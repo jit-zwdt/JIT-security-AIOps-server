@@ -1,0 +1,19 @@
+*.class
+ 
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+ 
+#Log file
+*.log
+ 
+#eclipse
+ 
+.classpath
+.project
+.settings
+.mymetadata
+target
+ 
+#idea 
+.idea
+.iml
