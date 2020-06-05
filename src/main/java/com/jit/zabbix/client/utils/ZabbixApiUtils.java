@@ -1,7 +1,6 @@
 package com.jit.zabbix.client.utils;
 
 import com.jit.zabbix.client.model.IZabbixMethod;
-import com.jit.zabbix.client.request.JsonRPCRequest;
 
 /**
  * @author Mamadou Lamine NIANG
@@ -13,8 +12,8 @@ public final class ZabbixApiUtils {
     private ZabbixApiUtils() {
     }
 
-    public static JsonRPCRequest buildRequest(IZabbixMethod method, Object params, String auth) {
-        JsonRPCRequest request = new JsonRPCRequest();
+    public static com.jit.zabbix.client.request.JsonRPCRequest buildRequest(IZabbixMethod method, Object params, String auth) {
+        com.jit.zabbix.client.request.JsonRPCRequest request = new com.jit.zabbix.client.request.JsonRPCRequest();
         request.setMethod(method.getValue());
         request.setAuth(auth);
         request.setParams(params);

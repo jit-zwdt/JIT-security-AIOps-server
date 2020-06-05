@@ -13,10 +13,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
-
+import static com.jit.zabbix.client.utils.CustomJsonSerializer.BooleanNumericDeserializer;
+import static com.jit.zabbix.client.utils.CustomJsonSerializer.BooleanNumericSerializer;
 
 /**
  * Zabbix Host object.
@@ -35,6 +34,7 @@ public class ZabbixHost {
     protected String id;
     @JsonProperty("host")
     protected String technicalName;
+    @Builder.Default
     protected Availabity available = Availabity.UNKNOWN;
     protected String description;
     @JsonProperty("disable_until")
@@ -47,10 +47,13 @@ public class ZabbixHost {
     @JsonProperty("flags")
     protected OriginFlag flag;
     @JsonProperty("inventory_mode")
+    @Builder.Default
     protected InventoryMode inventoryMode = InventoryMode.MANUAL;
     @JsonProperty("ipmi_authtype")
+    @Builder.Default
     protected IPMIAuthAlgo ipmiAuthType = IPMIAuthAlgo.DEFAULT;
     @JsonProperty("ipmi_available")
+    @Builder.Default
     protected Availabity ipmiAvailable = Availabity.UNKNOWN;
     @JsonProperty("ipmi_disable_until")
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
@@ -63,6 +66,7 @@ public class ZabbixHost {
     @JsonProperty("ipmi_password")
     protected String ipmiPassword;
     @JsonProperty("ipmi_privilege")
+    @Builder.Default
     protected IPMIPrivilege ipmiPrivilege = IPMIPrivilege.USER;
     @JsonProperty("ipmi_username")
     protected String ipmiUsername;
@@ -80,12 +84,13 @@ public class ZabbixHost {
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime maintenanceFrom;
     @JsonProperty("maintenance_status")
-    @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
-    @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
+    @JsonSerialize(using = BooleanNumericSerializer.class)
+    @JsonDeserialize(using = BooleanNumericDeserializer.class)
+    @Builder.Default
     protected boolean maintenanceInEffect = true;
     @JsonProperty("maintenance_type")
-    @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
-    @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
+    @JsonSerialize(using = BooleanNumericSerializer.class)
+    @JsonDeserialize(using = BooleanNumericDeserializer.class)
     protected boolean maintenanceWithoutDataCollection;
     @JsonProperty("maintenanceid")
     protected String maintenanceId;
@@ -93,6 +98,7 @@ public class ZabbixHost {
     @JsonProperty("proxy_hostid")
     protected String proxyHostId;
     @JsonProperty("snmp_available")
+    @Builder.Default
     protected Availabity snmpAvailable = Availabity.UNKNOWN;
     @JsonProperty("snmp_disable_until")
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
@@ -103,12 +109,14 @@ public class ZabbixHost {
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime snmpErrorsFrom;
     @JsonProperty("status")
-    @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
-    @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
+    @JsonSerialize(using = BooleanNumericSerializer.class)
+    @JsonDeserialize(using = BooleanNumericDeserializer.class)
     protected boolean unmonitored;
     @JsonProperty("tls_connect")
+    @Builder.Default
     protected TLSEncryption tlsConnect = TLSEncryption.NO_ENCRYPTION;
     @JsonProperty("tls_accept")
+    @Builder.Default
     protected TLSEncryption tlsAccept= TLSEncryption.NO_ENCRYPTION;
     @JsonProperty("tls_issuer")
     protected String tlsIssuer;

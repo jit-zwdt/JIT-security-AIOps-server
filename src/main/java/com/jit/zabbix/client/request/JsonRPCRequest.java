@@ -1,5 +1,8 @@
 package com.jit.zabbix.client.request;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -9,7 +12,8 @@ import java.util.UUID;
  *
  * @author Mamadou Lamine NIANG
  **/
-
+@Data
+@NoArgsConstructor
 public class JsonRPCRequest {
 
     private final String jsonrpc = "2.0";
@@ -19,48 +23,4 @@ public class JsonRPCRequest {
     private Object params;
     private String id = UUID.randomUUID().toString();
     private String auth;
-
-    public JsonRPCRequest() {
-    }
-
-    public String getJsonrpc() {
-        return jsonrpc;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public Object getParams() {
-        return params;
-    }
-
-    public void setParams(Object params) {
-        this.params = params;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getAuth() {
-        return auth;
-    }
-
-    public void setAuth(String auth) {
-        this.auth = auth;
-    }
-
-    @Override
-    public String toString() {
-        return "JsonRPCRequest(jsonrpc=" + getJsonrpc() + ", method=" + getMethod() + ", params=" + getParams() + ", id=" + getId() + ", auth=" + getAuth() + ")";
-    }
 }

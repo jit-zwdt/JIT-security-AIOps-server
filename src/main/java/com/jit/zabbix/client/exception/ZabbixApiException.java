@@ -1,11 +1,14 @@
 package com.jit.zabbix.client.exception;
 
 import com.jit.zabbix.client.response.JsonRPCError;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Mamadou Lamine NIANG
  **/
-
+@Getter
+@Setter
 public class ZabbixApiException extends Exception {
 
     private JsonRPCError error;
@@ -25,13 +28,5 @@ public class ZabbixApiException extends Exception {
 
     public ZabbixApiException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public JsonRPCError getError() {
-        return error;
-    }
-
-    public void setError(JsonRPCError error) {
-        this.error = error;
     }
 }

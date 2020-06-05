@@ -1,16 +1,16 @@
 package com.jit.zabbix.client.service;
 
+
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixMassAddHostDTO;
 import com.jit.zabbix.client.dto.ZabbixMassRemoveHostDTO;
 import com.jit.zabbix.client.dto.ZabbixMassUpdateHostDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
-import com.jit.zabbix.client.request.JsonRPCRequest;
+import com.jit.zabbix.client.model.host.HostMethod;
 import com.jit.zabbix.client.request.ZabbixGetHostParams;
-import com.jit.zabbix.client.response.JsonRPCResponse;
 import com.jit.zabbix.client.utils.JsonMapper;
 import com.jit.zabbix.client.utils.ZabbixApiUtils;
-import com.jit.zabbix.client.model.host.HostMethod;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,14 +24,15 @@ import java.util.List;
  * @see ZabbixApiService
  **/
 @Service
+@Slf4j
 public class ZabbixHostService {
 
     public static final String HOSTS_IDS_NODE = "hostids";
 
     private final JsonMapper jsonMapper;
-    private final ZabbixApiService apiService;
+    private final com.jit.zabbix.client.service.ZabbixApiService apiService;
 
-    public ZabbixHostService(JsonMapper jsonMapper, ZabbixApiService zabbixApiService) {
+    public ZabbixHostService(JsonMapper jsonMapper, com.jit.zabbix.client.service.ZabbixApiService zabbixApiService) {
         this.jsonMapper = jsonMapper;
         this.apiService = zabbixApiService;
     }
@@ -45,8 +46,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> create(List<ZabbixHostDTO> dtos, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.CREATE, dtos, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.CREATE, dtos, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return response.getResult().findValuesAsText(HOSTS_IDS_NODE);
     }
 
@@ -75,8 +76,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<ZabbixHostDTO> get(ZabbixGetHostParams params, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.GET, params, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.GET, params, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), ZabbixHostDTO.class);
     }
 
@@ -89,8 +90,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> delete(List<String> hostIds, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.DELETE, hostIds, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.DELETE, hostIds, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 
@@ -103,8 +104,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> massAdd(ZabbixMassAddHostDTO dto, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_ADD, dto, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_ADD, dto, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 
@@ -117,8 +118,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> massRemove(ZabbixMassRemoveHostDTO dto, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_REMOVE, dto, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_REMOVE, dto, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 
@@ -131,8 +132,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> massUpdate(ZabbixMassUpdateHostDTO dto, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_UPDATE, dto, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.MASS_UPDATE, dto, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 
@@ -145,8 +146,8 @@ public class ZabbixHostService {
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
     public List<String> update(ZabbixHostDTO dto, String auth) throws ZabbixApiException {
-        JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.UPDATE, dto, auth);
-        JsonRPCResponse response = apiService.call(request);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.UPDATE, dto, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 }
