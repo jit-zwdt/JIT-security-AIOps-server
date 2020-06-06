@@ -15,5 +15,5 @@
 target
  
 #idea 
-.idea
-jit-devops-base.iml
+*.idea
+*.iml
