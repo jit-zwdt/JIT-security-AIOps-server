@@ -4,3 +4,19 @@ server:
 zabbix:
   api:
     url: http://172.16.15.10/zabbix/
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://172.16.15.10:3306/zabbix_server
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      username: zabbix
+      password: zabbix
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
