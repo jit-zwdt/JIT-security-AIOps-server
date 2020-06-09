@@ -24,7 +24,7 @@ public class JwtTokenUtil implements Serializable {
 
     private static final long EXPIRATION_TIME = 1000*60;
 
-    private static final String SECRET = "hansey";
+    private static final String SECRET = "aGFuc2V5";
 
     public static final String JWT_ID = UUID.randomUUID().toString();
 

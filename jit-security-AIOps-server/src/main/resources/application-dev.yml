@@ -7,9 +7,9 @@ zabbix:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.15.10:3306/zabbix_server?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: zabbix
-    password: zabbix
+    url: jdbc:mysql://172.16.15.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
     connectionTimeout: 20000
     maximumPoolSize: 5
   jpa:
