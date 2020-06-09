@@ -1,9 +1,9 @@
-package com.jit.server.util;
+package com.jit.vue.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,74 +22,78 @@ public class JwtTokenUtil implements Serializable {
 
     private static final String CLAIM_KEY_USERNAME = "sub";
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+    private static final long EXPIRATION_TIME = 1000*60;
 
     private static final String SECRET = "hansey";
 
     public static final String JWT_ID = UUID.randomUUID().toString();
 
+    private final static Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
+
     /*
     签发JWT
      */
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>(16);
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+    public String generateToken(UserDetails userDetails){
+        return createToken(userDetails,1);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails){
+        return createToken(userDetails,5);
+    }
+
+    public String createToken(UserDetails userDetails,int flag){
+        Map<String,Object> claims = new HashMap<>(16);
+        claims.put(CLAIM_KEY_USERNAME,userDetails.getUsername());
         Map<String, Object> header = new HashMap<>(2);
         header.put("Type", "JWT");
         SecretKey key = generalKey();
         return Jwts.builder().setClaims(claims)
-                .setExpiration(new Date(Instant.now().toEpochMilli() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, key)
+                .setExpiration(new Date(Instant.now().toEpochMilli() + EXPIRATION_TIME * flag ))
+                .signWith(SignatureAlgorithm.HS512,key)
                 .setHeader(header)
                 .setId(JWT_ID)
                 .compact();
     }
-
     /*
     验证JWT
      */
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails){
         User user = (User) userDetails;
         String username = getUsernameFromToken(token);
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
     }
-
     /*
     验证token 是否过期
      */
-    public Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token){
         Date expiration = getExpirationeDateFromToken(token);
         return expiration.before(new Date());
     }
-
     /*
     根据token 获取username
      */
-    public String getUsernameFromToken(String token) {
+    public String getUsernameFromToken(String token){
         String username = getClaimsFromToken(token).getSubject();
         return username;
     }
-
     /*
     获取token过期时间
      */
-    public Date getExpirationeDateFromToken(String token) {
+    public Date getExpirationeDateFromToken(String token){
         Date expiration = getClaimsFromToken(token).getExpiration();
         return expiration;
     }
-
     /*
     解析JWT token
      */
     private Claims getClaimsFromToken(String token) {
         SecretKey key = generalKey();
         Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token)
-                .getBody();
+                        .setSigningKey(key)
+                        .parseClaimsJws(token)
+                        .getBody();
         return claims;
     }
-
     public static SecretKey generalKey() {
         // 本地的密码解码
         byte[] encodedKey = Base64.decodeBase64(SECRET);
