@@ -6,14 +6,12 @@ zabbix:
     url: http://172.16.15.10/zabbix/
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.16.15.10:3306/zabbix_server
-    type: com.zaxxer.hikari.HikariDataSource
-    hikari:
-      username: zabbix
-      password: zabbix
-      connectionTimeout: 20000
-      maximumPoolSize: 5
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.16.15.10:3306/zabbix_server?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: zabbix
+    password: zabbix
+    connectionTimeout: 20000
+    maximumPoolSize: 5
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true

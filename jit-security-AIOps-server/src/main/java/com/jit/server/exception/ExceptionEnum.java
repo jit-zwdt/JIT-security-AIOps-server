@@ -10,7 +10,8 @@ public enum ExceptionEnum {
     LOGIN_EXCEPTION(1001,"登录异常"),
     INNTER_EXCEPTION(500,"系统内部异常"),
     OPERATION_EXCEPTION(5005,"操作异常"),
-    Duplicate_EXCEPTION(5006,"重复记录");
+    Duplicate_EXCEPTION(5006,"重复记录"),
+    TOKEN_EXPIRED_EXCEPTION(5007,"令牌过期");
     ;
 
     private int code;
