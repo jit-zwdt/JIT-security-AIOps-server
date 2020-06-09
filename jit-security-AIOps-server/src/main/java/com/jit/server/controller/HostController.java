@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/host")
-@Api(value = "HostController call zabbix api")
+@Api(value = "HostController call zabbix api", tags = "HostController")
 public class HostController {
     @Autowired
     private ZabbixApiService zabbixApiService;
@@ -37,17 +37,16 @@ public class HostController {
 
     @ResponseBody
     @RequestMapping(value = "/createHost", method = RequestMethod.POST)
-    @ApiOperation(value = "get auth by username and password", notes = "username and password is necessary")
+    @ApiOperation(value = "createHost", notes = "createHost")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", value = "authorization", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "query", name = "params", value = "params", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "zabbixHostDTO", value = "zabbixHostDTO", required = true, dataType = "ZabbixHostDTO"),
             @ApiImplicitParam(paramType = "query", name = "auth", value = "auth", required = true, dataType = "String")
     })
-    public Result createHost(@RequestParam String params, @RequestParam String auth) {
+    public Result createHost(@RequestBody ZabbixHostDTO zabbixHostDTO, @RequestParam String auth) {
         try {
-            ZabbixHostDTO zabbixHostDTO = objectMapper.readValue(params, ZabbixHostDTO.class);
             String hostId = zabbixHostService.create(zabbixHostDTO, auth);
-        } catch (JsonProcessingException | ZabbixApiException e) {
+        } catch (ZabbixApiException e) {
             e.printStackTrace();
         }
         JSONObject jsonObj = new JSONObject();

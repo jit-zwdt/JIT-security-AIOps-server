@@ -31,7 +31,7 @@ public class JwtTokenUtil implements Serializable {
     /*
     签发JWT
      */
-    public static String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>(16);
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         Map<String, Object> header = new HashMap<>(2);
