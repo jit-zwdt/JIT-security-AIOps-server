@@ -2,7 +2,10 @@ package com.jit.server.repository;
 
 import com.jit.server.pojo.SysUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @Description:
@@ -12,4 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SysUserRepo extends JpaRepository<SysUserEntity, String> {
 
+    public List<SysUserEntity> findByUsername(String username);
 }

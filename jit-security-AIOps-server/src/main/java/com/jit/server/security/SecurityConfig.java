@@ -24,6 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     MyUserDetailService userDetailService;
     @Autowired
     MyAccessDeniedHandler myAccessDeniedHandler;
+    @Autowired
+    MyAuthenticationProvider authenticationProvider;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -61,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(authenticationProvider);
     }
 
     @Bean
