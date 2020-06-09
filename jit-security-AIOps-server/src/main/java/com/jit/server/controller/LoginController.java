@@ -7,6 +7,7 @@ import com.jit.server.service.AuthService;
 import com.jit.server.util.JwtTokenDto;
 import com.jit.server.util.Result;
 import io.jsonwebtoken.JwtException;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@Api(value = "LoginController", tags = "LoginController")
 public class LoginController {
     @Autowired
     private ServerResourceRepo serverResourceRepo;
