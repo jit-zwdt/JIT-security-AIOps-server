@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@Api(value = "LoginController", tags = "HostController")
+@Api(value = "LoginController", tags = "LoginController")
 public class LoginController {
     @Autowired
     private ServerResourceRepo serverResourceRepo;
