@@ -6,8 +6,6 @@ import com.jit.server.util.Result;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.service.ZabbixApiService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +17,18 @@ import org.springframework.web.bind.annotation.*;
  * @date 2020.06.06
  */
 
-
+@Api(tags = "ApiController")
 @RestController
 @RequestMapping("/api")
-@Api(value = "apiController call zabbix api")
 public class ApiController {
 
     @Autowired
     private ZabbixApiService zabbixApiService;
 
-    @ResponseBody
-    @RequestMapping(value = "/getAuth", method = RequestMethod.GET)
     @ApiOperation(value = "get auth by username and password", notes = "username and password is necessary")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "authorization", value = "authorization", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "query", name = "username", value = "username", required = true, dataType = "String", example = "Admin"),
-            @ApiImplicitParam(paramType = "query", name = "password", value = "password", required = true, dataType = "String", example = "zabbix")
-    })
-    public Result getAuth(@RequestParam String username, @RequestParam String password) {
+    @ResponseBody
+    @PostMapping(value = "/getAuth")
+    public Result getAuth(@RequestHeader String authorization, @RequestParam String username, @RequestParam String password) {
         Result result = null;
         String auth = "";
         JSONObject jsonObj = new JSONObject();

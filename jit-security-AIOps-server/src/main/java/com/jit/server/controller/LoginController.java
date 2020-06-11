@@ -7,8 +7,12 @@ import com.jit.server.service.AuthService;
 import com.jit.server.util.JwtTokenDto;
 import com.jit.server.util.Result;
 import io.jsonwebtoken.JwtException;
+<<<<<<<<< Temporary merge branch 1
+=========
 import io.swagger.annotations.Api;
+>>>>>>>>> Temporary merge branch 2
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +20,10 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+<<<<<<<<< Temporary merge branch 1
+=========
 @Api(value = "LoginController", tags = "LoginController")
+>>>>>>>>> Temporary merge branch 2
 public class LoginController {
     @Autowired
     private ServerResourceRepo serverResourceRepo;
