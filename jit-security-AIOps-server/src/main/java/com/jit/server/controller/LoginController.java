@@ -8,22 +8,23 @@ import com.jit.server.util.JwtTokenDto;
 import com.jit.server.util.Result;
 import io.jsonwebtoken.JwtException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Api(tags = "LoginController")
 @RestController
-@Api(value = "LoginController", tags = "LoginController")
 public class LoginController {
     @Autowired
     private ServerResourceRepo serverResourceRepo;
     @Autowired
     AuthService authService;
 
+    @ApiOperation(value = "login system", notes = "this mothod will get access_token and refresh_token")
     @PostMapping("/login")
     public Result login(@RequestParam(value = "username", required = true) String username,
                         @RequestParam(value = "password", required = true) String password, HttpServletResponse resp) throws IOException {
@@ -35,6 +36,7 @@ public class LoginController {
         }
     }
 
+    @ApiOperation(value = "refresh Token", notes = "this mothod will refresh refreshToken")
     @PostMapping("/refreshToken")
     public Result<JwtTokenDto> refreshToken(@RequestParam(value = "refresh_token", required = true) String refresh_token) {
         try {
