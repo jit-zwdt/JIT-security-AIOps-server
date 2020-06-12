@@ -2,7 +2,7 @@ package com.jit.server.filter;
 
 import com.jit.server.security.MyAccessDeniedHandler;
 import com.jit.server.security.MyUserDetailService;
-import com.jit.vue.utils.JwtTokenUtil;
+import com.jit.server.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
