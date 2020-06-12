@@ -1,4 +1,4 @@
-package com.jit.vue.utils;
+package com.jit.server.util;
 
 import io.jsonwebtoken.*;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -34,7 +34,7 @@ public class JwtTokenUtil implements Serializable {
     签发JWT
      */
     public String generateToken(UserDetails userDetails){
-        return createToken(userDetails,1);
+        return createToken(userDetails,2);
     }
 
     public String generateRefreshToken(UserDetails userDetails){

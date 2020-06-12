@@ -3,7 +3,7 @@ package com.jit.server.service.impl;
 import com.jit.server.security.MyUserDetailService;
 import com.jit.server.service.AuthService;
 import com.jit.server.util.JwtTokenDto;
-import com.jit.vue.utils.JwtTokenUtil;
+import com.jit.server.util.JwtTokenUtil;
 import io.jsonwebtoken.JwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
