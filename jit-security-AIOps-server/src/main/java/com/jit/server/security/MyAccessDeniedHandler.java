@@ -26,12 +26,14 @@ public class MyAccessDeniedHandler  implements AuthenticationEntryPoint{
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
-        httpServletResponse.setStatus(403);
+
         PrintWriter out = httpServletResponse.getWriter();
         Result result = null;
         if(e instanceof AccountExpiredException) {
+             httpServletResponse.setStatus(200);
              result = Result.ERROR(ExceptionEnum.TOKEN_EXPIRED_EXCEPTION);
         }else {
+             httpServletResponse.setStatus(403);
              result = Result.ERROR(ExceptionEnum.NO_AUTH);
         }
         out.write(new ObjectMapper().writeValueAsString(result));
