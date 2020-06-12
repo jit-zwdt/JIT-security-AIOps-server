@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 
+@Api(tags = "RegionController")
 @RestController
-@Api(value = "RegionController")
 @RequestMapping(value = "region")
 public class RegionController {
     @Autowired
