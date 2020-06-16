@@ -21,23 +21,44 @@ public class AssetsEntity {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "asset_name")
+    private String assetName;
 
-    @Column(name = "user")
-    private String user;
+    @Column(name = "asset_type")
+    private String assetType;
 
-    @Column(name = "type")
-    private String type;
+    @Column(name = "asset_number")
+    private String assetNumber;
 
-    @Column(name = "gmt_register")
-    private Timestamp gmtRegister;
+    @Column(name = "asset_state")
+    private String assetState;
 
-    @Column(name = "gmt_cancellation")
-    private Timestamp gmtCancellation;
+    @Column(name = "asset_amount")
+    private int assetAmount;
 
-    @Column(name = "delflag")
-    private String delflag;
+    @Column(name = "asset_belongs_dept")
+    private String assetBelongsDept;
+
+    @Column(name = "asset_belongs_person")
+    private String assetBelongsPerson;
+
+    @Column(name = "asset_register_date")
+    private Timestamp assetRegisterDate;
+
+    @Column(name = "asset_registrant")
+    private String assetRegistrant;
+
+    @Column(name = "asset_update_date")
+    private Timestamp assetUpdateDate;
+
+    @Column(name = "asset_location")
+    private String assetLocation;
+
+    @Column(name = "asset_logout_date")
+    private Timestamp assetLogoutDate;
+
+    @Column(name = "is_deleted")
+    private String isDeleted;
 
     @Column(name = "gmt_create")
     private Timestamp gmtCreate;
