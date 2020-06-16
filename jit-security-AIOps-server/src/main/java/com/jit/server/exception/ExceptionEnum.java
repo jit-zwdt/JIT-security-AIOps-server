@@ -11,8 +11,9 @@ public enum ExceptionEnum {
     INNTER_EXCEPTION(500,"系统内部异常"),
     OPERATION_EXCEPTION(5005,"操作异常"),
     Duplicate_EXCEPTION(5006,"重复记录"),
-    TOKEN_EXPIRED_EXCEPTION(5007,"令牌过期");
-    ;
+    TOKEN_EXPIRED_EXCEPTION(5007,"令牌过期"),
+    PARAMS_NULL_EXCEPTION(6001,"接口参数为空");
+
 
     private int code;
 
