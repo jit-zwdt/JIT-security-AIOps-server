@@ -1,5 +1,8 @@
 package com.jit.server.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,6 +17,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "assets")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssetsEntity {
     @Id
     @Column(length = 32, nullable = false)
@@ -42,6 +46,7 @@ public class AssetsEntity {
     @Column(name = "asset_belongs_person")
     private String assetBelongsPerson;
 
+    @JsonDeserialize(using= CustomJsonSerializer.TimestampStrDeserializer.class)
     @Column(name = "asset_register_date")
     private Timestamp assetRegisterDate;
 
