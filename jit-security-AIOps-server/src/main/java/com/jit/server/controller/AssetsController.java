@@ -3,12 +3,10 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.AssetsEntity;
-import com.jit.server.pojo.Region;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
-import com.jit.server.util.Params;
+import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
-import com.jit.server.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import java.util.Optional;
  * @Date: 2020/06/16 11:09
  */
 
-@Api(tags = "AssetsController")
 @RestController
 @RequestMapping("/assets")
 public class AssetsController {
@@ -36,9 +33,8 @@ public class AssetsController {
     @Autowired
     AssetsService assetsService;
 
-    @ApiOperation(value = "获得资产信息列表（带分页）",notes = "用于资产信息列表的展示")
     @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestHeader String authorization, @RequestBody Params<AssetsParams> params, HttpServletResponse resp) throws IOException {
+    public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) throws IOException {
         try{
             if(params!=null){
                 Page<AssetsEntity> pageResult= assetsService.findByCondition(params.getParam(),params.getPage(),params.getSize());
@@ -49,18 +45,19 @@ public class AssetsController {
                     result.put("dataList", pageResult.getContent());
                     return Result.SUCCESS(result);
                 } else {
-                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
             }else{
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
         }catch (Exception e){
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/addAssets")
-    public Result addAssets(@RequestHeader String authorization, @RequestBody AssetsEntity assets) {
+    public Result addAssets(@RequestBody AssetsEntity assets) {
         try{
             if(assets!=null){
                 assets.setGmtCreate(LocalDateTime.now());
@@ -78,7 +75,7 @@ public class AssetsController {
     }
 
     @PutMapping("/updateAssets")
-    public Result<AssetsEntity> updateAssets(@RequestHeader String authorization, @RequestBody AssetsEntity assets) {
+    public Result<AssetsEntity> updateAssets(@RequestBody AssetsEntity assets) {
         try{
             if(assets!=null){
                 Optional<AssetsEntity> bean = assetsService.findByAssetsId(assets.getId());
@@ -100,7 +97,7 @@ public class AssetsController {
     }
 
     @DeleteMapping("/deleteAssets/{id}")
-    public Result deleteAssets(@RequestHeader String authorization, @PathVariable String id) {
+    public Result deleteAssets(@PathVariable String id) {
         try{
             /*if (StringUtils.isNotEmpty(id)) {
                 assetsService.deleteAssets(id);
@@ -124,7 +121,7 @@ public class AssetsController {
     }
 
     @PostMapping("/findById/{id}")
-    public Result<AssetsEntity> findById(@RequestHeader String authorization, @PathVariable String id) {
+    public Result<AssetsEntity> findById(@PathVariable String id) {
         try{
             Optional<AssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {

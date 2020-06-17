@@ -5,13 +5,18 @@ import com.jit.server.exception.ExceptionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
-public class Params<T> {
+public class PageRequest<T> {
 
     private Integer page;
 
     private Integer size;
+
+    private List<Map<String,String>> orders;
 
     private T param;
 
