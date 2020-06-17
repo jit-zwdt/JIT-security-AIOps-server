@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Mamadou Lamine NIANG
@@ -57,7 +58,7 @@ public final class CustomJsonSerializer {
         @Override
         public Timestamp deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
             String date = jsonParser.getText();
-            if(!"0".equals(date)){
+            if(date!=null&&!"".equals(date)&&!"0".equals(date)){
                 Timestamp ts = null;
                 try {
                     ts = Timestamp.valueOf(date);
@@ -65,6 +66,21 @@ public final class CustomJsonSerializer {
                     e.printStackTrace();
                 }
                 return ts;
+            }else{
+                return null;
+            }
+        }
+    }
+
+    public static class LocalDateTimeStrDeserializer extends  JsonDeserializer<LocalDateTime>{
+
+        @Override
+        public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            String date = jsonParser.getText();
+            if(date!=null&&!"".equals(date)&&!"0".equals(date)){
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime localDateTimeBack = LocalDateTime.parse(date,df);
+                return localDateTimeBack;
             }else{
                 return null;
             }

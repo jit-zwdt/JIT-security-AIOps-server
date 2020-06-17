@@ -2,6 +2,7 @@ package com.jit.server.service.impl;
 
 import com.jit.server.pojo.AssetsEntity;
 import com.jit.server.repository.AssetsRepo;
+import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -23,7 +25,7 @@ public class AssetsServiceImpl implements AssetsService {
     private AssetsRepo assetsRepo;
 
     @Override
-    public Page<AssetsEntity> findByCondition(AssetsEntity params, int page, int size) throws Exception {
+    public Page<AssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception {
 
         if (params!=null){
             //条件
@@ -31,7 +33,7 @@ public class AssetsServiceImpl implements AssetsService {
                 @Override
                 public Predicate toPredicate(Root<AssetsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     /** 可添加你的其他搜索过滤条件 默认已有创建时间过滤 **/
-                    Path<Date> createTimeField=root.get("assetRegisterDate");
+                    Path<LocalDateTime> createTimeField=root.get("assetRegisterDate");
                     Path<Date> endTimeField=root.get("assetLogoutDate");
                     //Path<String> categoryIdField=root.get("categoryId");
 
@@ -39,28 +41,23 @@ public class AssetsServiceImpl implements AssetsService {
                      between : between and
                      like : like
                      equal : （相等）
-                     gt : greater than（大于）
+                     gt : greaterThan（大于）
                      ge : lessThanOrEqualTo（大于或等于）
-                     lt : less than（小于）
+                     lt : lessThan（小于）
                      le : lessThanOrEqualTo（小于或等于）
                      **/
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.like(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
                     /** 资产登记时间 **/
-                    //if(StringUtils.isNotEmpty((String)params.get("gmtRegister"))&&StringUtils.isNotEmpty((String)params.get("gmtRegister"))){
-                    if(params.getAssetRegisterDate()!=null){
-                        //Date start = DateUtils.parseDate(params.get("gmtRegister").toString());
-                        list.add(cb.greaterThanOrEqualTo(createTimeField, params.getAssetRegisterDate()));
+                    if(params.getAssetRegisterStartDate()!=null){
+                        list.add(cb.greaterThanOrEqualTo(createTimeField, params.getAssetRegisterStartDate()));
                     }
-                    /** 注销时间 **/
-                    //if(StringUtils.isNotEmpty((String)params.get("gmtCancellation"))&&StringUtils.isNotEmpty((String)params.get("gmtCancellation"))){
-                    if(params.getAssetLogoutDate()!=null){
-                        //Date end = DateUtils.parseDate(params.get("gmtCancellation").toString());
-                        list.add(cb.lessThanOrEqualTo(endTimeField, params.getAssetLogoutDate()));
+                    if(params.getAssetRegisterEndDate()!=null){
+                        list.add(cb.lessThanOrEqualTo(createTimeField, params.getAssetRegisterEndDate()));
                     }
                     /** 资产名称 **/
                     if(StringUtils.isNotEmpty(params.getAssetName())){
-                        list.add(cb.like(root.get("assetName").as(String.class), params.getAssetName()));
+                        list.add(cb.like(root.get("assetName").as(String.class),"%"+params.getAssetName()+"%"));
                     }
 
                     /** 资产类型 **/
@@ -70,7 +67,7 @@ public class AssetsServiceImpl implements AssetsService {
 
                     /** 资产所属人 **/
                     if(StringUtils.isNotEmpty(params.getAssetBelongsPerson())){
-                        list.add(cb.like(root.get("assetBelongsPerson").as(String.class), params.getAssetBelongsPerson()));
+                        list.add(cb.like(root.get("assetBelongsPerson").as(String.class), "%"+params.getAssetBelongsPerson()+"%"));
                     }
 
                     Predicate[] arr = new Predicate[list.size()];

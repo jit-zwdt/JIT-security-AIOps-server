@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @Description: table assets entity
@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "assets")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssetsEntity {
     @Id
     @Column(length = 32, nullable = false)
@@ -46,28 +45,27 @@ public class AssetsEntity {
     @Column(name = "asset_belongs_person")
     private String assetBelongsPerson;
 
-    @JsonDeserialize(using= CustomJsonSerializer.TimestampStrDeserializer.class)
     @Column(name = "asset_register_date")
-    private Timestamp assetRegisterDate;
+    private LocalDateTime assetRegisterDate;
 
     @Column(name = "asset_registrant")
     private String assetRegistrant;
 
     @Column(name = "asset_update_date")
-    private Timestamp assetUpdateDate;
+    private LocalDateTime assetUpdateDate;
 
     @Column(name = "asset_location")
     private String assetLocation;
 
     @Column(name = "asset_logout_date")
-    private Timestamp assetLogoutDate;
+    private LocalDateTime assetLogoutDate;
 
     @Column(name = "is_deleted")
     private String isDeleted;
 
     @Column(name = "gmt_create")
-    private Timestamp gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @Column(name = "gmt_modified")
-    private Timestamp gmtModified;
+    private LocalDateTime gmtModified;
 }

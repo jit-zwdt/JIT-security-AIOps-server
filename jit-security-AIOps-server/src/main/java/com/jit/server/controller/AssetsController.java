@@ -3,6 +3,7 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.AssetsEntity;
+import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.util.Params;
 import com.jit.server.util.Result;
@@ -33,7 +34,7 @@ public class AssetsController {
 
     @ApiOperation(value = "获得资产信息列表（带分页）",notes = "用于资产信息列表的展示")
     @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestHeader String authorization,@RequestBody Params<AssetsEntity> params, HttpServletResponse resp) throws IOException {
+    public Result findByCondition(@RequestHeader String authorization, @RequestBody Params<AssetsParams> params, HttpServletResponse resp) throws IOException {
         if(params!=null){
             try{
                 Page<AssetsEntity> pageResult= assetsService.findByCondition(params.getParam(),params.getPage(),params.getSize());
