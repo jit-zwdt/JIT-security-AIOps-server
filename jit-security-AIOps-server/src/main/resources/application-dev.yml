@@ -1,13 +1,13 @@
 #server port
 server:
-  port: 8080
+  port: 8081
 zabbix:
   api:
     url: http://172.16.15.10/zabbix/
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.15.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://172.16.15.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8
     username: root
     password: root
     connectionTimeout: 20000
@@ -18,3 +18,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        #jdbc:
+          #time_zone: Hongkong
+  jackson:
+    time-zone: GMT+8
