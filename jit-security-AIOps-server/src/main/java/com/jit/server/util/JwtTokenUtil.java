@@ -22,7 +22,7 @@ public class JwtTokenUtil implements Serializable {
 
     private static final String CLAIM_KEY_USERNAME = "sub";
 
-    private static final long EXPIRATION_TIME = 1000*60;
+    private static final long EXPIRATION_TIME = 60*1000*60;
 
     private static final String SECRET = "aGFuc2V5";
 
