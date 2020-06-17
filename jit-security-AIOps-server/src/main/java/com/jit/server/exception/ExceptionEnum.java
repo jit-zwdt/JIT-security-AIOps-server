@@ -13,6 +13,7 @@ public enum ExceptionEnum {
     Duplicate_EXCEPTION(5006, "重复记录"),
     TOKEN_EXPIRED_EXCEPTION(5007, "令牌过期"),
     PARAMS_NULL_EXCEPTION(6001, "接口参数为空"),
+    RESULT_NULL_EXCEPTION(6002, "记录不存在"),
     QUERY_DATA_EXCEPTION(0400, "数据库连接异常");
 
 

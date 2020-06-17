@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.pojo.AssetsEntity;
+import com.jit.server.pojo.Region;
 import com.jit.server.repository.AssetsRepo;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
@@ -89,5 +90,25 @@ public class AssetsServiceImpl implements AssetsService {
 
         }
         return null;
+    }
+
+    @Override
+    public void addAssets(AssetsEntity assets) throws Exception {
+        assetsRepo.save(assets);
+    }
+
+    @Override
+    public void deleteAssets(String id) throws Exception {
+        assetsRepo.deleteById(id);
+    }
+
+    @Override
+    public Optional<AssetsEntity> findByAssetsId(String id) throws Exception {
+        return assetsRepo.findById(id);
+    }
+
+    @Override
+    public void updateAssets(AssetsEntity assets) throws Exception {
+        assetsRepo.save(assets);
     }
 }

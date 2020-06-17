@@ -45,27 +45,32 @@ public class AssetsEntity {
     @Column(name = "asset_belongs_person")
     private String assetBelongsPerson;
 
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "asset_register_date")
     private LocalDateTime assetRegisterDate;
 
     @Column(name = "asset_registrant")
     private String assetRegistrant;
 
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "asset_update_date")
     private LocalDateTime assetUpdateDate;
 
     @Column(name = "asset_location")
     private String assetLocation;
 
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "asset_logout_date")
     private LocalDateTime assetLogoutDate;
 
     @Column(name = "is_deleted")
     private String isDeleted;
 
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "gmt_create")
     private LocalDateTime gmtCreate;
 
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "gmt_modified")
     private LocalDateTime gmtModified;
 }

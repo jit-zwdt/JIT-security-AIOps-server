@@ -18,19 +18,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssetsParams {
-    private String id;
 
     private String assetName;
 
     private String assetType;
-
-    private String assetNumber;
-
-    private String assetState;
-
-    private int assetAmount;
-
-    private String assetBelongsDept;
 
     private String assetBelongsPerson;
 
@@ -39,18 +30,4 @@ public class AssetsParams {
 
     @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     private LocalDateTime assetRegisterEndDate;
-
-    private String assetRegistrant;
-
-    private LocalDateTime assetUpdateDate;
-
-    private String assetLocation;
-
-    private LocalDateTime assetLogoutDate;
-
-    private String isDeleted;
-
-    private LocalDateTime gmtCreate;
-
-    private LocalDateTime gmtModified;
 }
