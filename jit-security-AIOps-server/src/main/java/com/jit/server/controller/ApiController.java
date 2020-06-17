@@ -5,8 +5,6 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.service.ZabbixApiService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
  * @date 2020.06.06
  */
 
-@Api(tags = "ApiController")
 @RestController
 @RequestMapping("/api")
 public class ApiController {
@@ -25,7 +22,6 @@ public class ApiController {
     @Autowired
     private ZabbixApiService zabbixApiService;
 
-    @ApiOperation(value = "get auth by username and password", notes = "username and password is necessary")
     @ResponseBody
     @PostMapping(value = "/getAuth")
     public Result getAuth(@RequestHeader String authorization, @RequestParam String username, @RequestParam String password) {

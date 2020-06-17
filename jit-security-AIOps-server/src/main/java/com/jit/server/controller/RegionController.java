@@ -6,7 +6,6 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.Region;
 import com.jit.server.service.RegionService;
 import com.jit.server.util.Result;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Api(tags = "RegionController")
 @RestController
 @RequestMapping(value = "region")
 public class RegionController {

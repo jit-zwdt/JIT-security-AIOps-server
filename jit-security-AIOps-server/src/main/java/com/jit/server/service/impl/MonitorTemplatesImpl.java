@@ -22,4 +22,9 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
         return monitorTemplatesRepo.findAll(sort);
     }
 
+    @Override
+    public List<MonitorTemplates> getMonitorTemplates(MonitorTemplates monitorTemplates, int page, int size) throws Exception {
+        //Page<MonitorTemplates> getMonitorTemplates(String lastname, Pageable pageable);
+        return null;
+    }
 }

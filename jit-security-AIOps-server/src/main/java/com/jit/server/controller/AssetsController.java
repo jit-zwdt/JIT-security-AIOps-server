@@ -7,8 +7,6 @@ import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
