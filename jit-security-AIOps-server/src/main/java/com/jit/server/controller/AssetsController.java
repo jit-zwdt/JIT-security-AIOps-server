@@ -62,14 +62,16 @@ public class AssetsController {
     @PostMapping("/addAssets")
     public Result addAssets(@RequestHeader String authorization, @RequestBody AssetsEntity assets) {
         try{
-            if(assets.getGmtCreate()==null){
+            if(assets!=null){
                 assets.setGmtCreate(LocalDateTime.now());
-            }
-            if(assets.getGmtModified()==null){
                 assets.setGmtModified(LocalDateTime.now());
+                assets.setIsDeleted("0");
+                assetsService.addAssets(assets);
+                return Result.SUCCESS(null);
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-            assetsService.addAssets(assets);
-            return Result.SUCCESS(null);
+
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
