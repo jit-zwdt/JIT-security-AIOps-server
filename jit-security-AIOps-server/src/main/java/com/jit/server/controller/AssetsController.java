@@ -7,6 +7,8 @@ import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import com.jit.server.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -72,15 +74,15 @@ public class AssetsController {
         }
     }
 
-    @PutMapping("/updateAssets")
-    public Result<AssetsEntity> updateAssets(@RequestBody AssetsEntity assets) {
+    @PutMapping("/updateAssets/{id}")
+    public Result<AssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id) {
         try{
-            if(assets!=null){
-                Optional<AssetsEntity> bean = assetsService.findByAssetsId(assets.getId());
+            if(params!=null && StringUtils.isNotEmpty(id)){
+                Optional<AssetsEntity> bean = assetsService.findByAssetsId(id);
                 if (bean.isPresent()) {
-                    if(assets.getGmtModified()==null){
-                        assets.setGmtModified(LocalDateTime.now());
-                    }
+                    AssetsEntity assets = bean.get();
+                    BeanUtils.copyProperties(params, assets);
+                    assets.setGmtModified(LocalDateTime.now());
                     assetsService.updateAssets(assets);
                     return Result.SUCCESS(assets);
                 }else{
