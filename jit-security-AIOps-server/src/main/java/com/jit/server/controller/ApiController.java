@@ -24,7 +24,7 @@ public class ApiController {
 
     @ResponseBody
     @PostMapping(value = "/getAuth")
-    public Result getAuth(@RequestHeader String authorization, @RequestParam String username, @RequestParam String password) {
+    public Result getAuth(@RequestParam String username, @RequestParam String password) {
         Result result = null;
         String auth = "";
         JSONObject jsonObj = new JSONObject();
