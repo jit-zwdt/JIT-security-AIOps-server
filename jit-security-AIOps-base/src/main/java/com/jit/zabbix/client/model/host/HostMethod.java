@@ -5,8 +5,8 @@ import com.jit.zabbix.client.model.IZabbixMethod;
 /**
  * Enum listing the different RPC methods available for Host.
  *
- * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/host">host</a>
  * @author Mamadou Lamine NIANG
+ * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/host">host</a>
  **/
 public enum HostMethod implements IZabbixMethod {
 
@@ -16,7 +16,7 @@ public enum HostMethod implements IZabbixMethod {
     MASS_ADD("host.massadd"),
     MASS_REMOVE("host.massremove"),
     MASS_UPDATE("host.massupdate"),
-    UPDATE("host.massupdate");
+    UPDATE("host.update");
 
     private String value;
 
