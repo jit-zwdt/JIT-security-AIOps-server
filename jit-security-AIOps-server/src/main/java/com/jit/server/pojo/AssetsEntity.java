@@ -1,6 +1,5 @@
 package com.jit.server.pojo;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
