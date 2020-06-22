@@ -7,7 +7,7 @@ import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
-import com.jit.zabbix.client.dto.ZabbixTemplateDTO;
+import com.jit.zabbix.client.dto.ZabbixGetTemplateDTO;
 import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
 import com.jit.zabbix.client.service.ZabbixTemplateService;
 import org.apache.commons.lang3.StringUtils;
@@ -70,8 +70,8 @@ public class MonitorTemplatesController {
             String auth = zabbixAuthService.getAuth();
             ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
             params.setOutput("extend");
-            List<ZabbixTemplateDTO> zabbixTemplateDTOList = zabbixTemplateService.get(params, auth);
-            return Result.SUCCESS(zabbixTemplateDTOList);
+            List<ZabbixGetTemplateDTO> zabbixGetTemplateDTOList = zabbixTemplateService.get(params, auth);
+            return Result.SUCCESS(zabbixGetTemplateDTOList);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Zabbix Template DTO used as parameter in method template.create and returned in template.get.
+ * Zabbix Template DTO used as parameter in method template.create.
  *
  * @author zengxin_miao
  * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/template/create">method template.create</a>
@@ -26,7 +26,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZabbixTemplateDTO extends ZabbixTemplate {
+public class ZabbixCreateTemplateDTO extends ZabbixTemplate {
 
     @Singular
     private List<ZabbixHostGroup> groups;
