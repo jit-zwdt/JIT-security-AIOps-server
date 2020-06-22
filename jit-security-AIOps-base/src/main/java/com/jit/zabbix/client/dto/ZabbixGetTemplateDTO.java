@@ -1,15 +1,13 @@
 package com.jit.zabbix.client.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jit.zabbix.client.model.GlobalMacro;
-import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 /**
  * Zabbix Template DTO used as parameter in method template.get.

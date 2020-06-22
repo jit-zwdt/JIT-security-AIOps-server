@@ -4,15 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jit.zabbix.client.model.GlobalMacro;
-import com.jit.zabbix.client.model.host.HostInventoryProperty;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
-import com.jit.zabbix.client.model.host.ZabbixHostInterface;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Zabbix Template DTO used as parameter in method template.create.
