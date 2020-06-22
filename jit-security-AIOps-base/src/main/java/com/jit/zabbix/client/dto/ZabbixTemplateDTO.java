@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jit.zabbix.client.model.GlobalMacro;
 import com.jit.zabbix.client.model.host.HostInventoryProperty;
-import com.jit.zabbix.client.model.host.ZabbixHost;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
@@ -16,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Zabbix Host DTO used as parameter in method host.create and returned in host.get.
- * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/host/create">method host.create</a>
+ * Zabbix Template DTO used as parameter in method template.create and returned in template.get.
  *
- * @author Mamadou Lamine NIANG
+ * @author zengxin_miao
+ * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/template/create">method template.create</a>
  **/
 @Data
 @NoArgsConstructor
@@ -27,22 +26,16 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZabbixHostDTO extends ZabbixHost {
+public class ZabbixTemplateDTO extends ZabbixTemplate {
 
     @Singular
     private List<ZabbixHostGroup> groups;
-    @Singular
-    private List<ZabbixHostInterface> interfaces;
     @JsonProperty("templates")
     @JsonAlias("parentTemplates")
     @Singular
     private List<ZabbixTemplate> templates;
     @Singular
     private List<GlobalMacro> macros;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @JsonProperty("inventory")
-    private Map<HostInventoryProperty, String> inventory;
-    @JsonProperty("templates_clear")
-    @Singular("templateToClear")
-    private List<ZabbixTemplate> templatesToClear;
+    @Singular
+    private List<ZabbixHostDTO> hosts;
 }

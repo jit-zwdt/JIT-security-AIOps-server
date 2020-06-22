@@ -6,7 +6,7 @@ import com.jit.zabbix.client.model.host.HostInventoryProperty;
 import com.jit.zabbix.client.model.host.InventoryMode;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
-import com.jit.zabbix.client.model.template.Template;
+import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import lombok.*;
 
 import java.util.List;
@@ -38,8 +38,8 @@ public class ZabbixMassUpdateHostDTO {
     private List<GlobalMacro> macros;
     @JsonProperty("templates")
     @Singular
-    private List<Template> templates;
+    private List<ZabbixTemplate> templates;
     @JsonProperty("templates_clear")
     @Singular("templateToClear")
-    private List<Template> templatesToClear;
+    private List<ZabbixTemplate> templatesToClear;
 }

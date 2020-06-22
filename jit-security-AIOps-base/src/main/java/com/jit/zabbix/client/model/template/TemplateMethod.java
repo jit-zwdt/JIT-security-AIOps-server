@@ -1,4 +1,4 @@
-package com.jit.zabbix.client.model.host;
+package com.jit.zabbix.client.model.template;
 
 import com.jit.zabbix.client.model.IZabbixMethod;
 

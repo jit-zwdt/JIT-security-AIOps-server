@@ -2,9 +2,9 @@ package com.jit.zabbix.client.service;
 
 
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixTemplateDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
-import com.jit.zabbix.client.model.host.HostMethod;
-import com.jit.zabbix.client.model.host.TemplateMethod;
+import com.jit.zabbix.client.model.template.TemplateMethod;
 import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
 import com.jit.zabbix.client.utils.JsonMapper;
 import com.jit.zabbix.client.utils.ZabbixApiUtils;
@@ -41,9 +41,9 @@ public class ZabbixTemplateService {
      * @return A list of hostDTOs.
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
-    public List<ZabbixHostDTO> get(ZabbixGetTemplateParams params, String auth) throws ZabbixApiException {
+    public List<ZabbixTemplateDTO> get(ZabbixGetTemplateParams params, String auth) throws ZabbixApiException {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(TemplateMethod.GET, params, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
-        return jsonMapper.getList(response.getResult(), ZabbixHostDTO.class);
+        return jsonMapper.getList(response.getResult(), ZabbixTemplateDTO.class);
     }
 }

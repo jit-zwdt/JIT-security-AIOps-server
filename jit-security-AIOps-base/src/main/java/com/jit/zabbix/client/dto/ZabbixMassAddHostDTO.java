@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jit.zabbix.client.model.GlobalMacro;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
-import com.jit.zabbix.client.model.template.Template;
+import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import lombok.*;
 
 import java.util.List;
@@ -31,5 +31,5 @@ public class ZabbixMassAddHostDTO {
     private List<GlobalMacro> macros;
     @JsonProperty("templates")
     @Singular
-    private List<Template> templates;
+    private List<ZabbixTemplate> templates;
 }
