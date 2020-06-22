@@ -81,4 +81,14 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
         }
         return null;
     }
+
+    @Override
+    public MonitorTemplatesEntity getMonitorTemplate(String id) throws Exception {
+        return monitorTemplatesRepo.getOne(id);
+    }
+
+    @Override
+    public void updateMonitorTemplate(MonitorTemplatesEntity monitorTemplatesEntity) throws Exception {
+        monitorTemplatesRepo.saveAndFlush(monitorTemplatesEntity);
+    }
 }

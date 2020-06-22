@@ -6,6 +6,7 @@ package com.jit.server.pojo;
  * @Date: 2020/06/17 09:40:43
  */
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,8 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "monitor_templates")
 public class MonitorTemplatesEntity {
 
@@ -70,8 +70,8 @@ public class MonitorTemplatesEntity {
     /**
      * 标识
      */
-    @Column(name = "key", nullable = false, unique = true)
-    private String key;
+    @Column(name = "temp_key", nullable = false, unique = true)
+    private String tempKey;
 
     /**
      * 标识

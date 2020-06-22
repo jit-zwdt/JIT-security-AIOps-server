@@ -7,14 +7,16 @@ import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
-import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixTemplateDTO;
 import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
 import com.jit.zabbix.client.service.ZabbixTemplateService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +66,36 @@ public class MonitorTemplatesController {
      */
     @ResponseBody
     @PostMapping(value = "/getTemplates")
-    public Result getMonitorTemplates(@RequestHeader String authorization) {
+    public Result getMonitorTemplates() {
         try {
             String auth = zabbixAuthService.getAuth();
             ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
             params.setOutput("extend");
-            List<ZabbixHostDTO> zabbixHostDTOList = zabbixTemplateService.get(params, auth);
-            return Result.SUCCESS(zabbixHostDTOList);
+            List<ZabbixTemplateDTO> zabbixTemplateDTOList = zabbixTemplateService.get(params, auth);
+            return Result.SUCCESS(zabbixTemplateDTOList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/bindTemplates")
+    public Result bindTemplates(@RequestParam String id, @RequestParam String templates) {
+        try {
+            if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(templates)) {
+                MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(id);
+                if (monitorTemplatesEntity != null) {
+                    monitorTemplatesEntity.setTemplates(templates);
+                    monitorTemplatesEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    monitorTemplatesService.updateMonitorTemplate(monitorTemplatesEntity);
+                    return Result.SUCCESS("success");
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
