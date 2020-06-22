@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "monitor_templates")
-public class MonitorTemplates {
+public class MonitorTemplatesEntity {
 
     @Id
     @Column(length = 32, nullable = false)
@@ -36,23 +36,18 @@ public class MonitorTemplates {
     @Column(name = "type")
     private String type;
 
-    /**
-     * 帮助描述
-     */
-    @Column(name = "help")
-    private String help;
 
     /**
      * 使用的模版
      */
-    @Column(name = "user_template")
-    private String userTemplate;
+    @Column(name = "templates")
+    private String templates;
 
     /**
      * 删除标识 0：表示未删除， 1：表示删除
      */
     @Column(name = "is_deleted")
-    private long isDeleted;
+    private int isDeleted;
 
     /**
      * 创建时间
@@ -65,5 +60,23 @@ public class MonitorTemplates {
      */
     @Column(name = "gmt_modified")
     private java.sql.Timestamp gmtModified;
+
+    /**
+     * 帮助描述文档
+     */
+    @Column(name = "help_doc")
+    private String helpDoc;
+
+    /**
+     * 标识
+     */
+    @Column(name = "key", nullable = false, unique = true)
+    private String key;
+
+    /**
+     * 标识
+     */
+    @Column(name = "order_num")
+    private int orderNum;
 
 }

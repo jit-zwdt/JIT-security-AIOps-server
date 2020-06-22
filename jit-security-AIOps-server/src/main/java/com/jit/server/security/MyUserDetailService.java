@@ -34,11 +34,10 @@ public class MyUserDetailService implements UserDetailsService {
     private SysRoleRepo roleRepo;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<SysUserEntity> userList = userRepo.findByUsername(username);
-        if(userList == null || userList.isEmpty()) {
+        SysUserEntity user = userRepo.findByUsername(username);
+        if(user == null) {
             throw new UsernameNotFoundException("user is not found");
         }
-        SysUserEntity user = userList.get(0);
         List<SysUserRoleEntity> roleList = userRoleRepo.findByUserId(user.getId());
         List<GrantedAuthority> authorities = new ArrayList<>();
         for(SysUserRoleEntity role : roleList){

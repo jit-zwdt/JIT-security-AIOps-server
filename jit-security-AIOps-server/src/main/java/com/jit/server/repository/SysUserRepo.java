@@ -15,5 +15,10 @@ import java.util.List;
 @Repository
 public interface SysUserRepo extends JpaRepository<SysUserEntity, String> {
 
-    public List<SysUserEntity> findByUsername(String username);
+    @Query("SELECT u FROM SysUserEntity u WHERE u.status = 1 and u.username = ?1")
+    SysUserEntity findByUsername(String username);
+
+    @Query("SELECT u FROM SysUserEntity u WHERE u.status = 1 and u.isZabbixActive = 1 and u.username = ?1")
+    SysUserEntity findZabbixActiveUserByUsername(String username);
+
 }

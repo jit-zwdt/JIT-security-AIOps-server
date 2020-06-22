@@ -45,6 +45,7 @@
             <groupId>com.jit</groupId>
             <artifactId>jit-security-AIOps-base</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <classifier>classes</classifier>
         </dependency>
     </dependencies>
 

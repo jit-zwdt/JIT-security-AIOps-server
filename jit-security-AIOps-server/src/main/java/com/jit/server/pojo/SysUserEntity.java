@@ -70,5 +70,13 @@ public class SysUserEntity {
     @Column(name = "city")
     private String city;
 
+    @Column(name = "is_zabbix_active")
+    private int isZabbixActive;
+
+    @Column(name = "zabbix_username")
+    private String zabbixUsername;
+
+    @Column(name = "zabbix_password")
+    private String zabbixPassword;
 
 }
