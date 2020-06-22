@@ -79,4 +79,10 @@ public class MonitorTemplatesEntity {
     @Column(name = "order_num")
     private int orderNum;
 
+    /**
+     * 图标 base64
+     */
+    @Column(name = "ico")
+    private String ico;
+
 }
