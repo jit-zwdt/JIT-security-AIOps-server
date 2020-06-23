@@ -7,6 +7,7 @@ import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.host.HostGroupMethod;
+import com.jit.zabbix.client.model.host.HostMethod;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.utils.JsonMapper;
@@ -91,4 +92,17 @@ public class ZabbixHostGroupService {
         return jsonMapper.getList(response.getResult(), ZabbixHostGroupDTO.class);
     }
 
+    /**
+     * Delete hosts request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/hostgroup/delete">hostgroup.delete</a>).
+     *
+     * @param hostGroupIds IDs of hostGroups to delete.
+     * @param auth         The auth token.
+     * @return The list of deleted hosts ids.
+     * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
+     */
+    public List<String> delete(List<String> hostGroupIds, String auth) throws ZabbixApiException {
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostGroupMethod.DELETE, hostGroupIds, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        return jsonMapper.getList(response.getResult(), GROUPIDS_IDS_NODE, String.class);
+    }
 }
