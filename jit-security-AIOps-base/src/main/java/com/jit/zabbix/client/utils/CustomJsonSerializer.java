@@ -27,7 +27,7 @@ public final class CustomJsonSerializer {
 
         @Override
         public void serialize(Boolean aBoolean, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeNumber(Boolean.TRUE == aBoolean ? 1 : 0);
+            jsonGenerator.writeNumber(Boolean.TRUE.equals(aBoolean) ? 1 : 0);
         }
     }
 

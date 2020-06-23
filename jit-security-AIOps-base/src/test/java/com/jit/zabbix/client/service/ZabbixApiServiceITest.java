@@ -2,9 +2,12 @@ package com.jit.zabbix.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jit.Application;
+import com.jit.zabbix.client.dto.ZabbixCreateHostGroupDTO;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.model.host.HostInventoryProperty;
 import com.jit.zabbix.client.request.JsonRPCRequest;
+import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.request.ZabbixGetHostParams;
 import com.jit.zabbix.client.response.JsonRPCResponse;
 import com.jit.zabbix.client.utils.JsonMapper;
@@ -36,6 +39,9 @@ public class ZabbixApiServiceITest {
     private ZabbixApiService zabbixApiService;
     @Autowired
     private ZabbixHostService zabbixHostService;
+
+    @Autowired
+    private ZabbixHostGroupService zabbixHostGroupService;
 
     /**
      * 获取 Zabbix API 版本。
@@ -77,6 +83,41 @@ public class ZabbixApiServiceITest {
         String json = mapper.writeValueAsString(list);
         System.out.println(json);
 
+    }
+
+    @Test
+    public void hostGroupCreateTest() throws Exception {
+        String auth = zabbixApiService.authenticate("Admin", "zabbix");
+        List<ZabbixCreateHostGroupDTO> zabbixCreateHostGroupDTOArrayList = new ArrayList<>();
+        ZabbixCreateHostGroupDTO zabbixCreateHostGroupDTO = new ZabbixCreateHostGroupDTO();
+        zabbixCreateHostGroupDTO.setName("测试主机群组");
+        zabbixCreateHostGroupDTOArrayList.add(zabbixCreateHostGroupDTO);
+
+        ZabbixCreateHostGroupDTO zabbixCreateHostGroupDTO2 = new ZabbixCreateHostGroupDTO();
+        zabbixCreateHostGroupDTO2.setName("测试主机群组2");
+        zabbixCreateHostGroupDTOArrayList.add(zabbixCreateHostGroupDTO2);
+
+        ZabbixCreateHostGroupDTO zabbixCreateHostGroupDTO3 = new ZabbixCreateHostGroupDTO();
+        zabbixCreateHostGroupDTO3.setName("测试主机群组3");
+        zabbixCreateHostGroupDTOArrayList.add(zabbixCreateHostGroupDTO3);
+
+        List<String> groupids = zabbixHostGroupService.create(zabbixCreateHostGroupDTOArrayList, auth);
+        for (String groupid : groupids) {
+            System.out.println(groupid);
+        }
+    }
+
+    @Test
+    public void hostGroupGetTest() throws Exception {
+        String auth = zabbixApiService.authenticate("Admin", "zabbix");
+
+        ZabbixGetHostGroupParams zabbixGetHostGroupParams = new ZabbixGetHostGroupParams();
+        zabbixGetHostGroupParams.setOutput("extend");
+
+        List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(zabbixGetHostGroupParams, auth);
+        for (ZabbixHostGroupDTO zabbixHostGroupDTO : zabbixHostGroupDTOList) {
+            System.out.println("name: " + zabbixHostGroupDTO.getName());
+        }
     }
 
 }

@@ -49,7 +49,7 @@ public class ApiControllerTest {
         System.out.println("access_token: " + access_token);
 
         RequestBuilder builder2 = MockMvcRequestBuilders.post("/api/getAuth").accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).header("authorization", access_token).param("username", "Admin").param("password", "zabbix");
+                .contentType(MediaType.APPLICATION_JSON_VALUE).header("authorization", access_token).param("username", "test").param("password", "111111");
         MvcResult result2 = mvc.perform(builder2).andReturn();
         System.out.println(result2.getResponse().getContentAsString());
         JSONObject jsonObject2 = JSONObject.parseObject(result2.getResponse().getContentAsString());
