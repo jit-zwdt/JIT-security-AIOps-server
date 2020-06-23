@@ -3,12 +3,9 @@ package com.jit.zabbix.client.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jit.zabbix.client.dto.ZabbixCreateHostGroupDTO;
-import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.host.HostGroupMethod;
-import com.jit.zabbix.client.model.host.HostMethod;
-import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.utils.JsonMapper;
 import com.jit.zabbix.client.utils.ZabbixApiUtils;
