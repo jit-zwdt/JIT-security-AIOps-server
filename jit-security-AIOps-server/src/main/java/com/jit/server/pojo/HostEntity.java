@@ -21,6 +21,9 @@ public class HostEntity {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
+    @Column(name = "hostid")
+    private String hostId;
+
     @Column(name = "host_object_name")
     private String objectName;
 

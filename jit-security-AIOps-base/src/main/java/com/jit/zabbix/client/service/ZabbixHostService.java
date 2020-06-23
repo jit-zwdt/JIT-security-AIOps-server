@@ -1,6 +1,7 @@
 package com.jit.zabbix.client.service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixMassAddHostDTO;
 import com.jit.zabbix.client.dto.ZabbixMassRemoveHostDTO;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,7 +50,13 @@ public class ZabbixHostService {
     public List<String> create(List<ZabbixHostDTO> dtos, String auth) throws ZabbixApiException {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.CREATE, dtos, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
-        return response.getResult().findValuesAsText(HOSTS_IDS_NODE);
+        //return response.getResult().findValuesAsText(HOSTS_IDS_NODE);
+        JsonNode skillsNode = response.getResult().get(HOSTS_IDS_NODE);
+        List<String> result = new ArrayList<String>();
+        for(int i = 0;i < skillsNode.size();i++) {
+            result.add(skillsNode.get(i).asText());
+        }
+        return result;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.jit.zabbix.client.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jit.zabbix.client.config.ZabbixApiProperties;
 import com.jit.zabbix.client.dto.ZabbixAuthDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
@@ -61,6 +62,11 @@ public class ZabbixApiService {
         String apiUrl = properties.getUrl() + ZabbixApiUtils.API_ENDPOINT;
         log.debug("Making request to {} with body: {}", apiUrl, request);
         try {
+            try {
+                System.out.println(new ObjectMapper().writeValueAsString(httpEntity));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             ResponseEntity<com.jit.zabbix.client.response.JsonRPCResponse> response = restTemplate.postForEntity(apiUrl, httpEntity, com.jit.zabbix.client.response.JsonRPCResponse.class);
             if(response.getStatusCodeValue() != 200) {
                 throw new ZabbixApiException(response.getStatusCodeValue());
