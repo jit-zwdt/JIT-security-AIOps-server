@@ -150,6 +150,13 @@ public class HostServiceImpl implements HostService {
         hostRepo.save(host);
     }
 
+    @Override
+    public Page<Object> hostinfo(HostParams params, int page, int size) throws Exception {
+        //分页的定义
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return this.hostRepo.getAllHostInfo(pageable);
+    }
+
     /**
      * 调用zabbix接口进行保存
      * @param host

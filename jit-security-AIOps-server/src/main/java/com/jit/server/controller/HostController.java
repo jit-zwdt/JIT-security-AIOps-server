@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
+import com.jit.server.request.HostViewInfoParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.service.HostService;
 import com.jit.server.util.PageRequest;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Description:
@@ -145,6 +144,47 @@ public class HostController {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/hostinfo")
+    public Result<Object> hostinfo(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException{
+        try{
+            if(params!=null){
+                Page<Object> pageResult = hostService.hostinfo(params.getParam(),params.getPage(),params.getSize());
+                if (null != pageResult) {
+                    List<HostViewInfoParams> views = new ArrayList<>();
+                    List<Object> userPageList= pageResult.getContent();
+                    long totalCount = pageResult.getTotalElements();
+                    for (Object o : userPageList) {
+                        Object[] rowArray = (Object[]) o;
+                        HostViewInfoParams view = new HostViewInfoParams();
+                        view.setId(rowArray[0]+"");
+                        view.setHostid(rowArray[1]+"");
+                        view.setHosttypeId(rowArray[2]+"");
+                        view.setAgentIp(rowArray[3]+"");
+                        view.setSnmpIp(rowArray[4]+"");
+                        view.setEnableMonitor(rowArray[5]+"");
+                        view.setGroupId(rowArray[6]+"");
+                        view.setHosttypeId(rowArray[7]+"");
+                        view.setObjectName(rowArray[8]+"");
+                        view.setRemark(rowArray[9]+"");
+                        view.setTypeId(rowArray[10]+"");
+                        views.add(view);
+                    }
+                    Map<String, Object> result = new HashMap<String, Object>();
+                    result.put("totalRow", totalCount);
+                    result.put("dataList", views);
+                    return Result.SUCCESS(result);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
