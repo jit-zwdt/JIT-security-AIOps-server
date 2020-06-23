@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HostParams {
 
+    private String hostId;
     private String objectName;
     private String businessName;
     private String assetsId;

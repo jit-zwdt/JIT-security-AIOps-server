@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jit.zabbix.client.model.GlobalMacro;
-import com.jit.zabbix.client.model.host.HostInventoryProperty;
-import com.jit.zabbix.client.model.host.ZabbixHost;
-import com.jit.zabbix.client.model.host.ZabbixHostGroup;
-import com.jit.zabbix.client.model.host.ZabbixHostInterface;
+import com.jit.zabbix.client.model.host.*;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -29,6 +26,10 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZabbixHostDTO extends ZabbixHost {
 
+    private String host;//主机的正式名称
+    private String name;//主机名
+    private String description;//主机说明
+    private boolean status;//主机的状态.
     @Singular
     private List<ZabbixHostGroup> groups;
     @Singular
@@ -38,7 +39,7 @@ public class ZabbixHostDTO extends ZabbixHost {
     @Singular
     private List<ZabbixTemplate> templates;
     @Singular
-    private List<GlobalMacro> macros;
+    private List<HostMacro> macros;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("inventory")
     private Map<HostInventoryProperty, String> inventory;
