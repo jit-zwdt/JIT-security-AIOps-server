@@ -48,7 +48,7 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
                         list.add(cb.equal(root.get("name").as(String.class), param.getName()));
                     }
                     if (StringUtils.isNotBlank(param.getType())) {
-                        list.add(cb.equal(root.get("type").as(String.class), param.getType()));
+                        list.add(cb.equal(root.get("typeId").as(String.class), param.getType()));
                     }
                     Predicate[] arr = new Predicate[list.size()];
                     return cb.and(list.toArray(arr));
@@ -72,7 +72,7 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
                     }
                 }
             } else {
-                orderList.add(new Sort.Order(Sort.Direction.ASC, "type"));
+                orderList.add(new Sort.Order(Sort.Direction.ASC, "typeId"));
             }
             Sort sort = Sort.by(orderList);
             //分页的定义
