@@ -42,6 +42,9 @@ public class HostEntity {
     @Column(name = "host_type_id")
     private String typeId;
 
+    @Column(name = "host_subtype_id")
+    private String subtypeId;
+
     @Column(name = "host_group_id")
     private String groupId;
 
