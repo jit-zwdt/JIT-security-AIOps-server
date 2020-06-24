@@ -22,23 +22,23 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
 
     public Page<HostEntity> findAll(Specification<HostEntity> spec, Pageable pageable);
 
-    @Query(value = " SELECT hostentity.id as id, " +
-            "        hostentity.hostid as hostid, " +
-            "        hostentity.host_type_id as hosttypeId, " +
-            "        hostentity.host_agent_ip as agentIp, " +
-            "        hostentity.host_snmp_ip as snmpIp, " +
-            "        hostentity.host_enable_monitor as enableMonitor, " +
-            "        hostentity.host_group_id as groupId, " +
-            "        hostentity.host_label as hostLabel, " +
-            "        hostentity.host_object_name as objectName, " +
-            "        hostentity.host_remark as remark, " +
-            "        monitortem_.type as typeId " +
-            "    from " +
-            "        monitor_host hostentity  " +
-            "    left  join " +
-            "        monitor_templates monitortem_ " +
-            "            on hostentity.host_type_id=monitortem_.id " +
-            "   ",
+    @Query(value = "SELECT " +
+            "hostentity.id AS id, " +
+            "hostentity.hostid AS hostid, " +
+            "hostentity.host_type_id AS hosttypeId, " +
+            "hostentity.host_agent_ip AS agentIp, " +
+            "hostentity.host_snmp_ip AS snmpIp, " +
+            "hostentity.host_enable_monitor AS enableMonitor, " +
+            "hostentity.host_group_id AS groupId, " +
+            "hostentity.host_label AS hostLabel, " +
+            "hostentity.host_object_name AS objectName, " +
+            "hostentity.host_remark AS remark, " +
+            "monitortem_.type AS type, " +
+            "monitortem2_.type AS subtype " +
+            "FROM " +
+            "monitor_host hostentity " +
+            "LEFT JOIN monitor_type monitortem_ ON hostentity.host_type_id = monitortem_.id " +
+            "LEFT JOIN monitor_type monitortem2_ ON hostentity.host_subtype_id = monitortem2_.id ",
             countQuery = " SELECT count(hostentity.id) from monitor_host hostentity left  join monitor_templates monitortem_ on hostentity.host_type_id=monitortem_.id ",
             nativeQuery = true )
     Page<Object> getAllHostInfo(Pageable pageable);

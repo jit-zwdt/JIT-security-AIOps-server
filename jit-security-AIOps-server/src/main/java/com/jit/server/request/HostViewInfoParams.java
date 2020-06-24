@@ -23,5 +23,6 @@ public class HostViewInfoParams {
     private String groupId;
     private String hostLabel;
     private String remark;
-    private String typeId;
+    private String type;
+    private String subtype;
 }

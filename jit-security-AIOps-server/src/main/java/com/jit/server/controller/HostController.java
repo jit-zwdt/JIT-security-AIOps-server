@@ -170,7 +170,8 @@ public class HostController {
                         view.setHosttypeId(rowArray[7]+"");
                         view.setObjectName(rowArray[8]+"");
                         view.setRemark(rowArray[9]+"");
-                        view.setTypeId(rowArray[10]+"");
+                        view.setType(rowArray[10]+"");
+                        view.setSubtype(rowArray[11]+"");
                         views.add(view);
                     }
                     Map<String, Object> result = new HashMap<String, Object>();
