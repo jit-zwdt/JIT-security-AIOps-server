@@ -28,6 +28,7 @@ public class HostParams {
     private String proxyMonitor;
     private String enableMonitor;
     private String typeId;
+    private String subtypeId;
     private String groupId;
     private String remark;
     private String label;
