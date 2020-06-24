@@ -91,4 +91,14 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
     public void updateMonitorTemplate(MonitorTemplatesEntity monitorTemplatesEntity) throws Exception {
         monitorTemplatesRepo.saveAndFlush(monitorTemplatesEntity);
     }
+
+    @Override
+    public List<MonitorTemplatesEntity> getMonitorTemplatesByTypeId(String typdId) throws Exception {
+        return monitorTemplatesRepo.findByTypeIdAndIsDeletedOrderByOrderNum(typdId, 0);
+    }
+
+    @Override
+    public List<MonitorTemplatesEntity> getMonitorTemplatesByTypeIdAndNameLike(String typeId, String keyword) throws Exception {
+        return monitorTemplatesRepo.findByTypeIdAndIsDeletedAndNameLike(typeId, 0, keyword);
+    }
 }

@@ -16,4 +16,8 @@ public interface MonitorTemplatesService {
     MonitorTemplatesEntity getMonitorTemplate(String id) throws Exception;
 
     void updateMonitorTemplate(MonitorTemplatesEntity monitorTemplatesEntity) throws Exception;
+
+    List<MonitorTemplatesEntity> getMonitorTemplatesByTypeId(String typeId) throws Exception;
+
+    List<MonitorTemplatesEntity> getMonitorTemplatesByTypeIdAndNameLike(String typeId, String keyword) throws Exception;
 }

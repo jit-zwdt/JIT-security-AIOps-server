@@ -1,9 +1,13 @@
 package com.jit.server.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorTemplatesEntity;
+import com.jit.server.pojo.MonitorTypeEntity;
 import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.service.MonitorTemplatesService;
+import com.jit.server.service.MonitorTypeService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -39,6 +43,9 @@ public class MonitorTemplatesController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
+    @Autowired
+    private MonitorTypeService monitorTypeService;
+
     @ResponseBody
     @PostMapping(value = "/getMonitorTemplates")
     public Result getMonitorTemplates(@RequestBody PageRequest<MonitorTemplatesParams> params) {
@@ -64,8 +71,8 @@ public class MonitorTemplatesController {
      * @return
      */
     @ResponseBody
-    @PostMapping(value = "/getTemplates")
-    public Result getMonitorTemplates() {
+    @PostMapping(value = "/getZabbixTemplates")
+    public Result getZabbixTemplates() {
         try {
             String auth = zabbixAuthService.getAuth();
             ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
@@ -101,5 +108,53 @@ public class MonitorTemplatesController {
         }
     }
 
+    /**
+     * get templates
+     *
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/getTemplates")
+    public Result getTemplates(@RequestParam String keyword, @RequestParam String type) {
+        try {
+            JSONArray jsonArray = new JSONArray();
+            List<MonitorTypeEntity> monitorTypeEntityList;
+            if (StringUtils.isNotBlank(type)) {
+                MonitorTypeEntity monitorTypeEntity = monitorTypeService.getMonitorTypesById(type);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", monitorTypeEntity.getType());
+                String typeId = monitorTypeEntity.getId();
+                List<MonitorTemplatesEntity> monitorTemplatesEntityList;
+                if (StringUtils.isNotBlank(keyword)) {
+                    monitorTemplatesEntityList = monitorTemplatesService.getMonitorTemplatesByTypeIdAndNameLike(typeId, keyword);
+                } else {
+                    monitorTemplatesEntityList = monitorTemplatesService.getMonitorTemplatesByTypeId(typeId);
+                }
+                jsonObject.put("templates", monitorTemplatesEntityList);
+                jsonArray.add(jsonObject);
+            } else {
+                monitorTypeEntityList = monitorTypeService.getMonitorTypes();
+                if (monitorTypeEntityList != null && !monitorTypeEntityList.isEmpty()) {
+                    for (MonitorTypeEntity monitorTypeEntity : monitorTypeEntityList) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("type", monitorTypeEntity.getType());
+                        String typeId = monitorTypeEntity.getId();
+                        List<MonitorTemplatesEntity> monitorTemplatesEntityList;
+                        if (StringUtils.isNotBlank(keyword)) {
+                            monitorTemplatesEntityList = monitorTemplatesService.getMonitorTemplatesByTypeIdAndNameLike(typeId, keyword);
+                        } else {
+                            monitorTemplatesEntityList = monitorTemplatesService.getMonitorTemplatesByTypeId(typeId);
+                        }
+                        jsonObject.put("templates", monitorTemplatesEntityList);
+                        jsonArray.add(jsonObject);
+                    }
+                }
+            }
+            return Result.SUCCESS(jsonArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 
 }

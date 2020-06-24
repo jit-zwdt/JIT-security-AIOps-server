@@ -34,6 +34,11 @@ public class MonitorTemplatesEntity {
     @Column(name = "type_id")
     private String typeId;
 
+    /**
+     * 子类型 关联类型表主键（多个逗号隔开）
+     */
+    @Column(name = "subtype_ids")
+    private String subtypeIds;
 
     /**
      * 使用的模版
