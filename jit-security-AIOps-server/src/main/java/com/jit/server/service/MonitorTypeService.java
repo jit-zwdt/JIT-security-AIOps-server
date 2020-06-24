@@ -9,4 +9,6 @@ public interface MonitorTypeService {
     List<MonitorTypeEntity> getMonitorTypes() throws Exception;
 
     MonitorTypeEntity getMonitorTypesById(String id) throws Exception;
+
+    Object getTypeById(String id) throws Exception;
 }

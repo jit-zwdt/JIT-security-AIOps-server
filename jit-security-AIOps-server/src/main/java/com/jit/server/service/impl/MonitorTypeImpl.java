@@ -24,4 +24,9 @@ public class MonitorTypeImpl implements MonitorTypeService {
     public MonitorTypeEntity getMonitorTypesById(String id) throws Exception {
         return monitorTypeRepo.getOne(id);
     }
+
+    @Override
+    public Object getTypeById(String id) throws Exception {
+        return monitorTypeRepo.getTypeById(id);
+    }
 }
