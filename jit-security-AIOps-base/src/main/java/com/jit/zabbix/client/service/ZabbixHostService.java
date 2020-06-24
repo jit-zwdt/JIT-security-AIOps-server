@@ -51,12 +51,15 @@ public class ZabbixHostService {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.CREATE, dtos, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         //return response.getResult().findValuesAsText(HOSTS_IDS_NODE);
-        JsonNode skillsNode = response.getResult().get(HOSTS_IDS_NODE);
+        /*JsonNode skillsNode = response.getResult().get(HOSTS_IDS_NODE);
         List<String> result = new ArrayList<String>();
-        for(int i = 0;i < skillsNode.size();i++) {
-            result.add(skillsNode.get(i).asText());
+        if (!skillsNode.isEmpty()) {
+            for(int i = 0;i < skillsNode.size();i++) {
+                result.add(skillsNode.get(i).asText());
+            }
         }
-        return result;
+        return result;*/
+        return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
     }
 
     /**
@@ -153,9 +156,13 @@ public class ZabbixHostService {
      * @return The list of affected hosts ids.
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
-    public List<String> update(ZabbixHostDTO dto, String auth) throws ZabbixApiException {
+    public String update(ZabbixHostDTO dto, String auth) throws ZabbixApiException {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.UPDATE, dto, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
-        return jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
+        List<String> ids = jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new ZabbixApiException("Aucun id recu.");
+        }
+        return ids.get(0);
     }
 }
