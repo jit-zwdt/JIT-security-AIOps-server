@@ -3,12 +3,14 @@ package com.jit.zabbix.client.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jit.Application;
 import com.jit.zabbix.client.dto.ZabbixCreateHostGroupDTO;
+import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.model.host.HostInventoryProperty;
 import com.jit.zabbix.client.request.JsonRPCRequest;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.request.ZabbixGetHostParams;
+import com.jit.zabbix.client.request.ZabbixGetItemParams;
 import com.jit.zabbix.client.response.JsonRPCResponse;
 import com.jit.zabbix.client.utils.JsonMapper;
 import org.junit.Test;
@@ -42,6 +44,8 @@ public class ZabbixApiServiceITest {
 
     @Autowired
     private ZabbixHostGroupService zabbixHostGroupService;
+    @Autowired
+    private ZabbixItemService zabbixItemService;
 
     /**
      * 获取 Zabbix API 版本。
@@ -117,6 +121,22 @@ public class ZabbixApiServiceITest {
         List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(zabbixGetHostGroupParams, auth);
         for (ZabbixHostGroupDTO zabbixHostGroupDTO : zabbixHostGroupDTOList) {
             System.out.println("name: " + zabbixHostGroupDTO.getName());
+        }
+    }
+
+    @Test
+    public void itemGetTest() throws Exception {
+        String auth = zabbixApiService.authenticate("Admin", "zabbix");
+
+        ZabbixGetItemParams zabbixGetItemParams = new ZabbixGetItemParams();
+        zabbixGetItemParams.setOutput("extend");
+        //List<String> hostIds = new ArrayList<>();
+        //hostIds.add("10318");
+        //zabbixGetItemParams.setHostIds(hostIds);
+
+        List<ZabbixGetItemDTO> zabbixGetItemDTOList = zabbixItemService.get(zabbixGetItemParams, auth);
+        for (ZabbixGetItemDTO zabbixGetItemDTO : zabbixGetItemDTOList) {
+            System.out.println("name: " + zabbixGetItemDTO.getName());
         }
     }
 
