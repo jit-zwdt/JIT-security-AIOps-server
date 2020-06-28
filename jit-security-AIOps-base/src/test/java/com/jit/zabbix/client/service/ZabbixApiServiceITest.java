@@ -134,6 +134,11 @@ public class ZabbixApiServiceITest {
         //hostIds.add("10318");
         //zabbixGetItemParams.setHostIds(hostIds);
 
+        List<String> templateids = new ArrayList<>();
+        templateids.add("10001");
+        templateids.add("10048");
+        zabbixGetItemParams.setTemplateIds(templateids);
+
         List<ZabbixGetItemDTO> zabbixGetItemDTOList = zabbixItemService.get(zabbixGetItemParams, auth);
         for (ZabbixGetItemDTO zabbixGetItemDTO : zabbixGetItemDTOList) {
             System.out.println("name: " + zabbixGetItemDTO.getName());
