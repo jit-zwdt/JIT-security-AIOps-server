@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.repository.HostRepo;
@@ -7,6 +8,7 @@ import com.jit.server.request.HostParams;
 import com.jit.server.service.HostService;
 import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
@@ -129,7 +131,7 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public void addHost(HostEntity host) throws Exception {
+    public String addHost(HostEntity host) throws Exception {
         //调用zabbix接口进行保存
         String hostid = createHostToZabbix(host);
         if(StringUtils.isNotEmpty(hostid)){
@@ -137,11 +139,23 @@ public class HostServiceImpl implements HostService {
             //保存到本地
             hostRepo.save(host);
         }
+        return hostid;
     }
 
     @Override
-    public void deleteHost(String id) throws Exception {
-        hostRepo.deleteById(id);
+    public String deleteHost(HostEntity host) throws Exception {
+        //获得token
+        String authToken = zabbixAuthService.getAuth();
+        if(StringUtils.isEmpty(authToken)){
+            return null;
+        }
+        //调用zabbix接口进行删除
+        String hostid = zabbixHostService.delete(host.getHostId(), authToken);
+        if(StringUtils.isNotEmpty(hostid)){
+            //更新本地
+            hostRepo.save(host);
+        }
+        return hostid;
     }
 
     @Override
@@ -150,13 +164,14 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public void updateHost(HostEntity host) throws Exception {
+    public String updateHost(HostEntity host) throws Exception {
         //调用zabbix接口进行保存
         String hostid = updateHostToZabbix(host);
         if(StringUtils.isNotEmpty(hostid)){
             //更新本地
             hostRepo.save(host);
         }
+        return hostid;
     }
 
     @Override

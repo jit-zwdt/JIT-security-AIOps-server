@@ -83,8 +83,11 @@ public class HostController {
                 host.setGmtCreate(LocalDateTime.now());
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(false);
-                hostService.addHost(host);
-                return Result.SUCCESS(null);
+                if(StringUtils.isNotEmpty(hostService.addHost(host))){
+                    return Result.SUCCESS(null);
+                }else{
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
             }else{
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
@@ -103,8 +106,11 @@ public class HostController {
                     HostEntity host = bean.get();
                     BeanUtils.copyProperties(params, host);
                     host.setGmtModified(LocalDateTime.now());
-                    hostService.updateHost(host);
-                    return Result.SUCCESS(host);
+                    if(StringUtils.isNotEmpty(hostService.updateHost(host))){
+                        return Result.SUCCESS(host);
+                    }else{
+                        return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                    }
                 }else{
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
@@ -124,8 +130,11 @@ public class HostController {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(true);
-                hostService.updateHost(host);
-                return Result.SUCCESS(host);
+                if(StringUtils.isNotEmpty(hostService.deleteHost(host))){
+                    return Result.SUCCESS(host);
+                }else{
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
             }else{
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }

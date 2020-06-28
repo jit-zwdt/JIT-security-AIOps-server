@@ -107,6 +107,22 @@ public class ZabbixHostService {
     }
 
     /**
+     * Delete hosts request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/host/delete">host.delete</a>).
+     *
+     * @param hostIds IDs of hosts to delete.
+     * @param auth    The auth token.
+     * @return The list of deleted hosts ids.
+     * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
+     */
+    public String delete(String hostIds, String auth) throws ZabbixApiException {
+        List<String> ids = delete(Collections.singletonList(hostIds), auth);
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new ZabbixApiException("Aucun id recu.");
+        }
+        return ids.get(0);
+    }
+
+    /**
      * Mass add hosts request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/host/massadd">host.massadd</a>).
      *
      * @param dto  The request param.
