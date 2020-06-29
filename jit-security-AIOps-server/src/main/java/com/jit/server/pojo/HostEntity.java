@@ -39,6 +39,9 @@ public class HostEntity {
     @Column(name = "host_enable_monitor")
     private String enableMonitor;
 
+    @Column(name = "host_templates_id")
+    private String templatesId;
+
     @Column(name = "host_type_id")
     private String typeId;
 

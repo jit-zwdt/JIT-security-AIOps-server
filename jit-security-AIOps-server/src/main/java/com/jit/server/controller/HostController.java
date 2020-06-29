@@ -38,19 +38,6 @@ public class HostController {
     @Autowired
     HostService hostService;
 
-    /*@PostMapping(value = "/getHost")
-    public Result getHost(@RequestParam ZabbixGetHostParams params) {
-        try {
-            String auth = zabbixApiService.authenticate("Admin", "zabbix");
-            List<ZabbixHostDTO> resultList = zabbixHostService.get(params, auth);
-        } catch (ZabbixApiException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonObj = new JSONObject();
-
-        return Result.SUCCESS(jsonObj);
-    }*/
-
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException {
         try{
@@ -143,6 +130,27 @@ public class HostController {
         }
     }
 
+    @PutMapping("/updateHostEnableMonitor/{id}")
+    public Result updateHostEnableMonitor(@PathVariable String id, @RequestParam("enableMonitor") String enableMonitor) {
+        try{
+            Optional<HostEntity> bean = hostService.findByHostId(id);
+            if (bean.isPresent() && StringUtils.isNotEmpty(enableMonitor)) {
+                HostEntity host = bean.get();
+                host.setGmtModified(LocalDateTime.now());
+                host.setEnableMonitor(enableMonitor.trim());
+                if(StringUtils.isNotEmpty(hostService.updateHostEnableMonitor(host))){
+                    return Result.SUCCESS(host);
+                }else{
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     @PostMapping("/findById/{id}")
     public Result<HostEntity> findById(@PathVariable String id) {
         try{
@@ -172,6 +180,7 @@ public class HostController {
                         view.setId(rowArray[0]+"");
                         view.setHostid(rowArray[1]+"");
                         view.setHosttypeId(rowArray[2]+"");
+                        view.setHostIp(StringUtils.isNotEmpty(rowArray[3]+"")?rowArray[3]+"":rowArray[4]+"");
                         view.setAgentIp(rowArray[3]+"");
                         view.setSnmpIp(rowArray[4]+"");
                         view.setEnableMonitor(rowArray[5]+"");

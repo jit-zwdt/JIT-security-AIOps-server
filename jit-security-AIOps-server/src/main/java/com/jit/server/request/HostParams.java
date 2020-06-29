@@ -27,6 +27,7 @@ public class HostParams {
     private String assetsId;
     private String proxyMonitor;
     private String enableMonitor;
+    private String templatesId;
     private String typeId;
     private String subtypeId;
     private String groupId;
@@ -59,4 +60,7 @@ public class HostParams {
     private String vmMacroPassword;
     private String vmMacroSdkLink;
     private String vmMacroUsername;
+
+    private String hostObjectName;
+    private String hostIp;
 }

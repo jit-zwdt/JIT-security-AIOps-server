@@ -21,6 +21,11 @@ public class MonitorTypeImpl implements MonitorTypeService {
     }
 
     @Override
+    public List<MonitorTypeEntity> getMonitorSubTypes() throws Exception {
+        return monitorTypeRepo.findByPidNotAndIsDeletedOrderByOrderNum("0", 0);
+    }
+
+    @Override
     public MonitorTypeEntity getMonitorTypesById(String id) throws Exception {
         return monitorTypeRepo.getOne(id);
     }

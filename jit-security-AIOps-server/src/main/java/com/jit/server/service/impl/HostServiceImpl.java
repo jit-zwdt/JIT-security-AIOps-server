@@ -21,16 +21,17 @@ import com.jit.zabbix.client.request.ZabbixGetHostInterfaceParams;
 import com.jit.zabbix.client.service.ZabbixHostInterfaceService;
 import com.jit.zabbix.client.service.ZabbixHostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.*;
+import java.math.BigInteger;
 import java.util.*;
 
 @Service
@@ -46,6 +47,8 @@ public class HostServiceImpl implements HostService {
     private ZabbixAuthService zabbixAuthService;
     @Autowired
     private MonitorTemplatesService monitorTemplatesService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     @Override
@@ -175,10 +178,102 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    public String updateHostEnableMonitor(HostEntity host) throws Exception {
+        //调用zabbix接口进行保存
+        String hostid = updateHostStatusToZabbix(host.getHostId(), host.getEnableMonitor());
+        if(StringUtils.isNotEmpty(hostid)){
+            //更新本地
+            hostRepo.save(host);
+        }
+        return hostid;
+    }
+
+    @Override
     public Page<Object> hostinfo(HostParams params, int page, int size) throws Exception {
         //分页的定义
         Pageable pageable = PageRequest.of(page - 1, size);
-        return this.hostRepo.getAllHostInfo(pageable);
+        //return this.hostRepo.getAllHostInfo(pageable);
+        return predicateQuery(params, pageable);
+    }
+
+    /**
+     * 自定义拼接条件查询
+     */
+    private Page<Object> predicateQuery(HostParams params, Pageable pageable) {
+        String comditionalSQL = "";
+        String orderbySQL = " order by hostentity.gmtModified desc,hostentity.id ";
+        String baseSQL = "SELECT " +
+                "hostentity.id, " +
+                "hostentity.hostId, " +
+                "hostentity.typeId, " +
+                "hostentity.agentIp, " +
+                "hostentity.snmpIp, " +
+                "hostentity.enableMonitor, " +
+                "hostentity.groupId, " +
+                "hostentity.label, " +
+                "hostentity.objectName, " +
+                "hostentity.remark, " +
+                "monitortem_.type, " +
+                "monitortem2_.type as subtype " +
+                "FROM " +
+                "HostEntity hostentity " +
+                "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
+                "LEFT JOIN MonitorTypeEntity monitortem2_ ON hostentity.subtypeId = monitortem2_.id " +
+                "WHERE 1=1 ";
+        String countSQL  = "SELECT count(1) " +
+                "FROM " +
+                "HostEntity hostentity " +
+                "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
+                "LEFT JOIN MonitorTypeEntity monitortem2_ ON hostentity.subtypeId = monitortem2_.id " +
+                "WHERE 1=1 ";
+        //map用来组装SQL占位符和对应的值
+        Map<String,Object> map = new HashMap<String,Object>();
+        if(StringUtils.isNotEmpty(params.getHostObjectName())){
+            comditionalSQL+=" and (hostentity.businessName like :hostObjectName or hostentity.remark like :hostObjectName)";
+            map.put("hostObjectName", "%"+params.getHostObjectName().trim()+"%");
+        }
+        if(StringUtils.isNotEmpty(params.getHostIp())){
+            comditionalSQL+=" and (hostentity.agentIp like :hostIp or hostentity.snmpIp like :hostIp)";
+            map.put("hostIp", "%"+params.getHostIp().trim()+"%");
+        }
+        if(StringUtils.isNotEmpty(params.getTypeId())){
+            comditionalSQL+=" and hostentity.typeId = :typeId";
+            map.put("typeId", params.getTypeId().trim());
+        }
+        if(StringUtils.isNotEmpty(params.getSubtypeId())){
+            comditionalSQL+=" and hostentity.subtypeId = :subtypeId";
+            map.put("subtypeId", params.getSubtypeId().trim());
+        }
+        if(StringUtils.isNotEmpty(params.getEnableMonitor())){
+            comditionalSQL+=" and hostentity.enableMonitor = :enableMonitor";
+            map.put("enableMonitor", params.getEnableMonitor().trim());
+        }
+        //组装SQL
+        String resSQL = baseSQL + comditionalSQL + orderbySQL;
+        countSQL = countSQL + comditionalSQL;
+        //创建查询对象
+        /*这里是重点，将SQL放入方法中，创建一个查询对象，确切的说应该是HQL，
+        他接收的也是Hibernate查询语句（我写原生SQL报错）。重点是，SQL是自己写的，
+        这就灵活了很多。性能方面没有关注*/
+        Query res = this.entityManager.createQuery(resSQL);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            res.setParameter(entry.getKey(), entry.getValue());
+        }
+        res.setFirstResult((int) pageable.getOffset());
+        res.setMaxResults(pageable.getPageSize());
+
+        Query countQuery = entityManager.createQuery(countSQL);
+
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            countQuery.setParameter(entry.getKey(), entry.getValue());
+        }
+        Long totalCount = (Long) countQuery.getSingleResult();
+
+        List<Object> resultList = res.getResultList();
+        Page<Object> page = new PageImpl<Object>(resultList, pageable, totalCount.longValue());
+
+        return page;
+        //Query countRes=em.createQuery(countSQL);
     }
 
     /**
@@ -300,9 +395,9 @@ public class HostServiceImpl implements HostService {
         }
         dto.setInterfaces(interfaces);
         //主机模板信息
-        String typeId = host.getTypeId();
-        if(StringUtils.isNotEmpty(typeId)){
-            MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(typeId.trim());
+        String templatesId = host.getTemplatesId();
+        if(StringUtils.isNotEmpty(templatesId)){
+            MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(templatesId.trim());
             if(monitorTemplatesEntity!=null){
                 String templateIds = monitorTemplatesEntity.getTemplates();
                 if(StringUtils.isNotEmpty(templateIds)){
@@ -457,13 +552,13 @@ public class HostServiceImpl implements HostService {
     }
 
     /**
-     * 调用zabbix接口进行保存
+     * 调用zabbix接口进行修改
      * @param host
      * @return
      * @throws ZabbixApiException
      */
     private String updateHostToZabbix(HostEntity host) throws Exception {
-        //主机名称、主机组、主机接口 必填项
+        //hostid 必填项
         if(host==null || StringUtils.isEmpty(host.getHostId())){
             return null;
         }
@@ -711,6 +806,33 @@ public class HostServiceImpl implements HostService {
             dto.setMacros(macros);
         }
 
+        //获得token
+        String authToken = zabbixAuthService.getAuth();
+        if(StringUtils.isEmpty(authToken)){
+            return null;
+        }
+        return zabbixHostService.update(dto, authToken);
+    }
+
+    /**
+     * 调用zabbix接口进行修改Status
+     * @param hostId
+     * @param status
+     * @return
+     * @throws ZabbixApiException
+     */
+    private String updateHostStatusToZabbix(String hostId, String status) throws Exception {
+        //hostid status 必填项
+        if(StringUtils.isEmpty(hostId) || StringUtils.isEmpty(status)){
+            return null;
+        }
+        if(!"0".equals(status.trim())&&!"1".equals(status.trim())){
+            return null;
+        }
+        //主机信息
+        ZabbixHostDTO dto = new ZabbixHostDTO();
+        dto.setHostId(hostId.trim());
+        dto.setStatus("1".equals(status.trim())?false:true);
         //获得token
         String authToken = zabbixAuthService.getAuth();
         if(StringUtils.isEmpty(authToken)){

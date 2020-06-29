@@ -18,6 +18,8 @@ public interface MonitorTypeRepo extends JpaRepository<MonitorTypeEntity, String
 
     List<MonitorTypeEntity> findByPidAndIsDeletedOrderByOrderNum(String pid, int isDeleted);
 
+    List<MonitorTypeEntity> findByPidNotAndIsDeletedOrderByOrderNum(String pid, int isDeleted);
+
     @Query("select e.type from MonitorTypeEntity e where e.isDeleted = 0 and e.id = ?1")
     Object getTypeById(String id);
 }

@@ -8,6 +8,8 @@ public interface MonitorTypeService {
 
     List<MonitorTypeEntity> getMonitorTypes() throws Exception;
 
+    List<MonitorTypeEntity> getMonitorSubTypes() throws Exception;
+
     MonitorTypeEntity getMonitorTypesById(String id) throws Exception;
 
     Object getTypeById(String id) throws Exception;

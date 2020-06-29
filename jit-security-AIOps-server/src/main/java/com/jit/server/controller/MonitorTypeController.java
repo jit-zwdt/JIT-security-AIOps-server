@@ -39,6 +39,18 @@ public class MonitorTypeController {
     }
 
     @ResponseBody
+    @PostMapping(value = "/getMonitorSubTypes")
+    public Result getMonitorSubTemplates() {
+        try {
+            List<MonitorTypeEntity> monitorTemplatesList = monitorTypeService.getMonitorSubTypes();
+            return Result.SUCCESS(monitorTemplatesList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
     @PostMapping(value = "/getJsonTypes")
     public Result getJsonTypes(@RequestParam String ids) {
         try {

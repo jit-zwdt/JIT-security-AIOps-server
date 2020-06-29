@@ -13,5 +13,6 @@ public interface HostService {
     public String deleteHost(HostEntity host) throws Exception;
     public Optional<HostEntity> findByHostId(String id)  throws Exception;
     public String updateHost(HostEntity host) throws Exception;
+    public String updateHostEnableMonitor(HostEntity host) throws Exception;
     public Page<Object> hostinfo(HostParams params, int page, int size) throws Exception;
 }

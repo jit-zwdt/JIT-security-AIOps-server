@@ -17,6 +17,7 @@ public class HostViewInfoParams {
     private String objectName;
     private String hostid;
     private String hosttypeId;
+    private String hostIp;
     private String agentIp;
     private String snmpIp;
     private String enableMonitor;

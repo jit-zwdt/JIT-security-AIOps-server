@@ -20,6 +20,7 @@ import java.util.List;
 @Repository
 public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecificationExecutor<HostEntity> {
 
+    @Override
     public Page<HostEntity> findAll(Specification<HostEntity> spec, Pageable pageable);
 
     @Query(value = "SELECT " +
