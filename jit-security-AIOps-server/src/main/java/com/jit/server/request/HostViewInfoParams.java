@@ -26,4 +26,5 @@ public class HostViewInfoParams {
     private String remark;
     private String type;
     private String subtype;
+    private String businessName;
 }

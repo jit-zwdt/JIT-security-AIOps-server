@@ -214,7 +214,8 @@ public class HostServiceImpl implements HostService {
                 "hostentity.objectName, " +
                 "hostentity.remark, " +
                 "monitortem_.type, " +
-                "monitortem2_.type as subtype " +
+                "monitortem2_.type as subtype, " +
+                "hostentity.businessName " +
                 "FROM " +
                 "HostEntity hostentity " +
                 "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
@@ -247,6 +248,10 @@ public class HostServiceImpl implements HostService {
         if(StringUtils.isNotEmpty(params.getEnableMonitor())){
             comditionalSQL+=" and hostentity.enableMonitor = :enableMonitor";
             map.put("enableMonitor", params.getEnableMonitor().trim());
+        }
+        if(StringUtils.isNotEmpty(params.getGroupId())){
+            comditionalSQL+=" and hostentity.groupId like :groupId";
+            map.put("groupId", "%"+params.getGroupId().trim()+"%");
         }
         //组装SQL
         String resSQL = baseSQL + comditionalSQL + orderbySQL;

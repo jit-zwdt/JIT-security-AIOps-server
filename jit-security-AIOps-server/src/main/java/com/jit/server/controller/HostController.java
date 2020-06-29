@@ -190,6 +190,7 @@ public class HostController {
                         view.setRemark(rowArray[9]+"");
                         view.setType(rowArray[10]+"");
                         view.setSubtype(rowArray[11]+"");
+                        view.setBusinessName(rowArray[12]+"");
                         views.add(view);
                     }
                     Map<String, Object> result = new HashMap<String, Object>();
