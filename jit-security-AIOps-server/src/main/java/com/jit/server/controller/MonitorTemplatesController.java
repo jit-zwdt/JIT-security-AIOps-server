@@ -11,8 +11,12 @@ import com.jit.server.service.MonitorTypeService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetTemplateDTO;
+import com.jit.zabbix.client.exception.ZabbixApiException;
+import com.jit.zabbix.client.request.ZabbixGetItemParams;
 import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
+import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixTemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zengxin_miao
@@ -45,6 +47,9 @@ public class MonitorTemplatesController {
 
     @Autowired
     private MonitorTypeService monitorTypeService;
+
+    @Autowired
+    private ZabbixItemService zabbixItemService;
 
     @ResponseBody
     @PostMapping(value = "/getMonitorTemplates")
@@ -155,6 +160,88 @@ public class MonitorTemplatesController {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/checkItems")
+    public Result checkItems(@RequestParam String templates) {
+        try {
+            if (StringUtils.isNotBlank(templates)) {
+                //error msg
+                StringBuffer msg = new StringBuffer(1024);
+                Map<String, String> titleMap = new HashMap<>();
+                String[] temps = templates.split(",");
+                List<String> tempList;
+                String auth = zabbixAuthService.getAuth();
+                List<List<ZabbixGetItemDTO>> list = new ArrayList<>(temps.length);
+                ZabbixGetItemParams zabbixGetItemParams = new ZabbixGetItemParams();
+                zabbixGetItemParams.setOutput("extend");
+                //set error group title
+                Map<String, String> templateidMap = templateidMap(templates, auth);
+                for (int m = 0, ll = temps.length; m < ll; m++) {
+                    for (int n = m + 1; n < ll; n++) {
+                        titleMap.put(temps[m] + "&&" + temps[n], "模版：" + templateidMap.get(temps[m]) + " 与模版：" + templateidMap.get(temps[n]) + " 有监控项冲突，监控项：");
+                    }
+                }
+                //get itemList
+                for (String t : temps) {
+                    tempList = new ArrayList<>();
+                    tempList.add(t);
+                    zabbixGetItemParams.setTemplateIds(tempList);
+                    List<ZabbixGetItemDTO> zabbixGetItemDTOList = zabbixItemService.get(zabbixGetItemParams, auth);
+                    list.add(zabbixGetItemDTOList);
+                }
+                // do check
+                List<String> bodyList;
+                List<ZabbixGetItemDTO> listA;
+                List<ZabbixGetItemDTO> listB;
+                boolean flag;
+                String title = "";
+                for (int i = 0, len = list.size(); i < len; i++) {
+                    listA = list.get(i);
+                    for (int j = i + 1; j < len; j++) {
+                        listB = list.get(j);
+                        flag = false;
+                        bodyList = new ArrayList<>();
+                        for (ZabbixGetItemDTO dtoA : listA) {
+                            for (ZabbixGetItemDTO dtoB : listB) {
+                                if (dtoA.getKey_().equals(dtoB.getKey_())) {
+                                    title = dtoA.getHostId() + "&&" + dtoB.getHostId();
+                                    flag = true;
+                                    bodyList.add(dtoA.getKey_());
+                                }
+                            }
+                        }
+                        if (flag) {
+                            msg.append(titleMap.get(title));
+                            msg.append(bodyList.toString() + " ");
+                        }
+                    }
+                }
+                if (msg.length() > 0) {
+                    return Result.SUCCESS(msg.toString());
+                } else {
+                    return Result.SUCCESS("success");
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    private Map<String, String> templateidMap(String templateids, String auth) throws ZabbixApiException {
+        Map<String, String> res = new HashMap<>(templateids.split(",").length);
+        ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
+        params.setOutput("extend");
+        params.setTemplateIds(Arrays.asList(templateids.split(",")));
+        List<ZabbixGetTemplateDTO> zabbixGetTemplateDTOList = zabbixTemplateService.get(params, auth);
+        for (ZabbixGetTemplateDTO zabbixGetTemplateDTO : zabbixGetTemplateDTOList) {
+            res.put(zabbixGetTemplateDTO.getId(), zabbixGetTemplateDTO.getName());
+        }
+        return res;
     }
 
 }
