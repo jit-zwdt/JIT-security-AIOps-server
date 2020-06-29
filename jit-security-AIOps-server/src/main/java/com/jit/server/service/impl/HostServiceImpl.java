@@ -219,13 +219,13 @@ public class HostServiceImpl implements HostService {
                 "HostEntity hostentity " +
                 "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
                 "LEFT JOIN MonitorTypeEntity monitortem2_ ON hostentity.subtypeId = monitortem2_.id " +
-                "WHERE 1=1 ";
+                "WHERE hostentity.deleted=0 ";
         String countSQL  = "SELECT count(1) " +
                 "FROM " +
                 "HostEntity hostentity " +
                 "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
                 "LEFT JOIN MonitorTypeEntity monitortem2_ ON hostentity.subtypeId = monitortem2_.id " +
-                "WHERE 1=1 ";
+                "WHERE  hostentity.deleted=0 ";
         //map用来组装SQL占位符和对应的值
         Map<String,Object> map = new HashMap<String,Object>();
         if(StringUtils.isNotEmpty(params.getHostObjectName())){
