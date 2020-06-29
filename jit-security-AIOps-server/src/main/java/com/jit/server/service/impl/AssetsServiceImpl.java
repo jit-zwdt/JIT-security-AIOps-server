@@ -111,4 +111,8 @@ public class AssetsServiceImpl implements AssetsService {
     public void updateAssets(AssetsEntity assets) throws Exception {
         assetsRepo.save(assets);
     }
+    @Override
+    public List<AssetsEntity> findByConditionInfo() throws Exception {
+        return this.assetsRepo.findAll();
+    }
 }
