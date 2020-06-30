@@ -6,6 +6,7 @@ import com.jit.zabbix.client.model.GlobalMacro;
 import com.jit.zabbix.client.model.host.*;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import com.jit.zabbix.client.request.ZabbixGetHostInterfaceParams;
+import com.jit.zabbix.client.request.ZabbixGetHostParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,10 @@ public class ZabbixHostApiTest {
 
 
         ZabbixHostDTO dto = new ZabbixHostDTO();
-        dto.setHost("test8");
+        dto.setTechnicalName("test8");
         dto.setName("测试主机8");
         dto.setDescription("测试主机7说明");
-        dto.setStatus(false);
+        dto.setUnmonitored(false);
 
         List<ZabbixHostGroup> groups = new ArrayList<ZabbixHostGroup>();
         ZabbixHostGroup group = new ZabbixHostGroup();
@@ -109,6 +110,26 @@ public class ZabbixHostApiTest {
 
         try {
             System.out.println("testGetHostInterface:"+new ObjectMapper().writeValueAsString(list));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testGetHost() throws Exception {
+
+
+        //zabbixHostService.get()
+        ZabbixGetHostParams params = new ZabbixGetHostParams();
+
+        String authToken = zabbixApiService.authenticate("Admin", "zabbix");
+        System.out.println("authToken: " + authToken);
+        params.setHostIds(Arrays.asList(new String[]{"10366","10367"}));
+
+        List<ZabbixHostDTO> list = zabbixHostService.get(params, authToken);
+
+        try {
+            System.out.println("testGetHost:"+new ObjectMapper().writeValueAsString(list));
         }catch (Exception e){
             e.printStackTrace();
         }

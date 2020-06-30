@@ -18,6 +18,7 @@ import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import com.jit.zabbix.client.request.ZabbixGetHostInterfaceParams;
+import com.jit.zabbix.client.request.ZabbixGetHostParams;
 import com.jit.zabbix.client.service.ZabbixHostInterfaceService;
 import com.jit.zabbix.client.service.ZabbixHostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,6 +197,23 @@ public class HostServiceImpl implements HostService {
         return predicateQuery(params, pageable);
     }
 
+    @Override
+    public List<ZabbixHostDTO> getHostAvailableFromZabbix(List<String> hostIds) throws Exception {
+        //hostids 必填项
+        if(hostIds==null || CollectionUtils.isEmpty(hostIds)){
+            return null;
+        }
+        //主机信息
+        ZabbixGetHostParams params = new ZabbixGetHostParams();
+        params.setHostIds(hostIds);
+        //获得token
+        String authToken = zabbixAuthService.getAuth();
+        if(StringUtils.isEmpty(authToken)){
+            return null;
+        }
+        return zabbixHostService.get(params, authToken);
+    }
+
     /**
      * 自定义拼接条件查询
      */
@@ -294,10 +312,10 @@ public class HostServiceImpl implements HostService {
         }
         //主机信息
         ZabbixHostDTO dto = new ZabbixHostDTO();
-        dto.setHost(host.getObjectName());
+        dto.setTechnicalName(host.getObjectName());
         dto.setName(host.getBusinessName());
         dto.setDescription(host.getRemark());
-        dto.setStatus("1".equals(host.getEnableMonitor())?false:true);
+        dto.setUnmonitored("1".equals(host.getEnableMonitor())?false:true);
         //主机组信息
         String groupIds = host.getGroupId();
         if(StringUtils.isEmpty(groupIds)){
@@ -569,9 +587,9 @@ public class HostServiceImpl implements HostService {
         }
         //主机信息
         ZabbixHostDTO dto = new ZabbixHostDTO();
-        dto.setHostId(host.getHostId().trim());
+        dto.setId(host.getHostId().trim());
         if(host.getObjectName()!=null){
-            dto.setHost(host.getObjectName());
+            dto.setTechnicalName(host.getObjectName());
         }
         if(host.getBusinessName()!=null){
             dto.setName(host.getBusinessName());
@@ -580,7 +598,7 @@ public class HostServiceImpl implements HostService {
             dto.setDescription(host.getRemark());
         }
         if("0".equals(host.getEnableMonitor())||"1".equals(host.getEnableMonitor())){
-            dto.setStatus("1".equals(host.getEnableMonitor())?false:true);
+            dto.setUnmonitored("1".equals(host.getEnableMonitor())?false:true);
         }
 
         //主机组信息
@@ -836,8 +854,8 @@ public class HostServiceImpl implements HostService {
         }
         //主机信息
         ZabbixHostDTO dto = new ZabbixHostDTO();
-        dto.setHostId(hostId.trim());
-        dto.setStatus("1".equals(status.trim())?false:true);
+        dto.setId(hostId.trim());
+        dto.setUnmonitored("1".equals(status.trim())?false:true);
         //获得token
         String authToken = zabbixAuthService.getAuth();
         if(StringUtils.isEmpty(authToken)){

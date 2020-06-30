@@ -2,6 +2,7 @@ package com.jit.server.service;
 
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
+import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface HostService {
     public String updateHost(HostEntity host) throws Exception;
     public String updateHostEnableMonitor(HostEntity host) throws Exception;
     public Page<Object> hostinfo(HostParams params, int page, int size) throws Exception;
+    public List<ZabbixHostDTO> getHostAvailableFromZabbix(List<String> hostIds) throws Exception;
 }

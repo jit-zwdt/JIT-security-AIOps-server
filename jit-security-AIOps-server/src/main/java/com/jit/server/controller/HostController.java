@@ -9,11 +9,13 @@ import com.jit.server.service.HostService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
+import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.service.ZabbixApiService;
 import com.jit.zabbix.client.service.ZabbixHostService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -205,6 +207,24 @@ public class HostController {
             }
         }catch (Exception e){
             e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/findHostAvailable")
+    public Result<HostEntity> findHostAvailable(@RequestBody String[] hostIds) {
+        try{
+            if(hostIds!=null && hostIds.length>0){
+                List<ZabbixHostDTO> result = hostService.getHostAvailableFromZabbix(Arrays.asList(hostIds));
+                if (result!=null && !CollectionUtils.isEmpty(result)) {
+                    return Result.SUCCESS(result);
+                }else{
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

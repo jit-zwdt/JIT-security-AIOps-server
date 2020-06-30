@@ -26,12 +26,6 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZabbixHostDTO extends ZabbixHost {
 
-    @JsonProperty("hostid")
-    private String hostId;//主机id
-    private String host;//主机的正式名称
-    private String name;//主机名
-    private String description;//主机说明
-    private boolean status;//主机的状态.
     @Singular
     private List<ZabbixHostGroup> groups;
     @Singular
