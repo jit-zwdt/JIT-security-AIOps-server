@@ -1,20 +1,21 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.ItemService;
 import com.jit.server.util.Result;
+import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -31,7 +32,7 @@ public class ItemController {
     @PostMapping("/getItemInfoList")
     public Result getItemInfoList(@RequestBody ItemParams itemParams, HttpServletResponse resp) throws IOException {
         try {
-            if (itemParams != null) {
+            if (itemParams != null && itemParams.getHostids() != null) {
                 List<ZabbixGetItemDTO> result = itemService.getItemInfoList(itemParams);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);

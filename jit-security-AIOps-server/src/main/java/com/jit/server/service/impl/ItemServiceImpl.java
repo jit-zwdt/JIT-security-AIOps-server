@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
             params.setOutput(ITEM_EXTEND);
             params.setSortFields(ITEM_ARRAY_NAME);
             String name = itemParams.getName();
-            String status = itemParams.getName();
+            String status = itemParams.getStatus();
             if (StringUtils.isNotEmpty(name)) {
                 Map mapSearch = new HashMap();
                 mapSearch.put(ITEM_NAME, itemParams.getName());
