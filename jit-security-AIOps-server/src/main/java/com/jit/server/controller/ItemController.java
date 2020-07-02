@@ -47,4 +47,16 @@ public class ItemController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+    @PutMapping("/updateItemStatus/{id}")
+    public Result updateItemStatus(@PathVariable String id, @RequestParam("status") String status) {
+        try{
+            if(StringUtils.isNotEmpty(itemService.updateItemStatus(id, status))){
+                return Result.SUCCESS(null);
+            }else{
+                return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

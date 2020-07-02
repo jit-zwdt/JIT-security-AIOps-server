@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class TriggerParams {
 
     private String hostId;
+    private String triggerId;
     private String description;
     private String status;
 }

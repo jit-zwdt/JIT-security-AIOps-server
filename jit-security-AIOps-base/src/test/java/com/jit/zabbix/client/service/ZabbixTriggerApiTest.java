@@ -2,6 +2,7 @@ package com.jit.zabbix.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.model.host.HostMacro;
 import com.jit.zabbix.client.model.host.InterfaceType;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
@@ -52,7 +53,7 @@ public class ZabbixTriggerApiTest {
         filter.put("status",0);
         params.setFilter(filter);
 
-        List<ZabbixTrigger> list = zabbixTriggerService.get(params, authToken);
+        List<ZabbixTriggerDTO> list = zabbixTriggerService.get(params, authToken);
 
         try {
             System.out.println("testGetTrigger:"+new ObjectMapper().writeValueAsString(list));

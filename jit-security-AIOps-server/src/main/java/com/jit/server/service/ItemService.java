@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ItemService {
     public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams) throws Exception;
+    public String updateItemStatus(String itemId, String status) throws Exception;
 }

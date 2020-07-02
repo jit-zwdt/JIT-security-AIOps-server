@@ -4,14 +4,11 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
 import com.jit.server.request.HostViewInfoParams;
-import com.jit.server.service.AssetsService;
 import com.jit.server.service.HostService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
-import com.jit.zabbix.client.service.ZabbixApiService;
-import com.jit.zabbix.client.service.ZabbixHostService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,11 +29,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/host")
 public class HostController {
-    @Autowired
-    private ZabbixApiService zabbixApiService;
-    @Autowired
-    private ZabbixHostService zabbixHostService;
-
     @Autowired
     HostService hostService;
 

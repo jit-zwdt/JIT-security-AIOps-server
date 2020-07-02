@@ -24,31 +24,31 @@ import lombok.experimental.SuperBuilder;
 public class ZabbixTrigger {
 
     @JsonProperty("triggerid")
-    private String id;
-    private String description;
-    private String expression;
-    private String comments;
-    private int priority;
+    protected String id;
+    protected String description;
+    protected String expression;
+    protected String comments;
+    protected int priority;
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean status;
-    private String templateid;
+    protected String templateid;
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean type;
-    private String url;
+    protected String url;
     @JsonProperty("recovery_mode")
-    private int recoveryMode;
+    protected int recoveryMode;
     @JsonProperty("recovery_expression")
-    private String recoveryExpression;
+    protected String recoveryExpression;
     @JsonProperty("correlation_mode")
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
-    private boolean correlationMode;
+    protected boolean correlationMode;
     @JsonProperty("correlation_tag")
-    private String correlationTag;
+    protected String correlationTag;
     @JsonProperty("manual_close")
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
-    private boolean manualClose;
+    protected boolean manualClose;
 }
