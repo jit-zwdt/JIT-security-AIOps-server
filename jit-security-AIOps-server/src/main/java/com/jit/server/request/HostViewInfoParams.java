@@ -16,7 +16,6 @@ public class HostViewInfoParams {
     private String id;
     private String objectName;
     private String hostid;
-    private String hosttypeId;
     private String hostIp;
     private String agentIp;
     private String snmpIp;
@@ -27,4 +26,7 @@ public class HostViewInfoParams {
     private String type;
     private String subtype;
     private String businessName;
+    private String templatesId;
+    private String typeId;
+    private String subtypeId;
 }

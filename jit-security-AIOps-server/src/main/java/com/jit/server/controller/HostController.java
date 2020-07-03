@@ -173,18 +173,20 @@ public class HostController {
                         HostViewInfoParams view = new HostViewInfoParams();
                         view.setId(rowArray[0]+"");
                         view.setHostid(rowArray[1]+"");
-                        view.setHosttypeId(rowArray[2]+"");
+                        view.setTypeId(rowArray[2]+"");
                         view.setHostIp(StringUtils.isNotEmpty(rowArray[3]+"")?rowArray[3]+"":rowArray[4]+"");
                         view.setAgentIp(rowArray[3]+"");
                         view.setSnmpIp(rowArray[4]+"");
                         view.setEnableMonitor(rowArray[5]+"");
                         view.setGroupId(rowArray[6]+"");
-                        view.setHosttypeId(rowArray[7]+"");
+                        view.setHostLabel(rowArray[7]+"");
                         view.setObjectName(rowArray[8]+"");
                         view.setRemark(rowArray[9]+"");
                         view.setType(rowArray[10]+"");
                         view.setSubtype(rowArray[11]+"");
                         view.setBusinessName(rowArray[12]+"");
+                        view.setTemplatesId(rowArray[13]+"");
+                        view.setSubtypeId(rowArray[14]+"");
                         views.add(view);
                     }
                     Map<String, Object> result = new HashMap<String, Object>();
