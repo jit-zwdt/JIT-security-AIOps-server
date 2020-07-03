@@ -31,15 +31,11 @@ public class TriggerController {
     TriggerService triggerService;
 
     @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody PageRequest<TriggerParams> params, HttpServletResponse resp) throws IOException {
+    public Result findByCondition(@RequestBody TriggerParams params, HttpServletResponse resp) throws IOException {
         try{
-            if(params!=null&&params.getParam().getHostId()!=null){
-                List<ZabbixTriggerDTO> _result= triggerService.findByCondition(params.getParam());
-                if (null != _result && !CollectionUtils.isEmpty(_result)) {
-                    Map<String, Object> result = new HashMap<String, Object>();
-                    //result.put("totalRow", 15);
-                    //result.put("totalPage", 1);
-                    result.put("dataList", _result);
+            if(params!=null&&params.getHostId()!=null){
+                List<ZabbixTriggerDTO> result= triggerService.findByCondition(params);
+                if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
