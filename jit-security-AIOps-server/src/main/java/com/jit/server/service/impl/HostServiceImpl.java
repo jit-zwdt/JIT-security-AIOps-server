@@ -11,14 +11,17 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.host.HostMacro;
 import com.jit.zabbix.client.model.host.InterfaceType;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
+import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.request.ZabbixGetHostInterfaceParams;
 import com.jit.zabbix.client.request.ZabbixGetHostParams;
+import com.jit.zabbix.client.service.ZabbixHostGroupService;
 import com.jit.zabbix.client.service.ZabbixHostInterfaceService;
 import com.jit.zabbix.client.service.ZabbixHostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +53,8 @@ public class HostServiceImpl implements HostService {
     private MonitorTemplatesService monitorTemplatesService;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private ZabbixHostGroupService zabbixHostGroupService;
 
 
     @Override
@@ -866,5 +871,46 @@ public class HostServiceImpl implements HostService {
             return null;
         }
         return zabbixHostService.update(dto, authToken);
+    }
+
+    /**
+     * 按主机类型获得zabbix主机组
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<ZabbixHostGroupDTO> findHostGroupByTypeId(Map<String, Object> params) throws Exception {
+        if(params!=null){
+            String typeId = (String)params.get("typeId");
+            if(StringUtils.isNotEmpty(typeId)){
+                String groupName = (String)params.get("groupName");
+                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId,false);
+                if (null != hostList && !CollectionUtils.isEmpty(hostList)) {
+                    List<String> hostIds = new ArrayList<>();
+                    for(HostEntity host : hostList){
+                        if(StringUtils.isNotEmpty(host.getHostId())){
+                            hostIds.add(host.getHostId().trim());
+                        }
+                    }
+                    if(!CollectionUtils.isEmpty(hostIds)){
+                        ZabbixGetHostGroupParams _params = new ZabbixGetHostGroupParams();
+                        _params.setHostIds(hostIds);
+                        if(StringUtils.isNotEmpty(groupName)){
+                            Map<String, Object> search = new HashMap<>();
+                            search.put("name", groupName);
+                            _params.setSearch(search);
+                        }
+                        //获得token
+                        String authToken = zabbixAuthService.getAuth();
+                        if(StringUtils.isEmpty(authToken)){
+                            return null;
+                        }
+                        return zabbixHostGroupService.get(_params, authToken);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

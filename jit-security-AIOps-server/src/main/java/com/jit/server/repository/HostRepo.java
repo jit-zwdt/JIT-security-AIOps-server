@@ -43,4 +43,6 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
             countQuery = " SELECT count(hostentity.id) from monitor_host hostentity left  join monitor_templates monitortem_ on hostentity.host_type_id=monitortem_.id ",
             nativeQuery = true )
     Page<Object> getAllHostInfo(Pageable pageable);
+
+    public List<HostEntity> findByTypeIdAndDeleted(String typeId, boolean deleted);
 }

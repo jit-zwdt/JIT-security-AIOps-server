@@ -7,10 +7,7 @@ import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.service.ZabbixHostGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,5 +47,4 @@ public class HostGroupController {
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
-
 }

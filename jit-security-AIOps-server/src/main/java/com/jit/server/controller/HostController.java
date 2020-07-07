@@ -9,6 +9,8 @@ import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
+import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
+import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,29 +33,6 @@ import java.util.*;
 public class HostController {
     @Autowired
     HostService hostService;
-
-    @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException {
-        try{
-            if(params!=null){
-                Page<HostEntity> pageResult= hostService.findByCondition(params.getParam(),params.getPage(),params.getSize());
-                if (null != pageResult) {
-                    Map<String, Object> result = new HashMap<String, Object>();
-                    result.put("totalRow", pageResult.getTotalElements());
-                    result.put("totalPage", pageResult.getTotalPages());
-                    result.put("dataList", pageResult.getContent());
-                    return Result.SUCCESS(result);
-                } else {
-                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-                }
-            }else{
-                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
-        }
-    }
 
     @PostMapping("/addHost")
     public Result addHost(@RequestBody HostParams params) {
@@ -219,6 +198,32 @@ public class HostController {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
         }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+    /**
+     * get zabbix hostGroup by host type
+     *
+     * @return
+     */
+    @PostMapping(value = "/getZabbixHostGroupByHostType")
+    public Result getZabbixHostGroupByHostType(@RequestParam("typeId") String typeId, @RequestParam(value = "groupName",required = false) String groupName) {
+        try{
+            if(typeId!=null){
+                Map<String, Object> params = new HashMap<>();
+                params.put("typeId", typeId);
+                params.put("groupName", groupName);
+                List<ZabbixHostGroupDTO> resultList= hostService.findHostGroupByTypeId(params);
+                if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
+                    return Result.SUCCESS(resultList);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
