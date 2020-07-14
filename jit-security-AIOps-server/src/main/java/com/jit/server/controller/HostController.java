@@ -227,4 +227,28 @@ public class HostController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @PostMapping(value = "/getTop5ByItem")
+    public Result getTop5ByItem(@RequestBody Map<String, Object> params) {
+        //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
+        try{
+            if(params!=null){
+               /* params.put("typeId", typeId);
+                params.put("subtypeId", subtypeId);
+                params.put("itemKey", itemKey);
+                params.put("valueType", valueType);*/
+                List<Map<String, String>> resultList= hostService.getTop5ByItem(params);
+                if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
+                    return Result.SUCCESS(resultList);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

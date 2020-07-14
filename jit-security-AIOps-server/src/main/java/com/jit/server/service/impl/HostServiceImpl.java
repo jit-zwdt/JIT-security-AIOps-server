@@ -10,6 +10,8 @@ import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
+import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
+import com.jit.zabbix.client.dto.ZabbixHistoryDTO;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
@@ -18,12 +20,8 @@ import com.jit.zabbix.client.model.host.InterfaceType;
 import com.jit.zabbix.client.model.host.ZabbixHostGroup;
 import com.jit.zabbix.client.model.host.ZabbixHostInterface;
 import com.jit.zabbix.client.model.template.ZabbixTemplate;
-import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
-import com.jit.zabbix.client.request.ZabbixGetHostInterfaceParams;
-import com.jit.zabbix.client.request.ZabbixGetHostParams;
-import com.jit.zabbix.client.service.ZabbixHostGroupService;
-import com.jit.zabbix.client.service.ZabbixHostInterfaceService;
-import com.jit.zabbix.client.service.ZabbixHostService;
+import com.jit.zabbix.client.request.*;
+import com.jit.zabbix.client.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Order;
@@ -36,6 +34,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.math.BigInteger;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -55,10 +54,14 @@ public class HostServiceImpl implements HostService {
     private EntityManager entityManager;
     @Autowired
     private ZabbixHostGroupService zabbixHostGroupService;
+    @Autowired
+    private ZabbixItemService zabbixItemService;
+    @Autowired
+    private ZabbixHistoryService zabbixHistoryService;
 
 
     @Override
-    public Page<HostEntity> findByCondition(HostParams params, int page, int size) throws Exception {
+    public List<HostEntity> findByCondition(HostParams params) throws Exception {
 
         if (params!=null){
             //条件
@@ -107,6 +110,11 @@ public class HostServiceImpl implements HostService {
                     if(StringUtils.isNotEmpty(params.getTypeId())){
                         list.add(cb.equal(root.get("typeId").as(String.class), params.getTypeId()));
                     }
+                    
+                    /** 子类型 **/
+                    if(StringUtils.isNotEmpty(params.getSubtypeId())){
+                        list.add(cb.equal(root.get("subtypeId").as(String.class), params.getSubtypeId()));
+                    }
 
                     /** 分组 **/
                     if(StringUtils.isNotEmpty(params.getGroupId())){
@@ -123,17 +131,17 @@ public class HostServiceImpl implements HostService {
                 }
             };
             //排序的定义
-            List<Order> list = new ArrayList<>();
+            /*List<Order> list = new ArrayList<>();
             Order order1 = new Order(Sort.Direction.DESC, "gmtModified");
             Order order2 = new Order(Sort.Direction.ASC, "id");
             list.add(order1);
             list.add(order2);
             Sort sort = Sort.by(list);
-            //Sort sort = Sort.by(Sort.Order.desc("gmtModified"));
             //分页的定义
             Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-            return this.hostRepo.findAll(spec, pageable);
+            return this.hostRepo.findAll(spec, pageable);*/
+            return this.hostRepo.findAll(spec);
 
         }
         return null;
@@ -910,6 +918,127 @@ public class HostServiceImpl implements HostService {
                     }
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 获得所有主机指标项的TOP5值
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Map<String,String>> getTop5ByItem(Map<String, Object> params) throws Exception {
+        List<Map<String,String>> result = new ArrayList<>();
+        if(params!=null){
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            Map<String, String> map =null;
+            String typeId = (String)params.get("typeId");
+            String subtypeId = (String)params.get("subtypeId");
+            String itemKey = (String)params.get("itemKey");
+            String valueType = (String)params.get("valueType");
+
+            if(StringUtils.isEmpty(itemKey)){
+                return null;
+            }
+
+            //获得token
+            String authToken = zabbixAuthService.getAuth();
+            if(StringUtils.isEmpty(authToken)){
+                return null;
+            }
+
+            HostParams hostParams = new HostParams();
+            if(StringUtils.isNotEmpty(typeId)){
+                hostParams.setTypeId(typeId);
+            }
+            if(StringUtils.isNotEmpty(subtypeId)){
+                hostParams.setSubtypeId(subtypeId);
+            }
+            List<HostEntity> hostList = findByCondition(hostParams);
+
+            List<String> hostIds = new ArrayList<>();
+            for(HostEntity host : hostList){
+                String hostId = host.getHostId();
+                hostIds.add(hostId);
+                map = new HashMap<>();
+                map.put("hostId",hostId);
+                map.put("hostName",host.getBusinessName());
+                result.add(map);
+            }
+
+            if (CollectionUtils.isEmpty(hostIds)){
+                return null;
+            }
+
+            ZabbixGetItemParams itemParams = new ZabbixGetItemParams();
+            itemParams.setOutput(Arrays.asList(new String[]{"itemid","hostid","name","key_"}));
+            itemParams.setHostIds(hostIds);
+            Map<String, Object> filter = new HashMap<>();
+            //filter.put("key_","mysql.com_select.rate");
+            filter.put("key_",itemKey.trim());
+            itemParams.setFilter(filter);
+
+            List<ZabbixGetItemDTO> itemList = zabbixItemService.get(itemParams, authToken);
+            ZabbixGetHistoryParams historyParams = null;
+            for(ZabbixGetItemDTO dto : itemList){
+                String hostId = dto.getHostId();
+                String itemId = dto.getId();
+                String itemName = dto.getName();
+
+                historyParams = new ZabbixGetHistoryParams();
+                try {
+                    historyParams.setHistory(!"0".equals(valueType)?Integer.parseInt(valueType):0);
+                }catch (Exception e){
+                    historyParams.setHistory(0);
+                }
+                historyParams.setItemIds(Arrays.asList(new String[]{itemId}));
+                historyParams.setSortFields(Arrays.asList(new String[]{"clock"}));
+                historyParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
+                historyParams.setLimit(1);
+
+                for(Map<String, String> _map : result){
+                    if(hostId.equals(_map.get("hostId"))){
+                        _map.put("itemId",itemId);
+                        _map.put("itemName",itemName);
+
+                        List<ZabbixHistoryDTO> historyList = zabbixHistoryService.get(historyParams, authToken);
+                        if (historyList!=null && !CollectionUtils.isEmpty(historyList)){
+                            ZabbixHistoryDTO history = historyList.get(0);
+                            try{
+                                _map.put("clock",df.format(history.getClock()));
+                            }catch (Exception e){
+                                _map.put("clock","");
+                            }
+                            _map.put("value",history.getValue());
+                        }else{
+                            _map.put("clock","");
+                            _map.put("value","0");
+                        }
+                        break;
+                    }
+                }
+            }
+            if(!CollectionUtils.isEmpty(result)){
+                Collections.sort(result, new Comparator<Map>()
+                {
+                    @Override
+                    public int compare(Map o1, Map o2) {
+                        double v1 = Double.parseDouble((String)o1.get("value"));
+                        double v2 = Double.parseDouble((String)o2.get("value"));
+                        if(v1>v2){
+                            return -1;
+                        }else if(v1<v2){
+                            return 1;
+                        }else{
+                            return 0;
+                        }
+                    }
+                });
+                result = result.subList(0,result.size()>4?5:result.size());
+            }
+            return result;
         }
         return null;
     }

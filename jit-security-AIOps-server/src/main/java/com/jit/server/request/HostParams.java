@@ -63,4 +63,6 @@ public class HostParams {
 
     private String hostObjectName;
     private String hostIp;
+
+    private String itemKey;
 }
