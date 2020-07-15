@@ -10,10 +10,7 @@ import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
-import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
-import com.jit.zabbix.client.dto.ZabbixHistoryDTO;
-import com.jit.zabbix.client.dto.ZabbixHostDTO;
-import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
+import com.jit.zabbix.client.dto.*;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.host.HostMacro;
 import com.jit.zabbix.client.model.host.InterfaceType;
@@ -58,7 +55,8 @@ public class HostServiceImpl implements HostService {
     private ZabbixItemService zabbixItemService;
     @Autowired
     private ZabbixHistoryService zabbixHistoryService;
-
+    @Autowired
+    private ZabbixTriggerService zabbixTriggerService;
 
     @Override
     public List<HostEntity> findByCondition(HostParams params) throws Exception {
@@ -1027,6 +1025,90 @@ public class HostServiceImpl implements HostService {
                     public int compare(Map o1, Map o2) {
                         double v1 = Double.parseDouble((String)o1.get("value"));
                         double v2 = Double.parseDouble((String)o2.get("value"));
+                        if(v1>v2){
+                            return -1;
+                        }else if(v1<v2){
+                            return 1;
+                        }else{
+                            return 0;
+                        }
+                    }
+                });
+                result = result.subList(0,result.size()>4?5:result.size());
+            }
+            return result;
+        }
+        return null;
+    }
+
+    /**
+     * 获得所有主机触发器严重的TOP5值
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Map<String,String>> getTop5ByTrigger(Map<String, Object> params) throws Exception {
+        List<Map<String,String>> result = new ArrayList<>();
+        if(params!=null){
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            Map<String, String> map =null;
+            String typeId = (String)params.get("typeId");
+            String subtypeId = (String)params.get("subtypeId");
+            String valueType = (String)params.get("valueType");
+
+            //获得token
+            String authToken = zabbixAuthService.getAuth();
+            if(StringUtils.isEmpty(authToken)){
+                return null;
+            }
+
+            HostParams hostParams = new HostParams();
+            if(StringUtils.isNotEmpty(typeId)){
+                hostParams.setTypeId(typeId);
+            }
+            if(StringUtils.isNotEmpty(subtypeId)){
+                hostParams.setSubtypeId(subtypeId);
+            }
+            List<HostEntity> hostList = findByCondition(hostParams);
+
+            List<String> hostIds = new ArrayList<>();
+            for(HostEntity host : hostList){
+                String hostId = host.getHostId();
+                hostIds.add(hostId);
+                map = new HashMap<>();
+                map.put("hostId",hostId);
+                map.put("hostName",host.getBusinessName());
+                ZabbixGetTriggerParams triggerParams = new ZabbixGetTriggerParams();
+                triggerParams.setOutput(Arrays.asList(new String[]{"triggerid","description","priority","value"}));
+                triggerParams.setHostIds(Arrays.asList(new String[]{hostId}));
+                Map<String, Object> filter = new HashMap<>();
+                //filter.put("status",0);
+                filter.put("value",1);
+                try {
+                    filter.put("priority",!"4".equals(valueType)?Integer.parseInt(valueType):4);
+                }catch (Exception e){
+                    //filter.put("priority",4);
+                }
+                triggerParams.setFilter(filter);
+                triggerParams.setSortFields(Arrays.asList(new String[]{"priority"}));
+                triggerParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
+                List<ZabbixTriggerDTO> triggerList = zabbixTriggerService.get(triggerParams, authToken);
+                if(triggerList != null && !CollectionUtils.isEmpty(triggerList)){
+                    map.put("value",String.valueOf(triggerList.size()));
+                    result.add(map);
+                }else{
+                    map.put("value","0");
+                }
+                //result.add(map);
+            }
+            if(!CollectionUtils.isEmpty(result)){
+                Collections.sort(result, new Comparator<Map>()
+                {
+                    @Override
+                    public int compare(Map o1, Map o2) {
+                        int v1 = Integer.parseInt((String)o1.get("value"));
+                        int v2 = Integer.parseInt((String)o2.get("value"));
                         if(v1>v2){
                             return -1;
                         }else if(v1<v2){

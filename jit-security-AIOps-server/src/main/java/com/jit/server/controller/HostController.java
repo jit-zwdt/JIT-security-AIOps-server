@@ -251,4 +251,27 @@ public class HostController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @PostMapping(value = "/getTop5ByTrigger")
+    public Result getTop5ByTrigger(@RequestBody Map<String, Object> params) {
+        //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
+        try{
+            if(params!=null){
+               /* params.put("typeId", typeId);
+                params.put("subtypeId", subtypeId);
+                params.put("valueType", valueType);*/
+                List<Map<String, String>> resultList= hostService.getTop5ByTrigger(params);
+                if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
+                    return Result.SUCCESS(resultList);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }
