@@ -99,6 +99,21 @@ public class HostEntity {
     @Column(name = "host_snmp_macro")
     private String snmpMacro;
 
+    @Column(name = "host_ipmi_type")
+    private String ipmiType;
+
+    @Column(name = "host_ipmi_ip")
+    private String ipmiIp;
+
+    @Column(name = "host_ipmi_dns_name")
+    private String ipmiDnsName;
+
+    @Column(name = "host_ipmi_port")
+    private String ipmiPort;
+
+    @Column(name = "host_ipmi_macro")
+    private String ipmiMacro;
+
     @Column(name = "host_mssql_macro_instance")
     private String mssqlMacroInstance;
 
