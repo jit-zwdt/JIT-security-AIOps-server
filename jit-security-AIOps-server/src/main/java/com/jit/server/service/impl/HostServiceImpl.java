@@ -108,7 +108,7 @@ public class HostServiceImpl implements HostService {
                     if(StringUtils.isNotEmpty(params.getTypeId())){
                         list.add(cb.equal(root.get("typeId").as(String.class), params.getTypeId()));
                     }
-                    
+
                     /** 子类型 **/
                     if(StringUtils.isNotEmpty(params.getSubtypeId())){
                         list.add(cb.equal(root.get("subtypeId").as(String.class), params.getSubtypeId()));
@@ -974,7 +974,7 @@ public class HostServiceImpl implements HostService {
             itemParams.setOutput(Arrays.asList(new String[]{"itemid","hostid","name","key_"}));
             itemParams.setHostIds(hostIds);
             Map<String, Object> filter = new HashMap<>();
-            //filter.put("key_","mysql.com_select.rate");
+            // filter.put("key_","jmx[\"java.lang:type=Threading\",ThreadCount]");
             filter.put("key_",itemKey.trim());
             itemParams.setFilter(filter);
 
@@ -1018,18 +1018,36 @@ public class HostServiceImpl implements HostService {
                     }
                 }
             }
-            if(!CollectionUtils.isEmpty(result)){
+
+            if(!CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(itemList)){
+                // 比较value为0移除此数据
+                for (int i = 0;i<result.size();i++) {
+                    try {
+                        Map<String,String> _map = result.get(i);
+                        double d = Double.parseDouble(_map.get("value"));
+                        if((d<0.0001)&&(d>-0.0001))
+                        {
+                            result.remove(i);
+                        }
+                    }catch (Exception e) {
+                        break;
+                    }
+                }
                 Collections.sort(result, new Comparator<Map>()
                 {
                     @Override
                     public int compare(Map o1, Map o2) {
-                        double v1 = Double.parseDouble((String)o1.get("value"));
-                        double v2 = Double.parseDouble((String)o2.get("value"));
-                        if(v1>v2){
-                            return -1;
-                        }else if(v1<v2){
-                            return 1;
-                        }else{
+                        try {
+                            double v1 = Double.parseDouble((String)o1.get("value"));
+                            double v2 = Double.parseDouble((String)o2.get("value"));
+                            if(v1>v2){
+                                return -1;
+                            }else if(v1<v2){
+                                return 1;
+                            }else{
+                                return 0;
+                            }
+                        }catch (Exception e) {
                             return 0;
                         }
                     }
