@@ -14,10 +14,10 @@ spring:
     maximumPoolSize: 5
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         #jdbc:
           #time_zone: Hongkong
   jackson:

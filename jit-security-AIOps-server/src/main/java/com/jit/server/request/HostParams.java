@@ -47,6 +47,11 @@ public class HostParams {
     private String snmpDnsName;
     private String snmpPort;
     private String snmpMacro;
+    private String ipmiType;
+    private String ipmiIp;
+    private String ipmiDnsName;
+    private String ipmiPort;
+    private String ipmiMacro;
     private String mssqlMacroInstance;
     private String mssqlMacroOdbc;
     private String mssqlMacroPassword;

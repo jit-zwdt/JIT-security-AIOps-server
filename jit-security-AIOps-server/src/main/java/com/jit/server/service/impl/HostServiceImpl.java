@@ -428,6 +428,31 @@ public class HostServiceImpl implements HostService {
             _interface.setType(InterfaceType.SNMP);
             interfaces.add(_interface);
         }
+        //IPMI
+        String ipmiType = host.getIpmiType();
+        String ipmiPort = host.getIpmiPort();
+        if(StringUtils.isNotEmpty(ipmiType) && StringUtils.isNotEmpty(ipmiPort)){
+            String ipmiDnsName = host.getSnmpDnsName();
+            String ipmiIp = host.getSnmpIp();
+            ZabbixHostInterface _interface = new ZabbixHostInterface();
+            if(isIp.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiIp.trim())){
+                //使用ip
+                _interface.setDns(ipmiDnsName!=null?ipmiDnsName.trim():"");
+                _interface.setIp(ipmiIp.trim());
+                _interface.setUseIp(true);
+            }else if(isDns.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiDnsName.trim())){
+                //使用DNS
+                _interface.setDns(ipmiDnsName.trim());
+                _interface.setIp(ipmiIp!=null?ipmiIp.trim():"");
+                _interface.setUseIp(false);
+            }else{
+                return null;
+            }
+            _interface.setMain(true);
+            _interface.setPort(ipmiPort.trim());
+            _interface.setType(InterfaceType.IPMI);
+            interfaces.add(_interface);
+        }
         if(CollectionUtils.isEmpty(interfaces)){
             return null;
         }
