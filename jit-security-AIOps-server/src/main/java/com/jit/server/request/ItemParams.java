@@ -29,5 +29,6 @@ public class ItemParams {
     private List<String> hostids;
     private String status;
     private String name;
+    private String key_;
 
 }

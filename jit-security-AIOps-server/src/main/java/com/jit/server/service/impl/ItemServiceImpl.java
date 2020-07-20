@@ -28,6 +28,7 @@ public class ItemServiceImpl implements ItemService {
     private ZabbixAuthService zabbixAuthService;
     public static final String ITEM_EXTEND = "extend";
     public static final String ITEM_STATUS = "status";
+    public static final String ITEM_KEY_ = "key_";
     public static final String ITEM_NAME = "name";
     public static final List<String> ITEM_ARRAY_NAME = Collections.singletonList("name");
 
@@ -49,6 +50,7 @@ public class ItemServiceImpl implements ItemService {
             params.setSortFields(ITEM_ARRAY_NAME);
             String name = itemParams.getName();
             String status = itemParams.getStatus();
+            String key_ = itemParams.getKey_();
             if (StringUtils.isNotEmpty(name)) {
                 Map mapSearch = new HashMap();
                 mapSearch.put(ITEM_NAME, itemParams.getName());
@@ -58,6 +60,12 @@ public class ItemServiceImpl implements ItemService {
 
                 Map mapFilter = new HashMap();
                 mapFilter.put(ITEM_STATUS, itemParams.getStatus());
+                params.setFilter(mapFilter);
+            }
+            if (StringUtils.isNotEmpty(key_)) {
+
+                Map mapFilter = new HashMap();
+                mapFilter.put(ITEM_KEY_, itemParams.getKey_());
                 params.setFilter(mapFilter);
             }
         }

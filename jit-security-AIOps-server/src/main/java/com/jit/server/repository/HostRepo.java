@@ -45,4 +45,6 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
     Page<Object> getAllHostInfo(Pageable pageable);
 
     public List<HostEntity> findByTypeIdAndDeleted(String typeId, boolean deleted);
+
+    public HostEntity findByHostId(String hostId);
 }

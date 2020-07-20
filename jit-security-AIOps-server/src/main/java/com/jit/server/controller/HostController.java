@@ -274,4 +274,18 @@ public class HostController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @PostMapping("/findHostIdinfo/{hostId}")
+    public Result<HostEntity> findHostId(@PathVariable String hostId) {
+        try{
+            HostEntity bean = hostService.findHostIdinfo(hostId);
+            if (bean!=null) {
+                return Result.SUCCESS(bean);
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }
