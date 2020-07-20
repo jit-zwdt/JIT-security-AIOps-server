@@ -1167,4 +1167,9 @@ public class HostServiceImpl implements HostService {
         }
         return null;
     }
+
+    @Override
+    public HostEntity findHostIdinfo(String id) throws Exception {
+        return hostRepo.findByHostId(id);
+    }
 }
