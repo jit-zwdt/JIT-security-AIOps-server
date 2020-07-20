@@ -22,4 +22,5 @@ public interface HostService {
     public List<ZabbixHostGroupDTO> findHostGroupByTypeId(Map<String, Object> params) throws Exception;
     public List<Map<String,String>> getTop5ByItem(Map<String, Object> params) throws Exception;
     public List<Map<String,String>> getTop5ByTrigger(Map<String, Object> params) throws Exception;
+    public HostEntity findHostIdinfo(String id) throws Exception;
 }
