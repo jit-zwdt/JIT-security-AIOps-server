@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jit.zabbix.client.model.trigger.TriggerPriority;
 import com.jit.zabbix.client.model.trigger.ZabbixTrigger;
 import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
@@ -27,4 +28,6 @@ public class ZabbixUpdateTriggerDTO {
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean status;
+
+    private TriggerPriority priority;
 }
