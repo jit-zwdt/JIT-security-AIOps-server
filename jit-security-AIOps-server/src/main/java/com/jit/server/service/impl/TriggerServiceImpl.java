@@ -7,6 +7,7 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.dto.ZabbixUpdateTriggerDTO;
+import com.jit.zabbix.client.model.trigger.TriggerPriority;
 import com.jit.zabbix.client.request.ZabbixGetTriggerParams;
 import com.jit.zabbix.client.service.ZabbixTriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,23 @@ public class TriggerServiceImpl implements TriggerService {
         ZabbixUpdateTriggerDTO dto = new ZabbixUpdateTriggerDTO();
         dto.setId(triggerId.trim());
         dto.setStatus("1".equals(status.trim())?true:false);
+        //获得token
+        String authToken = zabbixAuthService.getAuth();
+        if(StringUtils.isEmpty(authToken)){
+            return null;
+        }
+        return zabbixTriggerService.update(dto, authToken);
+    }
+
+    @Override
+    public String updateTriggerPriority(String triggerId, String priority) throws Exception {
+        if(StringUtils.isEmpty(priority) || StringUtils.isEmpty(priority)){
+            return null;
+        }
+        //主机信息
+        ZabbixUpdateTriggerDTO dto = new ZabbixUpdateTriggerDTO();
+        dto.setId(triggerId.trim());
+        dto.setPriority(TriggerPriority.fromValue(Integer.parseInt(priority)));
         //获得token
         String authToken = zabbixAuthService.getAuth();
         if(StringUtils.isEmpty(authToken)){

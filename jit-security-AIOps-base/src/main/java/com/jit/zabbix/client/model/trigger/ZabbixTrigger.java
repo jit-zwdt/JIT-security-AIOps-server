@@ -28,7 +28,7 @@ public class ZabbixTrigger {
     protected String description;
     protected String expression;
     protected String comments;
-    protected int priority;
+    protected TriggerPriority priority;
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean status;

@@ -9,4 +9,5 @@ import java.util.List;
 public interface TriggerService {
     public List<ZabbixTriggerDTO> findByCondition(TriggerParams params) throws Exception;
     public String updateTriggerStatus(String triggerId, String status) throws Exception;
+    String updateTriggerPriority(String id, String priority) throws Exception;
 }

@@ -61,4 +61,16 @@ public class TriggerController {
         }
     }
 
+    @PutMapping("/updateTriggerPriority/{id}")
+    public Result updateTriggerPriority(@PathVariable String id, @RequestParam("priority") String priority) {
+        try{
+            if(StringUtils.isNotEmpty(triggerService.updateTriggerPriority(id, priority))){
+                return Result.SUCCESS(null);
+            }else{
+                return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }
