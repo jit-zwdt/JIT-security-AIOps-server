@@ -97,4 +97,34 @@ public class TrendController {
         }
     }
 
+    @PostMapping("/findHostDetailItems/{hostId}")
+    public Result findHostDetailItems(@PathVariable String hostId) {
+        try {
+            return Result.SUCCESS(monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, 0));
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+
+    @PostMapping("/checkHostDetailItem")
+    public Result checkHostDetailItem(@RequestBody TrendParams trendParams) {
+        try {
+            if (trendParams != null && StringUtils.isNotBlank(trendParams.getHostId()) && StringUtils.isNotBlank(trendParams.getItemId())) {
+                String hostId = trendParams.getHostId();
+                String itemId = trendParams.getItemId();
+                MonitorHostDetailBindItems monitorHostDetailBindItems = monitorHostDetailBindItemsService.findByHostIdAndItemIdAndIsDeleted(hostId, itemId, 0);
+                if (monitorHostDetailBindItems != null) {
+                    return Result.SUCCESS(true);
+                } else {
+                    return Result.SUCCESS(false);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
 }

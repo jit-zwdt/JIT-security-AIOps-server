@@ -16,4 +16,6 @@ public interface MonitorHostDetailBindItemsService {
     List<MonitorHostDetailBindItems> findMonitorHostDetailBindItemsByHostId(String hostId, int isDeleted) throws Exception;
 
     MonitorHostDetailBindItems findById(String id) throws Exception;
+
+    MonitorHostDetailBindItems findByHostIdAndItemIdAndIsDeleted(String hostId, String itemId, int isDeleted) throws Exception;
 }

@@ -34,4 +34,9 @@ public class MonitorHostDetailBindItemsImpl implements MonitorHostDetailBindItem
     public MonitorHostDetailBindItems findById(String id) throws Exception {
         return monitorHostDetailBindItemsRepo.getOne(id);
     }
+
+    @Override
+    public MonitorHostDetailBindItems findByHostIdAndItemIdAndIsDeleted(String hostId, String itemId, int isDeleted) throws Exception {
+        return monitorHostDetailBindItemsRepo.findByHostIdAndItemIdAndIsDeleted(hostId, itemId, isDeleted);
+    }
 }

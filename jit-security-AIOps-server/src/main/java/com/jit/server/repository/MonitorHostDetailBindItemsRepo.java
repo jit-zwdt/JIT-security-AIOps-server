@@ -17,4 +17,6 @@ public interface MonitorHostDetailBindItemsRepo extends JpaRepository<MonitorHos
 
 
     List<MonitorHostDetailBindItems> findByHostIdAndIsDeleted(String hostId, int isDeleted);
+
+    MonitorHostDetailBindItems findByHostIdAndItemIdAndIsDeleted(String hostId, String itemId, int isDeleted);
 }
