@@ -11,7 +11,9 @@ import java.util.List;
  */
 public interface MonitorHostDetailBindItemsService {
 
-    void saveOrUpdateMonitorHostDetailBindItems(MonitorHostDetailBindItems monitorHostDetailBindItems) throws Exception;
+    MonitorHostDetailBindItems saveOrUpdateMonitorHostDetailBindItems(MonitorHostDetailBindItems monitorHostDetailBindItems) throws Exception;
 
     List<MonitorHostDetailBindItems> findMonitorHostDetailBindItemsByHostId(String hostId, int isDeleted) throws Exception;
+
+    MonitorHostDetailBindItems findById(String id) throws Exception;
 }

@@ -22,4 +22,9 @@ public class TrendParams {
     private String timefrom;
     private String timetill;
 
+    private String hostId;
+    private String typeId;
+    private String itemId;
+    private String itemName;
+
 }
