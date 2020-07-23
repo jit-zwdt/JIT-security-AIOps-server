@@ -20,6 +20,6 @@ import java.util.Optional;
 @Repository
 public interface AssetsRepo extends JpaRepository<AssetsEntity, String>, JpaSpecificationExecutor<AssetsEntity> {
 
-
+    @Override
     public Page<AssetsEntity> findAll(Specification<AssetsEntity> spec, Pageable pageable);
 }
