@@ -40,7 +40,6 @@ public class ZabbixMediaType {
     private String smtpHelo;
     @JsonProperty("smtp_server")
     private String smtpServer;
-    @JsonProperty("smtp_server")
     @JsonSerialize(using = BooleanNumericSerializer.class)
     @JsonDeserialize(using = BooleanNumericDeserializer.class)
     private boolean status;
