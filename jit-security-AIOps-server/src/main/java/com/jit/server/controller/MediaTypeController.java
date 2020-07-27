@@ -5,12 +5,14 @@ import com.jit.server.request.MediaTypeParams;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetMediaTypeDTO;
+import com.jit.zabbix.client.dto.ZabbixUpdateMediaTypeDTO;
 import com.jit.zabbix.client.request.ZabbixGetMediaTypeParams;
 import com.jit.zabbix.client.service.ZabbixMediaTypeService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,5 +65,33 @@ public class MediaTypeController {
         }
     }
 
+    @PutMapping("/updateStatus")
+    public Result updateHostEnableMonitor(@RequestParam String mediatypeid, @RequestParam("status") String status) {
+        try {
+            if (StringUtils.isNotBlank(mediatypeid) && StringUtils.isNotBlank(status)) {
+                String auth = zabbixAuthService.getAuth();
+                ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
+                List<String> mediatypeIds = new ArrayList<>(1);
+                mediatypeIds.add(mediatypeid);
+                zabbixGetMediaTypeParams.setMediatypeIds(mediatypeIds);
+                zabbixGetMediaTypeParams.setOutput("extend");
+                List<ZabbixGetMediaTypeDTO> zabbixGetMediaTypeDTOList = zabbixMediaTypeService.get(zabbixGetMediaTypeParams, auth);
+                if (zabbixGetMediaTypeDTOList != null && !zabbixGetMediaTypeDTOList.isEmpty()) {
+                    ZabbixUpdateMediaTypeDTO zabbixUpdateMediaTypeDTO = new ZabbixUpdateMediaTypeDTO();
+                    zabbixUpdateMediaTypeDTO.setId(mediatypeid);
+                    zabbixUpdateMediaTypeDTO.setStatus("0".equals(status) ? false : true);
+                    zabbixUpdateMediaTypeDTO.setMaxattempts(zabbixGetMediaTypeDTOList.get(0).getMaxattempts());
+                    mediatypeid = zabbixMediaTypeService.update(zabbixUpdateMediaTypeDTO, auth);
+                    return Result.SUCCESS(mediatypeid);
+                } else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 
 }
