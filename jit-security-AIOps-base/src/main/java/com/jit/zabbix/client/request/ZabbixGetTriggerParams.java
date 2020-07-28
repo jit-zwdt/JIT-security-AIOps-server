@@ -28,4 +28,6 @@ public class ZabbixGetTriggerParams extends CommonGetParams {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Singular
     private List<String> hostIds;
+
+    private Object selectFunctions;
 }

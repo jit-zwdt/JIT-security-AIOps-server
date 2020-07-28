@@ -51,4 +51,5 @@ public class ZabbixTrigger {
     @JsonSerialize(using = CustomJsonSerializer.BooleanNumericSerializer.class)
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean manualClose;
+    protected String opdata;
 }

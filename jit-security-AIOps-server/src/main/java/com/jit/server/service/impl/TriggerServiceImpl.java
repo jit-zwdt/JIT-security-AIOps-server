@@ -23,6 +23,8 @@ public class TriggerServiceImpl implements TriggerService {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
+    public static final String TRIGGER_EXTEND = "extend";
+
     @Override
     public List<ZabbixTriggerDTO> findByCondition(TriggerParams params) throws Exception {
         if (params == null) {
@@ -84,5 +86,28 @@ public class TriggerServiceImpl implements TriggerService {
             return null;
         }
         return zabbixTriggerService.update(dto, authToken);
+    }
+    @Override
+    public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params) throws Exception {
+        //获得token
+        String authToken = zabbixAuthService.getAuth();
+        if(StringUtils.isEmpty(authToken)){
+            return null;
+        }
+        ZabbixGetTriggerParams paramsTrigger = new ZabbixGetTriggerParams();
+        if(params.getDescription()!=null&&!"".equals(params.getDescription().trim())){
+            Map<String, Object> search = new HashMap<>();
+            search.put("description",params.getDescription().trim());
+            paramsTrigger.setSearch(search);
+        }
+        if(params.getStatus()!=null&&("0".equals(params.getStatus().trim())||"1".equals(params.getStatus().trim()))){
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("status",Integer.parseInt(params.getStatus().trim()));
+            paramsTrigger.setFilter(filter);
+        }
+        paramsTrigger.setOutput(TRIGGER_EXTEND);
+        paramsTrigger.setSelectFunctions(TRIGGER_EXTEND);
+
+        return zabbixTriggerService.get(paramsTrigger, authToken);
     }
 }

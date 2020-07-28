@@ -73,4 +73,19 @@ public class TriggerController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @PutMapping("/findTriggerAll")
+    public Result findTriggerAll(@RequestBody TriggerParams params, HttpServletResponse resp) throws IOException {
+        try{
+            List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params);
+            if (null != result && !CollectionUtils.isEmpty(result)) {
+                return Result.SUCCESS(result);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }
