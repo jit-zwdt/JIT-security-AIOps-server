@@ -1,13 +1,12 @@
 package com.jit.zabbix.client.service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jit.zabbix.client.dto.ZabbixCreateMediaTypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetMediaTypeDTO;
-import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixUpdateMediaTypeDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
-import com.jit.zabbix.client.model.host.HostMethod;
 import com.jit.zabbix.client.model.mediaType.MediaTypeMethod;
-import com.jit.zabbix.client.model.mediaType.ZabbixMediaType;
 import com.jit.zabbix.client.request.ZabbixGetMediaTypeParams;
 import com.jit.zabbix.client.utils.JsonMapper;
 import com.jit.zabbix.client.utils.ZabbixApiUtils;
@@ -36,6 +35,26 @@ public class ZabbixMediaTypeService {
         this.jsonMapper = jsonMapper;
         this.apiService = zabbixApiService;
     }
+
+    /**
+     * Single host creation request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/mediatype/create">mediatype.create</a>).
+     *
+     * @param dto  MediaType to create.
+     * @param auth The auth token.
+     * @return The created mediaType id.
+     * @throws ZabbixApiException When the response status is not 200 or the API returned an error or no mediatype id was returned.
+     */
+    public String create(ZabbixCreateMediaTypeDTO dto, String auth) throws ZabbixApiException {
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(MediaTypeMethod.CREATE, dto, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        JsonNode jsonNode = response.getResult().findValue(MEDIATYPE_IDS_NODE);
+        if (!jsonNode.isEmpty()) {
+            return jsonNode.get(0).textValue();
+        } else {
+            throw new ZabbixApiException("Aucun id recu.");
+        }
+    }
+
 
     /**
      * Get mediaTypes request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/mediatype/get">mediatype.get</a>).
