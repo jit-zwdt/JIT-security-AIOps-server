@@ -25,11 +25,13 @@ public class ZabbixProblem {
     protected ProblemObject object;
     @JsonProperty("objectid")
     protected String objectId;
+    @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime clock;
     protected Integer ns;
     @JsonProperty("r_eventid")
     protected String rEventid;
     @JsonProperty("r_clock")
+    @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime rClock;
     @JsonProperty("r_ns")
     protected Integer rNs;
