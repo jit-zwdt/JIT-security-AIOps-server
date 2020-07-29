@@ -87,4 +87,18 @@ public class ZabbixMediaTypeService {
         }
         return ids.get(0);
     }
+
+    /**
+     * Delete mediatype request (<a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/mediatype/delete">mediatype.delete</a>).
+     *
+     * @param mediaTypeIds IDs of mediaType to delete.
+     * @param auth         The auth token.
+     * @return The list of deleted mediaType ids.
+     * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
+     */
+    public List<String> delete(List<String> mediaTypeIds, String auth) throws ZabbixApiException {
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(MediaTypeMethod.DELETE, mediaTypeIds, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        return jsonMapper.getList(response.getResult(), MEDIATYPE_IDS_NODE, String.class);
+    }
 }

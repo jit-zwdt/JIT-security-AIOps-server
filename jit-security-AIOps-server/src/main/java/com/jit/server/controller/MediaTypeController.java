@@ -124,4 +124,25 @@ public class MediaTypeController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @DeleteMapping("/deleteMediaType/{id}")
+    public Result deleteMediaType(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                List<String> mediaTypeIds = new ArrayList<>(1);
+                mediaTypeIds.add(id);
+                String auth = zabbixAuthService.getAuth();
+                List<String> ids = zabbixMediaTypeService.delete(mediaTypeIds, auth);
+                if (ids != null && !ids.isEmpty()) {
+                    return Result.SUCCESS(ids);
+                } else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }
