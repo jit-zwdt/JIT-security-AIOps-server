@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Zabbix method mediatype.get parameters.
  *
- * @author Mamadou Lamine NIANG
+ * @author zengxin_miao
  * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference/mediatype/get#parameters">Method mediatype.get parameters</a>
  **/
 @Data

@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 import static com.jit.zabbix.client.utils.CustomJsonSerializer.BooleanNumericDeserializer;
 import static com.jit.zabbix.client.utils.CustomJsonSerializer.BooleanNumericSerializer;
 
@@ -24,7 +26,7 @@ import static com.jit.zabbix.client.utils.CustomJsonSerializer.BooleanNumericSer
 @AllArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZabbixMediaType {
+public class ZabbixMediaType implements Serializable {
     @JsonProperty("mediatypeid")
     private String id;
     private MediaTypeType type;
