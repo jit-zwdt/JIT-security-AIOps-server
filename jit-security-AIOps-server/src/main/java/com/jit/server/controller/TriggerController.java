@@ -2,6 +2,8 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.request.ProblemParams;
+import com.jit.server.request.TriggerConditionParams;
 import com.jit.server.request.TriggerParams;
 import com.jit.server.service.TriggerService;
 import com.jit.server.util.PageRequest;
