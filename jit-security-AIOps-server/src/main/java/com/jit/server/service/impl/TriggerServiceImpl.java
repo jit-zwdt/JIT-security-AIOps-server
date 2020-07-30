@@ -1,10 +1,14 @@
 package com.jit.server.service.impl;
 
 
+import com.jit.server.request.ProblemParams;
+import com.jit.server.request.TriggerConditionParams;
 import com.jit.server.request.TriggerParams;
+import com.jit.server.service.ProblemService;
 import com.jit.server.service.TriggerService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
+import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.dto.ZabbixUpdateTriggerDTO;
 import com.jit.zabbix.client.model.trigger.TriggerPriority;
@@ -32,19 +36,19 @@ public class TriggerServiceImpl implements TriggerService {
         }
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         ZabbixGetTriggerParams _params = new ZabbixGetTriggerParams();
         _params.setHostIds(Arrays.asList(new String[]{params.getHostId()}));
-        if(params.getDescription()!=null&&!"".equals(params.getDescription().trim())){
+        if (params.getDescription() != null && !"".equals(params.getDescription().trim())) {
             Map<String, Object> search = new HashMap<>();
-            search.put("description",params.getDescription().trim());
+            search.put("description", params.getDescription().trim());
             _params.setSearch(search);
         }
-        if(params.getStatus()!=null&&("0".equals(params.getStatus().trim())||"1".equals(params.getStatus().trim()))){
+        if (params.getStatus() != null && ("0".equals(params.getStatus().trim()) || "1".equals(params.getStatus().trim()))) {
             Map<String, Object> filter = new HashMap<>();
-            filter.put("status",Integer.parseInt(params.getStatus().trim()));
+            filter.put("status", Integer.parseInt(params.getStatus().trim()));
             _params.setFilter(filter);
         }
 
@@ -53,19 +57,19 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Override
     public String updateTriggerStatus(String triggerId, String status) throws Exception {
-        if(StringUtils.isEmpty(triggerId) || StringUtils.isEmpty(status)){
+        if (StringUtils.isEmpty(triggerId) || StringUtils.isEmpty(status)) {
             return null;
         }
-        if(!"0".equals(status.trim())&&!"1".equals(status.trim())){
+        if (!"0".equals(status.trim()) && !"1".equals(status.trim())) {
             return null;
         }
         //主机信息
         ZabbixUpdateTriggerDTO dto = new ZabbixUpdateTriggerDTO();
         dto.setId(triggerId.trim());
-        dto.setStatus("1".equals(status.trim())?true:false);
+        dto.setStatus("1".equals(status.trim()) ? true : false);
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixTriggerService.update(dto, authToken);
@@ -73,7 +77,7 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Override
     public String updateTriggerPriority(String triggerId, String priority) throws Exception {
-        if(StringUtils.isEmpty(priority) || StringUtils.isEmpty(priority)){
+        if (StringUtils.isEmpty(priority) || StringUtils.isEmpty(priority)) {
             return null;
         }
         //主机信息
@@ -82,27 +86,28 @@ public class TriggerServiceImpl implements TriggerService {
         dto.setPriority(TriggerPriority.fromValue(Integer.parseInt(priority)));
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixTriggerService.update(dto, authToken);
     }
+
     @Override
     public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params) throws Exception {
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         ZabbixGetTriggerParams paramsTrigger = new ZabbixGetTriggerParams();
-        if(params.getDescription()!=null&&!"".equals(params.getDescription().trim())){
+        if (params.getDescription() != null && !"".equals(params.getDescription().trim())) {
             Map<String, Object> search = new HashMap<>();
-            search.put("description",params.getDescription().trim());
+            search.put("description", params.getDescription().trim());
             paramsTrigger.setSearch(search);
         }
-        if(params.getStatus()!=null&&("0".equals(params.getStatus().trim())||"1".equals(params.getStatus().trim()))){
+        if (params.getStatus() != null && ("0".equals(params.getStatus().trim()) || "1".equals(params.getStatus().trim()))) {
             Map<String, Object> filter = new HashMap<>();
-            filter.put("status",Integer.parseInt(params.getStatus().trim()));
+            filter.put("status", Integer.parseInt(params.getStatus().trim()));
             paramsTrigger.setFilter(filter);
         }
         paramsTrigger.setOutput(TRIGGER_EXTEND);
