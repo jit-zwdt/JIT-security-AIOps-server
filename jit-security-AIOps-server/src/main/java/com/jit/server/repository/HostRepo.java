@@ -7,7 +7,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,10 +40,13 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
             "LEFT JOIN monitor_type monitortem_ ON hostentity.host_type_id = monitortem_.id " +
             "LEFT JOIN monitor_type monitortem2_ ON hostentity.host_subtype_id = monitortem2_.id ",
             countQuery = " SELECT count(hostentity.id) from monitor_host hostentity left  join monitor_templates monitortem_ on hostentity.host_type_id=monitortem_.id ",
-            nativeQuery = true )
+            nativeQuery = true)
     Page<Object> getAllHostInfo(Pageable pageable);
 
     public List<HostEntity> findByTypeIdAndDeleted(String typeId, boolean deleted);
 
     public HostEntity findByHostId(String hostId);
+
+    @Query("SELECT h.hostId,t.type,t.id FROM HostEntity h,MonitorTypeEntity t WHERE t.isDeleted = 0 AND t.pid = '0' AND h.deleted = 0 and h.typeId = t.id ORDER BY t.orderNum")
+    List<Object> getHostByType();
 }

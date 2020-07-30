@@ -42,7 +42,7 @@ public class HostController {
                 BeanUtils.copyProperties(params, host);
                 host.setGmtCreate(LocalDateTime.now());
                 host.setGmtModified(LocalDateTime.now());
-                host.setDeleted(false);
+                host.setDeleted(0);
                 if(StringUtils.isNotEmpty(hostService.addHost(host))){
                     return Result.SUCCESS(null);
                 }else{
@@ -89,7 +89,7 @@ public class HostController {
             if (bean.isPresent()) {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
-                host.setDeleted(true);
+                host.setDeleted(1);
                 if(StringUtils.isNotEmpty(hostService.deleteHost(host))){
                     return Result.SUCCESS(host);
                 }else{

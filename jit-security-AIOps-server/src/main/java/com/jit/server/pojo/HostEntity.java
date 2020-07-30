@@ -154,7 +154,7 @@ public class HostEntity {
     private String vmMacroUsername;
 
     @Column(name = "is_deleted")
-    private boolean deleted;
+    private int deleted;
 
     @Column(name = "gmt_create")
     private LocalDateTime gmtCreate;
