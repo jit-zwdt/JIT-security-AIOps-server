@@ -71,7 +71,7 @@ public class MediaTypeController {
     }
 
     @PutMapping("/updateStatus")
-    public Result updateHostEnableMonitor(@RequestParam String mediatypeid, @RequestParam("status") boolean status) {
+    public Result updateStatus(@RequestParam String mediatypeid, @RequestParam("status") boolean status) {
         try {
             if (StringUtils.isNotBlank(mediatypeid)) {
                 String auth = zabbixAuthService.getAuth();
@@ -140,6 +140,71 @@ public class MediaTypeController {
                 }
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/findByMediaTypeId/{id}")
+    public Result findByMediaTypeId(@PathVariable String id) {
+        if (StringUtils.isNotBlank(id)) {
+            try {
+                String auth = zabbixAuthService.getAuth();
+                ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
+                List<String> mediatypeIds = new ArrayList<>(1);
+                mediatypeIds.add(id);
+                zabbixGetMediaTypeParams.setMediatypeIds(mediatypeIds);
+                zabbixGetMediaTypeParams.setOutput("extend");
+                List<ZabbixGetMediaTypeDTO> zabbixGetMediaTypeDTOList = zabbixMediaTypeService.get(zabbixGetMediaTypeParams, auth);
+                if (zabbixGetMediaTypeDTOList != null && !zabbixGetMediaTypeDTOList.isEmpty()) {
+                    return Result.SUCCESS(zabbixGetMediaTypeDTOList.get(0));
+                    //I just want serialized json data not unserialize json,so use JSONObject to change json data
+                    //return Result.SUCCESS(JSONObject.toJSON(zabbixGetMediaTypeDTOList.get(0)));
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+            }
+        } else {
+            return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+        }
+    }
+
+    @PutMapping("/updateMediaType/{id}")
+    public Result updateMediaType(@PathVariable String id, @RequestBody MediaTypeParams params) {
+        try {
+            if (params != null && StringUtils.isNotBlank(id)) {
+                String auth = zabbixAuthService.getAuth();
+                ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
+                List<String> mediatypeIds = new ArrayList<>(1);
+                mediatypeIds.add(id);
+                zabbixGetMediaTypeParams.setMediatypeIds(mediatypeIds);
+                zabbixGetMediaTypeParams.setOutput("extend");
+                List<ZabbixGetMediaTypeDTO> zabbixGetMediaTypeDTOList = zabbixMediaTypeService.get(zabbixGetMediaTypeParams, auth);
+                if (zabbixGetMediaTypeDTOList != null && !zabbixGetMediaTypeDTOList.isEmpty()) {
+                    ZabbixUpdateMediaTypeDTO zabbixUpdateMediaTypeDTO = new ZabbixUpdateMediaTypeDTO();
+                    BeanUtils.copyProperties(params, zabbixUpdateMediaTypeDTO);
+                    zabbixUpdateMediaTypeDTO.setId(id);
+                    zabbixUpdateMediaTypeDTO.setType(zabbixGetMediaTypeDTOList.get(0).getType());
+                    zabbixUpdateMediaTypeDTO.setSmtpSecurity(MediaTypeSmtpSecurity.fromValue(params.getSmtpSecurity()));
+                    zabbixUpdateMediaTypeDTO.setSmtpAuthentication(params.getSmtpAuthentication() == 0 ? false : true);
+                    zabbixUpdateMediaTypeDTO.setContentType(params.getContentType() == 0 ? false : true);
+                    zabbixUpdateMediaTypeDTO.setStatus(!params.isStatus());
+                    String mediatypeid = zabbixMediaTypeService.update(zabbixUpdateMediaTypeDTO, auth);
+                    if (StringUtils.isNotBlank(mediatypeid)) {
+                        return Result.SUCCESS(mediatypeid);
+                    } else {
+                        return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                    }
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
