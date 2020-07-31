@@ -104,9 +104,9 @@ public class HomePageController {
         res.put("notClassifiedCount", 0);
         res.put("informationCount", 0);
         res.put("warningCount", 0);
-        res.put("average", 0);
-        res.put("high", 0);
-        res.put("disaster", 0);
+        res.put("averageCount", 0);
+        res.put("highCount", 0);
+        res.put("disasterCount", 0);
         if (hostIds != null && !hostIds.isEmpty()) {
             String auth = zabbixAuthService.getAuth();
             ZabbixGetProblemParams zabbixGetProblemParams = new ZabbixGetProblemParams();
@@ -143,9 +143,9 @@ public class HomePageController {
                 res.put("notClassifiedCount", notClassifiedCount);
                 res.put("informationCount", informationCount);
                 res.put("warningCount", warningCount);
-                res.put("average", averageCount);
-                res.put("high", highCount);
-                res.put("disaster", disasterCount);
+                res.put("averageCount", averageCount);
+                res.put("highCount", highCount);
+                res.put("disasterCount", disasterCount);
             }
             return res;
         } else {
