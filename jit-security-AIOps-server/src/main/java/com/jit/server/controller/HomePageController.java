@@ -117,9 +117,9 @@ public class HomePageController {
                 int notClassifiedCount = 0;
                 int informationCount = 0;
                 int warningCount = 0;
-                int average = 0;
-                int high = 0;
-                int disaster = 0;
+                int averageCount = 0;
+                int highCount = 0;
+                int disasterCount = 0;
                 for (ZabbixProblemDTO zabbixProblemDTO : zabbixProblemDTOList) {
                     if (ProblemSeverity.NOT_CLASSIFIED.equals(zabbixProblemDTO.getSeverity())) {
                         ++notClassifiedCount;
@@ -131,21 +131,21 @@ public class HomePageController {
                         ++warningCount;
                     }
                     if (ProblemSeverity.AVERAGE.equals(zabbixProblemDTO.getSeverity())) {
-                        ++average;
+                        ++averageCount;
                     }
                     if (ProblemSeverity.HIGH.equals(zabbixProblemDTO.getSeverity())) {
-                        ++high;
+                        ++highCount;
                     }
                     if (ProblemSeverity.DISASTER.equals(zabbixProblemDTO.getSeverity())) {
-                        ++disaster;
+                        ++disasterCount;
                     }
                 }
                 res.put("notClassifiedCount", notClassifiedCount);
                 res.put("informationCount", informationCount);
                 res.put("warningCount", warningCount);
-                res.put("average", average);
-                res.put("high", high);
-                res.put("disaster", disaster);
+                res.put("average", averageCount);
+                res.put("high", highCount);
+                res.put("disaster", disasterCount);
             }
             return res;
         } else {
