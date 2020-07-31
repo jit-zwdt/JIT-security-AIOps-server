@@ -101,12 +101,12 @@ public class HomePageController {
      */
     private Map<String, Integer> countProblemsGroupBySeverity(List<String> hostIds) throws Exception {
         Map<String, Integer> res = new HashMap<>();
-        res.put("0", 0);
-        res.put("1", 0);
-        res.put("2", 0);
-        res.put("3", 0);
-        res.put("4", 0);
-        res.put("5", 0);
+        res.put("notClassifiedCount", 0);
+        res.put("informationCount", 0);
+        res.put("warningCount", 0);
+        res.put("average", 0);
+        res.put("high", 0);
+        res.put("disaster", 0);
         if (hostIds != null && !hostIds.isEmpty()) {
             String auth = zabbixAuthService.getAuth();
             ZabbixGetProblemParams zabbixGetProblemParams = new ZabbixGetProblemParams();
@@ -140,12 +140,12 @@ public class HomePageController {
                         ++disaster;
                     }
                 }
-                res.put("0", notClassifiedCount);
-                res.put("1", informationCount);
-                res.put("2", warningCount);
-                res.put("3", average);
-                res.put("4", high);
-                res.put("5", disaster);
+                res.put("notClassifiedCount", notClassifiedCount);
+                res.put("informationCount", informationCount);
+                res.put("warningCount", warningCount);
+                res.put("average", average);
+                res.put("high", high);
+                res.put("disaster", disaster);
             }
             return res;
         } else {
