@@ -27,6 +27,7 @@ import java.util.List;
 public class ItemParams {
 
     private List<String> hostids;
+    private List<String> itemids;
     private String status;
     private String name;
     private String key_;

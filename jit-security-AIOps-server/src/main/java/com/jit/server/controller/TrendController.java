@@ -1,8 +1,10 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.pojo.MonitorHostDetailBindItems;
 import com.jit.server.request.TrendParams;
+import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.MonitorHostDetailBindItemsService;
 import com.jit.server.service.TrendService;
 import com.jit.server.util.Result;
@@ -33,6 +35,9 @@ public class TrendController {
 
     @Autowired
     private MonitorHostDetailBindItemsService monitorHostDetailBindItemsService;
+
+    @Autowired
+    private MonitorHostDetailBindGraphsService monitorHostDetailBindGraphsService;
 
     @PostMapping("/getItemInfoList")
     public Result getItemInfoList(@RequestBody TrendParams trendParams, HttpServletResponse resp) throws IOException {
@@ -76,6 +81,29 @@ public class TrendController {
         }
     }
 
+    @PostMapping("/addHostDetailGraph")
+    public Result addHostDetailGraph(@RequestBody TrendParams trendParams) {
+        try {
+            if (trendParams != null) {
+                MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = new MonitorHostDetailBindGraphs();
+                BeanUtils.copyProperties(trendParams, monitorHostDetailBindGraphs);
+                monitorHostDetailBindGraphs.setGmtCreate(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindGraphs.setIsDeleted(0);
+                monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
+                if (StringUtils.isNotBlank(monitorHostDetailBindGraphs.getId())) {
+                    return Result.SUCCESS(null);
+                } else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     @DeleteMapping("/deleteHostDetailItem/{id}")
     public Result deleteHostDetailItem(@PathVariable String id) {
         try {
@@ -97,10 +125,40 @@ public class TrendController {
         }
     }
 
+    @DeleteMapping("/deleteHostDetailGraph/{id}")
+    public Result deleteHostDetailGraph(@PathVariable String id) {
+        try {
+            MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findById(id);
+            if (monitorHostDetailBindGraphs != null) {
+                monitorHostDetailBindGraphs.setGmtModified(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindGraphs.setIsDeleted(1);
+                monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
+                if (StringUtils.isNotBlank(monitorHostDetailBindGraphs.getId())) {
+                    return Result.SUCCESS(null);
+                } else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     @PostMapping("/findHostDetailItems/{hostId}")
     public Result findHostDetailItems(@PathVariable String hostId) {
         try {
             return Result.SUCCESS(monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, 0));
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/findHostDetailGraphs/{hostId}")
+    public Result findHostDetailGraphs(@PathVariable String hostId) {
+        try {
+            return Result.SUCCESS(monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, 0));
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -115,6 +173,26 @@ public class TrendController {
                 String itemId = trendParams.getItemId();
                 MonitorHostDetailBindItems monitorHostDetailBindItems = monitorHostDetailBindItemsService.findByHostIdAndItemIdAndIsDeleted(hostId, itemId, 0);
                 if (monitorHostDetailBindItems != null) {
+                    return Result.SUCCESS(true);
+                } else {
+                    return Result.SUCCESS(false);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/checkHostDetailGraph")
+    public Result checkHostDetailGraph(@RequestBody TrendParams trendParams) {
+        try {
+            if (trendParams != null && StringUtils.isNotBlank(trendParams.getHostId()) && StringUtils.isNotBlank(trendParams.getGraphId())) {
+                String hostId = trendParams.getHostId();
+                String graphId = trendParams.getGraphId();
+                MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findByHostIdAndGraphIdAndIsDeleted(hostId, graphId, 0);
+                if (monitorHostDetailBindGraphs != null) {
                     return Result.SUCCESS(true);
                 } else {
                     return Result.SUCCESS(false);

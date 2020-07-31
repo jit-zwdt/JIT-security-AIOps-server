@@ -26,5 +26,7 @@ public class TrendParams {
     private String typeId;
     private String itemId;
     private String itemName;
+    private String graphId;
+    private String graphName;
 
 }
