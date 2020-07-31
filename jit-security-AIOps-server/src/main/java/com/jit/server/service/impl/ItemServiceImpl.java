@@ -69,6 +69,11 @@ public class ItemServiceImpl implements ItemService {
                 params.setFilter(mapFilter);
             }
         }
+        List<String> itemids = itemParams.getItemids();
+        if (itemids != null && !CollectionUtils.isEmpty(itemids)) {
+            params.setItemIds(itemids);
+
+        }
         return zabbixItemService.get(params, authToken);
     }
 
