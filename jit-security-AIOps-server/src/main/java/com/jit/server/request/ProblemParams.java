@@ -13,5 +13,9 @@ import lombok.NoArgsConstructor;
 public class ProblemParams {
 
     private Integer severity;
+
+    private String timeFrom;
+
+    private String timeTill;
 }
 
