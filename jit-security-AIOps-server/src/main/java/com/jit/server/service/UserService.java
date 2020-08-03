@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface UserService {
     public List<ZabbixUserDTO> getUserInfo() throws Exception;
+
+
 }

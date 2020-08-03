@@ -21,4 +21,6 @@ public interface SysUserRepo extends JpaRepository<SysUserEntity, String> {
     @Query("SELECT u FROM SysUserEntity u WHERE u.status = 1 and u.isZabbixActive = 1 and u.username = ?1")
     SysUserEntity findZabbixActiveUserByUsername(String username);
 
+    @Query("SELECT u FROM SysUserEntity u,SysUserRoleEntity ur WHERE u.id = ur.userId and ur.roleId = ?1")
+    List<SysUserEntity> findUserByRole(Byte roleId);
 }

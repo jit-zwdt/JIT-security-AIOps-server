@@ -1,16 +1,16 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.dto.ProblemHostDTO;
+import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.repository.MonitorClaimRepo;
+import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
-import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.problem.ProblemSeverity;
-import com.jit.zabbix.client.model.problem.ZabbixProblem;
-import com.jit.zabbix.client.model.trigger.ZabbixTrigger;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.request.ZabbixGetTriggerParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
@@ -27,6 +27,9 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    private MonitorClaimRepo monitorClaimRepo;
 
     @Autowired
     private ZabbixProblemService zabbixProblemService;
@@ -112,5 +115,28 @@ public class ProblemServiceImpl implements ProblemService {
 
             return problemHosts;
         }
+    }
+
+    @Override
+    public List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
+        List<ZabbixProblemDTO> list = new ArrayList<>();
+        ProblemParams problemParams = new ProblemParams();
+        for(Integer integers:params.getSeverities()){
+            problemParams.setSeverity(integers);
+            List<ZabbixProblemDTO> temp = findByCondition(problemParams);
+            for(ZabbixProblemDTO zabbixProblemDTO : temp){
+                MonitorClaimEntity monitorClaimEntity = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+                if(monitorClaimEntity!= null){
+                    zabbixProblemDTO.setIsClaim(monitorClaimEntity.getIsClaim());
+                }
+            }
+            list.addAll(temp);
+        }
+        return list;
+    }
+
+    @Override
+    public void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception {
+        monitorClaimRepo.save(monitorClaimEntity);
     }
 }
