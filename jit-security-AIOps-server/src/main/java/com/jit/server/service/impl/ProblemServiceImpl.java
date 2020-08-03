@@ -46,8 +46,12 @@ public class ProblemServiceImpl implements ProblemService {
 
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
         if (params.getSeverity() != null) {
-            ProblemSeverity severity = ProblemSeverity.fromValue(params.getSeverity());
-            params_pro.setSeverity(severity);
+//            ProblemSeverity severity = ProblemSeverity.fromValue(params.getSeverity());
+//            params_pro.setSeverity(severity);
+            Map mapFilter = new HashMap();
+            mapFilter.put("severity", params.getSeverity());
+            params_pro.setFilter(mapFilter);
+
         }
         if (params.getTimeFrom() != null) {
             params_pro.setTime_from(params.getTimeFrom());
@@ -91,9 +95,7 @@ public class ProblemServiceImpl implements ProblemService {
                 _params.setFilter(filter);
 
                 // 获取trigger
-                System.out.println("mark1");
                 List<ZabbixTriggerDTO> trigger = zabbixTriggerService.get(_params, authToken);
-                System.out.println("mark2");
                 if(trigger == null || trigger.size() == 0) {
                     continue;
                 }
@@ -104,7 +106,6 @@ public class ProblemServiceImpl implements ProblemService {
                     temp.setZabbixProblemDTO(problem);
                     temp.setHostId(trigger.get(0).getZabbixHost().get(0).getId());
                     temp.setHostName(trigger.get(0).getZabbixHost().get(0).getName());
-                    System.out.println(trigger.get(0).getZabbixHost().toString());
                     problemHosts.add(temp);
                 }
             }
