@@ -4,6 +4,7 @@ package com.jit.zabbix.client.service;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.problem.ProblemMethod;
+import com.jit.zabbix.client.request.ZabbixGetProblemClaimParams;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.utils.JsonMapper;
 import com.jit.zabbix.client.utils.ZabbixApiUtils;
