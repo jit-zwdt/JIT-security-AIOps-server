@@ -15,4 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class ZabbixProblemDTO extends ZabbixProblem {
 
     private int isClaim;
+    private String hostId;
+    private String hostName;
+    private String ip;
 }
