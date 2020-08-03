@@ -4,9 +4,10 @@ import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
+import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,37 +20,22 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/problem")
-public class ProblemController {
+@RequestMapping("/user")
+public class UserController {
 
     @Autowired
-    private ProblemService problemService;
+    private UserService userService;
 
-    @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+    @PostMapping("/getUserInfo")
+    public Result getUserInfo() throws IOException {
         try {
-            List<ZabbixProblemDTO> result = problemService.findByCondition(params);
+            List<ZabbixUserDTO> result = userService.getUserInfo();
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch(Exception e) {
-            e.printStackTrace();
-            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
-        }
-    }
-
-    @PostMapping("/findProblemHost")
-    public Result findProblemHost(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
-        try {
-            List<ProblemHostDTO> result = problemService.findProblemHost(params);
-            if (null != result && !CollectionUtils.isEmpty(result)) {
-                return Result.SUCCESS(result);
-            } else {
-                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-            }
-        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }

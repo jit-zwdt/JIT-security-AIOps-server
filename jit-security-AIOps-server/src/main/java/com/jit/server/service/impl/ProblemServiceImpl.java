@@ -40,17 +40,23 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public List<ZabbixProblemDTO> findByCondition(ProblemParams params) throws Exception {
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)) {
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
 
-        ProblemSeverity severity = ProblemSeverity.fromValue(params.getSeverity());
-        ZabbixGetProblemParams _params = new ZabbixGetProblemParams();
-        if(severity != null) {
-            _params.setSeverity(severity);
+        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+        if (params.getSeverity() != null) {
+            ProblemSeverity severity = ProblemSeverity.fromValue(params.getSeverity());
+            params_pro.setSeverity(severity);
+        }
+        if (params.getTimeFrom() != null) {
+            params_pro.setTime_from(params.getTimeFrom());
+        }
+        if (params.getTimeTill() != null) {
+            params_pro.setTime_till(params.getTimeTill());
         }
 
-        return zabbixProblemService.get(_params, authToken);
+        return zabbixProblemService.get(params_pro, authToken);
     }
 
     @Override
