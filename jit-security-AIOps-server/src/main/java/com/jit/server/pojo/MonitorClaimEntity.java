@@ -59,4 +59,22 @@ public class MonitorClaimEntity {
 
     @Column(name = "problem_ns")
     private String ns;
+
+    /**
+     * 删除标识 0：表示未删除， 1：表示删除
+     */
+    @Column(name = "is_deleted")
+    private int isDeleted;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "gmt_create")
+    private java.sql.Timestamp gmtCreate;
+
+    /**
+     * 修改时间
+     */
+    @Column(name = "gmt_modified")
+    private java.sql.Timestamp gmtModified;
 }

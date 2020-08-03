@@ -2,6 +2,7 @@ package com.jit.server.service.impl;
 
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
@@ -10,7 +11,6 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
-import com.jit.zabbix.client.model.problem.ProblemSeverity;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.request.ZabbixGetTriggerParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
@@ -32,6 +32,9 @@ public class ProblemServiceImpl implements ProblemService {
     private MonitorClaimRepo monitorClaimRepo;
 
     @Autowired
+    private HostRepo hostRepo;
+
+    @Autowired
     private ZabbixProblemService zabbixProblemService;
 
     @Autowired
@@ -49,8 +52,6 @@ public class ProblemServiceImpl implements ProblemService {
 
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
         if (params.getSeverity() != null) {
-//            ProblemSeverity severity = ProblemSeverity.fromValue(params.getSeverity());
-//            params_pro.setSeverity(severity);
             Map mapFilter = new HashMap();
             mapFilter.put("severity", params.getSeverity());
             params_pro.setFilter(mapFilter);
@@ -120,19 +121,46 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
         List<ZabbixProblemDTO> list = new ArrayList<>();
-        ProblemParams problemParams = new ProblemParams();
-        for(Integer integers:params.getSeverities()){
-            problemParams.setSeverity(integers);
-            List<ZabbixProblemDTO> temp = findByCondition(problemParams);
-            for(ZabbixProblemDTO zabbixProblemDTO : temp){
-                MonitorClaimEntity monitorClaimEntity = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+        String authToken = zabbixAuthService.getAuth();
+        if (StringUtils.isEmpty(authToken)) {
+            return null;
+        }
+
+        List<Object> listHostRepo = hostRepo.getHostIdsAndIp();
+        List<ProblemHostDTO> problemHostDTOS = new ArrayList<>();
+        List<Integer> integerList = new ArrayList<>();
+        for (int i = 0, len = listHostRepo.size(); i < len; i++) {
+            ProblemHostDTO problemHostDTO = new ProblemHostDTO();
+            Object[] objs = (Object[]) listHostRepo.get(i);
+            problemHostDTO.setHostId(objs[0].toString());
+            integerList.add(Integer.parseInt(objs[0].toString()));
+            problemHostDTO.setHostName(objs[1].toString());
+            problemHostDTO.setIp(objs[2].toString());
+            problemHostDTOS.add(problemHostDTO);
+        }
+        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+        Map mapFilter = new HashMap();
+        if (params.getSeverities() != null) {
+            mapFilter.put("severity", params.getSeverities());
+            params_pro.setFilter(mapFilter);
+        }
+        if (listHostRepo != null) {
+            mapFilter.put("hostids", integerList);
+            params_pro.setFilter(mapFilter);
+        }
+        list = zabbixProblemService.get(params_pro, authToken);
+        for(ZabbixProblemDTO zabbixProblemDTO:list){
+            List<MonitorClaimEntity> temp = monitorClaimRepo.findAll();
+            for(MonitorClaimEntity monitorClaimEntity : temp){
                 if(monitorClaimEntity!= null){
-                    zabbixProblemDTO.setIsClaim(monitorClaimEntity.getIsClaim());
+                    if(zabbixProblemDTO.getId() == monitorClaimEntity.getProblemId()){
+                        zabbixProblemDTO.setIsClaim(monitorClaimEntity.getIsClaim());
+                    }
                 }
             }
-            list.addAll(temp);
         }
         return list;
+
     }
 
     @Override

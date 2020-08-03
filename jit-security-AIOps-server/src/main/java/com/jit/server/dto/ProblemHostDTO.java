@@ -18,4 +18,5 @@ public class ProblemHostDTO {
     private ZabbixProblemDTO zabbixProblemDTO;
     private String hostId;
     private String hostName;
+    private String ip;
 }
