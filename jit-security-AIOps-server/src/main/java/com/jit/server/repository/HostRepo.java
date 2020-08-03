@@ -43,7 +43,7 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
             nativeQuery = true)
     Page<Object> getAllHostInfo(Pageable pageable);
 
-    public List<HostEntity> findByTypeIdAndDeleted(String typeId, boolean deleted);
+    public List<HostEntity> findByTypeIdAndDeleted(String typeId, int deleted);
 
     public HostEntity findByHostId(String hostId);
 
