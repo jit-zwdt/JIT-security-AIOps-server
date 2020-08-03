@@ -920,7 +920,7 @@ public class HostServiceImpl implements HostService {
             String typeId = (String) params.get("typeId");
             if (StringUtils.isNotEmpty(typeId)) {
                 String groupName = (String) params.get("groupName");
-                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId, false);
+                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId, 0);
                 if (null != hostList && !CollectionUtils.isEmpty(hostList)) {
                     List<String> hostIds = new ArrayList<>();
                     for (HostEntity host : hostList) {
