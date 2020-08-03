@@ -54,4 +54,15 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
 
     @Query("SELECT h.hostId,h.businessName FROM HostEntity h WHERE h.deleted = 0")
     List<Object> getHostIds();
+
+    @Query(" SELECT h.hostId,h.businessName," +
+            "    CASE " +
+            "        WHEN h.agentIp is null THEN " +
+            "            h.snmpIp " +
+            "        WHEN h.agentIp ='' THEN " +
+            "            h.snmpIp " +
+            "        ELSE " +
+            "            h.agentIp " +
+            "    END AS ip  FROM HostEntity h WHERE h.deleted = 0 ")
+    List<Object> getHostIdsAndIp();
 }
