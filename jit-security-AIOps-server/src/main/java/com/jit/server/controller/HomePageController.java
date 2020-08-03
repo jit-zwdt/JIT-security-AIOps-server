@@ -250,6 +250,7 @@ public class HomePageController {
     private ChartData getHistoryItemvalue24H(List<ItemC> itemCList, String auth) throws ZabbixApiException {
         List<String> getHours = getHours();
         ChartData chartData = new ChartData();
+        chartData.setLegend(getLegend(itemCList));
         chartData.setxAxis(getHours);
         List<Map<String, Object>> series = new ArrayList<>();
         for (ItemC itemC : itemCList) {
@@ -257,6 +258,17 @@ public class HomePageController {
         }
         chartData.setSeries(series);
         return chartData;
+    }
+
+    private List<String> getLegend(List<ItemC> itemCList) {
+        List<String> legend = null;
+        if (itemCList != null) {
+            legend = new ArrayList<>(itemCList.size());
+            for (ItemC c : itemCList) {
+                legend.add(c.getHostName());
+            }
+        }
+        return legend;
     }
 
     private List<String> getHours() {
@@ -327,6 +339,7 @@ public class HomePageController {
     }
 
     public class ChartData {
+        private List<String> legend;
         private List<String> xAxis;
         private List<Map<String, Object>> series;
 
@@ -344,6 +357,14 @@ public class HomePageController {
 
         public void setSeries(List<Map<String, Object>> series) {
             this.series = series;
+        }
+
+        public List<String> getLegend() {
+            return legend;
+        }
+
+        public void setLegend(List<String> legend) {
+            this.legend = legend;
         }
     }
 
