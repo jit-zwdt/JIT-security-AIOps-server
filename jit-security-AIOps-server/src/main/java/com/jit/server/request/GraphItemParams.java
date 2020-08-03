@@ -20,9 +20,12 @@ public class GraphItemParams {
     private List<String> gitemids;
     private List<String> graphids;
     private List<String> itemids;
+    private List<String> hostids;
     private Integer type;
     private String status;
     private String name;
+    private String timefrom;
+    private String timetill;
 
 
 }
