@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.config.ParamsConfig;
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.HostEntity;
 import com.jit.server.service.HomePageService;
 import com.jit.server.service.HostService;
 import com.jit.server.service.ZabbixAuthService;
