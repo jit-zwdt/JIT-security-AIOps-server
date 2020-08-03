@@ -43,10 +43,15 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
             nativeQuery = true)
     Page<Object> getAllHostInfo(Pageable pageable);
 
-    public List<HostEntity> findByTypeIdAndDeleted(String typeId, boolean deleted);
+    public List<HostEntity> findByTypeIdAndDeleted(String typeId, int deleted);
 
     public HostEntity findByHostId(String hostId);
 
     @Query("SELECT h.hostId,t.type,t.id FROM HostEntity h,MonitorTypeEntity t WHERE t.isDeleted = 0 AND t.pid = '0' AND h.deleted = 0 and h.typeId = t.id ORDER BY t.orderNum")
     List<Object> getHostByType();
+
+    List<HostEntity> findByDeleted(int deleted);
+
+    @Query("SELECT h.hostId,h.businessName FROM HostEntity h WHERE h.deleted = 0")
+    List<Object> getHostIds();
 }

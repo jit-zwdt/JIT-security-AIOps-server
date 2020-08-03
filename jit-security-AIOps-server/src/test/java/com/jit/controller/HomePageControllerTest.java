@@ -75,8 +75,17 @@ public class HomePageControllerTest {
         System.out.println(result2.getResponse().getContentAsString());
         JSONObject jsonObject2 = JSONObject.parseObject(result2.getResponse().getContentAsString());
         System.out.println(jsonObject2.toJSONString());
+    }
 
+    @Test
+    public void getTimeTop5ItemInfoTest() throws Exception {
 
+        RequestBuilder builder2 = MockMvcRequestBuilders.post("/homePage/getTimeTop5ItemInfo/"+"cup").accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).header("authorization", this.access_token);
+        MvcResult result2 = mvc.perform(builder2).andReturn();
+        System.out.println(result2.getResponse().getContentAsString());
+        JSONObject jsonObject2 = JSONObject.parseObject(result2.getResponse().getContentAsString());
+        System.out.println(jsonObject2.toJSONString());
     }
 
 

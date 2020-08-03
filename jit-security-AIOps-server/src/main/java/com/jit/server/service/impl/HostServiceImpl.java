@@ -61,7 +61,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<HostEntity> findByCondition(HostParams params) throws Exception {
 
-        if (params!=null){
+        if (params != null) {
             //条件
             Specification<HostEntity> spec = new Specification<HostEntity>() {
                 @Override
@@ -80,47 +80,47 @@ public class HostServiceImpl implements HostService {
                     list.add(cb.equal(root.get("deleted").as(Boolean.class), false));
 
                     /** 对象名称 **/
-                    if(StringUtils.isNotEmpty(params.getObjectName())){
-                        list.add(cb.like(root.get("objectName").as(String.class),"%"+params.getObjectName()+"%"));
+                    if (StringUtils.isNotEmpty(params.getObjectName())) {
+                        list.add(cb.like(root.get("objectName").as(String.class), "%" + params.getObjectName() + "%"));
                     }
 
                     /** 业务名称 **/
-                    if(StringUtils.isNotEmpty(params.getBusinessName())){
-                        list.add(cb.like(root.get("businessName").as(String.class),"%"+params.getBusinessName()+"%"));
+                    if (StringUtils.isNotEmpty(params.getBusinessName())) {
+                        list.add(cb.like(root.get("businessName").as(String.class), "%" + params.getBusinessName() + "%"));
                     }
 
                     /** 备注 **/
-                    if(StringUtils.isNotEmpty(params.getRemark())){
-                        list.add(cb.like(root.get("remark").as(String.class),"%"+params.getRemark()+"%"));
+                    if (StringUtils.isNotEmpty(params.getRemark())) {
+                        list.add(cb.like(root.get("remark").as(String.class), "%" + params.getRemark() + "%"));
                     }
 
                     /** 标签 **/
-                    if(StringUtils.isNotEmpty(params.getLabel())){
-                        list.add(cb.like(root.get("label").as(String.class),"%"+params.getLabel()+"%"));
+                    if (StringUtils.isNotEmpty(params.getLabel())) {
+                        list.add(cb.like(root.get("label").as(String.class), "%" + params.getLabel() + "%"));
                     }
 
                     /** 资产 **/
-                    if(StringUtils.isNotEmpty(params.getAssetsId())){
+                    if (StringUtils.isNotEmpty(params.getAssetsId())) {
                         list.add(cb.equal(root.get("assetsId").as(String.class), params.getAssetsId()));
                     }
 
                     /** 类型 **/
-                    if(StringUtils.isNotEmpty(params.getTypeId())){
+                    if (StringUtils.isNotEmpty(params.getTypeId())) {
                         list.add(cb.equal(root.get("typeId").as(String.class), params.getTypeId()));
                     }
 
                     /** 子类型 **/
-                    if(StringUtils.isNotEmpty(params.getSubtypeId())){
+                    if (StringUtils.isNotEmpty(params.getSubtypeId())) {
                         list.add(cb.equal(root.get("subtypeId").as(String.class), params.getSubtypeId()));
                     }
 
                     /** 分组 **/
-                    if(StringUtils.isNotEmpty(params.getGroupId())){
+                    if (StringUtils.isNotEmpty(params.getGroupId())) {
                         list.add(cb.equal(root.get("groupId").as(String.class), params.getGroupId()));
                     }
 
                     /** 是否监控 **/
-                    if(StringUtils.isNotEmpty(params.getEnableMonitor())){
+                    if (StringUtils.isNotEmpty(params.getEnableMonitor())) {
                         list.add(cb.equal(root.get("enableMonitor").as(String.class), params.getEnableMonitor()));
                     }
 
@@ -149,7 +149,7 @@ public class HostServiceImpl implements HostService {
     public String addHost(HostEntity host) throws Exception {
         //调用zabbix接口进行保存
         String hostid = createHostToZabbix(host);
-        if(StringUtils.isNotEmpty(hostid)){
+        if (StringUtils.isNotEmpty(hostid)) {
             host.setHostId(hostid.trim());
             //保存到本地
             hostRepo.save(host);
@@ -161,12 +161,12 @@ public class HostServiceImpl implements HostService {
     public String deleteHost(HostEntity host) throws Exception {
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         //调用zabbix接口进行删除
         String hostid = zabbixHostService.delete(host.getHostId(), authToken);
-        if(StringUtils.isNotEmpty(hostid)){
+        if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
         }
@@ -182,7 +182,7 @@ public class HostServiceImpl implements HostService {
     public String updateHost(HostEntity host) throws Exception {
         //调用zabbix接口进行保存
         String hostid = updateHostToZabbix(host);
-        if(StringUtils.isNotEmpty(hostid)){
+        if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
         }
@@ -193,7 +193,7 @@ public class HostServiceImpl implements HostService {
     public String updateHostEnableMonitor(HostEntity host) throws Exception {
         //调用zabbix接口进行保存
         String hostid = updateHostStatusToZabbix(host.getHostId(), host.getEnableMonitor());
-        if(StringUtils.isNotEmpty(hostid)){
+        if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
         }
@@ -211,7 +211,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<ZabbixHostDTO> getHostAvailableFromZabbix(List<String> hostIds) throws Exception {
         //hostids 必填项
-        if(hostIds==null || CollectionUtils.isEmpty(hostIds)){
+        if (hostIds == null || CollectionUtils.isEmpty(hostIds)) {
             return null;
         }
         //主机信息
@@ -219,7 +219,7 @@ public class HostServiceImpl implements HostService {
         params.setHostIds(hostIds);
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixHostService.get(params, authToken);
@@ -253,7 +253,7 @@ public class HostServiceImpl implements HostService {
                 "LEFT JOIN MonitorTypeEntity monitortem2_ ON hostentity.subtypeId = monitortem2_.id " +
                 "LEFT JOIN MonitorTemplatesEntity monitortemlate_ ON hostentity.templatesId = monitortemlate_.id " +
                 "WHERE hostentity.deleted=0 ";
-        String countSQL  = "SELECT count(1) " +
+        String countSQL = "SELECT count(1) " +
                 "FROM " +
                 "HostEntity hostentity " +
                 "LEFT JOIN MonitorTypeEntity monitortem_ ON hostentity.typeId = monitortem_.id " +
@@ -261,30 +261,30 @@ public class HostServiceImpl implements HostService {
                 "LEFT JOIN MonitorTemplatesEntity monitortemlate_ ON hostentity.templatesId = monitortemlate_.id " +
                 "WHERE  hostentity.deleted=0 ";
         //map用来组装SQL占位符和对应的值
-        Map<String,Object> map = new HashMap<String,Object>();
-        if(StringUtils.isNotEmpty(params.getHostObjectName())){
-            comditionalSQL+=" and (hostentity.businessName like :hostObjectName or hostentity.remark like :hostObjectName)";
-            map.put("hostObjectName", "%"+params.getHostObjectName().trim()+"%");
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (StringUtils.isNotEmpty(params.getHostObjectName())) {
+            comditionalSQL += " and (hostentity.businessName like :hostObjectName or hostentity.remark like :hostObjectName)";
+            map.put("hostObjectName", "%" + params.getHostObjectName().trim() + "%");
         }
-        if(StringUtils.isNotEmpty(params.getHostIp())){
-            comditionalSQL+=" and (hostentity.agentIp like :hostIp or hostentity.snmpIp like :hostIp)";
-            map.put("hostIp", "%"+params.getHostIp().trim()+"%");
+        if (StringUtils.isNotEmpty(params.getHostIp())) {
+            comditionalSQL += " and (hostentity.agentIp like :hostIp or hostentity.snmpIp like :hostIp)";
+            map.put("hostIp", "%" + params.getHostIp().trim() + "%");
         }
-        if(StringUtils.isNotEmpty(params.getTypeId())){
-            comditionalSQL+=" and hostentity.typeId = :typeId";
+        if (StringUtils.isNotEmpty(params.getTypeId())) {
+            comditionalSQL += " and hostentity.typeId = :typeId";
             map.put("typeId", params.getTypeId().trim());
         }
-        if(StringUtils.isNotEmpty(params.getSubtypeId())){
-            comditionalSQL+=" and hostentity.subtypeId = :subtypeId";
+        if (StringUtils.isNotEmpty(params.getSubtypeId())) {
+            comditionalSQL += " and hostentity.subtypeId = :subtypeId";
             map.put("subtypeId", params.getSubtypeId().trim());
         }
-        if(StringUtils.isNotEmpty(params.getEnableMonitor())){
-            comditionalSQL+=" and hostentity.enableMonitor = :enableMonitor";
+        if (StringUtils.isNotEmpty(params.getEnableMonitor())) {
+            comditionalSQL += " and hostentity.enableMonitor = :enableMonitor";
             map.put("enableMonitor", params.getEnableMonitor().trim());
         }
-        if(StringUtils.isNotEmpty(params.getGroupId())){
-            comditionalSQL+=" and hostentity.groupId like :groupId";
-            map.put("groupId", "%"+params.getGroupId().trim()+"%");
+        if (StringUtils.isNotEmpty(params.getGroupId())) {
+            comditionalSQL += " and hostentity.groupId like :groupId";
+            map.put("groupId", "%" + params.getGroupId().trim() + "%");
         }
         //组装SQL
         String resSQL = baseSQL + comditionalSQL + orderbySQL;
@@ -316,13 +316,14 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 调用zabbix接口进行保存
+     *
      * @param host
      * @return
      * @throws ZabbixApiException
      */
     private String createHostToZabbix(HostEntity host) throws Exception {
         //主机名称、主机组、主机接口 必填项
-        if(host==null || StringUtils.isEmpty(host.getObjectName())){
+        if (host == null || StringUtils.isEmpty(host.getObjectName())) {
             return null;
         }
         //主机信息
@@ -330,22 +331,22 @@ public class HostServiceImpl implements HostService {
         dto.setTechnicalName(host.getObjectName());
         dto.setName(host.getBusinessName());
         dto.setDescription(host.getRemark());
-        dto.setUnmonitored("1".equals(host.getEnableMonitor())?false:true);
+        dto.setUnmonitored("1".equals(host.getEnableMonitor()) ? false : true);
         //主机组信息
         String groupIds = host.getGroupId();
-        if(StringUtils.isEmpty(groupIds)){
+        if (StringUtils.isEmpty(groupIds)) {
             return null;
         }
         List<ZabbixHostGroup> groups = new ArrayList<ZabbixHostGroup>();
         String[] _groupIds = groupIds.split(",");
-        for(String groupId : _groupIds){
-            if(StringUtils.isNotEmpty(groupId)){
+        for (String groupId : _groupIds) {
+            if (StringUtils.isNotEmpty(groupId)) {
                 ZabbixHostGroup group = new ZabbixHostGroup();
                 group.setId(groupId.trim());
                 groups.add(group);
             }
         }
-        if(CollectionUtils.isEmpty(groups)){
+        if (CollectionUtils.isEmpty(groups)) {
             return null;
         }
         dto.setGroups(groups);
@@ -356,21 +357,21 @@ public class HostServiceImpl implements HostService {
         //AGENT
         String agentType = host.getAgentType();
         String agentPort = host.getAgentPort();
-        if(StringUtils.isNotEmpty(agentType) && StringUtils.isNotEmpty(agentPort)){
+        if (StringUtils.isNotEmpty(agentType) && StringUtils.isNotEmpty(agentPort)) {
             String agentDnsName = host.getAgentDnsName();
             String agentIp = host.getAgentIp();
             ZabbixHostInterface _interface = new ZabbixHostInterface();
-            if(isIp.equals(agentType.trim()) && StringUtils.isNotEmpty(agentIp.trim())){
+            if (isIp.equals(agentType.trim()) && StringUtils.isNotEmpty(agentIp.trim())) {
                 //使用ip
-                _interface.setDns(agentDnsName!=null?agentDnsName.trim():"");
+                _interface.setDns(agentDnsName != null ? agentDnsName.trim() : "");
                 _interface.setIp(agentIp.trim());
                 _interface.setUseIp(true);
-            }else if(isDns.equals(agentType.trim()) && StringUtils.isNotEmpty(agentDnsName.trim())){
+            } else if (isDns.equals(agentType.trim()) && StringUtils.isNotEmpty(agentDnsName.trim())) {
                 //使用DNS
                 _interface.setDns(agentDnsName.trim());
-                _interface.setIp(agentIp!=null?agentIp.trim():"");
+                _interface.setIp(agentIp != null ? agentIp.trim() : "");
                 _interface.setUseIp(false);
-            }else{
+            } else {
                 return null;
             }
             _interface.setMain(true);
@@ -381,21 +382,21 @@ public class HostServiceImpl implements HostService {
         //JMX
         String jmxType = host.getJmxType();
         String jmxPort = host.getJmxPort();
-        if(StringUtils.isNotEmpty(jmxType) && StringUtils.isNotEmpty(jmxPort)){
+        if (StringUtils.isNotEmpty(jmxType) && StringUtils.isNotEmpty(jmxPort)) {
             String jmxDnsName = host.getJmxDnsName();
             String jmxIp = host.getJmxIp();
             ZabbixHostInterface _interface = new ZabbixHostInterface();
-            if(isIp.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxIp.trim())){
+            if (isIp.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxIp.trim())) {
                 //使用ip
-                _interface.setDns(jmxDnsName!=null?jmxDnsName.trim():"");
+                _interface.setDns(jmxDnsName != null ? jmxDnsName.trim() : "");
                 _interface.setIp(jmxIp.trim());
                 _interface.setUseIp(true);
-            }else if(isDns.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxDnsName.trim())){
+            } else if (isDns.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxDnsName.trim())) {
                 //使用DNS
                 _interface.setDns(jmxDnsName.trim());
-                _interface.setIp(jmxIp!=null?jmxIp.trim():"");
+                _interface.setIp(jmxIp != null ? jmxIp.trim() : "");
                 _interface.setUseIp(false);
-            }else{
+            } else {
                 return null;
             }
             _interface.setMain(true);
@@ -406,21 +407,21 @@ public class HostServiceImpl implements HostService {
         //SNMP
         String snmpType = host.getSnmpType();
         String snmpPort = host.getSnmpPort();
-        if(StringUtils.isNotEmpty(snmpType) && StringUtils.isNotEmpty(snmpPort)){
+        if (StringUtils.isNotEmpty(snmpType) && StringUtils.isNotEmpty(snmpPort)) {
             String snmpDnsName = host.getSnmpDnsName();
             String snmpIp = host.getSnmpIp();
             ZabbixHostInterface _interface = new ZabbixHostInterface();
-            if(isIp.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpIp.trim())){
+            if (isIp.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpIp.trim())) {
                 //使用ip
-                _interface.setDns(snmpDnsName!=null?snmpDnsName.trim():"");
+                _interface.setDns(snmpDnsName != null ? snmpDnsName.trim() : "");
                 _interface.setIp(snmpIp.trim());
                 _interface.setUseIp(true);
-            }else if(isDns.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpDnsName.trim())){
+            } else if (isDns.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpDnsName.trim())) {
                 //使用DNS
                 _interface.setDns(snmpDnsName.trim());
-                _interface.setIp(snmpIp!=null?snmpIp.trim():"");
+                _interface.setIp(snmpIp != null ? snmpIp.trim() : "");
                 _interface.setUseIp(false);
-            }else{
+            } else {
                 return null;
             }
             _interface.setMain(true);
@@ -431,21 +432,21 @@ public class HostServiceImpl implements HostService {
         //IPMI
         String ipmiType = host.getIpmiType();
         String ipmiPort = host.getIpmiPort();
-        if(StringUtils.isNotEmpty(ipmiType) && StringUtils.isNotEmpty(ipmiPort)){
+        if (StringUtils.isNotEmpty(ipmiType) && StringUtils.isNotEmpty(ipmiPort)) {
             String ipmiDnsName = host.getSnmpDnsName();
             String ipmiIp = host.getSnmpIp();
             ZabbixHostInterface _interface = new ZabbixHostInterface();
-            if(isIp.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiIp.trim())){
+            if (isIp.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiIp.trim())) {
                 //使用ip
-                _interface.setDns(ipmiDnsName!=null?ipmiDnsName.trim():"");
+                _interface.setDns(ipmiDnsName != null ? ipmiDnsName.trim() : "");
                 _interface.setIp(ipmiIp.trim());
                 _interface.setUseIp(true);
-            }else if(isDns.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiDnsName.trim())){
+            } else if (isDns.equals(ipmiType.trim()) && StringUtils.isNotEmpty(ipmiDnsName.trim())) {
                 //使用DNS
                 _interface.setDns(ipmiDnsName.trim());
-                _interface.setIp(ipmiIp!=null?ipmiIp.trim():"");
+                _interface.setIp(ipmiIp != null ? ipmiIp.trim() : "");
                 _interface.setUseIp(false);
-            }else{
+            } else {
                 return null;
             }
             _interface.setMain(true);
@@ -453,27 +454,27 @@ public class HostServiceImpl implements HostService {
             _interface.setType(InterfaceType.IPMI);
             interfaces.add(_interface);
         }
-        if(CollectionUtils.isEmpty(interfaces)){
+        if (CollectionUtils.isEmpty(interfaces)) {
             return null;
         }
         dto.setInterfaces(interfaces);
         //主机模板信息
         String templatesId = host.getTemplatesId();
-        if(StringUtils.isNotEmpty(templatesId)){
+        if (StringUtils.isNotEmpty(templatesId)) {
             MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(templatesId.trim());
-            if(monitorTemplatesEntity!=null){
+            if (monitorTemplatesEntity != null) {
                 String templateIds = monitorTemplatesEntity.getTemplates();
-                if(StringUtils.isNotEmpty(templateIds)){
+                if (StringUtils.isNotEmpty(templateIds)) {
                     String[] _templateIds = templateIds.split(",");
                     List<ZabbixTemplate> templates = new ArrayList<ZabbixTemplate>();
-                    for(String templateId : _templateIds){
-                        if(StringUtils.isNotEmpty(templateId)){
+                    for (String templateId : _templateIds) {
+                        if (StringUtils.isNotEmpty(templateId)) {
                             ZabbixTemplate template = new ZabbixTemplate();
                             template.setId(templateId.trim());
                             templates.add(template);
                         }
                     }
-                    if(!CollectionUtils.isEmpty(templates)){
+                    if (!CollectionUtils.isEmpty(templates)) {
                         dto.setTemplates(templates);
                     }
                 }
@@ -483,7 +484,7 @@ public class HostServiceImpl implements HostService {
         //主机宏信息
         List<HostMacro> macros = new ArrayList<HostMacro>();
         String macro_jmx = host.getJmxMacro();
-        if(StringUtils.isNotEmpty(macro_jmx)){
+        if (StringUtils.isNotEmpty(macro_jmx)) {
             //JMX：主机宏(JMX路径)
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PATH}");
@@ -491,7 +492,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_snmp = host.getSnmpMacro();
-        if(StringUtils.isNotEmpty(macro_snmp)){
+        if (StringUtils.isNotEmpty(macro_snmp)) {
             //SNMP：主机宏(SNMP团体名)
             HostMacro macro = new HostMacro();
             macro.setMacro("{$SNMP_COMMUNITY}");
@@ -499,7 +500,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_instance = host.getMssqlMacroInstance();
-        if(StringUtils.isNotEmpty(macro_mssql_instance)){
+        if (StringUtils.isNotEmpty(macro_mssql_instance)) {
             //MSSQLSERVICE主机宏：实例名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$INSTANCENAME}");
@@ -507,7 +508,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_odbc = host.getMssqlMacroOdbc();
-        if(StringUtils.isNotEmpty(macro_mssql_odbc)){
+        if (StringUtils.isNotEmpty(macro_mssql_odbc)) {
             //MSSQLSERVICE主机宏：ODBC源名称
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ODBC}");
@@ -515,7 +516,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_password = host.getMssqlMacroPassword();
-        if(StringUtils.isNotEmpty(macro_mssql_password)){
+        if (StringUtils.isNotEmpty(macro_mssql_password)) {
             //MSSQLSERVICE主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -523,7 +524,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_username = host.getMssqlMacroUsername();
-        if(StringUtils.isNotEmpty(macro_mssql_username)){
+        if (StringUtils.isNotEmpty(macro_mssql_username)) {
             //MSSQLSERVICE主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USER}");
@@ -531,7 +532,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_ip = host.getOracleMacroIp();
-        if(StringUtils.isNotEmpty(macro_oracle_ip)){
+        if (StringUtils.isNotEmpty(macro_oracle_ip)) {
             //ORACLE主机宏：oracle所在主机IP
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ADDRESS}");
@@ -539,7 +540,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_asm = host.getOracleMacroAsm();
-        if(StringUtils.isNotEmpty(macro_oracle_asm)){
+        if (StringUtils.isNotEmpty(macro_oracle_asm)) {
             //ORACLE主机宏：ASM卷名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ARCHIVE}");
@@ -547,7 +548,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_dbname = host.getOracleMacroDbname();
-        if(StringUtils.isNotEmpty(macro_oracle_dbname)){
+        if (StringUtils.isNotEmpty(macro_oracle_dbname)) {
             //ORACLE主机宏：数据库名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$DATABASE}");
@@ -555,7 +556,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_password = host.getOracleMacroPassword();
-        if(StringUtils.isNotEmpty(macro_oracle_password)){
+        if (StringUtils.isNotEmpty(macro_oracle_password)) {
             //ORACLE主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -563,7 +564,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_username = host.getOracleMacroUsername();
-        if(StringUtils.isNotEmpty(macro_oracle_username)){
+        if (StringUtils.isNotEmpty(macro_oracle_username)) {
             //ORACLE主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USERNAME}");
@@ -571,7 +572,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_cpu_frequency = host.getVmMacroCpuFrequency();
-        if(StringUtils.isNotEmpty(macro_vm_cpu_frequency)){
+        if (StringUtils.isNotEmpty(macro_vm_cpu_frequency)) {
             //虚拟化主机宏：CPU单核频率
             HostMacro macro = new HostMacro();
             macro.setMacro("{$FREQ}");
@@ -579,7 +580,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_password = host.getVmMacroPassword();
-        if(StringUtils.isNotEmpty(macro_vm_password)){
+        if (StringUtils.isNotEmpty(macro_vm_password)) {
             //虚拟化主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -587,7 +588,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_sdk_link = host.getVmMacroSdkLink();
-        if(StringUtils.isNotEmpty(macro_vm_sdk_link)){
+        if (StringUtils.isNotEmpty(macro_vm_sdk_link)) {
             //虚拟化主机宏：SDK链接
             HostMacro macro = new HostMacro();
             macro.setMacro("{$URL}");
@@ -595,20 +596,20 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_username = host.getVmMacroUsername();
-        if(StringUtils.isNotEmpty(macro_vm_username)){
+        if (StringUtils.isNotEmpty(macro_vm_username)) {
             //虚拟化主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USERNAME}");
             macro.setValue(macro_vm_username.trim());
             macros.add(macro);
         }
-        if(!CollectionUtils.isEmpty(macros)){
+        if (!CollectionUtils.isEmpty(macros)) {
             dto.setMacros(macros);
         }
 
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixHostService.create(dto, authToken);
@@ -616,44 +617,45 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 调用zabbix接口进行修改
+     *
      * @param host
      * @return
      * @throws ZabbixApiException
      */
     private String updateHostToZabbix(HostEntity host) throws Exception {
         //hostid 必填项
-        if(host==null || StringUtils.isEmpty(host.getHostId())){
+        if (host == null || StringUtils.isEmpty(host.getHostId())) {
             return null;
         }
         //主机信息
         ZabbixHostDTO dto = new ZabbixHostDTO();
         dto.setId(host.getHostId().trim());
-        if(host.getObjectName()!=null){
+        if (host.getObjectName() != null) {
             dto.setTechnicalName(host.getObjectName());
         }
-        if(host.getBusinessName()!=null){
+        if (host.getBusinessName() != null) {
             dto.setName(host.getBusinessName());
         }
-        if(host.getRemark()!=null){
+        if (host.getRemark() != null) {
             dto.setDescription(host.getRemark());
         }
-        if("0".equals(host.getEnableMonitor())||"1".equals(host.getEnableMonitor())){
-            dto.setUnmonitored("1".equals(host.getEnableMonitor())?false:true);
+        if ("0".equals(host.getEnableMonitor()) || "1".equals(host.getEnableMonitor())) {
+            dto.setUnmonitored("1".equals(host.getEnableMonitor()) ? false : true);
         }
 
         //主机组信息
         String groupIds = host.getGroupId();
-        if(StringUtils.isNotEmpty(groupIds)){
+        if (StringUtils.isNotEmpty(groupIds)) {
             List<ZabbixHostGroup> groups = new ArrayList<ZabbixHostGroup>();
             String[] _groupIds = groupIds.split(",");
-            for(String groupId : _groupIds){
-                if(StringUtils.isNotEmpty(groupId)){
+            for (String groupId : _groupIds) {
+                if (StringUtils.isNotEmpty(groupId)) {
                     ZabbixHostGroup group = new ZabbixHostGroup();
                     group.setId(groupId.trim());
                     groups.add(group);
                 }
             }
-            if(!CollectionUtils.isEmpty(groups)){
+            if (!CollectionUtils.isEmpty(groups)) {
                 dto.setGroups(groups);
             }
         }
@@ -661,78 +663,78 @@ public class HostServiceImpl implements HostService {
         //主机接口信息
         //获得token
         String _authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(_authToken)){
+        if (StringUtils.isEmpty(_authToken)) {
             return null;
         }
         ZabbixGetHostInterfaceParams params = new ZabbixGetHostInterfaceParams();
         params.setHostIds(Arrays.asList(new String[]{host.getHostId().trim()}));
         List<ZabbixHostInterface> zabbixHostInterfaceList = zabbixHostInterfaceService.get(params, _authToken);
-        if(zabbixHostInterfaceList!=null && !CollectionUtils.isEmpty(zabbixHostInterfaceList)){
+        if (zabbixHostInterfaceList != null && !CollectionUtils.isEmpty(zabbixHostInterfaceList)) {
             String isIp = "1";
             String isDns = "2";
-            for(ZabbixHostInterface zabbixInterface : zabbixHostInterfaceList) {
-                if(InterfaceType.AGENT.equals(zabbixInterface.getType())){
+            for (ZabbixHostInterface zabbixInterface : zabbixHostInterfaceList) {
+                if (InterfaceType.AGENT.equals(zabbixInterface.getType())) {
                     //AGENT
                     String agentType = host.getAgentType();
                     String agentPort = host.getAgentPort();
-                    if(StringUtils.isNotEmpty(agentType) && StringUtils.isNotEmpty(agentPort)){
+                    if (StringUtils.isNotEmpty(agentType) && StringUtils.isNotEmpty(agentPort)) {
                         String agentDnsName = host.getAgentDnsName();
                         String agentIp = host.getAgentIp();
-                        if(isIp.equals(agentType.trim()) && StringUtils.isNotEmpty(agentIp.trim())){
+                        if (isIp.equals(agentType.trim()) && StringUtils.isNotEmpty(agentIp.trim())) {
                             //使用ip
-                            zabbixInterface.setDns(agentDnsName!=null?agentDnsName.trim():"");
+                            zabbixInterface.setDns(agentDnsName != null ? agentDnsName.trim() : "");
                             zabbixInterface.setIp(agentIp.trim());
                             zabbixInterface.setUseIp(true);
-                        }else if(isDns.equals(agentType.trim()) && StringUtils.isNotEmpty(agentDnsName.trim())){
+                        } else if (isDns.equals(agentType.trim()) && StringUtils.isNotEmpty(agentDnsName.trim())) {
                             //使用DNS
                             zabbixInterface.setDns(agentDnsName.trim());
-                            zabbixInterface.setIp(agentIp!=null?agentIp.trim():"");
+                            zabbixInterface.setIp(agentIp != null ? agentIp.trim() : "");
                             zabbixInterface.setUseIp(false);
-                        }else{
+                        } else {
                             continue;
                         }
                         zabbixInterface.setPort(agentPort.trim());
                     }
-                }else if(InterfaceType.JMX.equals(zabbixInterface.getType())){
+                } else if (InterfaceType.JMX.equals(zabbixInterface.getType())) {
                     //JMX
                     String jmxType = host.getJmxType();
                     String jmxPort = host.getJmxPort();
-                    if(StringUtils.isNotEmpty(jmxType) && StringUtils.isNotEmpty(jmxPort)){
+                    if (StringUtils.isNotEmpty(jmxType) && StringUtils.isNotEmpty(jmxPort)) {
                         String jmxDnsName = host.getJmxDnsName();
                         String jmxIp = host.getJmxIp();
-                        if(isIp.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxIp.trim())){
+                        if (isIp.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxIp.trim())) {
                             //使用ip
-                            zabbixInterface.setDns(jmxDnsName!=null?jmxDnsName.trim():"");
+                            zabbixInterface.setDns(jmxDnsName != null ? jmxDnsName.trim() : "");
                             zabbixInterface.setIp(jmxIp.trim());
                             zabbixInterface.setUseIp(true);
-                        }else if(isDns.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxDnsName.trim())){
+                        } else if (isDns.equals(jmxType.trim()) && StringUtils.isNotEmpty(jmxDnsName.trim())) {
                             //使用DNS
                             zabbixInterface.setDns(jmxDnsName.trim());
-                            zabbixInterface.setIp(jmxIp!=null?jmxIp.trim():"");
+                            zabbixInterface.setIp(jmxIp != null ? jmxIp.trim() : "");
                             zabbixInterface.setUseIp(false);
-                        }else{
+                        } else {
                             continue;
                         }
                         zabbixInterface.setPort(jmxPort.trim());
                     }
-                }else if(InterfaceType.SNMP.equals(zabbixInterface.getType())){
+                } else if (InterfaceType.SNMP.equals(zabbixInterface.getType())) {
                     //SNMP
                     String snmpType = host.getSnmpType();
                     String snmpPort = host.getSnmpPort();
-                    if(StringUtils.isNotEmpty(snmpType) && StringUtils.isNotEmpty(snmpPort)){
+                    if (StringUtils.isNotEmpty(snmpType) && StringUtils.isNotEmpty(snmpPort)) {
                         String snmpDnsName = host.getSnmpDnsName();
                         String snmpIp = host.getSnmpIp();
-                        if(isIp.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpIp.trim())){
+                        if (isIp.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpIp.trim())) {
                             //使用ip
-                            zabbixInterface.setDns(snmpDnsName!=null?snmpDnsName.trim():"");
+                            zabbixInterface.setDns(snmpDnsName != null ? snmpDnsName.trim() : "");
                             zabbixInterface.setIp(snmpIp.trim());
                             zabbixInterface.setUseIp(true);
-                        }else if(isDns.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpDnsName.trim())){
+                        } else if (isDns.equals(snmpType.trim()) && StringUtils.isNotEmpty(snmpDnsName.trim())) {
                             //使用DNS
                             zabbixInterface.setDns(snmpDnsName.trim());
-                            zabbixInterface.setIp(snmpIp!=null?snmpIp.trim():"");
+                            zabbixInterface.setIp(snmpIp != null ? snmpIp.trim() : "");
                             zabbixInterface.setUseIp(false);
-                        }else{
+                        } else {
                             continue;
                         }
                         zabbixInterface.setPort(snmpPort.trim());
@@ -746,7 +748,7 @@ public class HostServiceImpl implements HostService {
         //主机宏信息
         List<HostMacro> macros = new ArrayList<HostMacro>();
         String macro_jmx = host.getJmxMacro();
-        if(StringUtils.isNotEmpty(macro_jmx)){
+        if (StringUtils.isNotEmpty(macro_jmx)) {
             //JMX：主机宏(JMX路径)
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PATH}");
@@ -754,7 +756,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_snmp = host.getSnmpMacro();
-        if(StringUtils.isNotEmpty(macro_snmp)){
+        if (StringUtils.isNotEmpty(macro_snmp)) {
             //SNMP：主机宏(SNMP团体名)
             HostMacro macro = new HostMacro();
             macro.setMacro("{$SNMP_COMMUNITY}");
@@ -762,7 +764,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_instance = host.getMssqlMacroInstance();
-        if(StringUtils.isNotEmpty(macro_mssql_instance)){
+        if (StringUtils.isNotEmpty(macro_mssql_instance)) {
             //MSSQLSERVICE主机宏：实例名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$INSTANCENAME}");
@@ -770,7 +772,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_odbc = host.getMssqlMacroOdbc();
-        if(StringUtils.isNotEmpty(macro_mssql_odbc)){
+        if (StringUtils.isNotEmpty(macro_mssql_odbc)) {
             //MSSQLSERVICE主机宏：ODBC源名称
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ODBC}");
@@ -778,7 +780,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_password = host.getMssqlMacroPassword();
-        if(StringUtils.isNotEmpty(macro_mssql_password)){
+        if (StringUtils.isNotEmpty(macro_mssql_password)) {
             //MSSQLSERVICE主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -786,7 +788,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_mssql_username = host.getMssqlMacroUsername();
-        if(StringUtils.isNotEmpty(macro_mssql_username)){
+        if (StringUtils.isNotEmpty(macro_mssql_username)) {
             //MSSQLSERVICE主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USER}");
@@ -794,7 +796,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_ip = host.getOracleMacroIp();
-        if(StringUtils.isNotEmpty(macro_oracle_ip)){
+        if (StringUtils.isNotEmpty(macro_oracle_ip)) {
             //ORACLE主机宏：oracle所在主机IP
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ADDRESS}");
@@ -802,7 +804,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_asm = host.getOracleMacroAsm();
-        if(StringUtils.isNotEmpty(macro_oracle_asm)){
+        if (StringUtils.isNotEmpty(macro_oracle_asm)) {
             //ORACLE主机宏：ASM卷名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$ARCHIVE}");
@@ -810,7 +812,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_dbname = host.getOracleMacroDbname();
-        if(StringUtils.isNotEmpty(macro_oracle_dbname)){
+        if (StringUtils.isNotEmpty(macro_oracle_dbname)) {
             //ORACLE主机宏：数据库名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$DATABASE}");
@@ -818,7 +820,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_password = host.getOracleMacroPassword();
-        if(StringUtils.isNotEmpty(macro_oracle_password)){
+        if (StringUtils.isNotEmpty(macro_oracle_password)) {
             //ORACLE主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -826,7 +828,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_oracle_username = host.getOracleMacroUsername();
-        if(StringUtils.isNotEmpty(macro_oracle_username)){
+        if (StringUtils.isNotEmpty(macro_oracle_username)) {
             //ORACLE主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USERNAME}");
@@ -834,7 +836,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_cpu_frequency = host.getVmMacroCpuFrequency();
-        if(StringUtils.isNotEmpty(macro_vm_cpu_frequency)){
+        if (StringUtils.isNotEmpty(macro_vm_cpu_frequency)) {
             //虚拟化主机宏：CPU单核频率
             HostMacro macro = new HostMacro();
             macro.setMacro("{$FREQ}");
@@ -842,7 +844,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_password = host.getVmMacroPassword();
-        if(StringUtils.isNotEmpty(macro_vm_password)){
+        if (StringUtils.isNotEmpty(macro_vm_password)) {
             //虚拟化主机宏：密码
             HostMacro macro = new HostMacro();
             macro.setMacro("{$PASSWORD}");
@@ -850,7 +852,7 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_sdk_link = host.getVmMacroSdkLink();
-        if(StringUtils.isNotEmpty(macro_vm_sdk_link)){
+        if (StringUtils.isNotEmpty(macro_vm_sdk_link)) {
             //虚拟化主机宏：SDK链接
             HostMacro macro = new HostMacro();
             macro.setMacro("{$URL}");
@@ -858,20 +860,20 @@ public class HostServiceImpl implements HostService {
             macros.add(macro);
         }
         String macro_vm_username = host.getVmMacroUsername();
-        if(StringUtils.isNotEmpty(macro_vm_username)){
+        if (StringUtils.isNotEmpty(macro_vm_username)) {
             //虚拟化主机宏：用户名
             HostMacro macro = new HostMacro();
             macro.setMacro("{$USERNAME}");
             macro.setValue(macro_vm_username.trim());
             macros.add(macro);
         }
-        if(!CollectionUtils.isEmpty(macros)){
+        if (!CollectionUtils.isEmpty(macros)) {
             dto.setMacros(macros);
         }
 
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixHostService.update(dto, authToken);
@@ -879,6 +881,7 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 调用zabbix接口进行修改Status
+     *
      * @param hostId
      * @param status
      * @return
@@ -886,19 +889,19 @@ public class HostServiceImpl implements HostService {
      */
     private String updateHostStatusToZabbix(String hostId, String status) throws Exception {
         //hostid status 必填项
-        if(StringUtils.isEmpty(hostId) || StringUtils.isEmpty(status)){
+        if (StringUtils.isEmpty(hostId) || StringUtils.isEmpty(status)) {
             return null;
         }
-        if(!"0".equals(status.trim())&&!"1".equals(status.trim())){
+        if (!"0".equals(status.trim()) && !"1".equals(status.trim())) {
             return null;
         }
         //主机信息
         ZabbixHostDTO dto = new ZabbixHostDTO();
         dto.setId(hostId.trim());
-        dto.setUnmonitored("1".equals(status.trim())?false:true);
+        dto.setUnmonitored("1".equals(status.trim()) ? false : true);
         //获得token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
         return zabbixHostService.update(dto, authToken);
@@ -906,35 +909,36 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 按主机类型获得zabbix主机组
+     *
      * @param params
      * @return
      * @throws Exception
      */
     @Override
     public List<ZabbixHostGroupDTO> findHostGroupByTypeId(Map<String, Object> params) throws Exception {
-        if(params!=null){
-            String typeId = (String)params.get("typeId");
-            if(StringUtils.isNotEmpty(typeId)){
-                String groupName = (String)params.get("groupName");
-                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId,false);
+        if (params != null) {
+            String typeId = (String) params.get("typeId");
+            if (StringUtils.isNotEmpty(typeId)) {
+                String groupName = (String) params.get("groupName");
+                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId, 0);
                 if (null != hostList && !CollectionUtils.isEmpty(hostList)) {
                     List<String> hostIds = new ArrayList<>();
-                    for(HostEntity host : hostList){
-                        if(StringUtils.isNotEmpty(host.getHostId())){
+                    for (HostEntity host : hostList) {
+                        if (StringUtils.isNotEmpty(host.getHostId())) {
                             hostIds.add(host.getHostId().trim());
                         }
                     }
-                    if(!CollectionUtils.isEmpty(hostIds)){
+                    if (!CollectionUtils.isEmpty(hostIds)) {
                         ZabbixGetHostGroupParams _params = new ZabbixGetHostGroupParams();
                         _params.setHostIds(hostIds);
-                        if(StringUtils.isNotEmpty(groupName)){
+                        if (StringUtils.isNotEmpty(groupName)) {
                             Map<String, Object> search = new HashMap<>();
                             search.put("name", groupName);
                             _params.setSearch(search);
                         }
                         //获得token
                         String authToken = zabbixAuthService.getAuth();
-                        if(StringUtils.isEmpty(authToken)){
+                        if (StringUtils.isEmpty(authToken)) {
                             return null;
                         }
                         return zabbixHostGroupService.get(_params, authToken);
@@ -947,73 +951,74 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 获得所有主机指标项的TOP5值
+     *
      * @param params
      * @return
      * @throws Exception
      */
     @Override
-    public List<Map<String,String>> getTop5ByItem(Map<String, Object> params) throws Exception {
-        List<Map<String,String>> result = new ArrayList<>();
-        if(params!=null){
+    public List<Map<String, String>> getTop5ByItem(Map<String, Object> params) throws Exception {
+        List<Map<String, String>> result = new ArrayList<>();
+        if (params != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            Map<String, String> map =null;
-            String typeId = (String)params.get("typeId");
-            String subtypeId = (String)params.get("subtypeId");
-            String itemKey = (String)params.get("itemKey");
-            String valueType = (String)params.get("valueType");
+            Map<String, String> map = null;
+            String typeId = (String) params.get("typeId");
+            String subtypeId = (String) params.get("subtypeId");
+            String itemKey = (String) params.get("itemKey");
+            String valueType = (String) params.get("valueType");
 
-            if(StringUtils.isEmpty(itemKey)){
+            if (StringUtils.isEmpty(itemKey)) {
                 return null;
             }
 
             //获得token
             String authToken = zabbixAuthService.getAuth();
-            if(StringUtils.isEmpty(authToken)){
+            if (StringUtils.isEmpty(authToken)) {
                 return null;
             }
 
             HostParams hostParams = new HostParams();
-            if(StringUtils.isNotEmpty(typeId)){
+            if (StringUtils.isNotEmpty(typeId)) {
                 hostParams.setTypeId(typeId);
             }
-            if(StringUtils.isNotEmpty(subtypeId)){
+            if (StringUtils.isNotEmpty(subtypeId)) {
                 hostParams.setSubtypeId(subtypeId);
             }
             List<HostEntity> hostList = findByCondition(hostParams);
 
             List<String> hostIds = new ArrayList<>();
-            for(HostEntity host : hostList){
+            for (HostEntity host : hostList) {
                 String hostId = host.getHostId();
                 hostIds.add(hostId);
                 map = new HashMap<>();
-                map.put("hostId",hostId);
-                map.put("hostName",host.getBusinessName());
+                map.put("hostId", hostId);
+                map.put("hostName", host.getBusinessName());
                 result.add(map);
             }
 
-            if (CollectionUtils.isEmpty(hostIds)){
+            if (CollectionUtils.isEmpty(hostIds)) {
                 return null;
             }
 
             ZabbixGetItemParams itemParams = new ZabbixGetItemParams();
-            itemParams.setOutput(Arrays.asList(new String[]{"itemid","hostid","name","key_"}));
+            itemParams.setOutput(Arrays.asList(new String[]{"itemid", "hostid", "name", "key_"}));
             itemParams.setHostIds(hostIds);
             Map<String, Object> filter = new HashMap<>();
             // filter.put("key_","jmx[\"java.lang:type=Threading\",ThreadCount]");
-            filter.put("key_",itemKey.trim());
+            filter.put("key_", itemKey.trim());
             itemParams.setFilter(filter);
 
             List<ZabbixGetItemDTO> itemList = zabbixItemService.get(itemParams, authToken);
             ZabbixGetHistoryParams historyParams = null;
-            for(ZabbixGetItemDTO dto : itemList){
+            for (ZabbixGetItemDTO dto : itemList) {
                 String hostId = dto.getHostId();
                 String itemId = dto.getId();
                 String itemName = dto.getName();
 
                 historyParams = new ZabbixGetHistoryParams();
                 try {
-                    historyParams.setHistory(!"0".equals(valueType)?Integer.parseInt(valueType):0);
-                }catch (Exception e){
+                    historyParams.setHistory(!"0".equals(valueType) ? Integer.parseInt(valueType) : 0);
+                } catch (Exception e) {
                     historyParams.setHistory(0);
                 }
                 historyParams.setItemIds(Arrays.asList(new String[]{itemId}));
@@ -1021,63 +1026,61 @@ public class HostServiceImpl implements HostService {
                 historyParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
                 historyParams.setLimit(1);
 
-                for(Map<String, String> _map : result){
-                    if(hostId.equals(_map.get("hostId"))){
-                        _map.put("itemId",itemId);
-                        _map.put("itemName",itemName);
+                for (Map<String, String> _map : result) {
+                    if (hostId.equals(_map.get("hostId"))) {
+                        _map.put("itemId", itemId);
+                        _map.put("itemName", itemName);
 
                         List<ZabbixHistoryDTO> historyList = zabbixHistoryService.get(historyParams, authToken);
-                        if (historyList!=null && !CollectionUtils.isEmpty(historyList)){
+                        if (historyList != null && !CollectionUtils.isEmpty(historyList)) {
                             ZabbixHistoryDTO history = historyList.get(0);
-                            try{
-                                _map.put("clock",df.format(history.getClock()));
-                            }catch (Exception e){
-                                _map.put("clock","");
+                            try {
+                                _map.put("clock", df.format(history.getClock()));
+                            } catch (Exception e) {
+                                _map.put("clock", "");
                             }
-                            _map.put("value",history.getValue());
-                        }else{
-                            _map.put("clock","");
-                            _map.put("value","0");
+                            _map.put("value", history.getValue());
+                        } else {
+                            _map.put("clock", "");
+                            _map.put("value", "0");
                         }
                         break;
                     }
                 }
             }
 
-            if(!CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(itemList)){
+            if (!CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(itemList)) {
                 // 比较value为0移除此数据
-                for (int i = 0;i<result.size();i++) {
+                for (int i = 0; i < result.size(); i++) {
                     try {
-                        Map<String,String> _map = result.get(i);
+                        Map<String, String> _map = result.get(i);
                         double d = Double.parseDouble(_map.get("value"));
-                        if((d<0.0001)&&(d>-0.0001))
-                        {
+                        if ((d < 0.0001) && (d > -0.0001)) {
                             result.remove(i);
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         break;
                     }
                 }
-                Collections.sort(result, new Comparator<Map>()
-                {
+                Collections.sort(result, new Comparator<Map>() {
                     @Override
                     public int compare(Map o1, Map o2) {
                         try {
-                            double v1 = Double.parseDouble((String)o1.get("value"));
-                            double v2 = Double.parseDouble((String)o2.get("value"));
-                            if(v1>v2){
+                            double v1 = Double.parseDouble((String) o1.get("value"));
+                            double v2 = Double.parseDouble((String) o2.get("value"));
+                            if (v1 > v2) {
                                 return -1;
-                            }else if(v1<v2){
+                            } else if (v1 < v2) {
                                 return 1;
-                            }else{
+                            } else {
                                 return 0;
                             }
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             return 0;
                         }
                     }
                 });
-                result = result.subList(0,result.size()>4?5:result.size());
+                result = result.subList(0, result.size() > 4 ? 5 : result.size());
             }
             return result;
         }
@@ -1086,82 +1089,82 @@ public class HostServiceImpl implements HostService {
 
     /**
      * 获得所有主机触发器严重的TOP5值
+     *
      * @param params
      * @return
      * @throws Exception
      */
     @Override
-    public List<Map<String,String>> getTop5ByTrigger(Map<String, Object> params) throws Exception {
-        List<Map<String,String>> result = new ArrayList<>();
-        if(params!=null){
+    public List<Map<String, String>> getTop5ByTrigger(Map<String, Object> params) throws Exception {
+        List<Map<String, String>> result = new ArrayList<>();
+        if (params != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            Map<String, String> map =null;
-            String typeId = (String)params.get("typeId");
-            String subtypeId = (String)params.get("subtypeId");
-            String valueType = (String)params.get("valueType");
+            Map<String, String> map = null;
+            String typeId = (String) params.get("typeId");
+            String subtypeId = (String) params.get("subtypeId");
+            String valueType = (String) params.get("valueType");
 
             //获得token
             String authToken = zabbixAuthService.getAuth();
-            if(StringUtils.isEmpty(authToken)){
+            if (StringUtils.isEmpty(authToken)) {
                 return null;
             }
 
             HostParams hostParams = new HostParams();
-            if(StringUtils.isNotEmpty(typeId)){
+            if (StringUtils.isNotEmpty(typeId)) {
                 hostParams.setTypeId(typeId);
             }
-            if(StringUtils.isNotEmpty(subtypeId)){
+            if (StringUtils.isNotEmpty(subtypeId)) {
                 hostParams.setSubtypeId(subtypeId);
             }
             List<HostEntity> hostList = findByCondition(hostParams);
 
             List<String> hostIds = new ArrayList<>();
-            for(HostEntity host : hostList){
+            for (HostEntity host : hostList) {
                 String hostId = host.getHostId();
                 hostIds.add(hostId);
                 map = new HashMap<>();
-                map.put("hostId",hostId);
-                map.put("hostName",host.getBusinessName());
+                map.put("hostId", hostId);
+                map.put("hostName", host.getBusinessName());
                 ZabbixGetTriggerParams triggerParams = new ZabbixGetTriggerParams();
-                triggerParams.setOutput(Arrays.asList(new String[]{"triggerid","description","priority","value"}));
+                triggerParams.setOutput(Arrays.asList(new String[]{"triggerid", "description", "priority", "value"}));
                 triggerParams.setHostIds(Arrays.asList(new String[]{hostId}));
                 Map<String, Object> filter = new HashMap<>();
                 //filter.put("status",0);
-                filter.put("value",1);
+                filter.put("value", 1);
                 try {
-                    filter.put("priority",!"4".equals(valueType)?Integer.parseInt(valueType):4);
-                }catch (Exception e){
+                    filter.put("priority", !"4".equals(valueType) ? Integer.parseInt(valueType) : 4);
+                } catch (Exception e) {
                     //filter.put("priority",4);
                 }
                 triggerParams.setFilter(filter);
                 triggerParams.setSortFields(Arrays.asList(new String[]{"priority"}));
                 triggerParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
                 List<ZabbixTriggerDTO> triggerList = zabbixTriggerService.get(triggerParams, authToken);
-                if(triggerList != null && !CollectionUtils.isEmpty(triggerList)){
-                    map.put("value",String.valueOf(triggerList.size()));
+                if (triggerList != null && !CollectionUtils.isEmpty(triggerList)) {
+                    map.put("value", String.valueOf(triggerList.size()));
                     result.add(map);
-                }else{
-                    map.put("value","0");
+                } else {
+                    map.put("value", "0");
                 }
                 //result.add(map);
             }
-            if(!CollectionUtils.isEmpty(result)){
-                Collections.sort(result, new Comparator<Map>()
-                {
+            if (!CollectionUtils.isEmpty(result)) {
+                Collections.sort(result, new Comparator<Map>() {
                     @Override
                     public int compare(Map o1, Map o2) {
-                        int v1 = Integer.parseInt((String)o1.get("value"));
-                        int v2 = Integer.parseInt((String)o2.get("value"));
-                        if(v1>v2){
+                        int v1 = Integer.parseInt((String) o1.get("value"));
+                        int v2 = Integer.parseInt((String) o2.get("value"));
+                        if (v1 > v2) {
                             return -1;
-                        }else if(v1<v2){
+                        } else if (v1 < v2) {
                             return 1;
-                        }else{
+                        } else {
                             return 0;
                         }
                     }
                 });
-                result = result.subList(0,result.size()>4?5:result.size());
+                result = result.subList(0, result.size() > 4 ? 5 : result.size());
             }
             return result;
         }
@@ -1171,5 +1174,15 @@ public class HostServiceImpl implements HostService {
     @Override
     public HostEntity findHostIdinfo(String id) throws Exception {
         return hostRepo.findByHostId(id);
+    }
+
+    @Override
+    public List<HostEntity> getHosts() throws Exception {
+        return hostRepo.findByDeleted(0);
+    }
+
+    @Override
+    public List<Object> getHostIds() throws Exception {
+        return hostRepo.getHostIds();
     }
 }

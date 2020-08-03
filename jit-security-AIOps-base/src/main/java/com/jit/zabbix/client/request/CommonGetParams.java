@@ -2,7 +2,10 @@ package com.jit.zabbix.client.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -11,8 +14,8 @@ import java.util.Map;
 /**
  * Common get method parameters.
  *
- * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference_commentary#common_get_method_parameters">Common "get" method parameters</a>
  * @author Mamadou Lamine NIANG
+ * @see <a href="https://www.zabbix.com/documentation/4.0/manual/api/reference_commentary#common_get_method_parameters">Common "get" method parameters</a>
  **/
 @Data
 @NoArgsConstructor

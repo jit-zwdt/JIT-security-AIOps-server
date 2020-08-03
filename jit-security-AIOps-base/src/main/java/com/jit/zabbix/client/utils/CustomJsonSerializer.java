@@ -21,7 +21,8 @@ public final class CustomJsonSerializer {
 
     private static final String TIME_OFFSET = "+8";
 
-    private CustomJsonSerializer() {}
+    private CustomJsonSerializer() {
+    }
 
     public static class BooleanNumericSerializer extends JsonSerializer<Boolean> {
 
@@ -39,26 +40,26 @@ public final class CustomJsonSerializer {
         }
     }
 
-    public static class DateStrDeserializer extends  JsonDeserializer<LocalDateTime>{
+    public static class DateStrDeserializer extends JsonDeserializer<LocalDateTime> {
 
         @Override
         public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
             String date = jsonParser.getText();
-            if(!"0".equals(date)){
-                LocalDateTime localDateTimeBack =  LocalDateTime.ofEpochSecond(Long.valueOf(date), 0, ZoneOffset.of(TIME_OFFSET));
+            if (!"0".equals(date)) {
+                LocalDateTime localDateTimeBack = LocalDateTime.ofEpochSecond(Long.valueOf(date), 0, ZoneOffset.of(TIME_OFFSET));
                 return localDateTimeBack;
-            }else{
+            } else {
                 return null;
             }
         }
     }
 
-    public static class TimestampStrDeserializer extends  JsonDeserializer<Timestamp>{
+    public static class TimestampStrDeserializer extends JsonDeserializer<Timestamp> {
 
         @Override
         public Timestamp deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
             String date = jsonParser.getText();
-            if(date!=null&&!"".equals(date)&&!"0".equals(date)){
+            if (date != null && !"".equals(date) && !"0".equals(date)) {
                 Timestamp ts = null;
                 try {
                     ts = Timestamp.valueOf(date);
@@ -66,22 +67,22 @@ public final class CustomJsonSerializer {
                     e.printStackTrace();
                 }
                 return ts;
-            }else{
+            } else {
                 return null;
             }
         }
     }
 
-    public static class LocalDateTimeStrDeserializer extends  JsonDeserializer<LocalDateTime>{
+    public static class LocalDateTimeStrDeserializer extends JsonDeserializer<LocalDateTime> {
 
         @Override
         public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
             String date = jsonParser.getText();
-            if(date!=null&&!"".equals(date)&&!"0".equals(date)){
+            if (date != null && !"".equals(date) && !"0".equals(date)) {
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                LocalDateTime localDateTimeBack = LocalDateTime.parse(date,df);
+                LocalDateTime localDateTimeBack = LocalDateTime.parse(date, df);
                 return localDateTimeBack;
-            }else{
+            } else {
                 return null;
             }
         }
