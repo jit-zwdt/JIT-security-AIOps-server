@@ -14,8 +14,12 @@ public class ProblemParams {
 
     private Integer severity;
 
+    private String hostId;
+
     private String timeFrom;
 
     private String timeTill;
+
+
 }
 

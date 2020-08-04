@@ -43,6 +43,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Autowired
     private ZabbixTriggerService zabbixTriggerService;
 
+
     @Override
     public List<ZabbixProblemDTO> findByCondition(ProblemParams params) throws Exception {
         String authToken = zabbixAuthService.getAuth();
@@ -51,20 +52,33 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+
+        // set severity
         if (params.getSeverity() != null) {
             Map mapFilter = new HashMap();
             mapFilter.put("severity", params.getSeverity());
             params_pro.setFilter(mapFilter);
-
         }
+
+        // set hostId
+        if(params.getHostId() != null) {
+            List<String> hostIds = new ArrayList<>();
+            hostIds.add(params.getHostId());
+            params_pro.setHostids(hostIds);
+        }
+
+        // set timeFrom
         if (params.getTimeFrom() != null) {
             params_pro.setTime_from(params.getTimeFrom());
         }
+
+        // set timeTill
         if (params.getTimeTill() != null) {
             params_pro.setTime_till(params.getTimeTill());
         }
 
-        return zabbixProblemService.get(params_pro, authToken);
+        List<ZabbixProblemDTO> result = zabbixProblemService.get(params_pro, authToken);
+        return result;
     }
 
     @Override
@@ -75,47 +89,36 @@ public class ProblemServiceImpl implements ProblemService {
             return null;
         }
 
-        List<ProblemHostDTO> problemHosts = new ArrayList<>();
-        ZabbixGetTriggerParams _params = new ZabbixGetTriggerParams();
-        _params.setSelectFunctions(EXTEND);
-        _params.setOutput(EXTEND);
-        _params.setSelectHosts(EXTEND);
+        // get host info
+        List<Object> hostInfo = hostRepo.getHostIdsAndIp();
 
-        // get problems
-        List<ZabbixProblemDTO> problems = problemService.findByCondition(params);
-        if(problems == null || problems.size() == 0) {
-            return null;
+        // create a map to store host information, using host id as key
+        Map<String, Object[]> mapHostInfo = new HashMap<>();
+        for(int i = 0; i < hostInfo.size(); i++) {
+            Object[] host = (Object[]) hostInfo.get(i);
+            mapHostInfo.put(host[0].toString(), host);
         }
 
-        // for each problem, find a trigger and register a ProblemHost object
-        else{
-            for(ZabbixProblemDTO problem : problems) {
-                ProblemHostDTO temp = new ProblemHostDTO();
+        List<ProblemHostDTO> problemHostDTOs = new ArrayList<>();
 
-                // 封装triggerService 参数
-//                _params.setTriggerIds(Arrays.asList(problem.getObjectId()));
-                Map<String, Object> filter = new HashMap<>();
-                filter.put("triggerid", problem.getObjectId());
-                _params.setFilter(filter);
-
-                // 获取trigger
-                List<ZabbixTriggerDTO> trigger = zabbixTriggerService.get(_params, authToken);
-                if(trigger == null || trigger.size() == 0) {
-                    continue;
-                }
-                else {
-                    // 增加到ProblemHostDTO列表
-//                    temp.setHostId("test");
-//                    temp.setHostName("test");
-                    temp.setZabbixProblemDTO(problem);
-                    temp.setHostId(trigger.get(0).getZabbixHost().get(0).getId());
-                    temp.setHostName(trigger.get(0).getZabbixHost().get(0).getName());
-                    problemHosts.add(temp);
+        // for each hostId, find problem
+        for(String hostId : mapHostInfo.keySet()) {
+            params.setHostId(hostId);
+            List<ZabbixProblemDTO> problems = findByCondition(params);
+            if(problems != null) {
+                for(ZabbixProblemDTO problem : problems) {
+                    ProblemHostDTO problemHostDTO = new ProblemHostDTO();
+                    problemHostDTO.setZabbixProblemDTO(problem);
+                    Object[] obj = mapHostInfo.get(hostId);
+                    problemHostDTO.setHostId(obj[0].toString());
+                    problemHostDTO.setHostName(obj[1].toString());
+                    problemHostDTO.setIp(obj[2].toString());
+                    problemHostDTOs.add(problemHostDTO);
                 }
             }
 
-            return problemHosts;
         }
+        return problemHostDTOs;
     }
 
     @Override
