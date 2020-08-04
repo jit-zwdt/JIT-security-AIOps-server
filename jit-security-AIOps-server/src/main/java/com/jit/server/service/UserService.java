@@ -7,7 +7,6 @@ import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import java.util.List;
 
 public interface UserService {
-    public List<ZabbixUserDTO> getUserInfo() throws Exception;
-
+    public List<ZabbixUserDTO> getUserInfo(String alias) throws Exception;
 
 }

@@ -7,10 +7,7 @@ import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,10 +21,10 @@ public class UserController {
     @Autowired
     private SysUserRepo sysUserRepo;
 
-    @PostMapping("/getUserInfo")
-    public Result getUserInfo() {
+    @PostMapping("/getUserInfo/{alias}")
+    public Result getUserInfo(@PathVariable String alias) {
         try {
-            List<ZabbixUserDTO> result = userService.getUserInfo();
+            List<ZabbixUserDTO> result = userService.getUserInfo(alias);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
