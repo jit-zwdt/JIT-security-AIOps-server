@@ -85,6 +85,7 @@ public class MediaTypeController {
                     ZabbixUpdateMediaTypeDTO zabbixUpdateMediaTypeDTO = new ZabbixUpdateMediaTypeDTO();
                     zabbixUpdateMediaTypeDTO.setId(mediatypeid);
                     zabbixUpdateMediaTypeDTO.setStatus(status);
+                    zabbixUpdateMediaTypeDTO.setMaxsessions(zabbixGetMediaTypeDTOList.get(0).getMaxsessions());
                     zabbixUpdateMediaTypeDTO.setMaxattempts(zabbixGetMediaTypeDTOList.get(0).getMaxattempts());
                     mediatypeid = zabbixMediaTypeService.update(zabbixUpdateMediaTypeDTO, auth);
                     return Result.SUCCESS(mediatypeid);
