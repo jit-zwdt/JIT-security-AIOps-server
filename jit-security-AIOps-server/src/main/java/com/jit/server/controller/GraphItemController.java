@@ -43,6 +43,8 @@ public class GraphItemController {
     private ItemService itemService;
     @Autowired
     private TrendService trendService;
+    @Autowired
+    private GraphPrototypeService graphPrototypeService;
 
     @PostMapping("/getGItemInfoList")
     public Result getGProInfoList(@RequestBody GraphItemParams graphItemParams, HttpServletResponse resp) throws IOException {
@@ -70,6 +72,12 @@ public class GraphItemController {
                 Map<String,Object> finalResult = new HashMap<>();
                 List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams);
                 finalResult.put("gItemData",result);
+                if(graphItemParams.getGraphids() != null && !CollectionUtils.isEmpty(graphItemParams.getGraphids())){
+                    GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
+                    graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
+                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams);
+                    finalResult.put("graphData",graph);
+                }
                 List<String> itemids = new ArrayList<>();
                 for(ZabbixGetGraphItemDTO z:result){
                     itemids.add(z.getItemId());
