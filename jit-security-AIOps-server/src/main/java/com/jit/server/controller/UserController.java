@@ -1,20 +1,17 @@
 package com.jit.server.controller;
 
-import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.repository.SysUserRepo;
-import com.jit.server.request.ProblemParams;
-import com.jit.server.service.ProblemService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.Result;
-import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,8 +21,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SysUserRepo sysUserRepo;
+
     @PostMapping("/getUserInfo")
-    public Result getUserInfo() throws IOException {
+    public Result getUserInfo() {
         try {
             List<ZabbixUserDTO> result = userService.getUserInfo();
             if (null != result && !CollectionUtils.isEmpty(result)) {
@@ -38,9 +38,6 @@ public class UserController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
-
-    @Autowired
-    private SysUserRepo sysUserRepo;
 
     @PostMapping("/findUserByRole")
     public Result findUserByRole(@RequestParam(value = "roleId", required = true) Byte roleId) {
