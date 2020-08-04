@@ -126,42 +126,74 @@ public class ProblemServiceImpl implements ProblemService {
             return null;
         }
 
-        List<Object> listHostRepo = hostRepo.getHostIdsAndIp();
-        List<ProblemHostDTO> problemHostDTOS = new ArrayList<>();
-        List<Integer> integerList = new ArrayList<>();
-        for (int i = 0, len = listHostRepo.size(); i < len; i++) {
-            ProblemHostDTO problemHostDTO = new ProblemHostDTO();
-            Object[] objs = (Object[]) listHostRepo.get(i);
-            problemHostDTO.setHostId(objs[0].toString());
-            integerList.add(Integer.parseInt(objs[0].toString()));
-            problemHostDTO.setHostName(objs[1].toString());
-            problemHostDTO.setIp(objs[2].toString());
-            problemHostDTOS.add(problemHostDTO);
-        }
-        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
-        Map mapFilter = new HashMap();
-        if (params.getSeverities() != null) {
-            mapFilter.put("severity", params.getSeverities());
-            params_pro.setFilter(mapFilter);
-        }
-        if (listHostRepo != null) {
-            mapFilter.put("hostids", integerList);
-            params_pro.setFilter(mapFilter);
-        }
-        list = zabbixProblemService.get(params_pro, authToken);
-        for(ZabbixProblemDTO zabbixProblemDTO:list){
-            List<MonitorClaimEntity> temp = monitorClaimRepo.findAll();
-            for(MonitorClaimEntity monitorClaimEntity : temp){
-                if(monitorClaimEntity!= null){
-                    if(zabbixProblemDTO.getId() == monitorClaimEntity.getProblemId()){
-                        zabbixProblemDTO.setIsClaim(monitorClaimEntity.getIsClaim());
+        for(Integer integer:params.getSeverities()){
+            ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+            if (integer != null) {
+                Map mapFilter = new HashMap();
+                mapFilter.put("severity",integer);
+                params_pro.setFilter(mapFilter);
+                List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, authToken);
+                for(ZabbixProblemDTO zabbixProblemDTO:listZ) {
+                    MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+                    if (temp != null) {
+                        if (zabbixProblemDTO.getId().equals(temp.getProblemId())) {
+                            zabbixProblemDTO.setIsClaim(temp.getIsClaim());
+                        }
                     }
                 }
+                list.addAll(listZ);
             }
         }
         return list;
 
     }
+
+//    @Override
+//    public List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
+//        List<ZabbixProblemDTO> list = new ArrayList<>();
+//        String authToken = zabbixAuthService.getAuth();
+//        if (StringUtils.isEmpty(authToken)) {
+//            return null;
+//        }
+//
+//        List<Object> listHostRepo = hostRepo.getHostIdsAndIp();
+//        List<ProblemHostDTO> problemHostDTOS = new ArrayList<>();
+//        List<Integer> integerList = new ArrayList<>();
+//        for (int i = 0, len = listHostRepo.size(); i < len; i++) {
+//            ProblemHostDTO problemHostDTO = new ProblemHostDTO();
+//            Object[] objs = (Object[]) listHostRepo.get(i);
+//            problemHostDTO.setHostId(objs[0].toString());
+//            integerList.add(Integer.parseInt(objs[0].toString()));
+//            problemHostDTO.setHostName(objs[1].toString());
+//            problemHostDTO.setIp(objs[2].toString());
+//            problemHostDTOS.add(problemHostDTO);
+//        }
+//        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+//        Map mapFilter = new HashMap();
+//        if (params.getSeverities() != null) {
+//            mapFilter.put("severity", params.getSeverities());
+//        }
+//        if (listHostRepo != null) {
+//            mapFilter.put("hostids", integerList);
+//        }
+//        List<String> ll = new ArrayList<>();
+//        ll.add("severity");
+//        params_pro.setSortFields(ll);
+//        List<String> ss = new ArrayList<>();
+//        ss.add("DESC");
+//        params_pro.setSortOrder(ss);
+//        list = zabbixProblemService.get(params_pro, authToken);
+//        for(ZabbixProblemDTO zabbixProblemDTO:list){
+//            MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+//            if(temp!= null){
+//                if(zabbixProblemDTO.getId().equals(temp.getProblemId())){
+//                    zabbixProblemDTO.setIsClaim(temp.getIsClaim());
+//                }
+//            }
+//        }
+//        return list;
+//
+//    }
 
     @Override
     public void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception {
