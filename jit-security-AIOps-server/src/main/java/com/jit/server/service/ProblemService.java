@@ -17,4 +17,5 @@ public interface ProblemService {
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
 
+    MonitorClaimEntity findByProblemId(String problemId);
 }

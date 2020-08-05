@@ -202,4 +202,9 @@ public class ProblemServiceImpl implements ProblemService {
     public void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception {
         monitorClaimRepo.save(monitorClaimEntity);
     }
+
+    @Override
+    public MonitorClaimEntity findByProblemId(String problemId) {
+        return monitorClaimRepo.getMonitorClaimEntityById(problemId);
+    }
 }
