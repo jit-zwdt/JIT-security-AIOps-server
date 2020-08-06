@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.dto.ProblemHostDTO;
@@ -13,9 +14,13 @@ public interface ProblemService {
 
     List<ProblemHostDTO> findProblemHost(ProblemParams params) throws Exception;
 
-    List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception;
+    List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception;
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
+
+    List<MonitorClaimEntity> findClaimByUser();
+
+    void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
 
     MonitorClaimEntity findByProblemId(String problemId);
 }

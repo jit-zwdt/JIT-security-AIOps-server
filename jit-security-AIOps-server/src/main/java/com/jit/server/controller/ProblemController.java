@@ -1,10 +1,9 @@
 package com.jit.server.controller;
 
+import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorClaimEntity;
-import com.jit.server.pojo.SysRoleEntity;
-import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.ProblemClaimParams;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +64,12 @@ public class ProblemController {
         }
     }
 
+
     @PostMapping("/findBySeverityLevel")
     public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletResponse resp) throws IOException {
         try {
             if(params != null && params.getSeverities() != null) {
-                List<ZabbixProblemDTO> result = problemService.findBySeverityLevel(params);
+                List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params);
                 if(null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -101,6 +100,25 @@ public class ProblemController {
         }
     }
 
+    @PostMapping("/findClaimByUser")
+    public Result findClaimByUser() {
+        try{
+            List<MonitorClaimEntity> list = problemService.findClaimByUser();
+            return Result.SUCCESS(list);
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateClaimAfterRegister")
+    public Result updateClaimAfterRegister(@RequestBody MonitorClaimEntity monitorClaimEntity) {
+        try{
+            problemService.updateClaimAfterRegister(monitorClaimEntity);
+            return Result.SUCCESS(null);
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
     @PostMapping("/findByProblemId")
     public Result findByProblemId(@RequestParam(value = "problemId")  String problemId) {
         try{

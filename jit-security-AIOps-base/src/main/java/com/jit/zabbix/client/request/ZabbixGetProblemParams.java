@@ -37,6 +37,7 @@ public class ZabbixGetProblemParams extends CommonGetParams {
     private boolean acknowledged;
     private ProblemSeverity severity;
     private ProblemEvaltype evaltype;
+
     @JsonProperty("time_from")
     private String time_from;
 
