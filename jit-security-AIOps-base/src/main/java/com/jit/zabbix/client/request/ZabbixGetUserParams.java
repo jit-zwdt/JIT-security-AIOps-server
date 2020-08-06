@@ -27,4 +27,7 @@ public class ZabbixGetUserParams extends CommonGetParams {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Object selectMediatypes;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Object selectUsrgrps;
 }
