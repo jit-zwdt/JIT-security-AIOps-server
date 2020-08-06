@@ -235,4 +235,47 @@ public class ProblemServiceImpl implements ProblemService {
     public MonitorClaimEntity findByProblemId(String problemId) {
         return monitorClaimRepo.getMonitorClaimEntityById(problemId);
     }
+
+    @Override
+    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params) throws Exception {
+        String authToken = zabbixAuthService.getAuth();
+        if (StringUtils.isEmpty(authToken)) {
+            return null;
+        }
+
+        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+
+        // set severity
+        if (params.getSeverity() != null) {
+            Map<String, Object> mapFilter = new HashMap();
+            mapFilter.put("severity", params.getSeverity());
+            params_pro.setFilter(mapFilter);
+        }
+
+        // set hostId
+        if(params.getHostId() != null) {
+            List<String> hostIds = new ArrayList<>();
+            hostIds.add(params.getHostId());
+            params_pro.setHostids(hostIds);
+        }
+
+        // set timeFrom
+        if (params.getTimeFrom() != null && !params.getTimeFrom().equals("NaN")) {
+            params_pro.setTime_from(params.getTimeFrom());
+        }
+
+        // set timeTill
+        if (params.getTimeTill() != null && !params.getTimeTill().equals("NaN")) {
+            params_pro.setTime_till(params.getTimeTill());
+        }
+
+        // set name
+        if(params.getName() != null && params.getName().length() > 0) {
+            Map<String, Object> mapSearch = new HashMap();
+            mapSearch.put("name", params.getName());
+            params_pro.setSearch(mapSearch);
+        }
+
+        return zabbixProblemService.get(params_pro, authToken);
+    }
 }

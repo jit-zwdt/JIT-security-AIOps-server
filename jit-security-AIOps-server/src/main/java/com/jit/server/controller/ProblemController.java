@@ -11,7 +11,6 @@ import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -135,6 +134,21 @@ public class ProblemController {
             }
 
         }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/getAlertdata")
+    public Result getAlertdata(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+        try {
+            List<ZabbixProblemDTO> result = problemService.getAlertdata(params);
+            if (null != result && !CollectionUtils.isEmpty(result)) {
+                return Result.SUCCESS(result);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

@@ -23,4 +23,6 @@ public interface ProblemService {
     void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
 
     MonitorClaimEntity findByProblemId(String problemId);
+
+    List<ZabbixProblemDTO> getAlertdata(ProblemParams params) throws Exception;
 }
