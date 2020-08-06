@@ -77,4 +77,13 @@ public class MonitorClaimEntity {
      */
     @Column(name = "gmt_modified")
     private java.sql.Timestamp gmtModified;
+
+    @Column(name = "is_register")
+    private int isRegister;
+
+    @Column(name = "is_resolve")
+    private int isResolve;
+
+    @Column(name = "problem_handle_time")
+    private String handleTime;
 }

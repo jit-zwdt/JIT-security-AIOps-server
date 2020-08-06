@@ -1,9 +1,12 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
+import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
@@ -16,6 +19,7 @@ import com.jit.zabbix.client.request.ZabbixGetTriggerParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
 import com.jit.zabbix.client.service.ZabbixTriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -43,6 +47,8 @@ public class ProblemServiceImpl implements ProblemService {
     @Autowired
     private ZabbixTriggerService zabbixTriggerService;
 
+    @Autowired
+    private SysUserRepo sysUserRepo;
 
     @Override
     public List<ZabbixProblemDTO> findByCondition(ProblemParams params) throws Exception {
@@ -52,33 +58,20 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
-
-        // set severity
         if (params.getSeverity() != null) {
             Map mapFilter = new HashMap();
             mapFilter.put("severity", params.getSeverity());
             params_pro.setFilter(mapFilter);
-        }
 
-        // set hostId
-        if(params.getHostId() != null) {
-            List<String> hostIds = new ArrayList<>();
-            hostIds.add(params.getHostId());
-            params_pro.setHostids(hostIds);
         }
-
-        // set timeFrom
         if (params.getTimeFrom() != null) {
             params_pro.setTime_from(params.getTimeFrom());
         }
-
-        // set timeTill
         if (params.getTimeTill() != null) {
             params_pro.setTime_till(params.getTimeTill());
         }
 
-        List<ZabbixProblemDTO> result = zabbixProblemService.get(params_pro, authToken);
-        return result;
+        return zabbixProblemService.get(params_pro, authToken);
     }
 
     @Override
@@ -89,41 +82,52 @@ public class ProblemServiceImpl implements ProblemService {
             return null;
         }
 
-        // get host info
-        List<Object> hostInfo = hostRepo.getHostIdsAndIp();
+        List<ProblemHostDTO> problemHosts = new ArrayList<>();
+        ZabbixGetTriggerParams _params = new ZabbixGetTriggerParams();
+        _params.setSelectFunctions(EXTEND);
+        _params.setOutput(EXTEND);
+        _params.setSelectHosts(EXTEND);
 
-        // create a map to store host information, using host id as key
-        Map<String, Object[]> mapHostInfo = new HashMap<>();
-        for(int i = 0; i < hostInfo.size(); i++) {
-            Object[] host = (Object[]) hostInfo.get(i);
-            mapHostInfo.put(host[0].toString(), host);
+        // get problems
+        List<ZabbixProblemDTO> problems = problemService.findByCondition(params);
+        if(problems == null || problems.size() == 0) {
+            return null;
         }
 
-        List<ProblemHostDTO> problemHostDTOs = new ArrayList<>();
+        // for each problem, find a trigger and register a ProblemHost object
+        else{
+            for(ZabbixProblemDTO problem : problems) {
+                ProblemHostDTO temp = new ProblemHostDTO();
 
-        // for each hostId, find problem
-        for(String hostId : mapHostInfo.keySet()) {
-            params.setHostId(hostId);
-            List<ZabbixProblemDTO> problems = findByCondition(params);
-            if(problems != null) {
-                for(ZabbixProblemDTO problem : problems) {
-                    ProblemHostDTO problemHostDTO = new ProblemHostDTO();
-                    problemHostDTO.setZabbixProblemDTO(problem);
-                    Object[] obj = mapHostInfo.get(hostId);
-                    problemHostDTO.setHostId(obj[0].toString());
-                    problemHostDTO.setHostName(obj[1].toString());
-                    problemHostDTO.setIp(obj[2].toString());
-                    problemHostDTOs.add(problemHostDTO);
+                // 封装triggerService 参数
+//                _params.setTriggerIds(Arrays.asList(problem.getObjectId()));
+                Map<String, Object> filter = new HashMap<>();
+                filter.put("triggerid", problem.getObjectId());
+                _params.setFilter(filter);
+
+                // 获取trigger
+                List<ZabbixTriggerDTO> trigger = zabbixTriggerService.get(_params, authToken);
+                if(trigger == null || trigger.size() == 0) {
+                    continue;
+                }
+                else {
+                    // 增加到ProblemHostDTO列表
+//                    temp.setHostId("test");
+//                    temp.setHostName("test");
+                    temp.setZabbixProblemDTO(problem);
+                    temp.setHostId(trigger.get(0).getZabbixHost().get(0).getId());
+                    temp.setHostName(trigger.get(0).getZabbixHost().get(0).getName());
+                    problemHosts.add(temp);
                 }
             }
 
+            return problemHosts;
         }
-        return problemHostDTOs;
     }
 
     @Override
-    public List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
-        List<ZabbixProblemDTO> list = new ArrayList<>();
+    public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
+        List<ProblemClaimDTO> list = new ArrayList<>();
         String authToken = zabbixAuthService.getAuth();
         if (StringUtils.isEmpty(authToken)) {
             return null;
@@ -136,15 +140,19 @@ public class ProblemServiceImpl implements ProblemService {
                 mapFilter.put("severity",integer);
                 params_pro.setFilter(mapFilter);
                 List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, authToken);
+                List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
                 for(ZabbixProblemDTO zabbixProblemDTO:listZ) {
+                    ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
+                    problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
                     MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
                     if (temp != null) {
                         if (zabbixProblemDTO.getId().equals(temp.getProblemId())) {
-                            zabbixProblemDTO.setIsClaim(temp.getIsClaim());
+                            problemClaimDTO.setIsClaim(temp.getIsClaim());
                         }
                     }
+                    problemClaimDTOS.add(problemClaimDTO);
                 }
-                list.addAll(listZ);
+                list.addAll(problemClaimDTOS);
             }
         }
         return list;
@@ -204,7 +212,15 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public MonitorClaimEntity findByProblemId(String problemId) {
-        return monitorClaimRepo.getMonitorClaimEntityById(problemId);
+    public List<MonitorClaimEntity> findClaimByUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        SysUserEntity user = sysUserRepo.findZabbixActiveUserByUsername(username);
+        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId());
+        return list;
+    }
+
+    @Override
+    public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
+        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getProblemId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getHandleTime());
     }
 }
