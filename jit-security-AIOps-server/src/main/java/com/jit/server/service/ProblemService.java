@@ -10,7 +10,7 @@ import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import java.util.List;
 
 public interface ProblemService {
-    List<ZabbixProblemDTO> findByCondition(ProblemParams params) throws Exception;
+    List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception;
 
     List<ProblemHostDTO> findProblemHost(ProblemParams params) throws Exception;
 

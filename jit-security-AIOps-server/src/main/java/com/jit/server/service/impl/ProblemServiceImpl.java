@@ -52,8 +52,7 @@ public class ProblemServiceImpl implements ProblemService {
     private SysUserRepo sysUserRepo;
 
     @Override
-    public List<ZabbixProblemDTO> findByCondition(ProblemParams params) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
+    public List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception {
         if (StringUtils.isEmpty(authToken)) {
             return null;
         }
@@ -75,17 +74,17 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set timeFrom
-        if (params.getTimeFrom() != null) {
+        if (params.getTimeFrom() != null && !params.getTimeFrom().equals("NaN")) {
             params_pro.setTime_from(params.getTimeFrom());
         }
 
         // set timeTill
-        if (params.getTimeTill() != null) {
+        if (params.getTimeTill() != null && !params.getTimeTill().equals("NaN")) {
             params_pro.setTime_till(params.getTimeTill());
         }
 
         // set name
-        if(params.getName() != null) {
+        if(params.getName() != null && params.getName().length() > 0) {
             Map<String, Object> mapSearch = new HashMap();
             mapSearch.put("name", params.getName());
             params_pro.setSearch(mapSearch);
@@ -117,7 +116,7 @@ public class ProblemServiceImpl implements ProblemService {
         // for each hostId, find problem
         for(String hostId : mapHostInfo.keySet()) {
             params.setHostId(hostId);
-            List<ZabbixProblemDTO> problems = findByCondition(params);
+            List<ZabbixProblemDTO> problems = findByCondition(params, authToken);
             if(problems != null) {
                 for(ZabbixProblemDTO problem : problems) {
                     ProblemHostDTO problemHostDTO = new ProblemHostDTO();

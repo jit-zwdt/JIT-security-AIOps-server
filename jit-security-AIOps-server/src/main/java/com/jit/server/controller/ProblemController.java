@@ -34,23 +34,24 @@ public class ProblemController {
     @Autowired
     private SysUserRepo sysUserRepo;
 
-    @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
-        try {
-            List<ZabbixProblemDTO> result = problemService.findByCondition(params);
-            if (null != result && !CollectionUtils.isEmpty(result)) {
-                return Result.SUCCESS(result);
-            } else {
-                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
-        }
-    }
+//    @PostMapping("/findByCondition")
+//    public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+//        try {
+//            List<ZabbixProblemDTO> result = problemService.findByCondition(params);
+//            if (null != result && !CollectionUtils.isEmpty(result)) {
+//                return Result.SUCCESS(result);
+//            } else {
+//                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+//            }
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+//        }
+//    }
 
     @PostMapping("/findProblemHost")
     public Result findProblemHost(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+        System.out.println(params);
         try {
             List<ProblemHostDTO> result = problemService.findProblemHost(params);
             if (null != result && !CollectionUtils.isEmpty(result)) {
