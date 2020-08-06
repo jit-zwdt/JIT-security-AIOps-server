@@ -35,6 +35,9 @@ public class MonitorRegisterEntity {
     @Column(name = "is_resolve")
     private int isResolve;
 
+    @Column(name = "claim_id")
+    private String claimId;
+
     /**
      * 删除标识 0：表示未删除， 1：表示删除
      */

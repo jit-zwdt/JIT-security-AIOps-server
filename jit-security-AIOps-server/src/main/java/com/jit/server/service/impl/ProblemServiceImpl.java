@@ -229,7 +229,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
-        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getProblemId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getHandleTime());
+        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getHandleTime());
     }
     @Override
     public MonitorClaimEntity findByProblemId(String problemId) {

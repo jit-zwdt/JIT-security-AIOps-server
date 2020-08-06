@@ -17,8 +17,8 @@ public class MonitorRegisterServiceImpl implements MonitorRegisterService {
     private MonitorRegisterRepo monitorRegisterRepo;
 
     @Override
-    public List<MonitorRegisterEntity> findByProblemId(String id){
-        List<MonitorRegisterEntity> monitorRegisterEntity = monitorRegisterRepo.findByProblemId(id);
+    public List<MonitorRegisterEntity> findByClaimId(String id){
+        List<MonitorRegisterEntity> monitorRegisterEntity = monitorRegisterRepo.findByClaimId(id);
         return monitorRegisterEntity;
     }
 

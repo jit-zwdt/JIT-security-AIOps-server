@@ -17,10 +17,10 @@ public class RegisterController {
     @Autowired
     private MonitorRegisterService registerService;
 
-    @PostMapping("/findRegisterById/{id}")
-    public Result findClaimByProblemId(@PathVariable String id) {
+    @PostMapping("/findRegisterByClaimId/{id}")
+    public Result findRegisterByClaimId(@PathVariable String id) {
         try{
-            List<MonitorRegisterEntity> monitorRegisterEntity= registerService.findByProblemId(id);
+            List<MonitorRegisterEntity> monitorRegisterEntity= registerService.findByClaimId(id);
             return Result.SUCCESS(monitorRegisterEntity);
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);

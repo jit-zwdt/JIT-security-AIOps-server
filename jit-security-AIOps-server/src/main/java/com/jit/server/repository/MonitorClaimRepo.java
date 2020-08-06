@@ -22,6 +22,6 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
 
     @Transactional
     @Modifying
-    @Query("update MonitorClaimEntity e set  e.isRegister = ?2,e.isResolve =  ?3,e.handleTime = ?4 where e.problemId =  ?1")
-    void updateClaimAfterRegister(String problemId,int isRegister,int isResolve,String handleTime);
+    @Query("update MonitorClaimEntity e set  e.isRegister = ?2,e.isResolve =  ?3,e.handleTime = ?4 where e.id =  ?1")
+    void updateClaimAfterRegister(String id,int isRegister,int isResolve,String handleTime);
 }

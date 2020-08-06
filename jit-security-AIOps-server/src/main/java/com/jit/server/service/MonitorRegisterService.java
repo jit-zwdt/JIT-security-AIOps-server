@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MonitorRegisterService {
 
-    List<MonitorRegisterEntity> findByProblemId(String id) throws Exception;
+    List<MonitorRegisterEntity> findByClaimId(String id) throws Exception;
 
     MonitorRegisterEntity addRegister(MonitorRegisterEntity monitorRegisterEntity);
 }
