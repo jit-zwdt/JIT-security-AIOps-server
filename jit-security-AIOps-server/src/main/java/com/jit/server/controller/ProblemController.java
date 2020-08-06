@@ -4,6 +4,8 @@ import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.repository.SysRoleRepo;
+import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/problem")
@@ -25,6 +29,10 @@ public class ProblemController {
 
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private SysRoleRepo sysRoleRepo;
+    @Autowired
+    private SysUserRepo sysUserRepo;
 
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
@@ -106,6 +114,24 @@ public class ProblemController {
         try{
             problemService.updateClaimAfterRegister(monitorClaimEntity);
             return Result.SUCCESS(null);
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+    @PostMapping("/findByProblemId")
+    public Result findByProblemId(@RequestParam(value = "problemId")  String problemId) {
+        try{
+            if(problemId!=null){
+                Map<String,Object> map = new HashMap<>();
+                MonitorClaimEntity monitorClaimEntity = problemService.findByProblemId(problemId);
+                map.put("claimOpinion",monitorClaimEntity.getClaimOpinion());
+                map.put("role",sysRoleRepo.getOne(monitorClaimEntity.getClaimRoleId()).getRoleName());
+                map.put("user",sysUserRepo.getOne(monitorClaimEntity.getClaimUserId()).getUsername());
+                return Result.SUCCESS(map);
+            }else{
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }

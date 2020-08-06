@@ -21,4 +21,6 @@ public interface ProblemService {
     List<MonitorClaimEntity> findClaimByUser();
 
     void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
+
+    MonitorClaimEntity findByProblemId(String problemId);
 }

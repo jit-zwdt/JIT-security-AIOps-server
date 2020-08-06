@@ -223,4 +223,8 @@ public class ProblemServiceImpl implements ProblemService {
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
         monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getProblemId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getHandleTime());
     }
+    @Override
+    public MonitorClaimEntity findByProblemId(String problemId) {
+        return monitorClaimRepo.getMonitorClaimEntityById(problemId);
+    }
 }
