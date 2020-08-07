@@ -27,4 +27,20 @@ public class MonitorRegisterServiceImpl implements MonitorRegisterService {
         MonitorRegisterEntity registerEntity = monitorRegisterRepo.save(monitorRegisterEntity);
         return registerEntity;
     }
+
+    @Override
+    public List<MonitorRegisterEntity> findAll() {
+        List<MonitorRegisterEntity> list = monitorRegisterRepo.findAll();
+        return list;
+    }
+
+    @Override
+    public List<MonitorRegisterEntity> findByClaimIdAndProblemType(String id, String problemType) {
+        return monitorRegisterRepo.findByClaimIdAndProblemTypeAndIsResolve(id,problemType,1);
+    }
+
+    @Override
+    public List<MonitorRegisterEntity> findByClaimIdAndIsResolve(String id) {
+        return monitorRegisterRepo.findByClaimIdAndIsResolve(id,1);
+    }
 }

@@ -25,4 +25,10 @@ public interface ProblemService {
     MonitorClaimEntity findByProblemId(String problemId);
 
     List<ZabbixProblemDTO> getAlertdata(ProblemParams params) throws Exception;
+
+    List<MonitorClaimEntity> findAllClaim();
+
+    List<MonitorClaimEntity> findByIsResolve();
+
+    List<MonitorClaimEntity> findByIsResolveAndProblemHandleTime(String problemHandleTime);
 }

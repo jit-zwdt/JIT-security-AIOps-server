@@ -2,22 +2,31 @@ package com.jit.server.controller;
 
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
+import com.jit.server.dto.ProblemSolveReportDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
+import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.service.ProblemService;
+import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
+import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
+import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
+import com.jit.zabbix.client.model.IZabbixMethod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +41,10 @@ public class ProblemController {
     private SysRoleRepo sysRoleRepo;
     @Autowired
     private SysUserRepo sysUserRepo;
+    @Autowired
+    private MonitorRegisterService registerService;
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
 
 //    @PostMapping("/findByCondition")
 //    public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
@@ -133,6 +146,42 @@ public class ProblemController {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
 
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/problemSolveReport")
+    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemHandleTime")String problemHandleTime) {
+        try{
+            List<MonitorClaimEntity> claimList = problemService.findByIsResolve();
+            if(StringUtils.isNotEmpty(problemHandleTime)){
+                claimList = problemService.findByIsResolveAndProblemHandleTime(problemHandleTime);
+            }
+            List<ProblemSolveReportDTO> resultList = new ArrayList<>();
+            if(CollectionUtils.isEmpty(claimList)){
+                return Result.SUCCESS(null);
+            }
+            for(int i = 0; i < claimList.size();i ++){
+                ProblemSolveReportDTO result = new ProblemSolveReportDTO();
+                List<MonitorRegisterEntity> regList = registerService.findByClaimIdAndIsResolve(claimList.get(i).getId());
+                if(StringUtils.isNotEmpty(problemType)){
+                    regList = registerService.findByClaimIdAndProblemType(claimList.get(i).getId(),problemType);
+                }
+                if(regList != null && !CollectionUtils.isEmpty(regList)) {
+                    for(MonitorRegisterEntity mm : regList){
+                        result.setRegister(mm);
+                    }
+                } else {
+                    continue;
+                }
+                result.setIndex(i + 1);
+                result.setClaim(claimList.get(i));
+                result.setUser(sysUserRepo.getOne(claimList.get(i).getClaimUserId()).getUsername());
+                result.setRole(sysRoleRepo.getOne(claimList.get(i).getClaimRoleId()).getRoleName());
+                resultList.add(result);
+            }
+            return Result.SUCCESS(resultList);
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }

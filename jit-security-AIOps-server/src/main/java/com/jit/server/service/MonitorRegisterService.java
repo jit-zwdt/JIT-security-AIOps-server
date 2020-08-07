@@ -9,4 +9,10 @@ public interface MonitorRegisterService {
     List<MonitorRegisterEntity> findByClaimId(String id) throws Exception;
 
     MonitorRegisterEntity addRegister(MonitorRegisterEntity monitorRegisterEntity);
+
+    List<MonitorRegisterEntity> findAll();
+
+    List<MonitorRegisterEntity> findByClaimIdAndIsResolve(String id);
+
+    List<MonitorRegisterEntity> findByClaimIdAndProblemType(String id, String problemType);
 }

@@ -229,7 +229,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
-        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getHandleTime());
+        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getProblemHandleTime());
     }
     @Override
     public MonitorClaimEntity findByProblemId(String problemId) {
@@ -277,5 +277,20 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         return zabbixProblemService.get(params_pro, authToken);
+    }
+
+    @Override
+    public List<MonitorClaimEntity> findAllClaim() {
+        return monitorClaimRepo.findAll();
+    }
+
+    @Override
+    public List<MonitorClaimEntity> findByIsResolve() {
+        return monitorClaimRepo.findByIsResolve(1);
+    }
+
+    @Override
+    public List<MonitorClaimEntity> findByIsResolveAndProblemHandleTime(String problemHandleTime) {
+        return monitorClaimRepo.findByIsResolveAndProblemHandleTime(1,problemHandleTime);
     }
 }

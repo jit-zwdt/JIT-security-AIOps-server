@@ -85,5 +85,5 @@ public class MonitorClaimEntity {
     private int isResolve;
 
     @Column(name = "problem_handle_time")
-    private String handleTime;
+    private String problemHandleTime;
 }
