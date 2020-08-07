@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -63,6 +64,20 @@ public class UserController {
             }
 
         }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateUserAndMediaInfo/{id}")
+    public Result updateUserAndMediaInfo(@PathVariable String id,
+                                         @RequestBody List<Map<String, Object>> tempData) {
+        try{
+            if(tempData != null) {
+                return Result.SUCCESS(userService.updateUserInfo(id, tempData));
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

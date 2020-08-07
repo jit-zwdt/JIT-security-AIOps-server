@@ -101,4 +101,16 @@ public class UserServiceImpl implements UserService {
         }
         return userParamList;
     }
+
+    @Override
+    public Object updateUserInfo(String userId, List<Map<String, Object>> params) throws Exception {
+        String authToken = zabbixAuthService.getAuth();
+        if (StringUtils.isEmpty(authToken)) {
+            return null;
+        }
+
+        // to do
+
+        return null;
+    }
 }
