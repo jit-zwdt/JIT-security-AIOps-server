@@ -30,5 +30,5 @@ public interface ProblemService {
 
     List<MonitorClaimEntity> findByIsResolve();
 
-    List<MonitorClaimEntity> findByIsResolveAndProblemNameLike(String problemName);
+    List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName);
 }

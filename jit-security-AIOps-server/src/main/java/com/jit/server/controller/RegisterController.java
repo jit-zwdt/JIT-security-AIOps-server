@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 
+import com.jit.server.dto.ProblemRegisterDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.service.MonitorRegisterService;
@@ -20,7 +21,7 @@ public class RegisterController {
     @PostMapping("/findRegisterByClaimId/{id}")
     public Result findRegisterByClaimId(@PathVariable String id) {
         try{
-            List<MonitorRegisterEntity> monitorRegisterEntity= registerService.findByClaimId(id);
+            List<ProblemRegisterDTO> monitorRegisterEntity= registerService.findByClaimId(id);
             return Result.SUCCESS(monitorRegisterEntity);
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);

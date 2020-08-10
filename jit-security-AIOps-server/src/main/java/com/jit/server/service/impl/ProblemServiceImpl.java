@@ -292,7 +292,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<MonitorClaimEntity> findByIsResolveAndProblemNameLike(String problemName) {
-        return monitorClaimRepo.findByIsResolveAndProblemNameLike(1,"%"+problemName+"%");
+    public List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName) {
+        return monitorClaimRepo.findByIsResolveAndProblemName(1,problemName);
     }
 }

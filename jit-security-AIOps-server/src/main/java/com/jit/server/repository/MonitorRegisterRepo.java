@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface MonitorRegisterRepo extends JpaRepository<MonitorRegisterEntity, String>, JpaSpecificationExecutor<MonitorRegisterEntity> {
 
-    @Query("select e from MonitorRegisterEntity e  where e.claimId =  ?1 order by e.gmtCreate")
-    List<MonitorRegisterEntity> findByClaimId(String id);
+    @Query("select e.claimId,e.gmtCreate,e.isResolve,e.problemProcess,e.problemReason,e.problemSolution,e.problemType,c.problemHandleTime from MonitorRegisterEntity e,MonitorClaimEntity c where e.claimId =  ?1 and e.claimId = c.id order by e.gmtCreate")
+    List<Object> findByClaimId(String id);
 
     List<MonitorRegisterEntity> findByClaimIdAndProblemTypeAndIsResolve(String id, String problemType,int isResolve);
 

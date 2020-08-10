@@ -1,12 +1,15 @@
 package com.jit.server.service.impl;
 
 
+import com.jit.server.dto.ProblemRegisterDTO;
 import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.repository.MonitorRegisterRepo;
 import com.jit.server.service.MonitorRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,9 +20,23 @@ public class MonitorRegisterServiceImpl implements MonitorRegisterService {
     private MonitorRegisterRepo monitorRegisterRepo;
 
     @Override
-    public List<MonitorRegisterEntity> findByClaimId(String id){
-        List<MonitorRegisterEntity> monitorRegisterEntity = monitorRegisterRepo.findByClaimId(id);
-        return monitorRegisterEntity;
+    public List<ProblemRegisterDTO> findByClaimId(String id){
+        List<Object> objects = monitorRegisterRepo.findByClaimId(id);
+        List<ProblemRegisterDTO> monitorRegisterEntities= new ArrayList<>();
+        for(Object o:objects){
+            ProblemRegisterDTO monitorRegisterEntity = new ProblemRegisterDTO();
+            Object[] a = (Object[]) o;
+            monitorRegisterEntity.setId(a[0].toString());
+            monitorRegisterEntity.setGmtCreate((Timestamp)a[1]);
+            monitorRegisterEntity.setIsResolve(Integer.valueOf(a[2].toString()));
+            monitorRegisterEntity.setProblemProcess(a[3].toString());
+            monitorRegisterEntity.setProblemReason(a[4].toString());
+            monitorRegisterEntity.setProblemSolution(a[5].toString());
+            monitorRegisterEntity.setProblemType(a[6].toString());
+            monitorRegisterEntity.setProblemHandleTime(a[7].toString());
+            monitorRegisterEntities.add(monitorRegisterEntity);
+        }
+        return monitorRegisterEntities;
     }
 
     @Override
