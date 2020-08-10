@@ -16,10 +16,7 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
-import com.jit.zabbix.client.model.IZabbixMethod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -152,11 +149,11 @@ public class ProblemController {
     }
 
     @PostMapping("/problemSolveReport")
-    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemHandleTime")String problemHandleTime) {
+    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemName")String problemName) {
         try{
             List<MonitorClaimEntity> claimList = problemService.findByIsResolve();
-            if(StringUtils.isNotEmpty(problemHandleTime)){
-                claimList = problemService.findByIsResolveAndProblemHandleTime(problemHandleTime);
+            if(StringUtils.isNotEmpty(problemName)){
+                claimList = problemService.findByIsResolveAndProblemName(problemName);
             }
             List<ProblemSolveReportDTO> resultList = new ArrayList<>();
             if(CollectionUtils.isEmpty(claimList)){
