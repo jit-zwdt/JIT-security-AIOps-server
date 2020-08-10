@@ -89,6 +89,8 @@ public class ProblemServiceImpl implements ProblemService {
             mapSearch.put("name", params.getName());
             params_pro.setSearch(mapSearch);
         }
+        params_pro.setSortFields(Arrays.asList(new String[]{"eventid"}));
+        params_pro.setSortOrder(Arrays.asList(new String[]{"DESC"}));
 
         return zabbixProblemService.get(params_pro, authToken);
     }
