@@ -27,5 +27,5 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
 
     List<MonitorClaimEntity> findByIsResolve(int i);
 
-    List<MonitorClaimEntity> findByIsResolveAndProblemHandleTime(int i,String problemHandleTime);
+    List<MonitorClaimEntity> findByIsResolveAndProblemNameLike(int i,String problemName);
 }

@@ -152,11 +152,11 @@ public class ProblemController {
     }
 
     @PostMapping("/problemSolveReport")
-    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemHandleTime")String problemHandleTime) {
+    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemName")String problemName) {
         try{
             List<MonitorClaimEntity> claimList = problemService.findByIsResolve();
-            if(StringUtils.isNotEmpty(problemHandleTime)){
-                claimList = problemService.findByIsResolveAndProblemHandleTime(problemHandleTime);
+            if(StringUtils.isNotEmpty(problemName)){
+                claimList = problemService.findByIsResolveAndProblemNameLike(problemName);
             }
             List<ProblemSolveReportDTO> resultList = new ArrayList<>();
             if(CollectionUtils.isEmpty(claimList)){
