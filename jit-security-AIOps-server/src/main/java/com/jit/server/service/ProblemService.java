@@ -18,7 +18,7 @@ public interface ProblemService {
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
 
-    List<MonitorClaimEntity> findClaimByUser();
+    List<MonitorClaimEntity> findClaimByUser( String problemName,int resolveType);
 
     void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
 

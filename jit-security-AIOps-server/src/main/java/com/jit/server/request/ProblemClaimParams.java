@@ -14,4 +14,5 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemClaimParams {
     private List<Integer> severities;
+    private String claimType;
 }

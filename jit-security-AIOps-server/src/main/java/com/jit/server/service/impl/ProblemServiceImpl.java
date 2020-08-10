@@ -140,7 +140,10 @@ public class ProblemServiceImpl implements ProblemService {
         if (StringUtils.isEmpty(authToken)) {
             return null;
         }
-
+        String claimType = params.getClaimType();
+        if(claimType == null || ("").equals(claimType)){
+            claimType = "-1";
+        }
         for(Integer integer:params.getSeverities()){
             ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
             if (integer != null) {
@@ -150,15 +153,31 @@ public class ProblemServiceImpl implements ProblemService {
                 List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, authToken);
                 List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
                 for(ZabbixProblemDTO zabbixProblemDTO:listZ) {
-                    ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
-                    problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
-                    MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
-                    if (temp != null) {
-                        if (zabbixProblemDTO.getId().equals(temp.getProblemId())) {
+                    if("0".equals(claimType)){
+                        ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
+                        problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
+                        MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+                        if (temp == null) {
+                            problemClaimDTO.setIsClaim(0);
+                            problemClaimDTOS.add(problemClaimDTO);
+                        }
+                    }else if("1".equals(claimType)){
+                        ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
+                        problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
+                        MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+                        if (temp != null) {
+                            problemClaimDTO.setIsClaim(temp.getIsClaim());
+                            problemClaimDTOS.add(problemClaimDTO);
+                        }
+                    }else{
+                        ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
+                        problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
+                        MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
+                        if (temp != null) {
                             problemClaimDTO.setIsClaim(temp.getIsClaim());
                         }
+                        problemClaimDTOS.add(problemClaimDTO);
                     }
-                    problemClaimDTOS.add(problemClaimDTO);
                 }
                 list.addAll(problemClaimDTOS);
             }
@@ -220,10 +239,10 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<MonitorClaimEntity> findClaimByUser() {
+    public List<MonitorClaimEntity> findClaimByUser(String problemName,int resolveType) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         SysUserEntity user = sysUserRepo.findZabbixActiveUserByUsername(username);
-        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId());
+        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(),problemName,resolveType);
         return list;
     }
 

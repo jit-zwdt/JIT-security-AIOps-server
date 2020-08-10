@@ -111,9 +111,12 @@ public class ProblemController {
     }
 
     @PostMapping("/findClaimByUser")
-    public Result findClaimByUser() {
+    public Result findClaimByUser(@RequestParam(value = "problemName")String problemName,@RequestParam(value = "resolveType")String resolveType) {
         try{
-            List<MonitorClaimEntity> list = problemService.findClaimByUser();
+            if(resolveType == null || ("").equals(resolveType)){
+                resolveType = "-1";
+            }
+            List<MonitorClaimEntity> list = problemService.findClaimByUser(problemName,Integer.parseInt(resolveType));
             return Result.SUCCESS(list);
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);

@@ -17,8 +17,8 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
     @Query("select e from MonitorClaimEntity e where e.problemId =  ?1")
     MonitorClaimEntity getMonitorClaimEntityById(String problemId);
 
-    @Query("select e from MonitorClaimEntity e where e.claimUserId =  ?1")
-    List<MonitorClaimEntity> findClaimByUser(String claimUserId);
+    @Query(value = "select * from monitor_claim e where e.claim_user_id =  ?1 and e.problem_name like %?2% and if(?3 != -1,e.is_resolve =?3,1=1)",nativeQuery = true)
+    List<MonitorClaimEntity> findClaimByUser(String claimUserId,String problemName,int resolveType);
 
     @Transactional
     @Modifying
