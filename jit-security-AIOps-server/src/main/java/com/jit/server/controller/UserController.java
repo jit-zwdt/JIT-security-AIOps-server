@@ -69,8 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/updateUserAndMediaInfo/{id}")
-    public Result updateUserAndMediaInfo(@PathVariable String id,
-                                         @RequestBody List<Map<String, Object>> tempData) {
+    public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData) {
         try{
             if(tempData != null) {
                 return Result.SUCCESS(userService.updateUserInfo(id, tempData));

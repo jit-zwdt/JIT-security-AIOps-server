@@ -4,8 +4,10 @@ import com.jit.server.request.UserParams;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
+import com.jit.zabbix.client.dto.ZabbixUpdateMediaDTO;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import com.jit.zabbix.client.model.user.ZabbixMedias;
+import com.jit.zabbix.client.model.user.ZabbixMediasUpdate;
 import com.jit.zabbix.client.model.user.ZabbixMediatypes;
 import com.jit.zabbix.client.request.ZabbixGetUserParams;
 import com.jit.zabbix.client.service.ZabbixUserService;
@@ -103,14 +105,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object updateUserInfo(String userId, List<Map<String, Object>> params) throws Exception {
+    public String updateUserInfo(String userId, List<UserParams> params) throws Exception {
         String authToken = zabbixAuthService.getAuth();
         if (StringUtils.isEmpty(authToken)) {
             return null;
         }
-
-        // to do
-
-        return null;
+        ZabbixUpdateMediaDTO zabbixUpdateMediaDTO = new ZabbixUpdateMediaDTO();
+        if (!StringUtils.isEmpty(userId)) {
+            zabbixUpdateMediaDTO.setUserid(userId);
+        }
+        if (params.size()>0) {
+            List<ZabbixMediasUpdate> zabbixMediasList = new ArrayList<>();
+            for(UserParams userParams: params){
+                ZabbixMediasUpdate zabbixMediasUpdate = new ZabbixMediasUpdate();
+                zabbixMediasUpdate.setActive(userParams.getActive());
+                zabbixMediasUpdate.setMediatypeid(userParams.getMediatypeid());
+                zabbixMediasUpdate.setPeriod(userParams.getPeriod());
+                zabbixMediasUpdate.setSeverity(userParams.getSeverity());
+                zabbixMediasUpdate.setSendto(userParams.getSendto());
+                zabbixMediasList.add(zabbixMediasUpdate);
+            }
+            zabbixUpdateMediaDTO.setList(zabbixMediasList);
+        }
+        return zabbixUserService.update(zabbixUpdateMediaDTO, authToken);
     }
 }

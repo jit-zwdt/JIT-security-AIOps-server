@@ -11,5 +11,5 @@ import java.util.Map;
 public interface UserService {
     public List<ZabbixUserDTO> getUserInfo(String alias) throws Exception;
     public List<UserParams> getUserAndMediaInfo(String alias, String userid) throws Exception;
-    Object updateUserInfo(String userId, List<Map<String, Object>> params) throws Exception;
+    Object updateUserInfo(String userId, List<UserParams> params) throws Exception;
 }

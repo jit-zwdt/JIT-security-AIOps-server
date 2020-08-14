@@ -13,4 +13,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZabbixProblemDTO extends ZabbixProblem {
+    private String hostid;
+    private String host;
 }
