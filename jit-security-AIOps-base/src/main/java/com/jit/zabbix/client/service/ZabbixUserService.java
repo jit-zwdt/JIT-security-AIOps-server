@@ -21,6 +21,8 @@ public class ZabbixUserService {
     private final JsonMapper jsonMapper;
     private final ZabbixApiService apiService;
 
+    public static final String USER_IDS_NODE = "userids";
+
     public ZabbixUserService(JsonMapper jsonMapper, ZabbixApiService apiService) {
         this.jsonMapper = jsonMapper;
         this.apiService = apiService;
@@ -35,7 +37,7 @@ public class ZabbixUserService {
     public String update(ZabbixUpdateMediaDTO zabbixUpdateMediaDTO, String auth) throws ZabbixApiException {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(UserMethod.UPDATE, zabbixUpdateMediaDTO, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
-        List<String> ids = jsonMapper.getList(response.getResult(), String.class);
+        List<String> ids = jsonMapper.getList(response.getResult(), USER_IDS_NODE, String.class);
         if (CollectionUtils.isEmpty(ids)) {
             throw new ZabbixApiException("Aucun id recu.");
         }
