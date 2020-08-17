@@ -29,15 +29,18 @@ public class SysRoleEntity {
 
     @Column(name = "remark")
     private String remark;
-    
-    @Column(name = "user_id_create")
-    private String userIdCreate;
+
+    @Column(name = "create_by")
+    private String createBy;
 
     @Column(name = "gmt_create")
     private Timestamp gmtCreate;
 
     @Column(name = "gmt_modified")
     private Timestamp gmtModified;
+
+    @Column(name = "update_by")
+    private String updateBy;
 
 
 }
