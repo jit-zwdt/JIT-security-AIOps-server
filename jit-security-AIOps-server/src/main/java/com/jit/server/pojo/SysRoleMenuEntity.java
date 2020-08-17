@@ -14,17 +14,57 @@ import javax.persistence.*;
 @Entity
 @Table(name = "sys_role_menu")
 public class SysRoleMenuEntity {
+
+
+    /**
+     * 主键
+     */
     @Id
     @Column(length = 32, nullable = false)
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "role_id", nullable = false)
+    /**
+     * 角色id
+     */
+    @Column(name = "role_id")
     private String roleId;
 
-    @Column(name = "menu_id", nullable = false)
-    private Byte menuId;
+    /**
+     * 菜单id
+     */
+    @Column(name = "menu_id")
+    private String menuId;
 
+    /**
+     * 创建者
+     */
+    @Column(name = "create_by")
+    private String createBy;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "gmt_create")
+    private java.sql.Timestamp gmtCreate;
+
+    /**
+     * 更新时间
+     */
+    @Column(name = "gmt_modified")
+    private java.sql.Timestamp gmtModified;
+
+    /**
+     * 更新者
+     */
+    @Column(name = "update_by")
+    private String updateBy;
+
+    /**
+     * 是否删除 0：未删除 ；1：已删除
+     */
+    @Column(name = "is_deleted")
+    private int isDeleted;
 
 }

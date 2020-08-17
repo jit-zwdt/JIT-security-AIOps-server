@@ -45,8 +45,8 @@ public class SysUserEntity {
     /**
      * 部门id
      */
-    @Column(name = "dept_id")
-    private String deptId;
+    @Column(name = "department_id")
+    private String departmentId;
 
     /**
      * 电子邮箱

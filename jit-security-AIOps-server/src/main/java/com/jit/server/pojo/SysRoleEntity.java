@@ -42,5 +42,7 @@ public class SysRoleEntity {
     @Column(name = "update_by")
     private String updateBy;
 
+    @Column(name = "is_deleted")
+    private String isDeleted;
 
 }
