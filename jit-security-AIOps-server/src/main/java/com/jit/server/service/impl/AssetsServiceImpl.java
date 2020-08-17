@@ -1,7 +1,6 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.pojo.AssetsEntity;
-import com.jit.server.pojo.Region;
 import com.jit.server.repository.AssetsRepo;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
@@ -17,7 +16,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AssetsServiceImpl implements AssetsService {
