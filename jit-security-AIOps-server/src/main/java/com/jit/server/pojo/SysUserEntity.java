@@ -124,7 +124,7 @@ public class SysUserEntity {
      * 是否允许登录zabbix系统 0：不允许；1：允许
      */
     @Column(name = "is_zabbix_active")
-    private long isZabbixActive;
+    private int isZabbixActive;
 
     /**
      * zabbix用户名
@@ -156,4 +156,9 @@ public class SysUserEntity {
     @Column(name = "update_by")
     private String updateBy;
 
+    /**
+     * 是否删除 0：未删除；1：已删除
+     */
+    @Column(name = "is_deleted")
+    private int isDeleted;
 }
