@@ -59,4 +59,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             return null;
         }
     }
+
+    @Override
+    public SysDepartmentEntity getDepartment(String id) throws Exception {
+        return sysDepartmentRepo.findByIdAndIsDeleted(id,0);
+    }
 }

@@ -19,4 +19,6 @@ public interface SysDepartmentRepo extends JpaRepository<SysDepartmentEntity, St
 
     @Query("select s.id,s.departName,s.departCode from SysDepartmentEntity s where s.parentId = ?1 and s.isDeleted = 0 order by s.departOrder")
     List<Object> getTreeNode(String parentId);
+
+    SysDepartmentEntity findByIdAndIsDeleted(String id, int isDeleted);
 }

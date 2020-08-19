@@ -14,4 +14,6 @@ public interface DepartmentService {
     List<TreeNode> getDepartmentInfos() throws Exception;
 
     String saveOrUpdateDepartment(SysDepartmentEntity department) throws Exception;
+
+    SysDepartmentEntity getDepartment(String id) throws Exception;
 }

@@ -42,10 +42,10 @@ public class DepartmentController {
     public Result addDepartment(@RequestBody SysDepartmentEntity department) {
         try {
             if (department != null) {
-                if(StringUtils.isBlank(department.getId())){
+                if (StringUtils.isBlank(department.getId())) {
                     department.setGmtCreate(new Timestamp(System.currentTimeMillis()));
                     department.setCreateBy(userService.findIdByUsername());
-                }else{
+                } else {
                     department.setGmtModified(new Timestamp(System.currentTimeMillis()));
                     department.setUpdateBy(userService.findIdByUsername());
                 }
@@ -64,5 +64,19 @@ public class DepartmentController {
         }
     }
 
+    @ResponseBody
+    @GetMapping(value = "/getDepartment/{id}")
+    public Result getDepartment(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                return Result.SUCCESS(departmentService.getDepartment(id));
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 
 }
