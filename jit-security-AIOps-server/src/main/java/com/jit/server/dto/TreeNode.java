@@ -10,13 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 public class TreeNode {
 
-    private long id;
+    private String id;
 
     private String label;
 
     private List<TreeNode> children;
 
-    private long parentId;
+    private String parentId;
 
     private Boolean parent;
 

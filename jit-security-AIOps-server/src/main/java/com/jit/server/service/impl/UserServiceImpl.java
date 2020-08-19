@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.UserParams;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
@@ -12,10 +13,14 @@ import com.jit.zabbix.client.model.user.ZabbixMediatypes;
 import com.jit.zabbix.client.request.ZabbixGetUserParams;
 import com.jit.zabbix.client.service.ZabbixUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ZabbixUserService zabbixUserService;
+
+    @Autowired
+    private SysUserRepo sysUserRepo;
 
     @Override
     public List<ZabbixUserDTO> getUserInfo(String alias) throws Exception {
@@ -114,9 +122,9 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(userId)) {
             zabbixUpdateMediaDTO.setUserid(userId);
         }
-        if (params.size()>0) {
+        if (params.size() > 0) {
             List<ZabbixMediasUpdate> zabbixMediasList = new ArrayList<>();
-            for(UserParams userParams: params){
+            for (UserParams userParams : params) {
                 ZabbixMediasUpdate zabbixMediasUpdate = new ZabbixMediasUpdate();
                 zabbixMediasUpdate.setActive(userParams.getActive());
                 zabbixMediasUpdate.setMediatypeid(userParams.getMediatypeid());
@@ -128,5 +136,15 @@ public class UserServiceImpl implements UserService {
             zabbixUpdateMediaDTO.setList(zabbixMediasList);
         }
         return zabbixUserService.update(zabbixUpdateMediaDTO, authToken);
+    }
+
+    @Override
+    public String findIdByUsername() throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (StringUtils.isNotEmpty(username)) {
+            return sysUserRepo.findIdByUsername(username);
+        } else {
+            return null;
+        }
     }
 }
