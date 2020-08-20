@@ -8,6 +8,7 @@ import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,21 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public SysDepartmentEntity getDepartment(String id) throws Exception {
-        return sysDepartmentRepo.findByIdAndIsDeleted(id,0);
+        return sysDepartmentRepo.findByIdAndIsDeleted(id, 0);
+    }
+
+    @Override
+    public List<String> getSubDepIds(String parentId) throws Exception {
+        return sysDepartmentRepo.getSubDepIds(parentId);
+    }
+
+    @Override
+    public int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy) throws Exception {
+        return sysDepartmentRepo.delDepartmentsByIds(list, gmtModified, updateBy);
+    }
+
+    @Override
+    public SysDepartmentEntity getDepartmentByDepartCode(String code) {
+        return sysDepartmentRepo.findByDepartCodeAndIsDeleted(code,0);
     }
 }
