@@ -125,20 +125,11 @@ public class SysDepartmentController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/checkDepartCode")
-    public Result checkDepartCode(@RequestParam String departCode, @RequestParam String id) {
+    @GetMapping(value = "/checkDepartCode/{code}")
+    public Result checkDepartCode(@PathVariable String code) {
         try {
-            if (StringUtils.isNotBlank(id)) {
-                SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartment(id);
-                if (sysDepartmentEntity != null) {
-                    //code unchange
-                    if (departCode.equals(sysDepartmentEntity.getDepartCode())) {
-                        return Result.SUCCESS(false);
-                    }
-                }
-            }
-            if (StringUtils.isNotBlank(departCode)) {
-                SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartmentByDepartCode(departCode);
+            if (StringUtils.isNotBlank(code)) {
+                SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartmentByDepartCode(code);
                 if (sysDepartmentEntity == null) {
                     return Result.SUCCESS(false);
                 }
