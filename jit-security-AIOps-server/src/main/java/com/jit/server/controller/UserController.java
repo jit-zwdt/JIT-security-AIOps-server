@@ -1,8 +1,8 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.UserParams;
+import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -22,10 +21,10 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private SysUserRepo sysUserRepo;
+    private SysUserService sysUserService;
 
     @PostMapping("/getUserInfo")
-    public Result getUserInfo(@RequestParam(value = "alias",required = false) String alias, HttpServletResponse resp){
+    public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletResponse resp) {
         try {
             List<ZabbixUserDTO> result = userService.getUserInfo(alias);
             if (null != result && !CollectionUtils.isEmpty(result)) {
@@ -33,14 +32,14 @@ public class UserController {
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/getUserAndMediaInfo")
-    public Result getUserAndMediaInfo(@RequestParam(value = "alias",required = false) String alias, @RequestParam(value = "userid",required = false) String userid , HttpServletResponse resp){
+    public Result getUserAndMediaInfo(@RequestParam(value = "alias", required = false) String alias, @RequestParam(value = "userid", required = false) String userid, HttpServletResponse resp) {
         try {
             List<UserParams> result = userService.getUserAndMediaInfo(alias, userid);
             if (null != result && !CollectionUtils.isEmpty(result)) {
@@ -48,30 +47,30 @@ public class UserController {
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/findUserByRole")
-    public Result findUserByRole(@RequestParam(value = "roleId", required = true) Byte roleId) {
-        try{
-            if(roleId != null){
-                return Result.SUCCESS(sysUserRepo.findUserByRole(roleId));
-            }else{
+    public Result findUserByRole(@RequestParam(value = "roleId", required = true) String roleId) {
+        try {
+            if (roleId != null) {
+                return Result.SUCCESS(sysUserService.findUserByRole(roleId));
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/updateUserAndMediaInfo/{id}")
     public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData) {
-        try{
-            if(tempData != null) {
+        try {
+            if (tempData != null) {
                 return Result.SUCCESS(userService.updateUserInfo(id, tempData));
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);

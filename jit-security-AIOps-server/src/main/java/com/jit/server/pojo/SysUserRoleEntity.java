@@ -25,7 +25,7 @@ public class SysUserRoleEntity {
     private String userId;
 
     @Column(name = "role_id", nullable = false)
-    private Byte roleId;
+    private String roleId;
 
 
 }
