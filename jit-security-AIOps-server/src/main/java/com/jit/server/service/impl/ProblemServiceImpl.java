@@ -31,9 +31,6 @@ public class ProblemServiceImpl implements ProblemService {
     public static final String EXTEND = "extend";
 
     @Autowired
-    private ProblemService problemService;
-
-    @Autowired
     private MonitorClaimRepo monitorClaimRepo;
 
     @Autowired
@@ -44,9 +41,6 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Autowired
     private ZabbixAuthService zabbixAuthService;
-
-    @Autowired
-    private ZabbixTriggerService zabbixTriggerService;
 
     @Autowired
     private SysUserRepo sysUserRepo;
@@ -243,7 +237,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public List<MonitorClaimEntity> findClaimByUser(String problemName,int resolveType) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        SysUserEntity user = sysUserRepo.findZabbixActiveUserByUsername(username);
+        SysUserEntity user = sysUserRepo.findByUsername(username);
         List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(),problemName,resolveType);
         return list;
     }

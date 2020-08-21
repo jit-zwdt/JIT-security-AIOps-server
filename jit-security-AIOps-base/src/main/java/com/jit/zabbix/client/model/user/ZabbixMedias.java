@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
 
 /**
  * Zabbix User object.
@@ -19,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class ZabbixMedias {
 
     protected String mediaid;

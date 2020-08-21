@@ -10,7 +10,7 @@ public interface UserService {
 
     List<UserParams> getUserAndMediaInfo(String alias, String userid) throws Exception;
 
-    Object updateUserInfo(String userId, List<UserParams> params) throws Exception;
+    String updateUserInfo(String userId, List<UserParams> params) throws Exception;
 
     String findIdByUsername() throws Exception;
 }
