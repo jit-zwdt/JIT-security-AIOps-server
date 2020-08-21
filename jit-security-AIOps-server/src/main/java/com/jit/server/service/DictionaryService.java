@@ -31,5 +31,5 @@ public interface DictionaryService {
 
     SysDictionaryEntity getByDictCode(String dictCode);
 
-    SysDictionaryItemEntity getByItemText(String itemName);
+    SysDictionaryItemEntity getByItemText(String itemName,String dictId);
 }

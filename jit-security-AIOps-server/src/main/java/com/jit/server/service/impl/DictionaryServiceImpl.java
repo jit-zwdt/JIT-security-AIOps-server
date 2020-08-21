@@ -73,8 +73,8 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public SysDictionaryItemEntity getByItemText(String itemName) {
-        return dictionaryItemRepo.findByItemTextAndIsDeleted(itemName,0);
+    public SysDictionaryItemEntity getByItemText(String itemName,String dictId) {
+        return dictionaryItemRepo.findByItemTextAndDictIdAndIsDeleted(itemName,dictId,0);
     }
 
     @Override

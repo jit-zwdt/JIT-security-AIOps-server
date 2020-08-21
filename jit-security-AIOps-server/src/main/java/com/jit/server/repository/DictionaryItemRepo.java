@@ -15,5 +15,5 @@ public interface DictionaryItemRepo  extends JpaRepository<SysDictionaryItemEnti
     @Query(value = "select count(*) from sys_dict_item e where  e.is_deleted = 0 and e.dict_id = ?1 and if(?2 != '',e.item_text like %?2%,1=1)  and if(?3 != -1,e.status = ?3,1=1)",nativeQuery = true)
     int getDictionaryCount(String id,String itemText,int status);
 
-    SysDictionaryItemEntity findByItemTextAndIsDeleted(String itemText,int isDeleted);
+    SysDictionaryItemEntity findByItemTextAndDictIdAndIsDeleted(String itemText,String dictId,int isDeleted);
 }

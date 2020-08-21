@@ -208,11 +208,11 @@ public class DictionaryController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/checkItemText/{itemText}")
-    public Result checkItemText(@PathVariable String itemText) {
+    @PostMapping(value = "/checkItemText")
+    public Result checkItemText(@RequestParam("itemText")String itemText,@RequestParam("dictId")String dictId) {
         try {
             if (StringUtils.isNotBlank(itemText)) {
-                SysDictionaryItemEntity sysDictionaryItemEntity = dictionaryService.getByItemText(itemText);
+                SysDictionaryItemEntity sysDictionaryItemEntity = dictionaryService.getByItemText(itemText,dictId);
                 if (sysDictionaryItemEntity == null) {
                     return Result.SUCCESS(false);
                 }
