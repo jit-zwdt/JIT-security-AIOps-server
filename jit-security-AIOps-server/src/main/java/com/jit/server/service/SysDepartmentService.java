@@ -6,7 +6,7 @@ import com.jit.server.pojo.SysDepartmentEntity;
 import java.sql.Timestamp;
 import java.util.List;
 
-public interface DepartmentService {
+public interface SysDepartmentService {
 
     List<SysDepartmentEntity> findByParentIdAndIsDeletedOrderByDepartOrderAsc(String parentId, int isDeleted) throws Exception;
 

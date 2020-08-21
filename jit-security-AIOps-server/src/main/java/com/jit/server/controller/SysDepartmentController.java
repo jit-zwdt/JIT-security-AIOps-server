@@ -2,7 +2,7 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysDepartmentEntity;
-import com.jit.server.service.DepartmentService;
+import com.jit.server.service.SysDepartmentService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +22,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sys/department")
-public class DepartmentController {
+public class SysDepartmentController {
 
     @Autowired
-    private DepartmentService departmentService;
+    private SysDepartmentService sysDepartmentService;
 
     @Autowired
     private UserService userService;
@@ -34,7 +34,7 @@ public class DepartmentController {
     @GetMapping(value = "/getDepartmentInfos")
     public Result getDepartmentInfos() {
         try {
-            return Result.SUCCESS(departmentService.getDepartmentInfos());
+            return Result.SUCCESS(sysDepartmentService.getDepartmentInfos());
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
@@ -58,7 +58,7 @@ public class DepartmentController {
                     department.setUpdateBy(userService.findIdByUsername());
                 }
                 department.setIsDeleted(0);
-                String id = departmentService.saveOrUpdateDepartment(department);
+                String id = sysDepartmentService.saveOrUpdateDepartment(department);
                 if (id != null) {
                     return Result.SUCCESS("success");
                 } else {
@@ -77,7 +77,7 @@ public class DepartmentController {
     public Result getDepartment(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                return Result.SUCCESS(departmentService.getDepartment(id));
+                return Result.SUCCESS(sysDepartmentService.getDepartment(id));
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
@@ -102,7 +102,7 @@ public class DepartmentController {
                 HashSet set = new HashSet(list);
                 list.clear();
                 list.addAll(set);
-                departmentService.delDepartmentsByIds(list, new Timestamp(System.currentTimeMillis()), userService.findIdByUsername());
+                sysDepartmentService.delDepartmentsByIds(list, new Timestamp(System.currentTimeMillis()), userService.findIdByUsername());
                 return Result.SUCCESS("success");
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -114,7 +114,7 @@ public class DepartmentController {
     }
 
     private List<String> getDelIds(String id, List<String> list) throws Exception {
-        List<String> ids = departmentService.getSubDepIds(id);
+        List<String> ids = sysDepartmentService.getSubDepIds(id);
         if (ids != null && !ids.isEmpty()) {
             list.addAll(ids);
             for (String i : ids) {
@@ -129,7 +129,7 @@ public class DepartmentController {
     public Result checkDepartCode(@PathVariable String code) {
         try {
             if (StringUtils.isNotBlank(code)) {
-                SysDepartmentEntity sysDepartmentEntity = departmentService.getDepartmentByDepartCode(code);
+                SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartmentByDepartCode(code);
                 if (sysDepartmentEntity == null) {
                     return Result.SUCCESS(false);
                 }

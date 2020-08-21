@@ -3,7 +3,7 @@ package com.jit.server.service.impl;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysDepartmentEntity;
 import com.jit.server.repository.SysDepartmentRepo;
-import com.jit.server.service.DepartmentService;
+import com.jit.server.service.SysDepartmentService;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+public class SysDepartmentServiceImpl implements SysDepartmentService {
 
     @Autowired
     private SysDepartmentRepo sysDepartmentRepo;
