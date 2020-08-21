@@ -26,4 +26,10 @@ public interface DictionaryService {
     SysDictionaryItemEntity addDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception;
 
     int getDictionaryItemCount(String id,String itemText,int status);
+
+    SysDictionaryEntity getByDictName(String dictName);
+
+    SysDictionaryEntity getByDictCode(String dictCode);
+
+    SysDictionaryItemEntity getByItemText(String itemName);
 }
