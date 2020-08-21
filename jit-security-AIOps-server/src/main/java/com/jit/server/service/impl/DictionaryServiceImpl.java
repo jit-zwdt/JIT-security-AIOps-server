@@ -63,6 +63,21 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    public SysDictionaryEntity getByDictName(String dictName) {
+        return dictionaryRepo.findByDictNameAndIsDeleted(dictName,0);
+    }
+
+    @Override
+    public SysDictionaryEntity getByDictCode(String dictCode) {
+        return dictionaryRepo.findByDictCodeAndIsDeleted(dictCode,0);
+    }
+
+    @Override
+    public SysDictionaryItemEntity getByItemText(String itemName) {
+        return dictionaryItemRepo.findByItemTextAndIsDeleted(itemName,0);
+    }
+
+    @Override
     public List<SysDictionaryItemEntity> findByDictId(String id,String itemText,int status,int currentPage,int pageSize) {
         int start = (currentPage-1)*pageSize;
         return dictionaryItemRepo.findByDictId(id,itemText,status,start,pageSize);
@@ -73,6 +88,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         int count = dictionaryItemRepo.getDictionaryCount(id,itemText,status);
         return count;
     }
+
 
     @Override
     public Optional<SysDictionaryItemEntity> findDictionaryItemById(String id) {

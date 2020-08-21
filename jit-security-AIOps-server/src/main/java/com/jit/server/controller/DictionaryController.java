@@ -9,6 +9,7 @@ import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.service.DictionaryService;
 import com.jit.server.util.Result;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/dictionary")
+@RequestMapping("/sys/dictionary")
 public class DictionaryController {
 
     @Autowired
@@ -165,6 +166,63 @@ public class DictionaryController {
             }
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/checkDictName/{dictName}")
+    public Result checkDictName(@PathVariable String dictName) {
+        try {
+            if (StringUtils.isNotBlank(dictName)) {
+                SysDictionaryEntity sysDictionaryEntity = dictionaryService.getByDictName(dictName);
+                if (sysDictionaryEntity == null) {
+                    return Result.SUCCESS(false);
+                }
+                return Result.SUCCESS(true);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/checkDictCode/{dictCode}")
+    public Result checkDictCode(@PathVariable String dictCode) {
+        try {
+            if (StringUtils.isNotBlank(dictCode)) {
+                SysDictionaryEntity sysDictionaryEntity = dictionaryService.getByDictCode(dictCode);
+                if (sysDictionaryEntity == null) {
+                    return Result.SUCCESS(false);
+                }
+                return Result.SUCCESS(true);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/checkItemText/{itemText}")
+    public Result checkItemText(@PathVariable String itemText) {
+        try {
+            if (StringUtils.isNotBlank(itemText)) {
+                SysDictionaryItemEntity sysDictionaryItemEntity = dictionaryService.getByItemText(itemText);
+                if (sysDictionaryItemEntity == null) {
+                    return Result.SUCCESS(false);
+                }
+                return Result.SUCCESS(true);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
 }
