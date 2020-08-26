@@ -36,11 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //OPTIONS请求全部放行
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 //登录接口放行
-                .antMatchers("/login","/refreshToken").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/v2/api-docs/**").permitAll()
+                .antMatchers("/login","/refreshToken","/getCheckCode").permitAll()
                 //其他接口全部接受验证
                 .anyRequest().authenticated();
 

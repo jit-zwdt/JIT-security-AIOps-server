@@ -19,6 +19,10 @@ spring:
       hibernate:
         format_sql: false
         #jdbc:
-          #time_zone: Hongkong
+        #time_zone: Hongkong
   jackson:
     time-zone: GMT+8
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:/ehcache.xml
