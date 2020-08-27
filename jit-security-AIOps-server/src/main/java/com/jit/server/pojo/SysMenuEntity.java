@@ -6,9 +6,9 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 /**
- * @Description: table sys_user_role entity
+ * @Description: table sys_menu entity
  * @Author: zengxin_miao
- * @Date: 2020/06/09 11:01
+ * @Date: 2020.08.27
  */
 @Data
 @Entity
@@ -24,6 +24,11 @@ public class SysMenuEntity {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
+    /**
+     * 菜单ID
+     */
+    @Column(name = "sid")
+    private int sid;
 
     /**
      * 父菜单ID，一级菜单为0
@@ -32,28 +37,22 @@ public class SysMenuEntity {
     private String parentId;
 
     /**
-     * 菜单名称
+     * 组件名称
      */
     @Column(name = "name")
     private String name;
 
     /**
+     * 菜单名称
+     */
+    @Column(name = "title")
+    private String title;
+
+    /**
      * 菜单URL
      */
-    @Column(name = "url")
-    private String url;
-
-    /**
-     * 授权(多个用逗号分隔，如：user:list,user:create)
-     */
-    @Column(name = "perms")
-    private String perms;
-
-    /**
-     * 权限策略 0: 显示；1：禁用
-     */
-    @Column(name = "perms_type")
-    private int permsType;
+    @Column(name = "path")
+    private String path;
 
     /**
      * 组件
@@ -62,28 +61,34 @@ public class SysMenuEntity {
     private String component;
 
     /**
-     * 组件名称
-     */
-    @Column(name = "component_name")
-    private String componentName;
-
-    /**
-     * 类型   0：一级菜单   1：子菜单   2：按钮
-     */
-    @Column(name = "menu_type")
-    private int menuType;
-
-    /**
      * 菜单图标
      */
     @Column(name = "icon")
     private String icon;
 
     /**
+     * 类型   0：菜单   1：按钮
+     */
+    @Column(name = "menu_type")
+    private int menuType;
+
+    /**
+     * 权限策略 0: 显示；1：禁用
+     */
+    @Column(name = "is_show")
+    private int isShow;
+
+    /**
      * 排序
      */
     @Column(name = "order_num")
     private int orderNum;
+
+    /**
+     * 重定向
+     */
+    @Column(name = "redirect")
+    private String redirect;
 
     /**
      * 是否路由菜单: 0:不是  1:是（默认值1）
