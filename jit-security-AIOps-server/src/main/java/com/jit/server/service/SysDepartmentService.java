@@ -23,4 +23,6 @@ public interface SysDepartmentService {
     int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy) throws Exception;
 
     SysDepartmentEntity getDepartmentByDepartCode(String code);
+
+    List<SysDepartmentEntity> getAllDepartment();
 }
