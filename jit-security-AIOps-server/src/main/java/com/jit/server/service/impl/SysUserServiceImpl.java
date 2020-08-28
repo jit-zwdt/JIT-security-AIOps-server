@@ -102,4 +102,9 @@ public class SysUserServiceImpl implements SysUserService {
     public Optional<SysUserEntity> findById(String id) {
         return sysUserRepo.findById(id);
     }
+
+    @Override
+    public SysUserEntity getByUserName(String username) {
+        return sysUserRepo.findByUsernameAndIsDeleted(username,0);
+    }
 }
