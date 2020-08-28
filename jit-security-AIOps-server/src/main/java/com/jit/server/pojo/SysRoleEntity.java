@@ -43,6 +43,6 @@ public class SysRoleEntity {
     private String updateBy;
 
     @Column(name = "is_deleted")
-    private String isDeleted;
+    private int isDeleted;
 
 }
