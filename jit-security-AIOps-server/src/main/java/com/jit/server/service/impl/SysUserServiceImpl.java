@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -88,6 +89,9 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUserEntity addUser(SysUserEntity params) throws Exception {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String password = bCryptPasswordEncoder.encode(params.getPassword());
+        params.setPassword(password);
         if(params.getId() != null && params.getId() != ""){
             params.setUpdateBy(userService.findIdByUsername());
             params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
