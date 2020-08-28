@@ -6,6 +6,7 @@ import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +81,25 @@ public class SysUserController {
             }
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/checkUserName/{username}")
+    public Result checkUserName(@PathVariable String username) {
+        try {
+            if (StringUtils.isNotBlank(username)) {
+                SysUserEntity sysUserEntity = sysUserService.getByUserName(username);
+                if (sysUserEntity == null) {
+                    return Result.SUCCESS(false);
+                }
+                return Result.SUCCESS(true);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
 }
