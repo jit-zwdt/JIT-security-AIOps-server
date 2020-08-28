@@ -4,6 +4,7 @@ import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,18 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private SysUserRepo sysUserRepo;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public String findIdByUsername() throws Exception {
@@ -78,5 +84,22 @@ public class SysUserServiceImpl implements SysUserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public SysUserEntity addUser(SysUserEntity params) throws Exception {
+        if(params.getId() != null && params.getId() != ""){
+            params.setUpdateBy(userService.findIdByUsername());
+            params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
+        }else{
+            params.setCreateBy(userService.findIdByUsername());
+            params.setGmtCreate(new java.sql.Timestamp(new Date().getTime()));
+        }
+        return  sysUserRepo.save(params);
+    }
+
+    @Override
+    public Optional<SysUserEntity> findById(String id) {
+        return sysUserRepo.findById(id);
     }
 }

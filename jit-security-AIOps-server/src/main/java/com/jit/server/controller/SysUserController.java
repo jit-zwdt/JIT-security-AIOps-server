@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/sys/user")
@@ -36,6 +38,48 @@ public class SysUserController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/addUser")
+    public Result addUser(@RequestBody SysUserEntity params) {
+        try{
+            return Result.SUCCESS(sysUserService.addUser(params));
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @DeleteMapping("/deleteUser/{id}")
+    public Result deleteUser(@PathVariable String id) {
+        try{
+            Optional<SysUserEntity> bean = sysUserService.findById(id);
+            if (bean.isPresent()) {
+                SysUserEntity sysUserEntity = bean.get();
+                sysUserEntity.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
+                sysUserEntity.setIsDeleted(1);
+                SysUserEntity sysUser = sysUserService.addUser(sysUserEntity);
+                return Result.SUCCESS(sysUser);
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/findUserById/{id}")
+    public Result findUserById(@PathVariable String id) {
+        try{
+            Optional<SysUserEntity> bean = sysUserService.findById(id);
+            if (bean.isPresent()) {
+                SysUserEntity sysDictionaryEntity = bean.get();
+                return Result.SUCCESS(sysDictionaryEntity);
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 }

@@ -80,4 +80,9 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
     public SysDepartmentEntity getDepartmentByDepartCode(String code) {
         return sysDepartmentRepo.findByDepartCodeAndIsDeleted(code,0);
     }
+
+    @Override
+    public List<SysDepartmentEntity> getAllDepartment() {
+        return sysDepartmentRepo.findByIsDeleted(0);
+    }
 }

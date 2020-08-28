@@ -6,6 +6,7 @@ import com.jit.server.util.PageRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SysUserService {
 
@@ -14,4 +15,8 @@ public interface SysUserService {
     Page<SysUserEntity> getUsers(PageRequest<SysUserEntityParams> params) throws Exception;
 
     List<SysUserEntity> findUserByRole(String roleId) throws Exception;
+
+    SysUserEntity addUser(SysUserEntity params) throws Exception;
+
+    Optional<SysUserEntity> findById(String id);
 }

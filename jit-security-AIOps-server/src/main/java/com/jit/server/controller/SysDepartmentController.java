@@ -143,4 +143,15 @@ public class SysDepartmentController {
         }
     }
 
+    @ResponseBody
+    @GetMapping(value = "/getAllDepartment")
+    public Result getAllDepartment() {
+        try {
+            return Result.SUCCESS(sysDepartmentService.getAllDepartment());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
 }

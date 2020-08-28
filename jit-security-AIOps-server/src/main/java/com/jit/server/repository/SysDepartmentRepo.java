@@ -34,4 +34,6 @@ public interface SysDepartmentRepo extends JpaRepository<SysDepartmentEntity, St
     int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy);
 
     SysDepartmentEntity findByDepartCodeAndIsDeleted(String departCode, int isDeleted);
+
+    List<SysDepartmentEntity> findByIsDeleted(int isDeleted);
 }
