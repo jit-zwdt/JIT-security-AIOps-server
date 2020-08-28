@@ -141,4 +141,28 @@ public class SysRoleController {
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
+
+    @ResponseBody
+    @DeleteMapping(value = "/delRole/{id}")
+    public Result delRole(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                SysRoleEntity sysRoleEntity = sysRoleService.findByIdAndIsDeleted(id);
+                if (sysRoleEntity == null) {
+                    return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+                } else {
+                    sysRoleEntity.setIsDeleted(1);
+                    sysRoleEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysRoleEntity.setUpdateBy(userService.findIdByUsername());
+                    sysRoleService.saveOrUpdateRole(sysRoleEntity);
+                    return Result.SUCCESS(true);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 }
