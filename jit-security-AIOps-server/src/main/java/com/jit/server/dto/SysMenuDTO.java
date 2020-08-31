@@ -1,5 +1,6 @@
 package com.jit.server.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,14 +13,17 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SysMenuDTO {
     private String id;
     private String path;
     private String component;
-    private String redirect;
     private String name;
-    private String title;
-    private String icon;
-    private String isShow;
-    public List<SysMenuDTO> children;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String redirect;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String permissionsKey;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<SysMenuDTO> children;
+    private SysMenuMetaDTO meta;
 }
