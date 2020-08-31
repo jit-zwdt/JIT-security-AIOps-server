@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class SysMenuServiceImpl implements SysMenuService {
     public static final String ONE = "1";
-    public static final String SYMBOL1 = "*";
+    public static final String SYMBOL = "*";
     public static final String LOGIN = "/login";
 
     @Autowired
@@ -24,7 +24,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     public List<SysMenuDTO> getMenus() throws Exception {
         List<SysMenuDTO> SysMenuDTOList = getMenusByParentId("0");
         SysMenuDTO sysMenuDtoLoginOut = new SysMenuDTO();
-        sysMenuDtoLoginOut.setPath(SYMBOL1);
+        sysMenuDtoLoginOut.setPath(SYMBOL);
         sysMenuDtoLoginOut.setRedirect(LOGIN);
         SysMenuDTOList.add(sysMenuDtoLoginOut);
         return SysMenuDTOList;
