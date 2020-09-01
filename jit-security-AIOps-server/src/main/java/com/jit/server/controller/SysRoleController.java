@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.dto.TransferDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysRoleEntity;
 import com.jit.server.request.RoleParams;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -157,6 +159,41 @@ public class SysRoleController {
                     sysRoleService.saveOrUpdateRole(sysRoleEntity);
                     return Result.SUCCESS(true);
                 }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getUsers")
+    public Result getUsers() {
+        try {
+            List<TransferDTO> object = sysRoleService.getUsers();
+            if (object == null) {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+            return Result.SUCCESS(object);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getRoleUsers/{id}")
+    public Result getRoleUsers(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                List<String> object = sysRoleService.getRoleUsers(id);
+                if (object == null) {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+                return Result.SUCCESS(object);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

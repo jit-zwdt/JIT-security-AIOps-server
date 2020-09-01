@@ -27,5 +27,18 @@ public class SysUserRoleEntity {
     @Column(name = "role_id", nullable = false)
     private String roleId;
 
+    @Column(name = "create_by")
+    private String createBy;
 
+    @Column(name = "gmt_create")
+    private Timestamp gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Timestamp gmtModified;
+
+    @Column(name = "update_by")
+    private String updateBy;
+
+    @Column(name = "is_deleted")
+    private int isDeleted;
 }

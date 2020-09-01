@@ -32,18 +32,19 @@ public class MyUserDetailService implements UserDetailsService {
     private SysUserRoleRepo userRoleRepo;
     @Autowired
     private SysRoleRepo roleRepo;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUserEntity user = userRepo.findByUsername(username);
-        if(user == null) {
+        if (user == null) {
             throw new UsernameNotFoundException("user is not found");
         }
-        List<SysUserRoleEntity> roleList = userRoleRepo.findByUserId(user.getId());
+        List<SysUserRoleEntity> roleList = userRoleRepo.findByUserIdAndIsDeleted(user.getId(), 0);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for(SysUserRoleEntity role : roleList){
+        for (SysUserRoleEntity role : roleList) {
             authorities.add(new SimpleGrantedAuthority(roleRepo.findRoleSignById(role.getId())));
         }
-        User securityUser = new User(user.getUsername(),user.getPassword(),authorities);
+        User securityUser = new User(user.getUsername(), user.getPassword(), authorities);
         return securityUser;
     }
 }
