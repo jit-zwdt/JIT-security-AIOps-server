@@ -2,7 +2,7 @@ package com.jit.server.controller;
 
 
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.AssetsEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.util.PageRequest;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -33,9 +33,9 @@ public class AssetsController {
 
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) throws IOException {
-        try{
-            if(params!=null){
-                Page<AssetsEntity> pageResult= assetsService.findByCondition(params.getParam(),params.getPage(),params.getSize());
+        try {
+            if (params != null) {
+                Page<MonitorAssetsEntity> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());
                 if (null != pageResult) {
                     Map<String, Object> result = new HashMap<String, Object>();
                     result.put("totalRow", pageResult.getTotalElements());
@@ -45,141 +45,142 @@ public class AssetsController {
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/addAssets")
-    public Result addAssets(@RequestBody AssetsEntity assets) {
-        try{
-            if(assets!=null){
-                assets.setGmtCreate(LocalDateTime.now());
-                assets.setGmtModified(LocalDateTime.now());
-                assets.setIsDeleted("0");
+    public Result addAssets(@RequestBody MonitorAssetsEntity assets) {
+        try {
+            if (assets != null) {
+                assets.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                assets.setIsDeleted(0);
                 assetsService.addAssets(assets);
                 return Result.SUCCESS(null);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PutMapping("/updateAssets/{id}")
-    public Result<AssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id) {
-        try{
-            if(params!=null && StringUtils.isNotEmpty(id)){
-                Optional<AssetsEntity> bean = assetsService.findByAssetsId(id);
+    public Result<MonitorAssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id) {
+        try {
+            if (params != null && StringUtils.isNotEmpty(id)) {
+                Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
                 if (bean.isPresent()) {
-                    AssetsEntity assets = bean.get();
+                    MonitorAssetsEntity assets = bean.get();
                     BeanUtils.copyProperties(params, assets);
-                    assets.setGmtModified(LocalDateTime.now());
+                    assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
                     assetsService.updateAssets(assets);
                     return Result.SUCCESS(assets);
-                }else{
+                } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @DeleteMapping("/deleteAssets/{id}")
     public Result deleteAssets(@PathVariable String id) {
-        try{
+        try {
             /*if (StringUtils.isNotEmpty(id)) {
                 assetsService.deleteAssets(id);
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }*/
-            Optional<AssetsEntity> bean = assetsService.findByAssetsId(id);
+            Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {
-                AssetsEntity assets = bean.get();
-                assets.setGmtModified(LocalDateTime.now());
-                assets.setIsDeleted("1");
+                MonitorAssetsEntity assets = bean.get();
+                assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                assets.setIsDeleted(1);
                 assetsService.updateAssets(assets);
                 return Result.SUCCESS(assets);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/findById/{id}")
-    public Result<AssetsEntity> findById(@PathVariable String id) {
-        try{
-            Optional<AssetsEntity> bean = assetsService.findByAssetsId(id);
+    public Result<MonitorAssetsEntity> findById(@PathVariable String id) {
+        try {
+            Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {
                 return Result.SUCCESS(bean);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
     @PostMapping("/findByConditionInfo")
     public Result findByConditionInfo() throws IOException {
-        try{
-            List<AssetsEntity> ListResult= assetsService.findByConditionInfo();
+        try {
+            List<MonitorAssetsEntity> ListResult = assetsService.findByConditionInfo();
             if (null != ListResult) {
                 List<Map> ListResult1 = new ArrayList<>();
                 List<Map> ListResult2 = new ArrayList<>();
                 List<Map> ListResult3 = new ArrayList<>();
                 List<Map> ListResult4 = new ArrayList<>();
-                for (AssetsEntity ret :ListResult) {
-                    if ("1".equals(ret.getAssetType())) {
+                for (MonitorAssetsEntity ret : ListResult) {
+                    if ("1".equals(ret.getType())) {
                         Map map = new HashMap();
-                        map.put("id",ret.getId());
-                        map.put("name",ret.getAssetName());
+                        map.put("id", ret.getId());
+                        map.put("name", ret.getName());
                         ListResult1.add(map);
-                    } else if ("2".equals(ret.getAssetType())) {
+                    } else if ("2".equals(ret.getType())) {
                         Map map = new HashMap();
-                        map.put("id",ret.getId());
-                        map.put("name",ret.getAssetName());
+                        map.put("id", ret.getId());
+                        map.put("name", ret.getName());
                         ListResult2.add(map);
-                    } else if ("3".equals(ret.getAssetType())) {
+                    } else if ("3".equals(ret.getType())) {
                         Map map = new HashMap();
-                        map.put("id",ret.getId());
-                        map.put("name",ret.getAssetName());
+                        map.put("id", ret.getId());
+                        map.put("name", ret.getName());
                         ListResult3.add(map);
-                    } else if ("4".equals(ret.getAssetType())) {
+                    } else if ("4".equals(ret.getType())) {
                         Map map = new HashMap();
-                        map.put("id",ret.getId());
-                        map.put("name",ret.getAssetName());
+                        map.put("id", ret.getId());
+                        map.put("name", ret.getName());
                         ListResult4.add(map);
                     }
 
                 }
                 Map<String, Object> resultmap1 = new HashMap<>();
-                resultmap1.put("id","1");
-                resultmap1.put("name","网络设备");
-                resultmap1.put("items",ListResult1);
+                resultmap1.put("id", "1");
+                resultmap1.put("name", "网络设备");
+                resultmap1.put("items", ListResult1);
                 Map<String, Object> resultmap2 = new HashMap<>();
-                resultmap2.put("id","2");
-                resultmap2.put("name","通讯设备");
-                resultmap2.put("items",ListResult2);
+                resultmap2.put("id", "2");
+                resultmap2.put("name", "通讯设备");
+                resultmap2.put("items", ListResult2);
                 Map<String, Object> resultmap3 = new HashMap<>();
-                resultmap3.put("id","3");
-                resultmap3.put("name","服务器");
-                resultmap3.put("items",ListResult3);
+                resultmap3.put("id", "3");
+                resultmap3.put("name", "服务器");
+                resultmap3.put("items", ListResult3);
                 Map<String, Object> resultmap4 = new HashMap<>();
-                resultmap4.put("id","4");
-                resultmap4.put("name","云平台");
-                resultmap4.put("items",ListResult4);
+                resultmap4.put("id", "4");
+                resultmap4.put("name", "云平台");
+                resultmap4.put("items", ListResult4);
                 List<Map<String, Object>> result = new ArrayList<>();
 
                 result.add(resultmap1);
@@ -190,7 +191,7 @@ public class AssetsController {
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }

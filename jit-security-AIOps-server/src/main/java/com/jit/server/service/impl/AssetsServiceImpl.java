@@ -1,6 +1,6 @@
 package com.jit.server.service.impl;
 
-import com.jit.server.pojo.AssetsEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.repository.AssetsRepo;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
@@ -28,16 +28,16 @@ public class AssetsServiceImpl implements AssetsService {
     private AssetsRepo assetsRepo;
 
     @Override
-    public Page<AssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception {
+    public Page<MonitorAssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception {
 
-        if (params!=null){
+        if (params != null) {
             //条件
-            Specification<AssetsEntity> spec = new Specification<AssetsEntity>() {
+            Specification<MonitorAssetsEntity> spec = new Specification<MonitorAssetsEntity>() {
                 @Override
-                public Predicate toPredicate(Root<AssetsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                public Predicate toPredicate(Root<MonitorAssetsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     /** 可添加你的其他搜索过滤条件 默认已有创建时间过滤 **/
-                    Path<LocalDateTime> createTimeField=root.get("assetRegisterDate");
-                    Path<Date> endTimeField=root.get("assetLogoutDate");
+                    Path<LocalDateTime> createTimeField = root.get("assetRegisterDate");
+                    Path<Date> endTimeField = root.get("assetLogoutDate");
                     //Path<String> categoryIdField=root.get("categoryId");
 
                     /**
@@ -52,25 +52,25 @@ public class AssetsServiceImpl implements AssetsService {
                     List<Predicate> list = new ArrayList<Predicate>();
                     list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
                     /** 资产登记时间 **/
-                    if(params.getAssetRegisterStartDate()!=null){
+                    if (params.getAssetRegisterStartDate() != null) {
                         list.add(cb.greaterThanOrEqualTo(createTimeField, params.getAssetRegisterStartDate()));
                     }
-                    if(params.getAssetRegisterEndDate()!=null){
+                    if (params.getAssetRegisterEndDate() != null) {
                         list.add(cb.lessThanOrEqualTo(createTimeField, params.getAssetRegisterEndDate()));
                     }
                     /** 资产名称 **/
-                    if(StringUtils.isNotEmpty(params.getAssetName())){
-                        list.add(cb.like(root.get("assetName").as(String.class),"%"+params.getAssetName()+"%"));
+                    if (StringUtils.isNotEmpty(params.getAssetName())) {
+                        list.add(cb.like(root.get("assetName").as(String.class), "%" + params.getAssetName() + "%"));
                     }
 
                     /** 资产类型 **/
-                    if(StringUtils.isNotEmpty(params.getAssetType())){
+                    if (StringUtils.isNotEmpty(params.getAssetType())) {
                         list.add(cb.equal(root.get("assetType").as(String.class), params.getAssetType()));
                     }
 
                     /** 资产所属人 **/
-                    if(StringUtils.isNotEmpty(params.getAssetBelongsPerson())){
-                        list.add(cb.like(root.get("assetBelongsPerson").as(String.class), "%"+params.getAssetBelongsPerson()+"%"));
+                    if (StringUtils.isNotEmpty(params.getAssetBelongsPerson())) {
+                        list.add(cb.like(root.get("assetBelongsPerson").as(String.class), "%" + params.getAssetBelongsPerson() + "%"));
                     }
 
                     Predicate[] arr = new Predicate[list.size()];
@@ -95,7 +95,7 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     @Override
-    public void addAssets(AssetsEntity assets) throws Exception {
+    public void addAssets(MonitorAssetsEntity assets) throws Exception {
         assetsRepo.save(assets);
     }
 
@@ -105,16 +105,17 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     @Override
-    public Optional<AssetsEntity> findByAssetsId(String id) throws Exception {
+    public Optional<MonitorAssetsEntity> findByAssetsId(String id) throws Exception {
         return assetsRepo.findById(id);
     }
 
     @Override
-    public void updateAssets(AssetsEntity assets) throws Exception {
+    public void updateAssets(MonitorAssetsEntity assets) throws Exception {
         assetsRepo.save(assets);
     }
+
     @Override
-    public List<AssetsEntity> findByConditionInfo() throws Exception {
+    public List<MonitorAssetsEntity> findByConditionInfo() throws Exception {
         return this.assetsRepo.findAll();
     }
 }

@@ -1,6 +1,6 @@
 package com.jit.server.repository;
 
-import com.jit.server.pojo.AssetsEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
  * @Date: 2020/06/16 13:25
  */
 @Repository
-public interface AssetsRepo extends JpaRepository<AssetsEntity, String>, JpaSpecificationExecutor<AssetsEntity> {
+public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, JpaSpecificationExecutor<MonitorAssetsEntity> {
 
     @Override
-    public Page<AssetsEntity> findAll(Specification<AssetsEntity> spec, Pageable pageable);
+    public Page<MonitorAssetsEntity> findAll(Specification<MonitorAssetsEntity> spec, Pageable pageable);
 }
