@@ -45,6 +45,7 @@ public class SysDepartmentController {
     public Result addDepartment(@RequestBody SysDepartmentEntity department) {
         try {
             if (department != null) {
+                String id = "";
                 if (StringUtils.isBlank(department.getId())) {
                     if ("0".equals(department.getParentId())) {
                         department.setDepartType("1");
@@ -53,12 +54,28 @@ public class SysDepartmentController {
                     }
                     department.setGmtCreate(new Timestamp(System.currentTimeMillis()));
                     department.setCreateBy(userService.findIdByUsername());
+                    department.setIsDeleted(0);
+                    id = sysDepartmentService.saveOrUpdateDepartment(department);
                 } else {
-                    department.setGmtModified(new Timestamp(System.currentTimeMillis()));
-                    department.setUpdateBy(userService.findIdByUsername());
+                    SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartment(department.getId());
+                    if (sysDepartmentEntity != null) {
+                        sysDepartmentEntity.setDepartName(department.getDepartName());
+                        sysDepartmentEntity.setDepartCode(department.getDepartCode());
+                        sysDepartmentEntity.setMobile(department.getMobile());
+                        sysDepartmentEntity.setFax(department.getFax());
+                        sysDepartmentEntity.setAddress(department.getAddress());
+                        sysDepartmentEntity.setDepartCategory(department.getDepartCategory());
+                        sysDepartmentEntity.setStatus(department.getStatus());
+                        sysDepartmentEntity.setDepartNameEn(department.getDepartNameEn());
+                        sysDepartmentEntity.setDepartNameAbbr(department.getDepartNameAbbr());
+                        sysDepartmentEntity.setRemark(department.getRemark());
+                        sysDepartmentEntity.setDepartOrder(department.getDepartOrder());
+                        sysDepartmentEntity.setDescription(department.getDescription());
+                        sysDepartmentEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysDepartmentEntity.setUpdateBy(userService.findIdByUsername());
+                        id = sysDepartmentService.saveOrUpdateDepartment(department);
+                    }
                 }
-                department.setIsDeleted(0);
-                String id = sysDepartmentService.saveOrUpdateDepartment(department);
                 if (id != null) {
                     return Result.SUCCESS("success");
                 } else {
