@@ -97,6 +97,12 @@ public class SysUserEntity {
     private String picId;
 
     /**
+     * 头像
+     */
+    @Column(name = "pic_url")
+    private String picUrl;
+
+    /**
      * 现居住地
      */
     @Column(name = "live_address")

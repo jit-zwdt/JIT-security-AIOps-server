@@ -5,14 +5,18 @@ import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,6 +119,27 @@ public class SysUserController {
                     return Result.SUCCESS(false);
                 }
                 return Result.SUCCESS(true);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/uploadPic")
+    public Result uploadPic(MultipartFile file) throws Exception{
+        try {
+            if (!file.isEmpty()) {
+                String path = "/";
+                String filename = file.getOriginalFilename(); //获得原始的文件名
+                InputStream input=file.getInputStream();
+                FtpClientUtil a = new FtpClientUtil();
+                FTPClient ftp = a.getConnectionFTP("172.16.15.10", 21, "jitutil", "dota&csjit3368");
+                String url = a.uploadFile(ftp, path, filename, input);
+                a.closeFTP(ftp);
+                return Result.SUCCESS(url);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
