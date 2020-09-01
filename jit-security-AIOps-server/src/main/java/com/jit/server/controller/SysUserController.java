@@ -4,11 +4,13 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -22,6 +24,9 @@ public class SysUserController {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private UserService userService;
 
     @ResponseBody
     @PostMapping(value = "/getUsers")
@@ -80,6 +85,22 @@ public class SysUserController {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+    @GetMapping("/getUserInfo")
+    public Result getUserInfo(){
+        try {
+            String id = userService.findIdByUsername();
+            Optional<SysUserEntity> bean = sysUserService.findById(id);
+            if (bean.isPresent()) {
+                SysUserEntity sysDictionaryEntity = bean.get();
+                return Result.SUCCESS(sysDictionaryEntity);
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
