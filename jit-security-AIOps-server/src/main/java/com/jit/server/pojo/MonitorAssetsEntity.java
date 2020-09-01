@@ -1,16 +1,17 @@
 package com.jit.server.pojo;
 
-/**
- * @Description table monitor_assets: table entity
- * @author zengxin_miao
- * @Date: 2020/09/01 09:32:38
- */
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+/**
+ * @Description table monitor_assets: table entity
+ * @author zengxin_miao
+ * @Date: 2020/09/01 09:32:38
+ */
 @Entity
 @Data
 @Table(name = "monitor_assets")
@@ -85,8 +86,9 @@ public class MonitorAssetsEntity {
     /**
      * 资产登记时间
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "register_date")
-    private java.sql.Timestamp registerDate;
+    private java.sql.Timestamp  registerDate;
 
     /**
      * 登记人
@@ -97,8 +99,9 @@ public class MonitorAssetsEntity {
     /**
      * 资产修改时间
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "update_date")
-    private java.sql.Timestamp updateDate;
+    private java.sql.Timestamp  updateDate;
 
     /**
      * 资产位置
@@ -109,8 +112,9 @@ public class MonitorAssetsEntity {
     /**
      * 资产注销时间
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "logout_date")
-    private java.sql.Timestamp logoutDate;
+    private java.sql.Timestamp  logoutDate;
 
     /**
      * 删除标识 0：表示未删除， 1：表示删除
@@ -121,8 +125,9 @@ public class MonitorAssetsEntity {
     /**
      * 财务入账日期
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "date_recorded")
-    private java.sql.Timestamp dateRecorded;
+    private java.sql.Timestamp  dateRecorded;
 
     /**
      * 价值
@@ -175,13 +180,15 @@ public class MonitorAssetsEntity {
     /**
      * 创建时间
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_create")
-    private java.sql.Timestamp gmtCreate;
+    private java.sql.Timestamp  gmtCreate;
 
     /**
      * 修改时间
      */
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_modified")
-    private java.sql.Timestamp gmtModified;
+    private java.sql.Timestamp  gmtModified;
 
 }

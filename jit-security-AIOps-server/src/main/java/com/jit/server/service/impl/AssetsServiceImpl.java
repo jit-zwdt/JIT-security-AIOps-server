@@ -36,8 +36,8 @@ public class AssetsServiceImpl implements AssetsService {
                 @Override
                 public Predicate toPredicate(Root<MonitorAssetsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     /** 可添加你的其他搜索过滤条件 默认已有创建时间过滤 **/
-                    Path<LocalDateTime> createTimeField = root.get("assetRegisterDate");
-                    Path<Date> endTimeField = root.get("assetLogoutDate");
+                    Path<LocalDateTime> createTimeField = root.get("registerDate");
+                    Path<LocalDateTime> endTimeField = root.get("logoutDate");
                     //Path<String> categoryIdField=root.get("categoryId");
 
                     /**
@@ -50,27 +50,27 @@ public class AssetsServiceImpl implements AssetsService {
                      le : lessThanOrEqualTo（小于或等于）
                      **/
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), 0));
                     /** 资产登记时间 **/
-                    if (params.getAssetRegisterStartDate() != null) {
-                        list.add(cb.greaterThanOrEqualTo(createTimeField, params.getAssetRegisterStartDate()));
+                    if (params.getRegisterStartDate() != null) {
+                        list.add(cb.greaterThanOrEqualTo(createTimeField, params.getRegisterStartDate()));
                     }
-                    if (params.getAssetRegisterEndDate() != null) {
-                        list.add(cb.lessThanOrEqualTo(createTimeField, params.getAssetRegisterEndDate()));
+                    if (params.getRegisterEndDate() != null) {
+                        list.add(cb.lessThanOrEqualTo(endTimeField, params.getRegisterEndDate()));
                     }
                     /** 资产名称 **/
-                    if (StringUtils.isNotEmpty(params.getAssetName())) {
-                        list.add(cb.like(root.get("assetName").as(String.class), "%" + params.getAssetName() + "%"));
+                    if (StringUtils.isNotEmpty(params.getName())) {
+                        list.add(cb.like(root.get("name").as(String.class), "%" + params.getName() + "%"));
                     }
 
                     /** 资产类型 **/
-                    if (StringUtils.isNotEmpty(params.getAssetType())) {
-                        list.add(cb.equal(root.get("assetType").as(String.class), params.getAssetType()));
+                    if (StringUtils.isNotEmpty(params.getType())) {
+                        list.add(cb.equal(root.get("type").as(String.class), params.getType()));
                     }
 
                     /** 资产所属人 **/
-                    if (StringUtils.isNotEmpty(params.getAssetBelongsPerson())) {
-                        list.add(cb.like(root.get("assetBelongsPerson").as(String.class), "%" + params.getAssetBelongsPerson() + "%"));
+                    if (StringUtils.isNotEmpty(params.getBelongsPerson())) {
+                        list.add(cb.like(root.get("belongsPerson").as(String.class), "%" + params.getBelongsPerson() + "%"));
                     }
 
                     Predicate[] arr = new Predicate[list.size()];

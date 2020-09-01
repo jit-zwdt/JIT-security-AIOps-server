@@ -20,36 +20,61 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssetsParams {
-    private String assetName;
+    private String name;
 
-    private String assetType;
+    private String type;
 
-    private String assetNumber;
+    private String number;
 
-    private String assetState;
+    private String state;
 
-    private int assetAmount;
+    private String gbType;
 
-    private String assetBelongsDept;
+    private String ip;
 
-    private String assetBelongsPerson;
+    private String backupIp;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime assetRegisterDate;
+    private int amount;
 
-    private String assetRegistrant;
+    private String belongsDept;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime assetUpdateDate;
-
-    private String assetLocation;
+    private String belongsPerson;
 
     @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime assetLogoutDate;
+    private LocalDateTime registerDate;
+
+    private String registrant;
 
     @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime assetRegisterStartDate;
+    private LocalDateTime updateDate;
+
+    private String location;
 
     @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime assetRegisterEndDate;
+    private LocalDateTime logoutDate;
+
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime registerStartDate;
+
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime registerEndDate;
+
+    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime dateRecorded;
+
+    private String worth;
+
+    private String acquisitionMode;
+
+    private String userDepartment;
+
+    private String user;
+
+    private String objectClassification;
+
+    private String sn;
+
+    private String brand;
+
+    private String productModel;
 }
