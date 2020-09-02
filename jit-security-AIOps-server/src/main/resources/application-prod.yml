@@ -26,3 +26,11 @@ spring:
     type: ehcache
     ehcache:
       config: classpath:/ehcache.xml
+###################################
+#--------------FTP配置-------------#
+###################################
+ftp:
+  hostName: 172.16.15.10
+  port: 21
+  userName: jitutil
+  passWord: dota&csjit3368

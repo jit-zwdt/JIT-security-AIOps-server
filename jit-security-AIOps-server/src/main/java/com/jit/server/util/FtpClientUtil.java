@@ -1,17 +1,22 @@
 package com.jit.server.util;
 
 
+import com.jit.server.config.FtpConfig;
 import org.apache.commons.net.ftp.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.UUID;
 
-public class FtpClientUtil
-{
+public class FtpClientUtil {
+    @Autowired
+    FtpConfig ftpConfig;
+
     /**
      * 获得连接FTP方式
+     *
      * @param hostName FTP服务器地址
-     * @param port FTP服务器端口
+     * @param port     FTP服务器端口
      * @param userName FTP登录用户名
      * @param passWord FTP登录密码
      * @return FTPClient
@@ -38,6 +43,7 @@ public class FtpClientUtil
 
     /**
      * 关闭连接FTP方式
+     *
      * @param ftp FTPClient对象
      * @return boolean
      */
@@ -56,9 +62,10 @@ public class FtpClientUtil
 
     /**
      * 上传文件FTP方式
-     * @param ftp FTPClient对象
-     * @param path FTP服务器上传地址
-     * @param fileName 本地文件路径
+     *
+     * @param ftp         FTPClient对象
+     * @param path        FTP服务器上传地址
+     * @param fileName    本地文件路径
      * @param inputStream 输入流
      * @return boolean
      */
@@ -67,8 +74,8 @@ public class FtpClientUtil
         try {
             ftp.changeWorkingDirectory(path);//转移到指定FTP服务器目录
             //重新命名不重复的文件名
-            fileName = UUID.randomUUID().toString()+fileName.substring(fileName.lastIndexOf("."),fileName.length());
-            url = "http://172.16.15.10:21/"+fileName;
+            fileName = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."), fileName.length());
+            url = fileName;
             path = new String(path.getBytes("GBK"), "ISO-8859-1");
             //转到指定上传目录
             ftp.changeWorkingDirectory(path);
@@ -88,8 +95,9 @@ public class FtpClientUtil
 
     /**
      * 删除文件FTP方式
-     * @param ftp FTPClient对象
-     * @param path FTP服务器上传地址
+     *
+     * @param ftp      FTPClient对象
+     * @param path     FTP服务器上传地址
      * @param fileName FTP服务器上要删除的文件名
      * @return
      */
@@ -110,9 +118,10 @@ public class FtpClientUtil
 
     /**
      * 下载文件FTP方式
-     * @param ftp FTPClient对象
-     * @param path FTP服务器上传地址
-     * @param fileName 本地文件路径
+     *
+     * @param ftp       FTPClient对象
+     * @param path      FTP服务器上传地址
+     * @param fileName  本地文件路径
      * @param localPath 本里存储路径
      * @return boolean
      */
@@ -142,6 +151,7 @@ public class FtpClientUtil
 
     /**
      * 判断是否有重名文件
+     *
      * @param fileName
      * @param fs
      * @return

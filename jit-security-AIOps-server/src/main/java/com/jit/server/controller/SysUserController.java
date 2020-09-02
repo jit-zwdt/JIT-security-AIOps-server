@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.config.FtpConfig;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
@@ -32,6 +33,9 @@ public class SysUserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FtpConfig ftpConfig;
+
     @ResponseBody
     @PostMapping(value = "/getUsers")
     public Result getUsers(@RequestBody PageRequest<SysUserEntityParams> params) {
@@ -53,16 +57,16 @@ public class SysUserController {
 
     @PostMapping("/addUser")
     public Result addUser(@RequestBody SysUserEntity params) {
-        try{
+        try {
             return Result.SUCCESS(sysUserService.addUser(params));
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @DeleteMapping("/deleteUser/{id}")
     public Result deleteUser(@PathVariable String id) {
-        try{
+        try {
             Optional<SysUserEntity> bean = sysUserService.findById(id);
             if (bean.isPresent()) {
                 SysUserEntity sysUserEntity = bean.get();
@@ -70,37 +74,38 @@ public class SysUserController {
                 sysUserEntity.setIsDeleted(1);
                 SysUserEntity sysUser = sysUserService.addUser(sysUserEntity);
                 return Result.SUCCESS(sysUser);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/findUserById/{id}")
     public Result findUserById(@PathVariable String id) {
-        try{
+        try {
             Optional<SysUserEntity> bean = sysUserService.findById(id);
             if (bean.isPresent()) {
                 SysUserEntity sysDictionaryEntity = bean.get();
                 return Result.SUCCESS(sysDictionaryEntity);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
     @GetMapping("/getUserInfo")
-    public Result getUserInfo(){
+    public Result getUserInfo() {
         try {
             String id = userService.findIdByUsername();
             Optional<SysUserEntity> bean = sysUserService.findById(id);
             if (bean.isPresent()) {
                 SysUserEntity sysDictionaryEntity = bean.get();
                 return Result.SUCCESS(sysDictionaryEntity);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -129,14 +134,14 @@ public class SysUserController {
     }
 
     @PostMapping("/uploadPic")
-    public Result uploadPic(MultipartFile file) throws Exception{
+    public Result uploadPic(MultipartFile file) throws Exception {
         try {
             if (!file.isEmpty()) {
                 String path = "/";
                 String filename = file.getOriginalFilename(); //获得原始的文件名
-                InputStream input=file.getInputStream();
+                InputStream input = file.getInputStream();
                 FtpClientUtil a = new FtpClientUtil();
-                FTPClient ftp = a.getConnectionFTP("172.16.15.10", 21, "jitutil", "dota&csjit3368");
+                FTPClient ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
                 String url = a.uploadFile(ftp, path, filename, input);
                 a.closeFTP(ftp);
                 return Result.SUCCESS(url);
