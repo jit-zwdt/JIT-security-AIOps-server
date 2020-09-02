@@ -1,16 +1,21 @@
 package com.jit.server.controller;
 
 import com.jit.server.dto.SysMenuDTO;
+import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.SysMenuEntity;
+import com.jit.server.request.MenuParams;
 import com.jit.server.service.SysMenuService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.Result;
+import com.jit.server.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/sys/menu")
@@ -18,6 +23,8 @@ public class SysMenuController {
 
     @Autowired
     private SysMenuService sysMenuService;
+    @Autowired
+    private UserService userService;
 
     @ResponseBody
     @GetMapping(value = "/getMenus")
@@ -27,6 +34,124 @@ public class SysMenuController {
             return Result.SUCCESS(menus);
         } catch (Exception e) {
             e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getMenusList")
+    public Result getMenusList() {
+        try {
+            List<SysMenuListDTO> menus = sysMenuService.getMenusList();
+            return Result.SUCCESS(menus);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping(value = "/findBySysMenu/{id}")
+    public Result findBySysMenu(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotEmpty(id)) {
+                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
+                if (bean.isPresent()) {
+                    SysMenuEntity sysMenuEntity = bean.get();
+                    return Result.SUCCESS(sysMenuEntity);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping(value = "/getSysMenuFirst")
+    public Result getSysMenuFirst() {
+        try {
+            List<SysMenuListDTO> menus = sysMenuService.getMenusFirst();
+            return Result.SUCCESS(menus);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping(value = "/addMenus")
+    public Result addMenus(@RequestBody MenuParams menuParams) {
+        try {
+            if (menuParams != null) {
+                SysMenuEntity sysMenuEntity = new SysMenuEntity();
+                if ("1".equals(menuParams.getStatus())) {
+                    sysMenuEntity.setParentId("0");
+                } else if ("2".equals(menuParams.getStatus())) {
+                    sysMenuEntity.setParentId(menuParams.getPid());
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+                sysMenuEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                sysMenuEntity.setCreateBy(userService.findIdByUsername());
+                sysMenuEntity.setName(menuParams.getName());
+                sysMenuEntity.setTitle(menuParams.getTitle());
+                sysMenuEntity.setPath(menuParams.getPath());
+                sysMenuEntity.setComponent(menuParams.getComponent());
+                sysMenuEntity.setIcon(menuParams.getIcon());
+                sysMenuEntity.setIsShow(Integer.parseInt(menuParams.getIsShow()));
+                sysMenuEntity.setOrderNum(Integer.parseInt(menuParams.getOrderNum()));
+                sysMenuEntity.setRedirect(menuParams.getRedirect());
+                sysMenuEntity.setIsRoute(Integer.parseInt(menuParams.getIsRoute()));
+                sysMenuEntity.setIsDeleted(0);
+                sysMenuService.addSysMenu(sysMenuEntity);
+                return Result.SUCCESS(sysMenuEntity);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping(value = "/updateMenus")
+    public Result updateMenus(@RequestBody SysMenuListDTO sysMenuListDTO) {
+        try {
+            if (sysMenuListDTO != null && StringUtils.isNotEmpty(sysMenuListDTO.getId())) {
+                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(sysMenuListDTO.getId());
+                if (bean.isPresent()) {
+                    SysMenuEntity sysMenuEntity = bean.get();
+                    BeanUtils.copyProperties(sysMenuListDTO, sysMenuEntity);
+                    sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysMenuEntity.setUpdateBy(userService.findIdByUsername());
+                    sysMenuService.updateSysMenu(sysMenuEntity);
+                    return Result.SUCCESS(sysMenuEntity);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping(value = "/delMenus/{id}")
+    public Result delMenus(@PathVariable String id) {
+        try {
+            Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
+            if (bean.isPresent()) {
+                SysMenuEntity sysMenuEntity = bean.get();
+                sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                sysMenuEntity.setUpdateBy(userService.findIdByUsername());
+                sysMenuEntity.setIsDeleted(1);
+                sysMenuService.updateSysMenu(sysMenuEntity);
+                return Result.SUCCESS(sysMenuEntity);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

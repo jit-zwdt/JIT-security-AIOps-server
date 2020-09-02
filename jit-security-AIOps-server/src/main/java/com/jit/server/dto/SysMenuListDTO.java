@@ -8,23 +8,23 @@ import java.util.List;
 
 /**
  * @Description: SysMenuDto
- * @Author: zengxin_miao
- * @Date: 2020/08/27
+ * @Author: jian_liu
+ * @Date: 2020/09/01
  */
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SysMenuDTO {
+public class SysMenuListDTO {
     private String id;
     private String path;
     private String component;
     private String name;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String redirect;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String permissionsKey;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<SysMenuDTO> children;
-    private SysMenuMetaDTO meta;
+    private List<SysMenuListDTO> children;
+    private String title;
+    private String icon;
     private String isShow;
+    private String isRoute;
+    private String orderNum;
 }

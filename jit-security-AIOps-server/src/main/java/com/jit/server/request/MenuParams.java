@@ -1,30 +1,34 @@
-package com.jit.server.dto;
+package com.jit.server.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jit.server.dto.SysMenuListDTO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /**
- * @Description: SysMenuDto
- * @Author: zengxin_miao
- * @Date: 2020/08/27
+ * @Description: object menu param
+ * @Author: jian_liu
+ * @Date: 2020/09/01 13:29
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SysMenuDTO {
+public class MenuParams {
     private String id;
     private String path;
     private String component;
     private String name;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String redirect;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String permissionsKey;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<SysMenuDTO> children;
-    private SysMenuMetaDTO meta;
+    private String title;
+    private String icon;
     private String isShow;
+    private String isRoute;
+    private String orderNum;
+    private String status;
+    private String pid;
 }
