@@ -1,16 +1,12 @@
 package com.jit.server.util;
 
 
-import com.jit.server.config.FtpConfig;
 import org.apache.commons.net.ftp.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.UUID;
 
 public class FtpClientUtil {
-    @Autowired
-    FtpConfig ftpConfig;
 
     /**
      * 获得连接FTP方式
