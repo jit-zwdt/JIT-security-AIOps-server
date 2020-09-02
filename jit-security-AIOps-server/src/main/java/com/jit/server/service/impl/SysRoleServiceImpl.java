@@ -2,6 +2,7 @@ package com.jit.server.service.impl;
 
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRoleRepo;
 import com.jit.server.service.SysRoleService;
@@ -111,5 +112,20 @@ public class SysRoleServiceImpl implements SysRoleService {
             }
         }
         return res;
+    }
+
+    @Override
+    public SysUserRoleEntity getSysUserRole(String roleId, String userId) throws Exception {
+        return sysUserRoleRepo.findByRoleIdAndUserIdAndIsDeleted(roleId, userId, 0);
+    }
+
+    @Override
+    public List<SysUserRoleEntity> getSysUserRolesByRoleId(String roleId) throws Exception {
+        return sysUserRoleRepo.findByRoleIdAndIsDeleted(roleId, 0);
+    }
+
+    @Override
+    public String saveOrUpdateUserRole(SysUserRoleEntity sysUserRoleEntity) throws Exception {
+        return sysUserRoleRepo.saveAndFlush(sysUserRoleEntity).getId();
     }
 }

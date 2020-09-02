@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.request.RoleParams;
 import com.jit.server.service.SysRoleService;
 import com.jit.server.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,10 +192,59 @@ public class SysRoleController {
         try {
             if (StringUtils.isNotBlank(id)) {
                 List<String> object = sysRoleService.getRoleUsers(id);
-                if (object == null) {
-                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-                }
                 return Result.SUCCESS(object);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/bindingUsers")
+    public Result bindingUsers(@RequestBody Map<String, Object> params) {
+        try {
+            System.out.println(params);
+            String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
+            List<String> value = params.get("value") != null ? (List<String>) params.get("value") : null;
+            if (params != null) {
+                if (StringUtils.isNotBlank(roleId)) {
+                    //del removed users
+                    List<SysUserRoleEntity> sysUserRoleEntityList = sysRoleService.getSysUserRolesByRoleId(roleId);
+                    List<String> exList = new ArrayList<>();
+                    if (sysUserRoleEntityList != null && !sysUserRoleEntityList.isEmpty()) {
+                        String userId = "";
+                        for (SysUserRoleEntity sysUserRoleEntity : sysUserRoleEntityList) {
+                            userId = sysUserRoleEntity.getUserId();
+                            if (!value.contains(userId)) {
+                                sysUserRoleEntity.setIsDeleted(1);
+                                sysUserRoleEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                                sysUserRoleEntity.setUpdateBy(userService.findIdByUsername());
+                                sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
+                            } else {
+                                exList.add(userId);
+                            }
+                        }
+                    }
+                    if (value != null && !value.isEmpty()) {
+                        value.removeAll(exList);
+                        //add new users
+                        for (String userId : value) {
+                            SysUserRoleEntity sysUserRoleEntity = new SysUserRoleEntity();
+                            sysUserRoleEntity.setRoleId(roleId);
+                            sysUserRoleEntity.setUserId(userId);
+                            sysUserRoleEntity.setCreateBy(userService.findIdByUsername());
+                            sysUserRoleEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                            sysUserRoleEntity.setIsDeleted(0);
+                            sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
+                        }
+                    }
+                    return Result.SUCCESS(null);
+                } else {
+                    return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+                }
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

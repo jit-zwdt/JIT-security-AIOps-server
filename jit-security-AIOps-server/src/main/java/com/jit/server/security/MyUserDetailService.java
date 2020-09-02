@@ -42,7 +42,7 @@ public class MyUserDetailService implements UserDetailsService {
         List<SysUserRoleEntity> roleList = userRoleRepo.findByUserIdAndIsDeleted(user.getId(), 0);
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (SysUserRoleEntity role : roleList) {
-            authorities.add(new SimpleGrantedAuthority(roleRepo.findRoleSignById(role.getId())));
+            authorities.add(new SimpleGrantedAuthority(roleRepo.findRoleSignById(role.getRoleId())));
         }
         User securityUser = new User(user.getUsername(), user.getPassword(), authorities);
         return securityUser;

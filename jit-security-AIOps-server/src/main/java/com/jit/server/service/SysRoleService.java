@@ -2,6 +2,7 @@ package com.jit.server.service;
 
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.util.PageRequest;
 import org.springframework.data.domain.Page;
 
@@ -23,4 +24,10 @@ public interface SysRoleService {
     List<String> getRoleUsers(String id) throws Exception;
 
     List<TransferDTO> getUsers() throws Exception;
+
+    SysUserRoleEntity getSysUserRole(String roleId, String userId) throws Exception;
+
+    List<SysUserRoleEntity> getSysUserRolesByRoleId(String roleId) throws Exception;
+
+    String saveOrUpdateUserRole(SysUserRoleEntity sysUserRoleEntity) throws Exception;
 }
