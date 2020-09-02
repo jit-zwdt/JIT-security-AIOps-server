@@ -25,6 +25,10 @@ public class SysMenuController {
     private SysMenuService sysMenuService;
     @Autowired
     private UserService userService;
+    public static final String ONE = "1";
+    public static final String TWO = "2";
+    public static final String ZERO = "0";
+    public static final String ICON = "el-icon-monitor";
 
     @ResponseBody
     @GetMapping(value = "/getMenus")
@@ -85,9 +89,9 @@ public class SysMenuController {
         try {
             if (menuParams != null) {
                 SysMenuEntity sysMenuEntity = new SysMenuEntity();
-                if ("1".equals(menuParams.getStatus())) {
-                    sysMenuEntity.setParentId("0");
-                } else if ("2".equals(menuParams.getStatus())) {
+                if (ONE.equals(menuParams.getStatus())) {
+                    sysMenuEntity.setParentId(ZERO);
+                } else if (TWO.equals(menuParams.getStatus())) {
                     sysMenuEntity.setParentId(menuParams.getPid());
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
@@ -100,6 +104,8 @@ public class SysMenuController {
                 sysMenuEntity.setComponent(menuParams.getComponent());
                 if (StringUtils.isNotEmpty(menuParams.getIcon())) {
                     sysMenuEntity.setIcon(menuParams.getIcon());
+                } else {
+                    sysMenuEntity.setIcon(ICON);
                 }
                 sysMenuEntity.setIsShow(Integer.parseInt(menuParams.getIsShow()));
                 sysMenuEntity.setOrderNum(Integer.parseInt(menuParams.getOrderNum()));
