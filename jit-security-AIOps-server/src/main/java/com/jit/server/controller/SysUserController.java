@@ -11,17 +11,15 @@ import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/sys/user")
@@ -151,6 +149,48 @@ public class SysUserController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/getPicBase64")
+    public Result getPicBase64(@RequestBody String param) {
+        FTPClient ftpClient = new FTPClient();
+        InputStream inputStream = null;
+        String re=null;
+        FtpClientUtil a = new FtpClientUtil();
+        try {
+            ftpClient = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
+            boolean status = param.contains("%2F");
+            if(status){
+                param = param.replace("%2F","/");
+                ftpClient.changeWorkingDirectory(param.substring(0,param.lastIndexOf("/")+1));
+            }
+            //遍历下载的目录
+            FTPFile[] fs = ftpClient.listFiles();
+            for (FTPFile ff : fs){
+                //解决中文乱码问题，两次解码
+                byte[] bytes=ff.getName().getBytes("iso-8859-1");
+                String fileName=new String(bytes,"utf-8");
+                if(param.substring(param.lastIndexOf("/")+1, param.length()-1).equals(fileName)){
+                    inputStream = ftpClient.retrieveFileStream(fileName);
+                }
+            }
+
+            if (inputStream != null) {
+                byte[] data=null;
+                ByteArrayOutputStream outStream =new ByteArrayOutputStream();
+                data=new byte[inputStream.available()];
+                int len=0;
+                while((len=inputStream.read(data))!=-1){
+                    outStream.write(data,0,len);
+                }
+                data=outStream.toByteArray();
+                Base64.Encoder encoder=Base64.getEncoder();
+                re=encoder.encodeToString(data);
+            }
+            return Result.SUCCESS(re);
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 }

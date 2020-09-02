@@ -47,7 +47,6 @@ public class FtpClientUtil {
         if (ftp.isConnected()) {
             try {
                 ftp.disconnect();
-                System.out.println("ftp已经关闭");
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -66,12 +65,25 @@ public class FtpClientUtil {
      * @return boolean
      */
     public String uploadFile(FTPClient ftp, String path, String fileName, InputStream inputStream) {
-        String url = "";
+        boolean status = fileName.contains("/");
+        if(status){
+            String[] a = fileName.split("/");
+            try {
+                for (int i=0;i<a.length-1;i++) {
+                    if (!ftp.changeWorkingDirectory(a[i])) {
+                        ftp.makeDirectory(a[i]);
+                        ftp.changeWorkingDirectory(a[i]);
+                    }
+                    path += a[i]+"/";
+                }
+                fileName = fileName.substring(fileName.lastIndexOf("/"),fileName.length());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
-            ftp.changeWorkingDirectory(path);//转移到指定FTP服务器目录
             //重新命名不重复的文件名
             fileName = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."), fileName.length());
-            url = fileName;
             path = new String(path.getBytes("GBK"), "ISO-8859-1");
             //转到指定上传目录
             ftp.changeWorkingDirectory(path);
@@ -86,7 +98,7 @@ public class FtpClientUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return url;
+        return path + fileName;
     }
 
     /**
