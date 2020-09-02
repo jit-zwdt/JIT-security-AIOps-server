@@ -98,7 +98,9 @@ public class SysMenuController {
                 sysMenuEntity.setTitle(menuParams.getTitle());
                 sysMenuEntity.setPath(menuParams.getPath());
                 sysMenuEntity.setComponent(menuParams.getComponent());
-                sysMenuEntity.setIcon(menuParams.getIcon());
+                if (StringUtils.isNotEmpty(menuParams.getIcon())) {
+                    sysMenuEntity.setIcon(menuParams.getIcon());
+                }
                 sysMenuEntity.setIsShow(Integer.parseInt(menuParams.getIsShow()));
                 sysMenuEntity.setOrderNum(Integer.parseInt(menuParams.getOrderNum()));
                 sysMenuEntity.setRedirect(menuParams.getRedirect());
