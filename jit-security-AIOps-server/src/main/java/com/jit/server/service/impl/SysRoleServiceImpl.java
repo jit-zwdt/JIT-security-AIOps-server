@@ -1,8 +1,12 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.dto.TransferDTO;
+import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysRoleMenuEntity;
 import com.jit.server.pojo.SysUserRoleEntity;
+import com.jit.server.repository.SysMenuRepo;
+import com.jit.server.repository.SysRoleMenuRepo;
 import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRoleRepo;
 import com.jit.server.service.SysRoleService;
@@ -20,6 +24,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +36,12 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Autowired
     private SysUserRoleRepo sysUserRoleRepo;
+
+    @Autowired
+    private SysRoleMenuRepo sysRoleMenuRepo;
+
+    @Autowired
+    private SysMenuRepo sysMenuRepo;
 
     @Override
     public Page<SysRoleEntity> getRoles(PageRequest<Map<String, Object>> params) {
@@ -127,5 +138,48 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Override
     public String saveOrUpdateUserRole(SysUserRoleEntity sysUserRoleEntity) throws Exception {
         return sysUserRoleRepo.saveAndFlush(sysUserRoleEntity).getId();
+    }
+
+    @Override
+    public List<String> getRoleMenus(String id) throws Exception {
+        List<String> menuIds = sysRoleMenuRepo.findMenuIdByRoleId(id);
+        if (menuIds != null && !menuIds.isEmpty()) {
+            return Arrays.asList(menuIds.get(0).split(","));
+        }
+        return null;
+    }
+
+    @Override
+    public List<TreeNode> getMenus() throws Exception {
+        return getTreeNodeList("0");
+    }
+
+    private List<TreeNode> getTreeNodeList(String parentId) {
+        List<TreeNode> nodes = new ArrayList<>();
+        List<Object> nodelist = sysMenuRepo.getMenus(parentId);
+        if (nodelist != null && !nodelist.isEmpty()) {
+            TreeNode treeNode;
+            for (Object object : nodelist) {
+                treeNode = new TreeNode();
+                Object[] obj = (Object[]) object;
+                treeNode.setId(com.jit.server.util.StringUtils.getVal(obj[10]));
+                treeNode.setLabel(com.jit.server.util.StringUtils.getVal(obj[5]));
+                treeNode.setParent("0".equals(parentId) ? true : false);
+                treeNode.setParentId(parentId);
+                treeNode.setChildren(getTreeNodeList(com.jit.server.util.StringUtils.getVal(obj[0])));
+                nodes.add(treeNode);
+            }
+        }
+        return nodes;
+    }
+
+    @Override
+    public SysRoleMenuEntity getRoleMenuByRoleId(String roleId) throws Exception {
+        return sysRoleMenuRepo.findByRoleIdAndIsDeleted(roleId, 0);
+    }
+
+    @Override
+    public String saveOrUpdateRoleMenu(SysRoleMenuEntity sysRoleMenuEntity) throws Exception {
+        return sysRoleMenuRepo.saveAndFlush(sysRoleMenuEntity).getId();
     }
 }
