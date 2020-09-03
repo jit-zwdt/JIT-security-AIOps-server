@@ -4,11 +4,14 @@ import com.jit.server.dto.SysMenuDTO;
 import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.dto.SysMenuMetaDTO;
 import com.jit.server.pojo.SysMenuEntity;
+import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysRoleMenuEntity;
 import com.jit.server.repository.SysMenuRepo;
 import com.jit.server.service.SysMenuService;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.Optional;
 
 @Service
 public class SysMenuServiceImpl implements SysMenuService {
+    public static final String ZERO = "0";
     public static final String ONE = "1";
     public static final String SYMBOL = "*";
     public static final String LOGIN = "/login";
@@ -25,8 +29,26 @@ public class SysMenuServiceImpl implements SysMenuService {
     private SysMenuRepo sysMenuRepo;
 
     @Override
-    public List<SysMenuDTO> getMenus() throws Exception {
-        List<SysMenuDTO> SysMenuDTOList = getMenusByParentId("0");
+    public List<SysMenuDTO> getMenus(String userid) throws Exception {
+        List<SysRoleMenuEntity> list = sysMenuRepo.findSysRoleMenuEntityList(userid);
+        List<String> listStr = new ArrayList<String>();
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            for (SysRoleMenuEntity sr : list) {
+                String menuId = sr.getMenuId();
+                if (menuId != null) {
+                    String[] menuNum = menuId.split(",");
+                    for (int i = 0; i < menuNum.length; i++) {
+                        if (!listStr.contains(menuNum[i])) {
+                            listStr.add(menuNum[i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        List<SysMenuDTO> SysMenuDTOList = getMenusByParentId(ZERO, listStr);
         SysMenuDTO sysMenuDtoLoginOut = new SysMenuDTO();
         sysMenuDtoLoginOut.setPath(SYMBOL);
         sysMenuDtoLoginOut.setRedirect(LOGIN);
@@ -35,7 +57,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         return SysMenuDTOList;
     }
 
-    private List<SysMenuDTO> getMenusByParentId(String parentId) {
+    private List<SysMenuDTO> getMenusByParentId(String parentId, List<String> listStr) {
         List<SysMenuDTO> sysMenuDTOList = null;
         List<Object> menus = sysMenuRepo.getMenus(parentId);
         if (menus != null) {
@@ -43,28 +65,30 @@ public class SysMenuServiceImpl implements SysMenuService {
             for (Object obj : menus) {
                 SysMenuDTO sysMenuDto = new SysMenuDTO();
                 Object[] menu = (Object[]) obj;
-                sysMenuDto.setId(StringUtils.getVal(menu[0]));
-                sysMenuDto.setPath(StringUtils.getVal(menu[1]));
-                sysMenuDto.setComponent(StringUtils.getVal(menu[2]));
-                sysMenuDto.setName(StringUtils.getVal(menu[4]));
-                sysMenuDto.setChildren(getMenusByParentId(StringUtils.getVal(menu[0])));
-                String isroute = StringUtils.getVal(menu[7]);
-                if (ONE.equals(isroute)) {
-                    SysMenuMetaDTO sysMenuMetaDto = new SysMenuMetaDTO();
-                    sysMenuMetaDto.setIcon(StringUtils.getVal(menu[6]));
-                    sysMenuMetaDto.setTitle(StringUtils.getVal(menu[5]));
-                    sysMenuDto.setMeta(sysMenuMetaDto);
+                if (listStr.contains(StringUtils.getVal(menu[10]))) {
+
+                    sysMenuDto.setId(StringUtils.getVal(menu[0]));
+                    sysMenuDto.setPath(StringUtils.getVal(menu[1]));
+                    sysMenuDto.setComponent(StringUtils.getVal(menu[2]));
+                    sysMenuDto.setName(StringUtils.getVal(menu[4]));
+                    sysMenuDto.setChildren(getMenusByParentId(StringUtils.getVal(menu[0]), listStr));
+                    if (ONE.equals(StringUtils.getVal(menu[7]))) {
+                        SysMenuMetaDTO sysMenuMetaDto = new SysMenuMetaDTO();
+                        sysMenuMetaDto.setIcon(StringUtils.getVal(menu[6]));
+                        sysMenuMetaDto.setTitle(StringUtils.getVal(menu[5]));
+                        sysMenuDto.setMeta(sysMenuMetaDto);
+                    }
+                    sysMenuDto.setRedirect(StringUtils.getVal(menu[3]));
+                    sysMenuDto.setIsShow(StringUtils.getVal(menu[8]));
+                    sysMenuDTOList.add(sysMenuDto);
                 }
-                sysMenuDto.setRedirect(StringUtils.getVal(menu[3]));
-                sysMenuDto.setIsShow(StringUtils.getVal(menu[8]));
-                sysMenuDTOList.add(sysMenuDto);
             }
         }
         return sysMenuDTOList;
     }
     @Override
     public List<SysMenuListDTO> getMenusList() throws Exception {
-        List<SysMenuListDTO> SysMenuDTOList = getMenusByParentIdList("0");
+        List<SysMenuListDTO> SysMenuDTOList = getMenusByParentIdList(ZERO);
         return SysMenuDTOList;
     }
 
@@ -95,7 +119,7 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     @Override
     public List<SysMenuListDTO> getMenusFirst() throws Exception {
-        List<SysMenuListDTO> SysMenuDTOList = getMenusByParentIdFirstList("0");
+        List<SysMenuListDTO> SysMenuDTOList = getMenusByParentIdFirstList(ZERO);
         return SysMenuDTOList;
     }
 
@@ -130,7 +154,7 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     @Override
     public Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception {
-        return sysMenuRepo.findById(id);
+        return sysMenuRepo.findByIdAndIsDeleted(id, 0);
     }
 
     @Override

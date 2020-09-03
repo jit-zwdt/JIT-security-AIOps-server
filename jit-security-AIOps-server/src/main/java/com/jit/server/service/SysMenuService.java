@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SysMenuService {
 
-    List<SysMenuDTO> getMenus() throws Exception;
+    List<SysMenuDTO> getMenus(String userid) throws Exception;
     List<SysMenuListDTO> getMenusList() throws Exception;
     void addSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
     Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception;

@@ -34,7 +34,7 @@ public class SysMenuController {
     @GetMapping(value = "/getMenus")
     public Result getMenus() {
         try {
-            List<SysMenuDTO> menus = sysMenuService.getMenus();
+            List<SysMenuDTO> menus = sysMenuService.getMenus(userService.findIdByUsername());
             return Result.SUCCESS(menus);
         } catch (Exception e) {
             e.printStackTrace();
