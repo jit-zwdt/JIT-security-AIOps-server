@@ -178,7 +178,7 @@ public class SysUserController {
                     ftpClient.changeWorkingDirectory("/");
                 }
             }
-            //遍历下载的目录
+            //遍历目录
             FTPFile[] fs = ftpClient.listFiles();
             for (FTPFile ff : fs){
                 //解决中文乱码问题，两次解码
@@ -186,6 +186,7 @@ public class SysUserController {
                 String fileName=new String(bytes,"utf-8");
                 if(param.substring(param.lastIndexOf("/")+1, param.length()-1).equals(fileName)){
                     inputStream = ftpClient.retrieveFileStream(fileName);
+                    break;
                 }
             }
 
