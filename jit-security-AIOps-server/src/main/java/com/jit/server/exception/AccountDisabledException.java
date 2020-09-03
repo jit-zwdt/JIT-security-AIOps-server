@@ -3,7 +3,7 @@ package com.jit.server.exception;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 
 /**
- * @Description:
+ * @Description: account disabled exception
  * @Author: zengxin_miao
  * @Date: 2020/09/03
  */
