@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface SysUserRepo extends JpaRepository<SysUserEntity, String>, JpaSpecificationExecutor<SysUserEntity> {
 
-    @Query("SELECT u FROM SysUserEntity u WHERE u.status = 1 and u.username = ?1 and u.isDeleted = 0")
+    @Query("SELECT u FROM SysUserEntity u WHERE u.username = ?1 and u.isDeleted = 0")
     SysUserEntity findByUsername(String username);
 
     @Query("SELECT u FROM SysUserEntity u WHERE u.status = 1 and u.isZabbixActive = 1 and u.username = ?1 and u.isDeleted = 0")
