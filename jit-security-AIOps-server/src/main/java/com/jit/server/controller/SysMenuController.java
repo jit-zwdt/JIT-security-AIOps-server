@@ -145,6 +145,18 @@ public class SysMenuController {
         }
     }
 
+    @PutMapping("updateIsShow/{id}/{isShow}")
+    public Result updateIsShow(@PathVariable String id ,@PathVariable int isShow){
+        try {
+            //调用方法更新数据
+            SysMenuEntity sysMenuEntity = sysMenuService.updateIsShow(id, isShow);
+            return Result.SUCCESS(sysMenuEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     @PostMapping(value = "/delMenus/{id}")
     public Result delMenus(@PathVariable String id) {
         try {

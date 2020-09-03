@@ -15,4 +15,6 @@ public interface SysMenuService {
     Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception;
     void updateSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
     List<SysMenuListDTO> getMenusFirst() throws Exception;
+
+    SysMenuEntity updateIsShow(String id, int isShow);
 }

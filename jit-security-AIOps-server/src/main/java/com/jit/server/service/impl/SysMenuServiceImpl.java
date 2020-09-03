@@ -9,6 +9,7 @@ import com.jit.server.service.SysMenuService;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,5 +136,28 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public void updateSysMenu(SysMenuEntity sysMenuEntity) throws Exception {
         sysMenuRepo.save(sysMenuEntity);
+    }
+
+    /**
+     * 更新 显示隐藏的方式的 业务层 如果没有则会返回空
+     * @param id 主键 ID
+     * @param isShow 更改的 isShow 值
+     * @return SysMenuEntity 对象实体
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SysMenuEntity updateIsShow(String id, int isShow) {
+        SysMenuEntity sysMenuEntity = sysMenuRepo.findById(id).get();
+        if(sysMenuEntity != null){
+            sysMenuEntity.setIsShow(isShow);
+            // 查看当前节点是否是 父节点 是的话 把子节点隐藏
+            if(sysMenuEntity.getParentId().equals("0")){
+                List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByParentId(id);
+                for(SysMenuEntity sysmenu : sysMenuEntities){
+                    sysmenu.setIsShow(isShow);
+                }
+            }
+        }
+        return sysMenuEntity;
     }
 }

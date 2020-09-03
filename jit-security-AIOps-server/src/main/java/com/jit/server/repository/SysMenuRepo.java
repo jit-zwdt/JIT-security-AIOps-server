@@ -23,4 +23,6 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
      */
     @Query("SELECT u.id,u.path,u.component,u.redirect,u.name,u.title,u.icon,u.isRoute,u.isShow,u.orderNum FROM SysMenuEntity u WHERE  u.isDeleted = 0 and u.parentId = ?1 order by u.orderNum")
     List<Object> getMenus(String parentId);
+
+    List<SysMenuEntity> findByParentId(String parentid);
 }
