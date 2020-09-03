@@ -89,15 +89,31 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUserEntity addUser(SysUserEntity params) throws Exception {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String password = bCryptPasswordEncoder.encode(params.getPassword());
-        params.setPassword(password);
         if(params.getId() != null && params.getId() != ""){
             params.setUpdateBy(userService.findIdByUsername());
             params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
         }else{
+            if(params.getPassword() != null && params.getPassword() != ""){
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+                String password = bCryptPasswordEncoder.encode(params.getPassword());
+                params.setPassword(password);
+            }
             params.setCreateBy(userService.findIdByUsername());
             params.setGmtCreate(new java.sql.Timestamp(new Date().getTime()));
+        }
+        return  sysUserRepo.save(params);
+    }
+
+    @Override
+    public SysUserEntity updatePassword(SysUserEntity params) throws Exception {
+        if(params.getId() != null && params.getId() != ""){
+            if(params.getPassword() != null && params.getPassword() != ""){
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+                String password = bCryptPasswordEncoder.encode(params.getPassword());
+                params.setPassword(password);
+            }
+            params.setUpdateBy(userService.findIdByUsername());
+            params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
         }
         return  sysUserRepo.save(params);
     }

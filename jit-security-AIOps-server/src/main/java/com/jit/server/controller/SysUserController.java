@@ -62,6 +62,15 @@ public class SysUserController {
         }
     }
 
+    @PostMapping("/updatePassword")
+    public Result updatePassword(@RequestBody SysUserEntity params) {
+        try {
+            return Result.SUCCESS(sysUserService.updatePassword(params));
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     @DeleteMapping("/deleteUser/{id}")
     public Result deleteUser(@PathVariable String id) {
         try {
@@ -163,7 +172,11 @@ public class SysUserController {
             boolean status = param.contains("%2F");
             if(status){
                 param = param.replace("%2F","/");
-                ftpClient.changeWorkingDirectory(param.substring(0,param.lastIndexOf("/")+1));
+                if(param.substring(1,param.length()).contains("/")){
+                    ftpClient.changeWorkingDirectory(param.substring(0,param.lastIndexOf("/")+1));
+                }else{
+                    ftpClient.changeWorkingDirectory("/");
+                }
             }
             //遍历下载的目录
             FTPFile[] fs = ftpClient.listFiles();
