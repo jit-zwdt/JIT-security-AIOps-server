@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysRoleEntity;
+import com.jit.server.pojo.SysRoleMenuEntity;
 import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.request.RoleParams;
 import com.jit.server.service.SysRoleService;
@@ -206,7 +207,6 @@ public class SysRoleController {
     @PostMapping(value = "/bindingUsers")
     public Result bindingUsers(@RequestBody Map<String, Object> params) {
         try {
-            System.out.println(params);
             String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
             List<String> value = params.get("value") != null ? (List<String>) params.get("value") : null;
             if (params != null) {
@@ -241,6 +241,66 @@ public class SysRoleController {
                             sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
                         }
                     }
+                    return Result.SUCCESS(null);
+                } else {
+                    return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getMenus")
+    public Result geMenus() {
+        try {
+            return Result.SUCCESS(sysRoleService.getMenus());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getRoleMenus/{id}")
+    public Result getRoleMenus(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                return Result.SUCCESS(sysRoleService.getRoleMenus(id));
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/bindingMenus")
+    public Result bindingMenus(@RequestBody Map<String, Object> params) {
+        try {
+            String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
+            List<String> keys = params.get("keys") != null ? (List<String>) params.get("keys") : null;
+            if (params != null) {
+                if (StringUtils.isNotBlank(roleId)) {
+                    SysRoleMenuEntity sysRoleMenuEntity = sysRoleService.getRoleMenuByRoleId(roleId);
+                    if (sysRoleMenuEntity != null) {
+                        sysRoleMenuEntity.setMenuId(keys != null ? StringUtils.join(keys, ",") : "");
+                        sysRoleMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysRoleMenuEntity.setUpdateBy(userService.findIdByUsername());
+                    } else {
+                        sysRoleMenuEntity = new SysRoleMenuEntity();
+                        sysRoleMenuEntity.setRoleId(roleId);
+                        sysRoleMenuEntity.setMenuId(keys != null ? StringUtils.join(keys, ",") : "");
+                        sysRoleMenuEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                        sysRoleMenuEntity.setCreateBy(userService.findIdByUsername());
+                    }
+                    sysRoleService.saveOrUpdateRoleMenu(sysRoleMenuEntity);
                     return Result.SUCCESS(null);
                 } else {
                     return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);

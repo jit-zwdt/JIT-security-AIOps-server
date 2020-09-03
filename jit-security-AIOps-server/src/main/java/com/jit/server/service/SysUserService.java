@@ -18,6 +18,8 @@ public interface SysUserService {
 
     SysUserEntity addUser(SysUserEntity params) throws Exception;
 
+    SysUserEntity updatePassword(SysUserEntity params) throws Exception;
+
     Optional<SysUserEntity> findById(String id);
 
     SysUserEntity getByUserName(String username);

@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.exception.AccountDisabledException;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.service.AuthService;
 import com.jit.server.util.JwtTokenDto;
@@ -54,6 +55,8 @@ public class LoginController {
             } else {
                 return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
             }
+        } catch (AccountDisabledException e) {
+            return Result.ERROR(ExceptionEnum.ACCOUNT_DISABLED_EXPIRES_EXCEPTION);
         } catch (BadCredentialsException e) {
             return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
         } catch (Exception e) {
