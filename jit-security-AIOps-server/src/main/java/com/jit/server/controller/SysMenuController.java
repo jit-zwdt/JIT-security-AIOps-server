@@ -175,4 +175,43 @@ public class SysMenuController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    /**
+     * 根据该菜单名称是否有相同的菜单名称 如果有则返回 false 没有返回 true
+     *
+     * @param path 菜单路径
+     * @param oldPath 旧的菜单路径
+     * @return  false 有 true 没有
+     */
+    @GetMapping("/getValidationPath")
+    public Result getValidationPath(String path , String oldPath){
+        Boolean flag = sysMenuService.getValidationName(path , oldPath);
+        return Result.SUCCESS(flag);
+    }
+
+    /**
+     * 根据该组件名称是否有相同的组件名称 如果有则返回 false 没有返回 true
+     *
+     * @param name 组件名称
+     * @param oldName 旧的组件名称
+     * @return  false 有 true 没有
+     */
+    @GetMapping("/getValidationName")
+    public Result getValidationName(String name , String oldName){
+        Boolean flag = sysMenuService.getValidationTitle(name , oldName);
+        return Result.SUCCESS(flag);
+    }
+
+    /**
+     * 根据该组件路径是否有相同的组件路径 如果有则返回 false 没有返回 true
+     *
+     * @param component 组件路径
+     * @param oldComponent 旧的组件路径
+     * @return  false 有 true 没有
+     */
+    @GetMapping("/getValidationComponent")
+    public Result getValidationComponent(String component , String oldComponent){
+        Boolean flag = sysMenuService.getValidationComponent(component , oldComponent);
+        return Result.SUCCESS(flag);
+    }
 }

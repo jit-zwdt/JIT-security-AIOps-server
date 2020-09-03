@@ -184,4 +184,66 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         return sysMenuEntity;
     }
+
+    /**
+     * 根据该菜单名称是否有相同的菜单名称 如果有则返回 false 没有返回 true
+     * @param path 菜单路径
+     * @param oldPath 旧的菜单路径
+     * @return false 有 true 没有
+     */
+    @Override
+    public Boolean getValidationName(String path, String oldPath) {
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path , 0);
+        System.out.println(sysMenuEntities);
+        if(path.equals(oldPath)){
+            return true;
+        }
+        if(sysMenuEntities.size() > 0){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 根据该组件名称是否有相同的组件名称 如果有则返回 false 没有返回 true
+     *
+     * @param name 组件名称
+     * @param oldName 旧的组件名称
+     * @return  false 有 true 没有
+     */
+    @Override
+    public Boolean getValidationTitle(String name, String oldName) {
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name , 0);
+        System.out.println(sysMenuEntities);
+        if(name.equals(oldName)){
+            return true;
+        }
+        if(sysMenuEntities.size() > 0){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 根据该组件路径是否有相同的组件路径 如果有则返回 false 没有返回 true
+     *
+     * @param component 组件路径
+     * @param oldComponent 旧的组件路径
+     * @return  false 有 true 没有
+     */
+    @Override
+    public Boolean getValidationComponent(String component, String oldComponent) {
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component , 0);
+        System.out.println(sysMenuEntities);
+        if(component.equals("Layout")){
+            return true;
+        }
+        if(component.equals(oldComponent)){
+            return true;
+        }
+        if(sysMenuEntities.size() > 0){
+            return false;
+        }
+        return true;
+    }
 }

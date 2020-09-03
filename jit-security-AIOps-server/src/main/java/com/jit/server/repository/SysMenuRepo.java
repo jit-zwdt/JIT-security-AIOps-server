@@ -33,4 +33,10 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
     Optional<SysMenuEntity> findByIdAndIsDeleted(String id, int isDeleted);
 
     List<SysMenuEntity> findByParentId(String parentid);
+
+    List<SysMenuEntity> findByPathIsAndIsDeleted(String path, int i);
+
+    List<SysMenuEntity> findByNameIsAndIsDeleted(String title, int i);
+
+    List<SysMenuEntity> findByComponentIsAndIsDeleted(String component, int i);
 }

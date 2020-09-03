@@ -17,4 +17,10 @@ public interface SysMenuService {
     List<SysMenuListDTO> getMenusFirst() throws Exception;
 
     SysMenuEntity updateIsShow(String id, int isShow);
+
+    Boolean getValidationName(String path, String oldPath);
+
+    Boolean getValidationTitle(String title, String oldTitle);
+
+    Boolean getValidationComponent(String component, String oldComponent);
 }
