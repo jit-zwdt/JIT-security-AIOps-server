@@ -27,4 +27,5 @@ public class SysMenuDTO {
     private List<SysMenuDTO> children;
     private SysMenuMetaDTO meta;
     private String isShow;
+    private String isRoute;
 }

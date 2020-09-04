@@ -72,12 +72,11 @@ public class SysMenuServiceImpl implements SysMenuService {
                     sysMenuDto.setComponent(StringUtils.getVal(menu[2]));
                     sysMenuDto.setName(StringUtils.getVal(menu[4]));
                     sysMenuDto.setChildren(getMenusByParentId(StringUtils.getVal(menu[0]), listStr));
-                    if (ONE.equals(StringUtils.getVal(menu[7]))) {
-                        SysMenuMetaDTO sysMenuMetaDto = new SysMenuMetaDTO();
-                        sysMenuMetaDto.setIcon(StringUtils.getVal(menu[6]));
-                        sysMenuMetaDto.setTitle(StringUtils.getVal(menu[5]));
-                        sysMenuDto.setMeta(sysMenuMetaDto);
-                    }
+                    sysMenuDto.setIsRoute(StringUtils.getVal(menu[7]));
+                    SysMenuMetaDTO sysMenuMetaDto = new SysMenuMetaDTO();
+                    sysMenuMetaDto.setIcon(StringUtils.getVal(menu[6]));
+                    sysMenuMetaDto.setTitle(StringUtils.getVal(menu[5]));
+                    sysMenuDto.setMeta(sysMenuMetaDto);
                     sysMenuDto.setRedirect(StringUtils.getVal(menu[3]));
                     sysMenuDto.setIsShow(StringUtils.getVal(menu[8]));
                     sysMenuDTOList.add(sysMenuDto);
