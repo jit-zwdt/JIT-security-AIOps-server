@@ -133,6 +133,7 @@ public class SysMenuController {
                     // 添加自己手动转类型的方法
                     sysMenuEntity.setIsShow(Integer.parseInt(sysMenuListDTO.getIsShow()));
                     sysMenuEntity.setIsRoute(Integer.parseInt(sysMenuListDTO.getIsRoute()));
+                    sysMenuEntity.setOrderNum(Integer.parseInt(sysMenuListDTO.getOrderNum()));
                     sysMenuEntity.setParentId(sysMenuListDTO.getParentId());
                     //sysMenuEntity.setIsDeleted(0);
                     sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
