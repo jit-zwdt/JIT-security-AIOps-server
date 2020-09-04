@@ -23,4 +23,8 @@ public interface SysMenuService {
     Boolean getValidationTitle(String title, String oldTitle);
 
     Boolean getValidationComponent(String component, String oldComponent);
+
+    List<SysMenuEntity> findByParentId(String id);
+
+    List<SysMenuEntity> getMenuTitle();
 }

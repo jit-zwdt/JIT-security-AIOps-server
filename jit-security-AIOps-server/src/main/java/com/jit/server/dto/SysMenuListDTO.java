@@ -16,6 +16,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SysMenuListDTO {
     private String id;
+    private String parentId;
     private String path;
     private String component;
     private String name;

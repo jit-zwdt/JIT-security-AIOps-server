@@ -246,4 +246,14 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         return true;
     }
+
+    @Override
+    public List<SysMenuEntity> findByParentId(String id) {
+        return sysMenuRepo.findByParentIdAndIsDel(id);
+    }
+
+    @Override
+    public List<SysMenuEntity> getMenuTitle() {
+        return sysMenuRepo.findByParentIdAndIsDel("0");
+    }
 }

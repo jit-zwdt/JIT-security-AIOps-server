@@ -130,6 +130,11 @@ public class SysMenuController {
                 if (bean.isPresent()) {
                     SysMenuEntity sysMenuEntity = bean.get();
                     BeanUtils.copyProperties(sysMenuListDTO, sysMenuEntity);
+                    // 添加自己手动转类型的方法
+                    sysMenuEntity.setIsShow(Integer.parseInt(sysMenuListDTO.getIsShow()));
+                    sysMenuEntity.setIsRoute(Integer.parseInt(sysMenuListDTO.getIsRoute()));
+                    sysMenuEntity.setParentId(sysMenuListDTO.getParentId());
+                    //sysMenuEntity.setIsDeleted(0);
                     sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
                     sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                     sysMenuService.updateSysMenu(sysMenuEntity);
@@ -213,5 +218,49 @@ public class SysMenuController {
     public Result getValidationComponent(String component , String oldComponent){
         Boolean flag = sysMenuService.getValidationComponent(component , oldComponent);
         return Result.SUCCESS(flag);
+    }
+
+    /**
+     * 判断一级目录下是否有二级目录
+     * @param id 主键
+     * @return
+     */
+    @PostMapping(value = "/judgeOfChild/{id}")
+    public Result judgeOfChild(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotEmpty(id)) {
+                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
+                if (bean.isPresent()) {
+                    SysMenuEntity sysMenuEntity = bean.get();
+                    // 如果parenid 等于0 ，证明是一级菜单 ，需判断是否有二级菜单
+                    if (sysMenuEntity.getParentId().equals("0")){
+                        // 当id 与 parenid 有相等的证明有二级菜单
+                        List<SysMenuEntity> sysMenuEntities = sysMenuService.findByParentId(id);
+                        if (sysMenuEntities != null  && sysMenuEntities.size() > 0){
+                            return Result.SUCCESS(true);
+                        }
+                        return Result.SUCCESS(false);
+                    }else{
+                        return Result.SUCCESS(false);
+                    }
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    /**
+     * 获取所有未删除的title
+     * @return
+     */
+    @GetMapping("/getMenuTitle")
+    public Result getMenuTitle(){
+        List<SysMenuEntity> sysMenuEntities = sysMenuService.getMenuTitle();
+        return Result.SUCCESS(sysMenuEntities);
     }
 }
