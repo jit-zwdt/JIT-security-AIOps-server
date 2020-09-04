@@ -59,9 +59,9 @@ public class AssetsControllerTest {
         System.out.println("access_token: " + access_token);
 
         JSONObject param = new JSONObject();
-        param.put("assetName","1");
-        param.put("assetRegisterStartDate","2020-06-16 00:00:00");
-        param.put("assetRegisterEndDate","2020-06-17 00:00:00");
+        param.put("name","1");
+        param.put("registerStartDate","2020-06-16 00:00:00");
+        param.put("registerEndDate","2020-06-17 00:00:00");
         JSONObject params = new JSONObject();
         params.put("page",1);
         params.put("size",10);

@@ -13,4 +13,5 @@ public class Test {
         String p = bCryptPasswordEncoder.encode("frank");
         System.out.println(p);
     }
+
 }

@@ -56,7 +56,6 @@ public class AssetsController {
 
     @PostMapping("/addAssets")
     public Result addAssets(@RequestBody MonitorAssetsEntity assets) {
-        System.out.println(assets);
         try {
             if (assets != null) {
                 assets.setGmtCreate(new Timestamp(System.currentTimeMillis()));
