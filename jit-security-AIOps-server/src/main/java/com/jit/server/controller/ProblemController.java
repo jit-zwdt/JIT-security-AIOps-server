@@ -177,7 +177,7 @@ public class ProblemController {
                 }
                 result.setIndex(i + 1);
                 result.setClaim(claimList.get(i));
-                result.setUser(sysUserRepo.getOne(claimList.get(i).getClaimUserId()).getUsername());
+                result.setUser(sysUserRepo.getOne(claimList.get(i).getClaimUserId()).getName());
                 result.setRole(sysRoleRepo.getOne(claimList.get(i).getClaimRoleId()).getRoleName());
                 resultList.add(result);
             }
