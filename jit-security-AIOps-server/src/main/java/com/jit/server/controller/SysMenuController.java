@@ -135,7 +135,11 @@ public class SysMenuController {
                     sysMenuEntity.setIsRoute(Integer.parseInt(sysMenuListDTO.getIsRoute()));
                     sysMenuEntity.setOrderNum(Integer.parseInt(sysMenuListDTO.getOrderNum()));
                     sysMenuEntity.setParentId(sysMenuListDTO.getParentId());
-                    //sysMenuEntity.setIsDeleted(0);
+                    if (StringUtils.isNotEmpty(sysMenuListDTO.getIcon())) {
+                        sysMenuEntity.setIcon(sysMenuListDTO.getIcon());
+                    } else {
+                        sysMenuEntity.setIcon(ICON);
+                    }
                     sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
                     sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                     sysMenuService.updateSysMenu(sysMenuEntity);
