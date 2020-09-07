@@ -202,6 +202,7 @@ public class SysUserController {
                 Base64.Encoder encoder=Base64.getEncoder();
                 re=encoder.encodeToString(data);
             }
+            a.closeFTP(ftpClient);
             return Result.SUCCESS(re);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
