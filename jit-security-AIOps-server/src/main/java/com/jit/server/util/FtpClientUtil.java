@@ -24,15 +24,18 @@ public class FtpClientUtil {
             //连接FTP服务器
             ftp.connect(hostName, port);
             ftp.setControlEncoding("GBK");
+            ftp.setConnectTimeout(1000*30);
             FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
-            conf.setServerLanguageCode("zh");
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
             //登录ftp
             ftp.login(userName, passWord);
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return ftp;
     }
@@ -44,8 +47,9 @@ public class FtpClientUtil {
      * @return boolean
      */
     public boolean closeFTP(FTPClient ftp) {
-        if (ftp.isConnected()) {
+        if (ftp !=null) {
             try {
+                ftp.logout();
                 ftp.disconnect();
                 return true;
             } catch (Exception e) {

@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -163,49 +165,52 @@ public class SysUserController {
 
     @PostMapping("/getPicBase64")
     public Result getPicBase64(@RequestBody String param) {
-        FTPClient ftpClient = new FTPClient();
+        FTPClient ftpClient = null;
         InputStream inputStream = null;
         String re=null;
         FtpClientUtil a = new FtpClientUtil();
         try {
+            System.out.println("进入1");
             ftpClient = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
-            boolean status = param.contains("%2F");
-            if(status){
-                param = param.replace("%2F","/");
-                if(param.substring(1,param.length()).contains("/")){
-                    ftpClient.changeWorkingDirectory(param.substring(0,param.lastIndexOf("/")+1));
-                }else{
-                    ftpClient.changeWorkingDirectory("/");
-                }
+            if (ftpClient == null){
+                System.out.println("进入2");
+                return null;
             }
-            //遍历目录
-            FTPFile[] fs = ftpClient.listFiles();
-            for (FTPFile ff : fs){
-                //解决中文乱码问题，两次解码
-                byte[] bytes=ff.getName().getBytes("iso-8859-1");
-                String fileName=new String(bytes,"utf-8");
-                if(param.substring(param.lastIndexOf("/")+1, param.length()-1).equals(fileName)){
-                    inputStream = ftpClient.retrieveFileStream(fileName);
-                    break;
-                }
-            }
-
-            if (inputStream != null) {
-                byte[] data=null;
-                ByteArrayOutputStream outStream =new ByteArrayOutputStream();
-                data=new byte[inputStream.available()];
-                int len=0;
-                while((len=inputStream.read(data))!=-1){
-                    outStream.write(data,0,len);
-                }
-                data=outStream.toByteArray();
-                Base64.Encoder encoder=Base64.getEncoder();
-                re=encoder.encodeToString(data);
-            }
-            a.closeFTP(ftpClient);
-            return Result.SUCCESS(re);
+            System.out.println("进入3");
+            ftpClient.changeWorkingDirectory("");
+            inputStream = ftpClient.retrieveFileStream("2961f9de-edf7-4627-aefb-d62116ffb1bf.png");
+            System.out.println("inputStream.available()："+inputStream.available());
+            int firstByte = inputStream.read();
+            int length = inputStream.available();
+            byte[] bytes = new byte[length+1];
+            bytes[0] = (byte)firstByte;
+            inputStream.read(bytes,1,length);
+            System.out.println("inputStream："+inputStream);
+            BASE64Encoder base64Encoder = new BASE64Encoder();
+            String base64 = base64Encoder.encode(bytes);//将字节数组转成base64字符串
+            System.out.println("base64："+base64);
+            re = base64;
+            ftpClient.logout();
+            System.out.println("进入4");
+            System.out.println("info："+re);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        } finally {
+            if (ftpClient.isConnected()){
+                try {
+                    ftpClient.disconnect();
+                } catch (IOException e) {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
+            }
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
+            }
         }
+        return Result.SUCCESS(re);
     }
 }
