@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
  * @author zengxin_miao
  * @see <a href="https://www.zabbix.com/documentation/4.0/zh/manual/api/reference/mediatype/update">method mediatype.update</a>
  **/
-@Data
 @NoArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
