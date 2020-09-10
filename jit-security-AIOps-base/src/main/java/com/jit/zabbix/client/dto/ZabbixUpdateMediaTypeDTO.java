@@ -1,12 +1,7 @@
 package com.jit.zabbix.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jit.zabbix.client.model.mediaType.ZabbixMediaType;
-import com.jit.zabbix.client.utils.CustomJsonSerializer;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
