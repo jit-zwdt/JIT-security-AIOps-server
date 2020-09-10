@@ -23,10 +23,9 @@ public class FtpClientUtil {
         try {
             //连接FTP服务器
             ftp.connect(hostName, port);
-            ftp.setControlEncoding("GBK");
+            ftp.setControlEncoding("UTF-8");
             ftp.setConnectTimeout(1000*30);
-            FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
             //登录ftp
             ftp.login(userName, passWord);
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
@@ -172,10 +171,29 @@ public class FtpClientUtil {
         for (int i = 0; i < fs.length; i++) {
             FTPFile ff = fs[i];
             if (ff.getName().equals(fileName)) {
-                return true; //如果存在返回 正确信号
+                // 如果存在返回 正确信号
+                return true;
             }
         }
-        return false; //如果不存在返回错误信号
+        // 如果不存在返回错误信号
+        return false;
     }
 
+    public byte[] readInputStream(InputStream inStream)
+            throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        // 创建一个Buffer字符串
+        byte[] buffer = new byte[1024];
+        // 每次读取的字符串长度，如果为-1，代表全部读取完毕
+        int len = 0;
+        // 使用一个输入流从buffer里把数据读取出来
+        while ((len = inStream.read(buffer)) != -1) {
+            // 用输出流往buffer里写入数据，中间参数代表从哪个位置开始读，len代表读取的长度
+            outStream.write(buffer, 0, len);
+        }
+        // 关闭输入流
+        //inStream.close();
+        // 把outStream里的数据写入内存
+        return outStream.toByteArray();
+    }
 }

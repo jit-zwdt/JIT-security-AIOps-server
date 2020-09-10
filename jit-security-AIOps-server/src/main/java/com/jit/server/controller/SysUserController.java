@@ -144,15 +144,17 @@ public class SysUserController {
 
     @PostMapping("/uploadPic")
     public Result uploadPic(MultipartFile file) throws Exception {
+        FTPClient ftp = null;
+        InputStream input = null;
         try {
             if (!file.isEmpty()) {
                 String path = "/";
                 String filename = file.getOriginalFilename(); //获得原始的文件名
-                InputStream input = file.getInputStream();
+                input = file.getInputStream();
                 FtpClientUtil a = new FtpClientUtil();
-                FTPClient ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
+                ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
                 String url = a.uploadFile(ftp, path, filename, input);
-                a.closeFTP(ftp);
+                url = url.replace("/","");
                 return Result.SUCCESS(url);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -160,39 +162,51 @@ public class SysUserController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }  finally {
+            if (ftp.isConnected()){
+                try {
+                    ftp.disconnect();
+                } catch (IOException e) {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
+            }
+            if (input != null){
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
+            }
         }
     }
 
-    @PostMapping("/getPicBase64")
-    public Result getPicBase64(@RequestBody String param) {
+    @PostMapping("/getPicBase64/{param}")
+    public Result getPicBase64(@PathVariable String param) {
         FTPClient ftpClient = null;
         InputStream inputStream = null;
         String re=null;
         FtpClientUtil a = new FtpClientUtil();
         try {
-            System.out.println("进入1");
             ftpClient = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
             if (ftpClient == null){
-                System.out.println("进入2");
                 return null;
             }
-            System.out.println("进入3");
-            ftpClient.changeWorkingDirectory("");
-            inputStream = ftpClient.retrieveFileStream("2961f9de-edf7-4627-aefb-d62116ffb1bf.png");
-            System.out.println("inputStream.available()："+inputStream.available());
-            int firstByte = inputStream.read();
-            int length = inputStream.available();
-            byte[] bytes = new byte[length+1];
-            bytes[0] = (byte)firstByte;
-            inputStream.read(bytes,1,length);
-            System.out.println("inputStream："+inputStream);
+            boolean status = param.contains("%2F");
+            if(status){
+                param = param.replace("%2F","/");
+                if(param.substring(1,param.length()).contains("/")){
+                    ftpClient.changeWorkingDirectory(param.substring(0,param.lastIndexOf("/")+1));
+                }else{
+                    ftpClient.changeWorkingDirectory("/");
+                }
+            } else {
+                ftpClient.changeWorkingDirectory("/");
+            }
+            inputStream = ftpClient.retrieveFileStream(param);
+            byte[] data = a.readInputStream(inputStream);
             BASE64Encoder base64Encoder = new BASE64Encoder();
-            String base64 = base64Encoder.encode(bytes);//将字节数组转成base64字符串
-            System.out.println("base64："+base64);
-            re = base64;
+            re= base64Encoder.encode(data);// 将字节数组转成base64字符串
             ftpClient.logout();
-            System.out.println("进入4");
-            System.out.println("info："+re);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         } finally {
@@ -211,6 +225,7 @@ public class SysUserController {
                 }
             }
         }
+        re.replaceAll("[\\s*\t\n\r]", "");
         return Result.SUCCESS(re);
     }
 }
