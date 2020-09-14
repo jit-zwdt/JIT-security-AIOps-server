@@ -48,7 +48,7 @@ public class HomePageControllerTest {
 
     @Before
     public void getAuthTest() throws Exception {
-        RequestBuilder builder = MockMvcRequestBuilders.post("/login").accept(MediaType.APPLICATION_JSON)
+        RequestBuilder builder = MockMvcRequestBuilders.post("/loginWithOutVerificationCode").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).param("username", "frank").param("password", "frank");
         MvcResult result = mvc.perform(builder).andReturn();
         JSONObject jsonObject = JSONObject.parseObject(result.getResponse().getContentAsString());
@@ -80,7 +80,7 @@ public class HomePageControllerTest {
     @Test
     public void getTimeTop5ItemInfoTest() throws Exception {
 
-        RequestBuilder builder2 = MockMvcRequestBuilders.post("/homePage/getTimeTop5ItemInfo/"+"cup").accept(MediaType.APPLICATION_JSON)
+        RequestBuilder builder2 = MockMvcRequestBuilders.post("/homePage/getTimeTop5ItemInfo/" + "cup").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).header("authorization", this.access_token);
         MvcResult result2 = mvc.perform(builder2).andReturn();
         System.out.println(result2.getResponse().getContentAsString());

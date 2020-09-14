@@ -51,7 +51,7 @@ public class AssetsControllerTest {
          *   比如此处使用MockMvcResultHandlers.print()输出整个响应结果信息。
          * 7、ResultActions.andReturn表示执行完成后返回相应的结果。
          */
-        RequestBuilder builder = MockMvcRequestBuilders.post("/login").accept(MediaType.APPLICATION_JSON)
+        RequestBuilder builder = MockMvcRequestBuilders.post("/loginWithOutVerificationCode").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).param("username", "frank").param("password", "frank");
         MvcResult result = mvc.perform(builder).andReturn();
         JSONObject jsonObject = JSONObject.parseObject(result.getResponse().getContentAsString());
@@ -59,13 +59,13 @@ public class AssetsControllerTest {
         System.out.println("access_token: " + access_token);
 
         JSONObject param = new JSONObject();
-        param.put("name","1");
-        param.put("registerStartDate","2020-06-16 00:00:00");
-        param.put("registerEndDate","2020-06-17 00:00:00");
+        param.put("name", "1");
+        param.put("registerStartDate", "2020-06-16 00:00:00");
+        param.put("registerEndDate", "2020-06-17 00:00:00");
         JSONObject params = new JSONObject();
-        params.put("page",1);
-        params.put("size",10);
-        params.put("param",param);
+        params.put("page", 1);
+        params.put("size", 10);
+        params.put("param", param);
 
         RequestBuilder builder2 = MockMvcRequestBuilders.post("/assets/findByCondition").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON).header("authorization", access_token).content(params.toJSONString());
@@ -78,7 +78,7 @@ public class AssetsControllerTest {
     }
 
     public void getTokenTest() throws Exception {
-        RequestBuilder builder = MockMvcRequestBuilders.post("/login").accept(MediaType.APPLICATION_JSON)
+        RequestBuilder builder = MockMvcRequestBuilders.post("/loginWithOutVerificationCode").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).param("username", "frank").param("password", "frank");
         MvcResult result = mvc.perform(builder).andReturn();
         JSONObject jsonObject = JSONObject.parseObject(result.getResponse().getContentAsString());

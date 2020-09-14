@@ -41,7 +41,7 @@ public class ApiControllerTest {
 
     @Test
     public void getAuthTest() throws Exception {
-        RequestBuilder builder = MockMvcRequestBuilders.post("/login").accept(MediaType.APPLICATION_JSON)
+        RequestBuilder builder = MockMvcRequestBuilders.post("/loginWithOutVerificationCode").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).param("username", "frank").param("password", "frank");
         MvcResult result = mvc.perform(builder).andReturn();
         JSONObject jsonObject = JSONObject.parseObject(result.getResponse().getContentAsString());

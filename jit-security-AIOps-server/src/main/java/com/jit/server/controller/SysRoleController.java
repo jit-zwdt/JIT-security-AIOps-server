@@ -288,6 +288,12 @@ public class SysRoleController {
             List<String> keys = params.get("keys") != null ? (List<String>) params.get("keys") : null;
             if (params != null) {
                 if (StringUtils.isNotBlank(roleId)) {
+                    //get Level 1 menu sids
+                    List<String> sids = sysRoleService.getLevelOneMenuSids();
+                    //remove  Level 1 menu sids
+                    sids.retainAll(keys);
+                    keys.removeAll(sids);
+                    //add
                     SysRoleMenuEntity sysRoleMenuEntity = sysRoleService.getRoleMenuByRoleId(roleId);
                     if (sysRoleMenuEntity != null) {
                         sysRoleMenuEntity.setMenuId(keys != null ? StringUtils.join(keys, ",") : "");

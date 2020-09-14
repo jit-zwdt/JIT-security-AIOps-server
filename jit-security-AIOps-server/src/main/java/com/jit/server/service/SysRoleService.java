@@ -40,4 +40,6 @@ public interface SysRoleService {
     SysRoleMenuEntity getRoleMenuByRoleId(String roleId) throws Exception;
 
     String saveOrUpdateRoleMenu(SysRoleMenuEntity sysRoleMenuEntity) throws Exception;
+
+    List<String> getLevelOneMenuSids() throws Exception;
 }
