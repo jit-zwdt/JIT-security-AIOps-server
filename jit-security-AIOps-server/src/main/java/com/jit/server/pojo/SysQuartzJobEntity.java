@@ -6,15 +6,13 @@ package com.jit.server.pojo;
  * @Date: 2020/09/10 16:19:00
  */
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "sys_quartz_job")
 public class SysQuartzJobEntity {
 
