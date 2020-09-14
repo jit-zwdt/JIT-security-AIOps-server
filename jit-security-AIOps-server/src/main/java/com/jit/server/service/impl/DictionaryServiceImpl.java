@@ -78,6 +78,11 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    public List<SysDictionaryItemEntity> getDictionaryByCode(String code) {
+        return dictionaryItemRepo.getDictionaryByCode(code);
+    }
+
+    @Override
     public List<SysDictionaryItemEntity> findByDictId(String id,String itemText,int status,int currentPage,int pageSize) {
         int start = (currentPage-1)*pageSize;
         return dictionaryItemRepo.findByDictId(id,itemText,status,start,pageSize);

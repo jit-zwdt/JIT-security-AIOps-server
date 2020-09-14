@@ -57,6 +57,17 @@ public class DictionaryController {
         }
     }
 
+    @ResponseBody
+    @PostMapping(value = "/getDictionaryByCode/{code}")
+    public Result getDictionaryByCode(@PathVariable("code")String code) {
+        try {
+            return Result.SUCCESS(dictionaryService.getDictionaryByCode(code));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
     @DeleteMapping("/deleteDictionary/{id}")
     public Result deleteDictionary(@PathVariable String id) {
         try{
