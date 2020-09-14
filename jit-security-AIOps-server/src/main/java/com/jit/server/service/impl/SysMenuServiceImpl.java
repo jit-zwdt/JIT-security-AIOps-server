@@ -38,10 +38,15 @@ public class SysMenuServiceImpl implements SysMenuService {
             for (SysRoleMenuEntity sr : list) {
                 String menuId = sr.getMenuId();
                 if (menuId != null) {
-                    String[] menuNum = menuId.split(",");
-                    for (int i = 0; i < menuNum.length; i++) {
-                        if (!listStr.contains(menuNum[i])) {
-                            listStr.add(menuNum[i]);
+                    String[] menuSids = menuId.split(",");
+                    for (String menuSid : menuSids) {
+                        if (!listStr.contains(menuSid)) {
+                            listStr.add(menuSid);
+                            //添加 父级菜单
+                            String psid = sysMenuRepo.findParentSidBySid(menuSid);
+                            if (StringUtils.isNotEmpty(psid) && !listStr.contains(psid)) {
+                                listStr.add(psid);
+                            }
                         }
                     }
                 }
@@ -85,6 +90,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         return sysMenuDTOList;
     }
+
     @Override
     public List<SysMenuListDTO> getMenusList() throws Exception {
         List<SysMenuListDTO> SysMenuDTOList = getMenusByParentIdList(ZERO);
@@ -163,7 +169,8 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     /**
      * 更新 显示隐藏的方式的 业务层 如果没有则会返回空
-     * @param id 主键 ID
+     *
+     * @param id     主键 ID
      * @param isShow 更改的 isShow 值
      * @return SysMenuEntity 对象实体
      */
@@ -171,12 +178,12 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Transactional(rollbackFor = Exception.class)
     public SysMenuEntity updateIsShow(String id, int isShow) {
         SysMenuEntity sysMenuEntity = sysMenuRepo.findById(id).get();
-        if(sysMenuEntity != null){
+        if (sysMenuEntity != null) {
             sysMenuEntity.setIsShow(isShow);
             // 查看当前节点是否是 父节点 是的话 把子节点隐藏
-            if(sysMenuEntity.getParentId().equals("0")){
+            if (sysMenuEntity.getParentId().equals("0")) {
                 List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByParentId(id);
-                for(SysMenuEntity sysmenu : sysMenuEntities){
+                for (SysMenuEntity sysmenu : sysMenuEntities) {
                     sysmenu.setIsShow(isShow);
                 }
             }
@@ -186,18 +193,19 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     /**
      * 根据该菜单名称是否有相同的菜单名称 如果有则返回 false 没有返回 true
-     * @param path 菜单路径
+     *
+     * @param path    菜单路径
      * @param oldPath 旧的菜单路径
      * @return false 有 true 没有
      */
     @Override
     public Boolean getValidationName(String path, String oldPath) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path , 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path, 0);
         System.out.println(sysMenuEntities);
-        if(path.equals(oldPath)){
+        if (path.equals(oldPath)) {
             return true;
         }
-        if(sysMenuEntities.size() > 0){
+        if (sysMenuEntities.size() > 0) {
             return false;
         }
         return true;
@@ -206,18 +214,18 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 根据该组件名称是否有相同的组件名称 如果有则返回 false 没有返回 true
      *
-     * @param name 组件名称
+     * @param name    组件名称
      * @param oldName 旧的组件名称
-     * @return  false 有 true 没有
+     * @return false 有 true 没有
      */
     @Override
     public Boolean getValidationTitle(String name, String oldName) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name , 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name, 0);
         System.out.println(sysMenuEntities);
-        if(name.equals(oldName)){
+        if (name.equals(oldName)) {
             return true;
         }
-        if(sysMenuEntities.size() > 0){
+        if (sysMenuEntities.size() > 0) {
             return false;
         }
         return true;
@@ -226,21 +234,21 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 根据该组件路径是否有相同的组件路径 如果有则返回 false 没有返回 true
      *
-     * @param component 组件路径
+     * @param component    组件路径
      * @param oldComponent 旧的组件路径
-     * @return  false 有 true 没有
+     * @return false 有 true 没有
      */
     @Override
     public Boolean getValidationComponent(String component, String oldComponent) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component , 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component, 0);
         System.out.println(sysMenuEntities);
-        if(component.equals("Layout")){
+        if (component.equals("Layout")) {
             return true;
         }
-        if(component.equals(oldComponent)){
+        if (component.equals(oldComponent)) {
             return true;
         }
-        if(sysMenuEntities.size() > 0){
+        if (sysMenuEntities.size() > 0) {
             return false;
         }
         return true;

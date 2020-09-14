@@ -43,4 +43,6 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
     @Query(value = "select * from sys_menu where parent_id = ?1 and is_deleted = 0", nativeQuery = true)
     List<SysMenuEntity> findByParentIdAndIsDel(String id);
 
+    @Query(value = "select m.sid from sys_menu m where m.id = (select m1.parent_id from sys_menu m1 where m1.is_deleted = 0 and m1.sid = ?1 ) and m.is_deleted = 0", nativeQuery = true)
+    String findParentSidBySid(String menuSid);
 }
