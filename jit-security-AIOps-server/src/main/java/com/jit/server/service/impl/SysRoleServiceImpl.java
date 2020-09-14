@@ -184,6 +184,11 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    public List<SysRoleEntity> findAll() {
+        return sysRoleRepo.findAll();
+    }
+
+    @Override
     public List<String> getLevelOneMenuSids() throws Exception {
         return sysMenuRepo.getLevelOneMenuSids();
     }

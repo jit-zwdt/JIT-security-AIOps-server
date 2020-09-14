@@ -319,4 +319,14 @@ public class SysRoleController {
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
+
+    @PostMapping("/findAllRole")
+    public Result findAllRole() {
+        try{
+            return Result.SUCCESS(sysRoleService.findAll());
+
+        }catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

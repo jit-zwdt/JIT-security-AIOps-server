@@ -32,4 +32,6 @@ public interface DictionaryService {
     SysDictionaryEntity getByDictCode(String dictCode);
 
     SysDictionaryItemEntity getByItemText(String itemName,String dictId);
+
+    List<SysDictionaryItemEntity> getDictionaryByCode(String code);
 }

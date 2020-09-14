@@ -41,5 +41,7 @@ public interface SysRoleService {
 
     String saveOrUpdateRoleMenu(SysRoleMenuEntity sysRoleMenuEntity) throws Exception;
 
+    List<SysRoleEntity> findAll();
+
     List<String> getLevelOneMenuSids() throws Exception;
 }
