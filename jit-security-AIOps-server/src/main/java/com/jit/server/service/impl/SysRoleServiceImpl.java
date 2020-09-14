@@ -182,4 +182,9 @@ public class SysRoleServiceImpl implements SysRoleService {
     public String saveOrUpdateRoleMenu(SysRoleMenuEntity sysRoleMenuEntity) throws Exception {
         return sysRoleMenuRepo.saveAndFlush(sysRoleMenuEntity).getId();
     }
+
+    @Override
+    public List<SysRoleEntity> findAll() {
+        return sysRoleRepo.findAll();
+    }
 }
