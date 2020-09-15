@@ -83,4 +83,30 @@ public class SysQuartzJobController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @ResponseBody
+    @DeleteMapping(value = "/delQuartzJob/{id}")
+    public Result delQuartzJob(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                SysQuartzJobEntity sysQuartzJobEntity = sysQuartzJobService.getSysQuartzJobEntityById(id);
+                if (sysQuartzJobEntity == null) {
+                    return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+                } else {
+                    boolean res = sysQuartzJobService.stopScheduleJob(ConstUtil.JOB_ + id);
+                    log.info("删除任务{}，结果{}", ConstUtil.JOB_ + id, res);
+                    sysQuartzJobEntity.setIsDeleted(1);
+                    sysQuartzJobEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysQuartzJobEntity.setUpdateBy(userService.findIdByUsername());
+                    sysQuartzJobService.saveAndScheduleJob(sysQuartzJobEntity);
+                    return Result.SUCCESS(true);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 }
