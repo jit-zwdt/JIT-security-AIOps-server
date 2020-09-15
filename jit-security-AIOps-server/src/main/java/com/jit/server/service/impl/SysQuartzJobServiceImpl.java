@@ -4,6 +4,7 @@ import com.jit.server.dto.SchedulerDTO;
 import com.jit.server.pojo.SysQuartzJobEntity;
 import com.jit.server.repository.SysQuartzJobRepo;
 import com.jit.server.service.SysQuartzJobService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,9 @@ public class SysQuartzJobServiceImpl implements SysQuartzJobService {
 
     @Autowired
     private Scheduler scheduler;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Page<SysQuartzJobEntity> getQuartzJobs(PageRequest<Map<String, Object>> params) {
@@ -78,16 +82,21 @@ public class SysQuartzJobServiceImpl implements SysQuartzJobService {
         String id = sysQuartzJobRepo.saveAndFlush(sysQuartzJobEntity).getId();
         if (StringUtils.isNotBlank(id)) {
             if (ConstUtil.STATUS_NORMAL == sysQuartzJobEntity.getStatus()) {
-                // 定时器添加
-                SchedulerDTO schedulerDTO = new SchedulerDTO();
-                schedulerDTO.setJobClassName(sysQuartzJobEntity.getJobClassName().trim());
-                schedulerDTO.setCronExpression(sysQuartzJobEntity.getCronExpression().trim());
-                schedulerDTO.setJobName(ConstUtil.JOB_ + sysQuartzJobEntity.getId());
-                schedulerDTO.setJobDescription(sysQuartzJobEntity.getDescription());
-                schedulerDTO.setJobGroup(sysQuartzJobEntity.getJobGroup());
-                schedulerDTO.setJsonParam(sysQuartzJobEntity.getJsonParam());
-                schedulerDTO.setTriggerName(ConstUtil.TRIGGER_ + sysQuartzJobEntity.getId());
-                this.schedulerAdd(schedulerDTO);
+                try {
+                    // 定时器添加
+                    SchedulerDTO schedulerDTO = new SchedulerDTO();
+                    schedulerDTO.setJobClassName(sysQuartzJobEntity.getJobClassName().trim());
+                    schedulerDTO.setCronExpression(sysQuartzJobEntity.getCronExpression().trim());
+                    schedulerDTO.setJobName(ConstUtil.JOB_ + sysQuartzJobEntity.getId());
+                    schedulerDTO.setJobDescription(sysQuartzJobEntity.getDescription());
+                    schedulerDTO.setJobGroup(sysQuartzJobEntity.getJobGroup());
+                    schedulerDTO.setJsonParam(sysQuartzJobEntity.getJsonParam());
+                    schedulerDTO.setTriggerName(ConstUtil.TRIGGER_ + sysQuartzJobEntity.getId());
+                    this.schedulerAdd(schedulerDTO);
+                } catch (Exception e) {
+                    sysQuartzJobRepo.deleteById(id);
+                    throw e;
+                }
             }
         }
         return id;
