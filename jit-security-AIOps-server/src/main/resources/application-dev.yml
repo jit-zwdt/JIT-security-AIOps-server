@@ -1,6 +1,8 @@
 #server port
 server:
   port: 8081
+  compression:
+    min-response-size:
 zabbix:
   api:
     url: http://172.16.15.10/zabbix/
@@ -26,6 +28,12 @@ spring:
     type: ehcache
     ehcache:
       config: classpath:/ehcache.xml
+  #quartz定时任务,采用数据库方式
+  quartz:
+    job-store-type: jdbc
+    #初始化表结构
+    jdbc:
+      initialize-schema: never
 ###################################
 #--------------FTP配置-------------#
 ###################################
@@ -34,3 +42,13 @@ ftp:
   port: 21
   userName: jitutil
   passWord: dota&csjit3368
+###################################
+#--------------LOG配置-------------#
+###################################
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
+    level: DEBUG
+  file:
+    name: c:/mylog/JIT-security-AIOps-server.log

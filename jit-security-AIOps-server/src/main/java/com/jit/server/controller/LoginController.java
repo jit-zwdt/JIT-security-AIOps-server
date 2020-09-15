@@ -64,6 +64,26 @@ public class LoginController {
         }
     }
 
+    @PostMapping("/loginWithOutVerificationCode")
+    public Result loginWithOutVerificationCode(@RequestParam(value = "username", required = true) String username,
+                                               @RequestParam(value = "password", required = true) String password,
+                                               HttpServletResponse resp) {
+        try {
+            JwtTokenDto token = authService.login(username, password);
+            if (null != token) {
+                return Result.SUCCESS(token);
+            } else {
+                return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
+            }
+        } catch (AccountDisabledException e) {
+            return Result.ERROR(ExceptionEnum.ACCOUNT_DISABLED_EXPIRES_EXCEPTION);
+        } catch (BadCredentialsException e) {
+            return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.LOGIN_EXCEPTION);
+        }
+    }
+
     @PostMapping("/refreshToken")
     public Result<JwtTokenDto> refreshToken(@RequestParam(value = "refresh_token", required = true) String refresh_token) {
         try {
