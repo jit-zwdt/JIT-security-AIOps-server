@@ -4,6 +4,7 @@ import com.jit.server.dto.SchedulerDTO;
 import com.jit.server.pojo.SysQuartzJobEntity;
 import com.jit.server.repository.SysQuartzJobRepo;
 import com.jit.server.service.SysQuartzJobService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,9 @@ public class SysQuartzJobServiceImpl implements SysQuartzJobService {
 
     @Autowired
     private Scheduler scheduler;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Page<SysQuartzJobEntity> getQuartzJobs(PageRequest<Map<String, Object>> params) {
@@ -78,16 +82,22 @@ public class SysQuartzJobServiceImpl implements SysQuartzJobService {
         String id = sysQuartzJobRepo.saveAndFlush(sysQuartzJobEntity).getId();
         if (StringUtils.isNotBlank(id)) {
             if (ConstUtil.STATUS_NORMAL == sysQuartzJobEntity.getStatus()) {
-                // 定时器添加
-                SchedulerDTO schedulerDTO = new SchedulerDTO();
-                schedulerDTO.setJobClassName(sysQuartzJobEntity.getJobClassName().trim());
-                schedulerDTO.setCronExpression(sysQuartzJobEntity.getCronExpression().trim());
-                schedulerDTO.setJobName(ConstUtil.JOB_ + sysQuartzJobEntity.getId());
-                schedulerDTO.setJobDescription(sysQuartzJobEntity.getDescription());
-                schedulerDTO.setJobGroup(sysQuartzJobEntity.getJobGroup());
-                schedulerDTO.setJsonParam(sysQuartzJobEntity.getJsonParam());
-                schedulerDTO.setTriggerName(ConstUtil.TRIGGER_ + sysQuartzJobEntity.getId());
-                this.schedulerAdd(schedulerDTO);
+                try {
+                    // 定时器添加
+                    SchedulerDTO schedulerDTO = new SchedulerDTO();
+                    schedulerDTO.setJobClassName(sysQuartzJobEntity.getJobClassName().trim());
+                    schedulerDTO.setCronExpression(sysQuartzJobEntity.getCronExpression().trim());
+                    schedulerDTO.setJobName(ConstUtil.JOB_ + sysQuartzJobEntity.getId());
+                    schedulerDTO.setJobDescription(sysQuartzJobEntity.getDescription());
+                    schedulerDTO.setJobGroup(sysQuartzJobEntity.getJobGroup());
+                    schedulerDTO.setJsonParam(sysQuartzJobEntity.getJsonParam());
+                    schedulerDTO.setTriggerName(ConstUtil.TRIGGER_ + sysQuartzJobEntity.getId());
+                    schedulerDTO.setTriggerGroup(sysQuartzJobEntity.getId());
+                    this.schedulerAdd(schedulerDTO);
+                } catch (Exception e) {
+                    sysQuartzJobRepo.deleteById(id);
+                    throw e;
+                }
             }
         }
         return id;
@@ -105,25 +115,50 @@ public class SysQuartzJobServiceImpl implements SysQuartzJobService {
      * @param schedulerDTO
      */
     private void schedulerAdd(SchedulerDTO schedulerDTO) throws Exception {
-        // start scheduler
-        scheduler.start();
-
-        // build job info
+        /*// build job info
         JobDetail jobDetail = JobBuilder.newJob(getClass(schedulerDTO.getJobClassName()).getClass()).withIdentity(schedulerDTO.getJobName(), schedulerDTO.getJobGroup())
                 .usingJobData("jsonParam", schedulerDTO.getJsonParam()).withDescription(schedulerDTO.getJobDescription()).build();
-
         // Expression schedule builder (that is, the time the task executes)
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(schedulerDTO.getCronExpression());
 
         // Build a new trigger based on the new cronExpression expression
         CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(schedulerDTO.getTriggerName(), schedulerDTO.getTriggerGroup()).withDescription(schedulerDTO.getTriggerDescription())
-                .startNow().withSchedule(scheduleBuilder).build();
+                .withSchedule(scheduleBuilder).build();
 
         scheduler.scheduleJob(jobDetail, trigger);
+
+        // start scheduler
+        if (!scheduler.isShutdown()) {
+            scheduler.start();
+        }*/
+
+
+        // 创建jobDetail实例，绑定Job实现类
+        Class<? extends Job> jobClass = (Class<? extends Job>) (Class.forName(schedulerDTO.getJobClassName()).newInstance()
+                .getClass());
+        // 任务名称和组构成任务key
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(new JobKey(schedulerDTO.getJobName(), schedulerDTO.getJobGroup()))
+                .build();
+        System.out.println(jobDetail.isConcurrentExectionDisallowed());
+        // 定义corn表达式调度触发器
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(new TriggerKey(schedulerDTO.getJobName(), schedulerDTO.getJobGroup()))
+                .startAt(DateBuilder.futureDate(1, DateBuilder.IntervalUnit.SECOND))
+                .withSchedule(CronScheduleBuilder.cronSchedule(schedulerDTO.getCronExpression())).startNow().build();
+        // 把作业和触发器注册到任务调度中
+        scheduler.scheduleJob(jobDetail, trigger);
+        // 启动
+        if (!scheduler.isShutdown()) {
+            scheduler.start();
+        }
     }
 
     private static Job getClass(String classname) throws Exception {
         Class<?> class1 = Class.forName(classname);
         return (Job) class1.newInstance();
+    }
+
+    @Override
+    public boolean stopScheduleJob(String jobKey) throws Exception {
+        return scheduler.deleteJob(JobKey.jobKey(jobKey));
     }
 }

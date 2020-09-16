@@ -13,4 +13,6 @@ public interface SysQuartzJobService {
     SysQuartzJobEntity getSysQuartzJobEntityById(String id) throws Exception;
 
     Page<SysQuartzJobEntity> getQuartzJobs(PageRequest<Map<String, Object>> params) throws Exception;
+
+    boolean stopScheduleJob(String jobKey) throws Exception;
 }

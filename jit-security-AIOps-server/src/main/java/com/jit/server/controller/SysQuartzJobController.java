@@ -8,6 +8,7 @@ import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/sys/quartzJob")
+@Slf4j
 public class SysQuartzJobController {
 
     @Autowired
@@ -52,7 +54,7 @@ public class SysQuartzJobController {
     }
 
     @PostMapping("/addQuartzJob")
-    public Result addUser(@RequestBody QuartzJobParams quartzJobParams) {
+    public Result addQuartzJob(@RequestBody QuartzJobParams quartzJobParams) {
         try {
             SysQuartzJobEntity sysQuartzJobEntity;
             if (StringUtils.isBlank(quartzJobParams.getId())) {
@@ -69,11 +71,42 @@ public class SysQuartzJobController {
             sysQuartzJobEntity.setCronExpression(quartzJobParams.getCronExpression());
             sysQuartzJobEntity.setJsonParam(quartzJobParams.getJsonParam());
             sysQuartzJobEntity.setDescription(quartzJobParams.getDescription());
-            sysQuartzJobEntity.setJobGroup(quartzJobParams.getJobGroup());
+            sysQuartzJobEntity.setJobGroup("".equals(quartzJobParams.getJobGroup()) ? null : quartzJobParams.getJobGroup());
             sysQuartzJobEntity.setStatus(quartzJobParams.getStatus());
             return Result.SUCCESS(sysQuartzJobService.saveAndScheduleJob(sysQuartzJobEntity));
+        } catch (ClassNotFoundException e) {
+            return Result.ERROR(ExceptionEnum.SCHEDULER_USE_CLASS_EXCEPTION);
+        } catch (RuntimeException e) {
+            log.error("创建失败：原因 {}", e.getMessage());
+            return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @DeleteMapping(value = "/delQuartzJob/{id}")
+    public Result delQuartzJob(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                SysQuartzJobEntity sysQuartzJobEntity = sysQuartzJobService.getSysQuartzJobEntityById(id);
+                if (sysQuartzJobEntity == null) {
+                    return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+                } else {
+                    boolean res = sysQuartzJobService.stopScheduleJob(ConstUtil.JOB_ + id);
+                    log.info("删除任务{}，结果{}", ConstUtil.JOB_ + id, res);
+                    sysQuartzJobEntity.setIsDeleted(1);
+                    sysQuartzJobEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysQuartzJobEntity.setUpdateBy(userService.findIdByUsername());
+                    sysQuartzJobService.saveAndScheduleJob(sysQuartzJobEntity);
+                    return Result.SUCCESS(true);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
 }
