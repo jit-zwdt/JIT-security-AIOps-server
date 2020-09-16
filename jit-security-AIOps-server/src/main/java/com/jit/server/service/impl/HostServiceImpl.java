@@ -3,6 +3,7 @@ package com.jit.server.service.impl;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorTemplatesEntity;
+import com.jit.server.pojo.SysMenuEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.request.HostParams;
 import com.jit.server.service.HostService;
@@ -1184,5 +1185,41 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<Object> getHostIds() throws Exception {
         return hostRepo.getHostIds();
+    }
+
+    /**
+     * 判断主机名称是否为空
+     * @param objectName 主机名称
+     * @param odlObjectName 旧的主机名称
+     * @return 返回false表示主机名称重复，反之true
+     */
+    @Override
+    public Boolean checkObjectName(String objectName, String odlObjectName) throws Exception {
+        List<HostEntity> hostEntities = hostRepo.findByObjectNameAndDeleted(objectName, 0);
+        if (objectName.equals(odlObjectName)) {
+            return true;
+        }
+        if (hostEntities.size() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断业务名称是否为空
+     * @param businessName 业务名称
+     * @param odlBusinessName 旧的业务名称
+     * @return 返回false表示业务名称重复，反之true
+     */
+    @Override
+    public Boolean checkBusinessName(String businessName, String odlBusinessName) {
+        List<HostEntity> hostEntities = hostRepo.findByBusinessNameAndDeleted(businessName, 0);
+        if (businessName.equals(odlBusinessName)) {
+            return true;
+        }
+        if (hostEntities.size() > 0) {
+            return false;
+        }
+        return true;
     }
 }

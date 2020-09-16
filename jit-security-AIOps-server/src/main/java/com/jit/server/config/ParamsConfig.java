@@ -27,6 +27,8 @@ public class ParamsConfig {
 
     private Map<String, String> item = new HashMap<>();
 
+    private Map<String, String> monitor28 = new HashMap<>();
+
     public Map<String, String> getMonitor1() {
         return monitor1;
     }
@@ -65,5 +67,13 @@ public class ParamsConfig {
 
     public void setItem(Map<String, String> item) {
         this.item = item;
+    }
+
+    public Map<String, String> getMonitor28() {
+        return monitor28;
+    }
+
+    public void setMonitor28(Map<String, String> monitor28) {
+        this.monitor28 = monitor28;
     }
 }
