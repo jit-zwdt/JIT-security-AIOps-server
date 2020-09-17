@@ -38,4 +38,8 @@ public interface HostService {
     List<HostEntity> getHosts() throws Exception;
 
     List<Object> getHostIds() throws Exception;
+
+    Boolean checkObjectName(String objectName, String odlObjectName) throws Exception;
+
+    Boolean checkBusinessName(String businessName, String odlBusinessName);
 }

@@ -288,4 +288,50 @@ public class HostController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    /**
+     * 判断主机名称是否重复
+     * @param objectName 主机名称
+     * @param odlObjectName 旧的主机名称
+     * @return 返回false表示主机名称重复，反之true
+     */
+    @GetMapping("/checkObjectName")
+    public Result checkObjectName(String objectName , String odlObjectName){
+//        if (StringUtils.isNotEmpty(objectName) ) {
+        Boolean flag = null;
+        try {
+            flag = hostService.checkObjectName(objectName , odlObjectName);
+            if (flag != null){
+                return Result.SUCCESS(flag);
+            }else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }
+        catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    /**
+     * 判断业务名称是否重复
+     * @param businessName 业务名称
+     * @param odlBusinessName 旧的业务名称
+     * @return 返回false表示业务名称重复，反之true
+     */
+    @GetMapping("/checkBusinessName")
+    public Result checkBusinessName(String businessName , String odlBusinessName){
+//        if (StringUtils.isNotEmpty(objectName) ) {
+        Boolean flag = null;
+        try {
+            flag = hostService.checkBusinessName(businessName , odlBusinessName);
+            if (flag != null){
+                return Result.SUCCESS(flag);
+            }else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        }
+        catch (Exception e){
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

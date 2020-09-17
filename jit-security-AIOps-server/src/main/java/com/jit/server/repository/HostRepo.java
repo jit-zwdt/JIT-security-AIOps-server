@@ -65,4 +65,8 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
             "            h.agentIp " +
             "    END AS ip  FROM HostEntity h WHERE h.deleted = 0 ")
     List<Object> getHostIdsAndIp();
+
+    List<HostEntity> findByObjectNameAndDeleted(String objectName, int i);
+
+    List<HostEntity> findByBusinessNameAndDeleted(String businessName, int i);
 }
