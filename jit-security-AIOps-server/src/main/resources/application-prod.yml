@@ -26,12 +26,6 @@ spring:
     type: ehcache
     ehcache:
       config: classpath:/ehcache.xml
-  #quartz定时任务,采用数据库方式
-  quartz:
-    job-store-type: jdbc
-    #初始化表结构
-    jdbc:
-      initialize-schema: never
 ###################################
 #--------------FTP配置-------------#
 ###################################

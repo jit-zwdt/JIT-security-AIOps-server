@@ -1,7 +1,7 @@
 package com.jit.server.pojo;
 
 /**
- * @Description table sys_quartz_job: table entity
+ * @Description table sys_schedule_task: table entity
  * @author zengxin_miao
  * @Date: 2020/09/10 16:19:00
  */
@@ -13,9 +13,8 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "sys_quartz_job")
-public class SysQuartzJobEntity {
-
+@Table(name = "sys_schedule_task")
+public class SysScheduleTaskEntity {
 
     /**
      * 主键

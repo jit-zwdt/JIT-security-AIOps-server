@@ -1,9 +1,9 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.SysQuartzJobEntity;
+import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.QuartzJobParams;
-import com.jit.server.service.SysQuartzJobService;
+import com.jit.server.service.SysScheduleTaskService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class SysQuartzJobController {
 
     @Autowired
-    private SysQuartzJobService sysQuartzJobService;
+    private SysScheduleTaskService sysScheduleTaskService;
 
     @Autowired
     private UserService userService;
@@ -39,7 +39,7 @@ public class SysQuartzJobController {
     @PostMapping(value = "/getQuartzJobs")
     public Result getQuartzJobs(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
-            Page<SysQuartzJobEntity> sysQuartzJobEntities = sysQuartzJobService.getQuartzJobs(params);
+            Page<SysScheduleTaskEntity> sysQuartzJobEntities = sysScheduleTaskService.getSysScheduleTasks(params);
             Map<String, Object> result = new HashMap<>(5);
             result.put("page", params.getPage());
             result.put("size", params.getSize());
@@ -56,24 +56,24 @@ public class SysQuartzJobController {
     @PostMapping("/addQuartzJob")
     public Result addQuartzJob(@RequestBody QuartzJobParams quartzJobParams) {
         try {
-            SysQuartzJobEntity sysQuartzJobEntity;
+            SysScheduleTaskEntity sysScheduleTaskEntity;
             if (StringUtils.isBlank(quartzJobParams.getId())) {
-                sysQuartzJobEntity = new SysQuartzJobEntity();
-                sysQuartzJobEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
-                sysQuartzJobEntity.setCreateBy(userService.findIdByUsername());
-                sysQuartzJobEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+                sysScheduleTaskEntity = new SysScheduleTaskEntity();
+                sysScheduleTaskEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                sysScheduleTaskEntity.setCreateBy(userService.findIdByUsername());
+                sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
             } else {
-                sysQuartzJobEntity = sysQuartzJobService.getSysQuartzJobEntityById(quartzJobParams.getId());
-                sysQuartzJobEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
-                sysQuartzJobEntity.setUpdateBy(userService.findIdByUsername());
+                sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(quartzJobParams.getId());
+                sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
             }
-            sysQuartzJobEntity.setJobClassName(quartzJobParams.getJobClassName());
-            sysQuartzJobEntity.setCronExpression(quartzJobParams.getCronExpression());
-            sysQuartzJobEntity.setJsonParam(quartzJobParams.getJsonParam());
-            sysQuartzJobEntity.setDescription(quartzJobParams.getDescription());
-            sysQuartzJobEntity.setJobGroup("".equals(quartzJobParams.getJobGroup()) ? null : quartzJobParams.getJobGroup());
-            sysQuartzJobEntity.setStatus(quartzJobParams.getStatus());
-            return Result.SUCCESS(sysQuartzJobService.saveAndScheduleJob(sysQuartzJobEntity));
+            sysScheduleTaskEntity.setJobClassName(quartzJobParams.getJobClassName());
+            sysScheduleTaskEntity.setCronExpression(quartzJobParams.getCronExpression());
+            sysScheduleTaskEntity.setJsonParam(quartzJobParams.getJsonParam());
+            sysScheduleTaskEntity.setDescription(quartzJobParams.getDescription());
+            sysScheduleTaskEntity.setJobGroup("".equals(quartzJobParams.getJobGroup()) ? null : quartzJobParams.getJobGroup());
+            sysScheduleTaskEntity.setStatus(quartzJobParams.getStatus());
+            return Result.SUCCESS(sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity));
         } catch (ClassNotFoundException e) {
             return Result.ERROR(ExceptionEnum.SCHEDULER_USE_CLASS_EXCEPTION);
         } catch (RuntimeException e) {
@@ -89,16 +89,16 @@ public class SysQuartzJobController {
     public Result delQuartzJob(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                SysQuartzJobEntity sysQuartzJobEntity = sysQuartzJobService.getSysQuartzJobEntityById(id);
-                if (sysQuartzJobEntity == null) {
+                SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(id);
+                if (sysScheduleTaskEntity == null) {
                     return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
                 } else {
-                    boolean res = sysQuartzJobService.stopScheduleJob(ConstUtil.JOB_ + id);
+                    boolean res = sysScheduleTaskService.stopScheduleTask(ConstUtil.JOB_ + id);
                     log.info("删除任务{}，结果{}", ConstUtil.JOB_ + id, res);
-                    sysQuartzJobEntity.setIsDeleted(1);
-                    sysQuartzJobEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
-                    sysQuartzJobEntity.setUpdateBy(userService.findIdByUsername());
-                    sysQuartzJobService.saveAndScheduleJob(sysQuartzJobEntity);
+                    sysScheduleTaskEntity.setIsDeleted(1);
+                    sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
+                    sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
                     return Result.SUCCESS(true);
                 }
             } else {
