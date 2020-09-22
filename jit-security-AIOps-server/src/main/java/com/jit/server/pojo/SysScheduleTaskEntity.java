@@ -32,6 +32,12 @@ public class SysScheduleTaskEntity {
     private String jobClassName;
 
     /**
+     * 执行方法
+     */
+    @Column(name = "job_method_name")
+    private String jobMethodName;
+
+    /**
      * cron表达式
      */
     @Column(name = "cron_expression")
@@ -56,7 +62,7 @@ public class SysScheduleTaskEntity {
     private String jobGroup;
 
     /**
-     * 状态（0：正常；1：停止）
+     * 状态（0：已启动；1：已停止）
      */
     @Column(name = "status")
     private int status;

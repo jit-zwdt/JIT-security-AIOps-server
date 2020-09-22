@@ -1,11 +1,9 @@
 package com.jit.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jit.server.controller.HomePageController;
 import com.jit.server.controller.LoginController;
-import com.jit.server.controller.SysQuartzJobController;
-import com.jit.server.request.QuartzJobParams;
-import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.controller.SysScheduleTaskController;
+import com.jit.server.request.ScheduleTaskParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +17,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.HashMap;
-
 /**
  * @Description:
  * @Author: zengxin_miao
@@ -29,13 +25,13 @@ import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SysQuartzJobControllerTest {
+public class SysScheduleTaskControllerTest {
 
     @Autowired
     private LoginController loginController;
 
     @Autowired
-    private SysQuartzJobController sysQuartzJobController;
+    private SysScheduleTaskController sysScheduleTaskController;
 
 
     private MockMvc mvc;
@@ -44,7 +40,7 @@ public class SysQuartzJobControllerTest {
 
     @Before
     public void setUp() {
-        mvc = MockMvcBuilders.standaloneSetup(loginController, sysQuartzJobController).build();
+        mvc = MockMvcBuilders.standaloneSetup(loginController, sysScheduleTaskController).build();
     }
 
     @Before
@@ -59,14 +55,14 @@ public class SysQuartzJobControllerTest {
 
     @Test
     public void getMonitorTypeUsedInfoTest() throws Exception {
-        QuartzJobParams quartzJobParams = new QuartzJobParams();
-        quartzJobParams.setJobClassName("com.jit.server.job.SampleJob");
-        quartzJobParams.setCronExpression("0/2 * * * * ?");
-        quartzJobParams.setJsonParam("{\"name\":\"2222\",\"id\":\"1234\"}");
-        quartzJobParams.setStatus(0);
-        quartzJobParams.setDescription("job1 description");
-        quartzJobParams.setJobGroup("group1");
-        String params = JSONObject.toJSONString(quartzJobParams);
+        ScheduleTaskParams scheduleTaskParams = new ScheduleTaskParams();
+        scheduleTaskParams.setJobClassName("com.jit.server.job.SampleJob");
+        scheduleTaskParams.setCronExpression("0/2 * * * * ?");
+        scheduleTaskParams.setJsonParam("{\"name\":\"2222\",\"id\":\"1234\"}");
+        scheduleTaskParams.setStatus(0);
+        scheduleTaskParams.setDescription("job1 description");
+        scheduleTaskParams.setJobGroup("group1");
+        String params = JSONObject.toJSONString(scheduleTaskParams);
         RequestBuilder builder2 = MockMvcRequestBuilders.post("/sys/quartzJob/addQuartzJob").accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).header("authorization", this.access_token).content(params);
         MvcResult result2 = mvc.perform(builder2).andReturn();

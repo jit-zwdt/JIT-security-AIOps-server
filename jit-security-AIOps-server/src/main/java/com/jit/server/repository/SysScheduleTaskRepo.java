@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @Description: SysScheduleTaskRepo
  * @Author: zengxin_miao
@@ -15,4 +17,6 @@ public interface SysScheduleTaskRepo extends JpaRepository<SysScheduleTaskEntity
 
 
     SysScheduleTaskEntity findByIdAndIsDeleted(String id, int isDeleted);
+
+    List<SysScheduleTaskEntity> findByIsDeletedAndStatusOrderByGmtCreate(int isNotDeleted, int status);
 }

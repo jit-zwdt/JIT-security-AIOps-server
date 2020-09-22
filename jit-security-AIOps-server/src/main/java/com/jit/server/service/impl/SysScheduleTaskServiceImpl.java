@@ -1,10 +1,9 @@
 package com.jit.server.service.impl;
 
-import com.jit.server.dto.SchedulerDTO;
+import com.jit.server.config.CronTaskRegistrar;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.repository.SysScheduleTaskRepo;
 import com.jit.server.service.SysScheduleTaskService;
-import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +33,8 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     @Autowired
     private SysScheduleTaskRepo sysScheduleTaskRepo;
 
-
     @Autowired
-    private UserService userService;
+    private CronTaskRegistrar cronTaskRegistrar;
 
     @Override
     public Page<SysScheduleTaskEntity> getSysScheduleTasks(PageRequest<Map<String, Object>> params) {
@@ -72,8 +70,8 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     }
 
     @Override
-    public boolean stopScheduleTask(String jobKey) throws Exception {
-        return false;
+    public boolean stopScheduleTask(String jobKey) {
+        return cronTaskRegistrar.removeCronTask(jobKey);
     }
 
     /**
@@ -83,19 +81,10 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     public String saveAndScheduleJob(SysScheduleTaskEntity sysScheduleTaskEntity) throws Exception {
         String id = sysScheduleTaskRepo.saveAndFlush(sysScheduleTaskEntity).getId();
         if (StringUtils.isNotBlank(id)) {
-            if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus()) {
+            if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus() && ConstUtil.IS_NOT_DELETED == sysScheduleTaskEntity.getIsDeleted()) {
                 try {
                     // 定时器添加
-                    SchedulerDTO schedulerDTO = new SchedulerDTO();
-                    schedulerDTO.setJobClassName(sysScheduleTaskEntity.getJobClassName().trim());
-                    schedulerDTO.setCronExpression(sysScheduleTaskEntity.getCronExpression().trim());
-                    schedulerDTO.setJobName(ConstUtil.JOB_ + sysScheduleTaskEntity.getId());
-                    schedulerDTO.setJobDescription(sysScheduleTaskEntity.getDescription());
-                    schedulerDTO.setJobGroup(sysScheduleTaskEntity.getJobGroup());
-                    schedulerDTO.setJsonParam(sysScheduleTaskEntity.getJsonParam());
-                    schedulerDTO.setTriggerName(ConstUtil.TRIGGER_ + sysScheduleTaskEntity.getId());
-                    schedulerDTO.setTriggerGroup(sysScheduleTaskEntity.getId());
-                    //this.schedulerAdd(schedulerDTO);
+                    cronTaskRegistrar.addCronTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
                 } catch (Exception e) {
                     sysScheduleTaskRepo.deleteById(id);
                     throw e;
@@ -110,9 +99,14 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
         return sysScheduleTaskRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
     }
 
-    private static Class getClass(String classname) throws Exception {
-        Class<?> class1 = Class.forName(classname);
-        return (Class) class1.newInstance();
+    @Override
+    public List<SysScheduleTaskEntity> getScheduleTaskList() throws Exception {
+        return sysScheduleTaskRepo.findByIsDeletedAndStatusOrderByGmtCreate(ConstUtil.IS_NOT_DELETED, ConstUtil.STATUS_NORMAL);
     }
 
+    @Override
+    public void startScheduleTask(String className, String methodName, String cron, String param) throws Exception {
+        // 定时器添加
+        cronTaskRegistrar.addCronTask(className, methodName, cron, param);
+    }
 }

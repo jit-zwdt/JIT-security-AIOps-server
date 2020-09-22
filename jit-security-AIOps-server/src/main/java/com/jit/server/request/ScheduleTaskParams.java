@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
 /**
  * @Description: object role param
  * @Author: zengxin_miao
@@ -16,10 +14,11 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QuartzJobParams {
+public class ScheduleTaskParams {
 
     private String id;
     private String jobClassName;
+    private String jobMethodName;
     private String cronExpression;
     private String jobGroup;
     private String jsonParam;

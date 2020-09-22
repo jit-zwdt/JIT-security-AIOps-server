@@ -35,17 +35,6 @@ public class ConstUtil {
     /**
      * 状态（0：正常；1：停止）
      */
-    public static final int STATUS_STOP = 0;
-
-    /**
-     * 触发器命名头
-     */
-    public static final String TRIGGER_ = "trigger_";
-
-    /**
-     * 任务命名头
-     */
-    public static final String JOB_ = "job_";
-
+    public static final int STATUS_STOP = 1;
 
 }
