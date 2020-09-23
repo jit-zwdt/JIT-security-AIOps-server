@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.CronExpression;
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.SysRoleEntity;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.SysScheduleTaskService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +59,13 @@ public class SysScheduleTaskController {
     @PostMapping("/addScheduleTask")
     public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
         try {
+            String id = scheduleTaskParams.getId();
+            String jobClassName = scheduleTaskParams.getJobClassName();
+            String jobMethodName = scheduleTaskParams.getJobMethodName();
+            String cronExpression = scheduleTaskParams.getCronExpression();
+            if (vaildateParams(id, jobClassName, jobMethodName, cronExpression)) {
+                return Result.ERROR(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION);
+            }
             SysScheduleTaskEntity sysScheduleTaskEntity;
             if (StringUtils.isBlank(scheduleTaskParams.getId())) {
                 sysScheduleTaskEntity = new SysScheduleTaskEntity();
@@ -68,9 +77,9 @@ public class SysScheduleTaskController {
                 sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
                 sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
             }
-            sysScheduleTaskEntity.setJobClassName(scheduleTaskParams.getJobClassName());
-            sysScheduleTaskEntity.setCronExpression(scheduleTaskParams.getCronExpression());
-            sysScheduleTaskEntity.setJobMethodName(scheduleTaskParams.getJobMethodName());
+            sysScheduleTaskEntity.setJobClassName(jobClassName);
+            sysScheduleTaskEntity.setJobMethodName(jobMethodName);
+            sysScheduleTaskEntity.setCronExpression(cronExpression);
             sysScheduleTaskEntity.setJsonParam(scheduleTaskParams.getJsonParam());
             sysScheduleTaskEntity.setDescription(scheduleTaskParams.getDescription());
             sysScheduleTaskEntity.setJobGroup("".equals(scheduleTaskParams.getJobGroup()) ? null : scheduleTaskParams.getJobGroup());
@@ -88,6 +97,32 @@ public class SysScheduleTaskController {
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
+    }
+
+    /**
+     * check param jobClassName, jobMethodName, cronExpression
+     *
+     * @param id
+     * @param jobClassName
+     * @param jobMethodName
+     * @param cronExpression
+     * @return
+     * @throws Exception
+     */
+    private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
+        boolean res = false;
+        if (StringUtils.isBlank(id)) {
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = sysScheduleTaskService.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
+            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
+                res = true;
+            }
+        } else {
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = sysScheduleTaskService.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
+            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
+                res = true;
+            }
+        }
+        return res;
     }
 
     @ResponseBody
@@ -152,6 +187,25 @@ public class SysScheduleTaskController {
                         return Result.SUCCESS(true);
                     }
                 }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getScheduleTask/{id}")
+    public Result getScheduleTask(@PathVariable String id) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(id);
+                if (sysScheduleTaskEntity == null) {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+                return Result.SUCCESS(sysScheduleTaskEntity);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

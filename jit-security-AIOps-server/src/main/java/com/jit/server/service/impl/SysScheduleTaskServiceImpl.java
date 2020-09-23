@@ -90,6 +90,10 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
                     throw e;
                 }
             }
+            if (ConstUtil.STATUS_STOP == sysScheduleTaskEntity.getStatus() && ConstUtil.IS_NOT_DELETED == sysScheduleTaskEntity.getIsDeleted()) {
+                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                cronTaskRegistrar.removeCronTask(key);
+            }
         }
         return id;
     }
@@ -109,4 +113,15 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
         // 定时器添加
         cronTaskRegistrar.addCronTask(className, methodName, cron, param);
     }
+
+    @Override
+    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression) throws Exception {
+        return sysScheduleTaskRepo.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
+    }
+
+    @Override
+    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
+        return sysScheduleTaskRepo.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
+    }
+
 }
