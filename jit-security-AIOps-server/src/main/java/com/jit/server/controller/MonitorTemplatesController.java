@@ -92,11 +92,12 @@ public class MonitorTemplatesController {
 
     @ResponseBody
     @PostMapping(value = "/bindTemplates")
-    public Result bindTemplates(@RequestParam String id, @RequestParam String templates) {
+    public Result bindTemplates(@RequestParam String id, @RequestParam String templates, @RequestParam String templateIds) {
         try {
-            if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(templates)) {
+            if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(templates) && StringUtils.isNotBlank(templateIds)) {
                 MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(id);
                 if (monitorTemplatesEntity != null) {
+                    monitorTemplatesEntity.setTemplateIds(templateIds);
                     monitorTemplatesEntity.setTemplates(templates);
                     monitorTemplatesEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
                     monitorTemplatesService.updateMonitorTemplate(monitorTemplatesEntity);

@@ -41,6 +41,12 @@ public class MonitorTemplatesEntity {
     private String subtypeIds;
 
     /**
+     * 使用的模版ids
+     */
+    @Column(name = "template_ids")
+    private String templateIds;
+
+    /**
      * 使用的模版
      */
     @Column(name = "templates")
