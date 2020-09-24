@@ -1,9 +1,14 @@
 package com.jit.server.controller;
 
+import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.HostEntity;
 import com.jit.server.service.InspectionManageService;
+import com.jit.server.util.Result;
+import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletOutputStream;
@@ -11,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequestMapping("/inspection")
@@ -18,6 +25,20 @@ public class InspectionManageController {
 
     @Autowired
     private InspectionManageService inspectionManageService;
+
+    @PostMapping("/getHostInfo")
+    public Result getHostInfo(@RequestParam String id) {
+        try {
+            List<HostEntity> bean = inspectionManageService.getHostInfo(id);
+            if (bean!=null) {
+                return Result.SUCCESS(bean);
+            }else{
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 
     @PostMapping("/makePdf")
     public void makePdf(HttpServletResponse response, HttpServletRequest request) {
