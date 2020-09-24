@@ -5,7 +5,12 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.jit.server.pojo.HostEntity;
+import com.jit.server.repository.HostRepo;
+import com.jit.server.repository.InspectionRepo;
 import com.jit.server.service.InspectionManageService;
+import com.jit.server.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
@@ -13,10 +18,29 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class InspectionManageServiceImpl implements InspectionManageService {
+    @Autowired
+    private InspectionRepo inspectionRepo;
+
+    @Override
+    public List<HostEntity> getHostInfo(String id) throws Exception {
+        try {
+            if (StringUtils.isNotEmpty(id)) {
+                List<HostEntity> listinfoOne = inspectionRepo.getHostInfoById(id);
+                return listinfoOne;
+            } else {
+                List<HostEntity> listinfoAll = inspectionRepo.getHostInfo();
+                return listinfoAll;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public String createPDF() throws Exception {
