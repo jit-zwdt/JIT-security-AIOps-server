@@ -91,7 +91,7 @@ public class SysUserServiceImpl implements SysUserService {
     public SysUserEntity addUser(SysUserEntity params) throws Exception {
         if(params.getId() != null && params.getId() != ""){
             params.setUpdateBy(userService.findIdByUsername());
-            params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
+            params.setGmtModified(new java.sql.Timestamp(System.currentTimeMillis()));
         }else{
             if(params.getPassword() != null && params.getPassword() != ""){
                 BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -99,7 +99,7 @@ public class SysUserServiceImpl implements SysUserService {
                 params.setPassword(password);
             }
             params.setCreateBy(userService.findIdByUsername());
-            params.setGmtCreate(new java.sql.Timestamp(new Date().getTime()));
+            params.setGmtCreate(new java.sql.Timestamp(System.currentTimeMillis()));
         }
         return  sysUserRepo.save(params);
     }
@@ -113,7 +113,7 @@ public class SysUserServiceImpl implements SysUserService {
                 params.setPassword(password);
             }
             params.setUpdateBy(userService.findIdByUsername());
-            params.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
+            params.setGmtModified(new java.sql.Timestamp(System.currentTimeMillis()));
         }
         return  sysUserRepo.save(params);
     }
