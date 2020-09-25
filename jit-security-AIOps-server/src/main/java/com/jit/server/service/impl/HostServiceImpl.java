@@ -464,7 +464,7 @@ public class HostServiceImpl implements HostService {
         if (StringUtils.isNotEmpty(templatesId)) {
             MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(templatesId.trim());
             if (monitorTemplatesEntity != null) {
-                String templateIds = monitorTemplatesEntity.getTemplates();
+                String templateIds = monitorTemplatesEntity.getTemplateIds();
                 if (StringUtils.isNotEmpty(templateIds)) {
                     String[] _templateIds = templateIds.split(",");
                     List<ZabbixTemplate> templates = new ArrayList<ZabbixTemplate>();

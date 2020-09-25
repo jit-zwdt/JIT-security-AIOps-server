@@ -6,6 +6,8 @@ server:
 zabbix:
   api:
     url: http://172.16.15.10/zabbix/
+  username: Admin
+  password: zabbix
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -40,9 +42,11 @@ ftp:
 #--------------LOG配置-------------#
 ###################################
 logging:
+  level:
+    root: info
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
-    level: DEBUG
+    level: debug
   file:
     name: c:/mylog/JIT-security-AIOps-server.log
