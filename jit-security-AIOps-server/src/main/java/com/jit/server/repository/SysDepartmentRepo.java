@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,7 +31,7 @@ public interface SysDepartmentRepo extends JpaRepository<SysDepartmentEntity, St
     @Transactional
     @Modifying
     @Query("update SysDepartmentEntity s set s.isDeleted = 1, s.gmtModified = ?2, s.updateBy = ?3  where s.id in ?1 and s.isDeleted <> 1")
-    int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy);
+    int delDepartmentsByIds(List<String> list, LocalDateTime gmtModified, String updateBy);
 
     SysDepartmentEntity findByDepartCodeAndIsDeleted(String departCode, int isDeleted);
 

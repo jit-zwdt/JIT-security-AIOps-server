@@ -14,18 +14,12 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
-import com.jit.zabbix.client.model.problem.ZabbixProblem;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
-import com.jit.zabbix.client.request.ZabbixGetTriggerParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
-import com.jit.zabbix.client.service.ZabbixTriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -250,7 +244,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
         if (monitorClaimEntity.getIsResolve() == ConstUtil.RESOLVED) {
-            monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime(), new Timestamp(System.currentTimeMillis()));
+            monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime(), LocalDateTime.now());
         } else {
             monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime());
         }

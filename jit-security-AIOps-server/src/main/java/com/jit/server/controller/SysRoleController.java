@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +99,7 @@ public class SysRoleController {
                     role.setRoleSign(roleParams.getRoleSign());
                     role.setRemark(roleParams.getRemark());
                     role.setIsDeleted(0);
-                    role.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                    role.setGmtCreate(LocalDateTime.now());
                     role.setCreateBy(userService.findIdByUsername());
                     id = sysRoleService.saveOrUpdateRole(role).getId();
                 } else {
@@ -108,7 +108,7 @@ public class SysRoleController {
                         role.setRoleName(roleParams.getRoleName());
                         role.setRoleSign(roleParams.getRoleSign());
                         role.setRemark(roleParams.getRemark());
-                        role.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        role.setGmtModified(LocalDateTime.now());
                         role.setUpdateBy(userService.findIdByUsername());
                         id = sysRoleService.saveOrUpdateRole(role).getId();
                     } else {
@@ -157,7 +157,7 @@ public class SysRoleController {
                     return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
                 } else {
                     sysRoleEntity.setIsDeleted(1);
-                    sysRoleEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysRoleEntity.setGmtModified(LocalDateTime.now());
                     sysRoleEntity.setUpdateBy(userService.findIdByUsername());
                     sysRoleService.saveOrUpdateRole(sysRoleEntity);
                     return Result.SUCCESS(true);
@@ -220,7 +220,7 @@ public class SysRoleController {
                             userId = sysUserRoleEntity.getUserId();
                             if (!value.contains(userId)) {
                                 sysUserRoleEntity.setIsDeleted(1);
-                                sysUserRoleEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                                sysUserRoleEntity.setGmtModified(LocalDateTime.now());
                                 sysUserRoleEntity.setUpdateBy(userService.findIdByUsername());
                                 sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
                             } else {
@@ -236,7 +236,7 @@ public class SysRoleController {
                             sysUserRoleEntity.setRoleId(roleId);
                             sysUserRoleEntity.setUserId(userId);
                             sysUserRoleEntity.setCreateBy(userService.findIdByUsername());
-                            sysUserRoleEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                            sysUserRoleEntity.setGmtCreate(LocalDateTime.now());
                             sysUserRoleEntity.setIsDeleted(0);
                             sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
                         }
@@ -297,13 +297,13 @@ public class SysRoleController {
                     SysRoleMenuEntity sysRoleMenuEntity = sysRoleService.getRoleMenuByRoleId(roleId);
                     if (sysRoleMenuEntity != null) {
                         sysRoleMenuEntity.setMenuId(keys != null ? StringUtils.join(keys, ",") : "");
-                        sysRoleMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysRoleMenuEntity.setGmtModified(LocalDateTime.now());
                         sysRoleMenuEntity.setUpdateBy(userService.findIdByUsername());
                     } else {
                         sysRoleMenuEntity = new SysRoleMenuEntity();
                         sysRoleMenuEntity.setRoleId(roleId);
                         sysRoleMenuEntity.setMenuId(keys != null ? StringUtils.join(keys, ",") : "");
-                        sysRoleMenuEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                        sysRoleMenuEntity.setGmtCreate(LocalDateTime.now());
                         sysRoleMenuEntity.setCreateBy(userService.findIdByUsername());
                     }
                     sysRoleService.saveOrUpdateRoleMenu(sysRoleMenuEntity);
@@ -322,10 +322,10 @@ public class SysRoleController {
 
     @PostMapping("/findAllRole")
     public Result findAllRole() {
-        try{
+        try {
             return Result.SUCCESS(sysRoleService.findAll());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

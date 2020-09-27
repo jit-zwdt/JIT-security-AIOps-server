@@ -6,10 +6,14 @@ package com.jit.server.pojo;
  * @Date: 2020/06/17 09:40:43
  */
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -62,13 +66,17 @@ public class MonitorTemplatesEntity {
      * 创建时间
      */
     @Column(name = "gmt_create")
-    private java.sql.Timestamp gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtCreate;
 
     /**
      * 修改时间
      */
     @Column(name = "gmt_modified")
-    private java.sql.Timestamp gmtModified;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtModified;
 
     /**
      * 帮助描述文档

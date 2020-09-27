@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -58,8 +58,8 @@ public class AssetsController {
     public Result addAssets(@RequestBody MonitorAssetsEntity assets) {
         try {
             if (assets != null) {
-                assets.setGmtCreate(new Timestamp(System.currentTimeMillis()));
-                assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                assets.setGmtCreate(LocalDateTime.now());
+                assets.setGmtModified(LocalDateTime.now());
                 assets.setIsDeleted(0);
                 assetsService.addAssets(assets);
                 return Result.SUCCESS(null);
@@ -80,7 +80,7 @@ public class AssetsController {
                 if (bean.isPresent()) {
                     MonitorAssetsEntity assets = bean.get();
                     BeanUtils.copyProperties(params, assets);
-                    assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    assets.setGmtModified(LocalDateTime.now());
                     assetsService.updateAssets(assets);
                     return Result.SUCCESS(assets);
                 } else {
@@ -106,7 +106,7 @@ public class AssetsController {
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {
                 MonitorAssetsEntity assets = bean.get();
-                assets.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                assets.setGmtModified(LocalDateTime.now());
                 assets.setIsDeleted(1);
                 assetsService.updateAssets(assets);
                 return Result.SUCCESS(assets);

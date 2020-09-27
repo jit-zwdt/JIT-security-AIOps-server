@@ -72,13 +72,17 @@ public class MonitorClaimEntity implements Serializable {
      * 创建时间
      */
     @Column(name = "gmt_create")
-    private java.sql.Timestamp gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtCreate;
 
     /**
      * 修改时间
      */
     @Column(name = "gmt_modified")
-    private java.sql.Timestamp gmtModified;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtModified;
 
     @Column(name = "is_register")
     private int isRegister;

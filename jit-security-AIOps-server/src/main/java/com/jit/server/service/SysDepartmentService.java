@@ -3,7 +3,7 @@ package com.jit.server.service;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysDepartmentEntity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SysDepartmentService {
@@ -20,7 +20,7 @@ public interface SysDepartmentService {
 
     List<String> getSubDepIds(String id) throws Exception;
 
-    int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy) throws Exception;
+    int delDepartmentsByIds(List<String> list, LocalDateTime gmtModified, String updateBy) throws Exception;
 
     SysDepartmentEntity getDepartmentByDepartCode(String code);
 

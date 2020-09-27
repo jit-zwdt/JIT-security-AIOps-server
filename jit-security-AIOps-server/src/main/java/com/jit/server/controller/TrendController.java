@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class TrendController {
             if (trendParams != null) {
                 MonitorHostDetailBindItems monitorHostDetailBindItems = new MonitorHostDetailBindItems();
                 BeanUtils.copyProperties(trendParams, monitorHostDetailBindItems);
-                monitorHostDetailBindItems.setGmtCreate(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindItems.setGmtCreate(LocalDateTime.now());
                 monitorHostDetailBindItems.setIsDeleted(0);
                 monitorHostDetailBindItems = monitorHostDetailBindItemsService.saveOrUpdateMonitorHostDetailBindItems(monitorHostDetailBindItems);
                 if (StringUtils.isNotBlank(monitorHostDetailBindItems.getId())) {
@@ -87,7 +86,7 @@ public class TrendController {
             if (trendParams != null) {
                 MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = new MonitorHostDetailBindGraphs();
                 BeanUtils.copyProperties(trendParams, monitorHostDetailBindGraphs);
-                monitorHostDetailBindGraphs.setGmtCreate(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindGraphs.setGmtCreate(LocalDateTime.now());
                 monitorHostDetailBindGraphs.setIsDeleted(0);
                 monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
                 if (StringUtils.isNotBlank(monitorHostDetailBindGraphs.getId())) {
@@ -109,7 +108,7 @@ public class TrendController {
         try {
             MonitorHostDetailBindItems monitorHostDetailBindItems = monitorHostDetailBindItemsService.findById(id);
             if (monitorHostDetailBindItems != null) {
-                monitorHostDetailBindItems.setGmtModified(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindItems.setGmtModified(LocalDateTime.now());
                 monitorHostDetailBindItems.setIsDeleted(1);
                 monitorHostDetailBindItems = monitorHostDetailBindItemsService.saveOrUpdateMonitorHostDetailBindItems(monitorHostDetailBindItems);
                 if (StringUtils.isNotBlank(monitorHostDetailBindItems.getId())) {
@@ -130,7 +129,7 @@ public class TrendController {
         try {
             MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findById(id);
             if (monitorHostDetailBindGraphs != null) {
-                monitorHostDetailBindGraphs.setGmtModified(Timestamp.valueOf(LocalDateTime.now()));
+                monitorHostDetailBindGraphs.setGmtModified(LocalDateTime.now());
                 monitorHostDetailBindGraphs.setIsDeleted(1);
                 monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
                 if (StringUtils.isNotBlank(monitorHostDetailBindGraphs.getId())) {

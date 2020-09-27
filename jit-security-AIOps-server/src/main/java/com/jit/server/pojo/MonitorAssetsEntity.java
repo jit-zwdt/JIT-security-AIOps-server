@@ -6,6 +6,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * @Description table monitor_assets: table entity
@@ -88,7 +89,7 @@ public class MonitorAssetsEntity {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "register_date")
-    private java.sql.Timestamp  registerDate;
+    private LocalDateTime registerDate;
 
     /**
      * 登记人
@@ -101,7 +102,7 @@ public class MonitorAssetsEntity {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "update_date")
-    private java.sql.Timestamp  updateDate;
+    private LocalDateTime  updateDate;
 
     /**
      * 资产位置
@@ -114,7 +115,7 @@ public class MonitorAssetsEntity {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "logout_date")
-    private java.sql.Timestamp  logoutDate;
+    private LocalDateTime  logoutDate;
 
     /**
      * 删除标识 0：表示未删除， 1：表示删除
@@ -127,7 +128,7 @@ public class MonitorAssetsEntity {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "date_recorded")
-    private java.sql.Timestamp  dateRecorded;
+    private LocalDateTime  dateRecorded;
 
     /**
      * 价值
@@ -182,13 +183,13 @@ public class MonitorAssetsEntity {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_create")
-    private java.sql.Timestamp  gmtCreate;
+    private LocalDateTime  gmtCreate;
 
     /**
      * 修改时间
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_modified")
-    private java.sql.Timestamp  gmtModified;
+    private LocalDateTime  gmtModified;
 
 }

@@ -8,7 +8,7 @@ import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
     }
 
     @Override
-    public int delDepartmentsByIds(List<String> list, Timestamp gmtModified, String updateBy) throws Exception {
+    public int delDepartmentsByIds(List<String> list, LocalDateTime gmtModified, String updateBy) throws Exception {
         return sysDepartmentRepo.delDepartmentsByIds(list, gmtModified, updateBy);
     }
 

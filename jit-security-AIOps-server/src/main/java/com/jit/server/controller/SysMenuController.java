@@ -13,7 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,7 +96,7 @@ public class SysMenuController {
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
-                sysMenuEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                sysMenuEntity.setGmtCreate(LocalDateTime.now());
                 sysMenuEntity.setCreateBy(userService.findIdByUsername());
                 sysMenuEntity.setName(menuParams.getName());
                 sysMenuEntity.setTitle(menuParams.getTitle());
@@ -140,7 +140,7 @@ public class SysMenuController {
                     } else {
                         sysMenuEntity.setIcon(ICON);
                     }
-                    sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    sysMenuEntity.setGmtModified(LocalDateTime.now());
                     sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                     sysMenuService.updateSysMenu(sysMenuEntity);
                     return Result.SUCCESS(sysMenuEntity);
@@ -156,7 +156,7 @@ public class SysMenuController {
     }
 
     @PutMapping("updateIsShow/{id}/{isShow}")
-    public Result updateIsShow(@PathVariable String id ,@PathVariable int isShow){
+    public Result updateIsShow(@PathVariable String id, @PathVariable int isShow) {
         try {
             //调用方法更新数据
             SysMenuEntity sysMenuEntity = sysMenuService.updateIsShow(id, isShow);
@@ -173,7 +173,7 @@ public class SysMenuController {
             Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
             if (bean.isPresent()) {
                 SysMenuEntity sysMenuEntity = bean.get();
-                sysMenuEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                sysMenuEntity.setGmtModified(LocalDateTime.now());
                 sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                 sysMenuEntity.setIsDeleted(1);
                 sysMenuService.updateSysMenu(sysMenuEntity);
@@ -189,44 +189,45 @@ public class SysMenuController {
     /**
      * 根据该菜单名称是否有相同的菜单名称 如果有则返回 false 没有返回 true
      *
-     * @param path 菜单路径
+     * @param path    菜单路径
      * @param oldPath 旧的菜单路径
-     * @return  false 有 true 没有
+     * @return false 有 true 没有
      */
     @GetMapping("/getValidationPath")
-    public Result getValidationPath(String path , String oldPath){
-        Boolean flag = sysMenuService.getValidationName(path , oldPath);
+    public Result getValidationPath(String path, String oldPath) {
+        Boolean flag = sysMenuService.getValidationName(path, oldPath);
         return Result.SUCCESS(flag);
     }
 
     /**
      * 根据该组件名称是否有相同的组件名称 如果有则返回 false 没有返回 true
      *
-     * @param name 组件名称
+     * @param name    组件名称
      * @param oldName 旧的组件名称
-     * @return  false 有 true 没有
+     * @return false 有 true 没有
      */
     @GetMapping("/getValidationName")
-    public Result getValidationName(String name , String oldName){
-        Boolean flag = sysMenuService.getValidationTitle(name , oldName);
+    public Result getValidationName(String name, String oldName) {
+        Boolean flag = sysMenuService.getValidationTitle(name, oldName);
         return Result.SUCCESS(flag);
     }
 
     /**
      * 根据该组件路径是否有相同的组件路径 如果有则返回 false 没有返回 true
      *
-     * @param component 组件路径
+     * @param component    组件路径
      * @param oldComponent 旧的组件路径
-     * @return  false 有 true 没有
+     * @return false 有 true 没有
      */
     @GetMapping("/getValidationComponent")
-    public Result getValidationComponent(String component , String oldComponent){
-        Boolean flag = sysMenuService.getValidationComponent(component , oldComponent);
+    public Result getValidationComponent(String component, String oldComponent) {
+        Boolean flag = sysMenuService.getValidationComponent(component, oldComponent);
         return Result.SUCCESS(flag);
     }
 
     /**
      * 判断一级目录下是否有二级目录
+     *
      * @param id 主键
      * @return
      */
@@ -238,14 +239,14 @@ public class SysMenuController {
                 if (bean.isPresent()) {
                     SysMenuEntity sysMenuEntity = bean.get();
                     // 如果parenid 等于0 ，证明是一级菜单 ，需判断是否有二级菜单
-                    if (sysMenuEntity.getParentId().equals("0")){
+                    if (sysMenuEntity.getParentId().equals("0")) {
                         // 当id 与 parenid 有相等的证明有二级菜单
                         List<SysMenuEntity> sysMenuEntities = sysMenuService.findByParentId(id);
-                        if (sysMenuEntities != null  && sysMenuEntities.size() > 0){
+                        if (sysMenuEntities != null && sysMenuEntities.size() > 0) {
                             return Result.SUCCESS(true);
                         }
                         return Result.SUCCESS(false);
-                    }else{
+                    } else {
                         return Result.SUCCESS(false);
                     }
                 } else {
@@ -261,10 +262,11 @@ public class SysMenuController {
 
     /**
      * 获取所有未删除的title
+     *
      * @return
      */
     @GetMapping("/getMenuTitle")
-    public Result getMenuTitle(){
+    public Result getMenuTitle() {
         List<SysMenuEntity> sysMenuEntities = sysMenuService.getMenuTitle();
         return Result.SUCCESS(sysMenuEntities);
     }

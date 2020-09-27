@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -99,7 +99,7 @@ public class MonitorTemplatesController {
                 if (monitorTemplatesEntity != null) {
                     monitorTemplatesEntity.setTemplateIds(templateIds);
                     monitorTemplatesEntity.setTemplates(templates);
-                    monitorTemplatesEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                    monitorTemplatesEntity.setGmtModified(LocalDateTime.now());
                     monitorTemplatesService.updateMonitorTemplate(monitorTemplatesEntity);
                     return Result.SUCCESS("success");
                 } else {

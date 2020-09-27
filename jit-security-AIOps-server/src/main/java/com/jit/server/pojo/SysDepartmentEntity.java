@@ -1,10 +1,14 @@
 package com.jit.server.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * @author zengxin_miao
@@ -121,13 +125,17 @@ public class SysDepartmentEntity {
      * 创建时间
      */
     @Column(name = "gmt_create")
-    private java.sql.Timestamp gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtCreate;
 
     /**
      * 更新时间
      */
     @Column(name = "gmt_modified")
-    private java.sql.Timestamp gmtModified;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtModified;
 
     /**
      * 更新者

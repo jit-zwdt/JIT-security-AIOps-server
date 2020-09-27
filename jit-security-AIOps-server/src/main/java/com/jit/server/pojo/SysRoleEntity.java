@@ -1,10 +1,13 @@
 package com.jit.server.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @Description: table sys_role entity
@@ -34,10 +37,14 @@ public class SysRoleEntity {
     private String createBy;
 
     @Column(name = "gmt_create")
-    private Timestamp gmtCreate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtCreate;
 
     @Column(name = "gmt_modified")
-    private Timestamp gmtModified;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    private LocalDateTime gmtModified;
 
     @Column(name = "update_by")
     private String updateBy;

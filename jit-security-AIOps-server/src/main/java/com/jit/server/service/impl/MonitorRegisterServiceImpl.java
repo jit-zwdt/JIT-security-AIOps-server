@@ -8,7 +8,7 @@ import com.jit.server.service.MonitorRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class MonitorRegisterServiceImpl implements MonitorRegisterService {
             ProblemRegisterDTO monitorRegisterEntity = new ProblemRegisterDTO();
             Object[] a = (Object[]) o;
             monitorRegisterEntity.setId(a[0].toString());
-            monitorRegisterEntity.setGmtCreate((Timestamp)a[1]);
+            monitorRegisterEntity.setGmtCreate((LocalDateTime)a[1]);
             monitorRegisterEntity.setIsResolve(Integer.valueOf(a[2].toString()));
             monitorRegisterEntity.setProblemProcess(a[3].toString());
             monitorRegisterEntity.setProblemReason(a[4].toString());

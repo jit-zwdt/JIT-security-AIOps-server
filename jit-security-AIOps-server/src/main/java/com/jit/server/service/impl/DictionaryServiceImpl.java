@@ -9,7 +9,7 @@ import com.jit.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,15 +27,15 @@ public class DictionaryServiceImpl implements DictionaryService {
     private UserService userService;
 
     @Override
-    public List<SysDictionaryEntity> getDictionary(String name,String code,int currentPage,int pageSize) {
-        int start = (currentPage-1)*pageSize;
-        List<SysDictionaryEntity> list = dictionaryRepo.getDictionary(name,code,start,pageSize);
+    public List<SysDictionaryEntity> getDictionary(String name, String code, int currentPage, int pageSize) {
+        int start = (currentPage - 1) * pageSize;
+        List<SysDictionaryEntity> list = dictionaryRepo.getDictionary(name, code, start, pageSize);
         return list;
     }
 
     @Override
     public int getCount(String name, String code) {
-        int count = dictionaryRepo.getDictionaryCount(name,code);
+        int count = dictionaryRepo.getDictionaryCount(name, code);
         return count;
     }
 
@@ -52,29 +52,29 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public SysDictionaryEntity addDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception {
-        if(sysDictionaryEntity.getId() != null && sysDictionaryEntity.getId() != ""){
+        if (sysDictionaryEntity.getId() != null && sysDictionaryEntity.getId() != "") {
             sysDictionaryEntity.setUpdateBy(userService.findIdByUsername());
-            sysDictionaryEntity.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
-        }else{
+            sysDictionaryEntity.setGmtModified(LocalDateTime.now());
+        } else {
             sysDictionaryEntity.setCreateBy(userService.findIdByUsername());
-            sysDictionaryEntity.setGmtCreate(new java.sql.Timestamp(new Date().getTime()));
+            sysDictionaryEntity.setGmtCreate(LocalDateTime.now());
         }
-        return  dictionaryRepo.save(sysDictionaryEntity);
+        return dictionaryRepo.save(sysDictionaryEntity);
     }
 
     @Override
     public SysDictionaryEntity getByDictName(String dictName) {
-        return dictionaryRepo.findByDictNameAndIsDeleted(dictName,0);
+        return dictionaryRepo.findByDictNameAndIsDeleted(dictName, 0);
     }
 
     @Override
     public SysDictionaryEntity getByDictCode(String dictCode) {
-        return dictionaryRepo.findByDictCodeAndIsDeleted(dictCode,0);
+        return dictionaryRepo.findByDictCodeAndIsDeleted(dictCode, 0);
     }
 
     @Override
-    public SysDictionaryItemEntity getByItemText(String itemName,String dictId) {
-        return dictionaryItemRepo.findByItemTextAndDictIdAndIsDeleted(itemName,dictId,0);
+    public SysDictionaryItemEntity getByItemText(String itemName, String dictId) {
+        return dictionaryItemRepo.findByItemTextAndDictIdAndIsDeleted(itemName, dictId, 0);
     }
 
     @Override
@@ -83,14 +83,14 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public List<SysDictionaryItemEntity> findByDictId(String id,String itemText,int status,int currentPage,int pageSize) {
-        int start = (currentPage-1)*pageSize;
-        return dictionaryItemRepo.findByDictId(id,itemText,status,start,pageSize);
+    public List<SysDictionaryItemEntity> findByDictId(String id, String itemText, int status, int currentPage, int pageSize) {
+        int start = (currentPage - 1) * pageSize;
+        return dictionaryItemRepo.findByDictId(id, itemText, status, start, pageSize);
     }
 
     @Override
-    public int getDictionaryItemCount(String id,String itemText,int status) {
-        int count = dictionaryItemRepo.getDictionaryCount(id,itemText,status);
+    public int getDictionaryItemCount(String id, String itemText, int status) {
+        int count = dictionaryItemRepo.getDictionaryCount(id, itemText, status);
         return count;
     }
 
@@ -108,13 +108,13 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public SysDictionaryItemEntity addDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception {
-        if(sysDictionaryItemEntity.getId() != null && sysDictionaryItemEntity.getId() != ""){
+        if (sysDictionaryItemEntity.getId() != null && sysDictionaryItemEntity.getId() != "") {
             sysDictionaryItemEntity.setUpdateBy(userService.findIdByUsername());
-            sysDictionaryItemEntity.setGmtModified(new java.sql.Timestamp(new Date().getTime()));
-        }else{
+            sysDictionaryItemEntity.setGmtModified(LocalDateTime.now());
+        } else {
             sysDictionaryItemEntity.setCreateBy(userService.findIdByUsername());
-            sysDictionaryItemEntity.setGmtCreate(new java.sql.Timestamp(new Date().getTime()));
+            sysDictionaryItemEntity.setGmtCreate(LocalDateTime.now());
         }
-        return  dictionaryItemRepo.save(sysDictionaryItemEntity);
+        return dictionaryItemRepo.save(sysDictionaryItemEntity);
     }
 }

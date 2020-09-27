@@ -2,7 +2,6 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.CronExpression;
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.SysRoleEntity;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.SysScheduleTaskService;
@@ -16,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,12 +68,12 @@ public class SysScheduleTaskController {
             SysScheduleTaskEntity sysScheduleTaskEntity;
             if (StringUtils.isBlank(scheduleTaskParams.getId())) {
                 sysScheduleTaskEntity = new SysScheduleTaskEntity();
-                sysScheduleTaskEntity.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                sysScheduleTaskEntity.setGmtCreate(LocalDateTime.now());
                 sysScheduleTaskEntity.setCreateBy(userService.findIdByUsername());
                 sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
             } else {
                 sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(scheduleTaskParams.getId());
-                sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
                 sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
             }
             sysScheduleTaskEntity.setJobClassName(jobClassName);
@@ -139,7 +138,7 @@ public class SysScheduleTaskController {
                     log.info("删除任务{}，结果{}", key, res);
                     if (res) {
                         sysScheduleTaskEntity.setIsDeleted(1);
-                        sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
                         sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
                         sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
                         return Result.SUCCESS(true);
@@ -171,7 +170,7 @@ public class SysScheduleTaskController {
                         log.info("删除任务{}，结果{}", key, res);
                         if (res) {
                             sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_STOP);
-                            sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                            sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
                             sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
                             sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
                             return Result.SUCCESS(true);
@@ -181,7 +180,7 @@ public class SysScheduleTaskController {
                     } else {
                         sysScheduleTaskService.startScheduleTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
                         sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_NORMAL);
-                        sysScheduleTaskEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
                         sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
                         sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
                         return Result.SUCCESS(true);

@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +27,7 @@ public class ProblemRegisterDTO {
 
     private int isResolve;
 
-    private java.sql.Timestamp gmtCreate;
+    private LocalDateTime gmtCreate;
 
     private String problemHandleTime;
 

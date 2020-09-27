@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +52,7 @@ public class SysDepartmentController {
                     } else {
                         department.setDepartType("2");
                     }
-                    department.setGmtCreate(new Timestamp(System.currentTimeMillis()));
+                    department.setGmtCreate(LocalDateTime.now());
                     department.setCreateBy(userService.findIdByUsername());
                     department.setIsDeleted(0);
                     id = sysDepartmentService.saveOrUpdateDepartment(department);
@@ -71,9 +71,9 @@ public class SysDepartmentController {
                         sysDepartmentEntity.setRemark(department.getRemark());
                         sysDepartmentEntity.setDepartOrder(department.getDepartOrder());
                         sysDepartmentEntity.setDescription(department.getDescription());
-                        sysDepartmentEntity.setGmtModified(new Timestamp(System.currentTimeMillis()));
+                        sysDepartmentEntity.setGmtModified(LocalDateTime.now());
                         sysDepartmentEntity.setUpdateBy(userService.findIdByUsername());
-                        id = sysDepartmentService.saveOrUpdateDepartment(department);
+                        id = sysDepartmentService.saveOrUpdateDepartment(sysDepartmentEntity);
                     }
                 }
                 if (id != null) {
@@ -119,7 +119,7 @@ public class SysDepartmentController {
                 HashSet set = new HashSet(list);
                 list.clear();
                 list.addAll(set);
-                sysDepartmentService.delDepartmentsByIds(list, new Timestamp(System.currentTimeMillis()), userService.findIdByUsername());
+                sysDepartmentService.delDepartmentsByIds(list, LocalDateTime.now(), userService.findIdByUsername());
                 return Result.SUCCESS("success");
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
