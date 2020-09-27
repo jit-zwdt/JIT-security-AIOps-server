@@ -37,4 +37,13 @@ public class ConstUtil {
      */
     public static final int STATUS_STOP = 1;
 
+    /**
+     * 是否解决 （0：未解决；1：解决）
+     */
+    public static final int UN_RESOLVE = 0;
+
+    /**
+     * 是否解决 （0：未解决；1：解决）
+     */
+    public static final int RESOLVED = 1;
 }

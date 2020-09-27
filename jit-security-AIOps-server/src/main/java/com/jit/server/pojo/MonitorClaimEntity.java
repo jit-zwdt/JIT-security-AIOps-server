@@ -1,18 +1,20 @@
 package com.jit.server.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
 @Data
 @Entity
 @Table(name = "monitor_claim")
-public class MonitorClaimEntity {
+public class MonitorClaimEntity implements Serializable {
     @Id
     @Column(length = 32, nullable = false)
     @GeneratedValue(generator = "uuid")
@@ -34,11 +36,11 @@ public class MonitorClaimEntity {
     @Column(name = "problem_name")
     private String problemName;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "problem_create")
     private LocalDateTime problemCreate;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     @Column(name = "claim_time")
     private LocalDateTime claimTime;
 
@@ -86,4 +88,9 @@ public class MonitorClaimEntity {
 
     @Column(name = "problem_handle_time")
     private String problemHandleTime;
+
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    @Column(name = "resolve_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime resolveTime;
 }

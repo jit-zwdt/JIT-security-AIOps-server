@@ -18,7 +18,7 @@ public interface ProblemService {
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
 
-    List<MonitorClaimEntity> findClaimByUser( String problemName,int resolveType);
+    List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType);
 
     void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
 
@@ -30,5 +30,9 @@ public interface ProblemService {
 
     List<MonitorClaimEntity> findByIsResolve();
 
+    List<MonitorClaimEntity> findByIsResolve(String resolveTimeStart, String resolveTimeEnd) throws Exception;
+
     List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName);
+
+    List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName, String resolveTimeStart, String resolveTimeEnd);
 }

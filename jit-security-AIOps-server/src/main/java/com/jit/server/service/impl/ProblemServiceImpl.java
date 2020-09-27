@@ -11,6 +11,7 @@ import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
@@ -23,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -61,7 +66,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set hostId
-        if(params.getHostId() != null) {
+        if (params.getHostId() != null) {
             List<String> hostIds = new ArrayList<>();
             hostIds.add(params.getHostId());
             params_pro.setHostids(hostIds);
@@ -78,7 +83,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set name
-        if(params.getName() != null && params.getName().length() > 0) {
+        if (params.getName() != null && params.getName().length() > 0) {
             Map<String, Object> mapSearch = new HashMap();
             mapSearch.put("name", params.getName());
             params_pro.setSearch(mapSearch);
@@ -93,7 +98,7 @@ public class ProblemServiceImpl implements ProblemService {
     public List<ProblemHostDTO> findProblemHost(ProblemParams params) throws Exception {
         // get token
         String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)) {
+        if (StringUtils.isEmpty(authToken)) {
             return null;
         }
 
@@ -102,7 +107,7 @@ public class ProblemServiceImpl implements ProblemService {
 
         // create a map to store host information, using host id as key
         Map<String, Object[]> mapHostInfo = new HashMap<>();
-        for(int i = 0; i < hostInfo.size(); i++) {
+        for (int i = 0; i < hostInfo.size(); i++) {
             Object[] host = (Object[]) hostInfo.get(i);
             mapHostInfo.put(host[0].toString(), host);
         }
@@ -110,11 +115,11 @@ public class ProblemServiceImpl implements ProblemService {
         List<ProblemHostDTO> problemHostDTOs = new ArrayList<>();
 
         // for each hostId, find problem
-        for(String hostId : mapHostInfo.keySet()) {
+        for (String hostId : mapHostInfo.keySet()) {
             params.setHostId(hostId);
             List<ZabbixProblemDTO> problems = findByCondition(params, authToken);
-            if(problems != null) {
-                for(ZabbixProblemDTO problem : problems) {
+            if (problems != null) {
+                for (ZabbixProblemDTO problem : problems) {
                     ProblemHostDTO problemHostDTO = new ProblemHostDTO();
                     problemHostDTO.setZabbixProblemDTO(problem);
                     Object[] obj = mapHostInfo.get(hostId);
@@ -137,19 +142,19 @@ public class ProblemServiceImpl implements ProblemService {
             return null;
         }
         String claimType = params.getClaimType();
-        if(claimType == null || ("").equals(claimType)){
+        if (claimType == null || ("").equals(claimType)) {
             claimType = "-1";
         }
-        for(Integer integer:params.getSeverities()){
+        for (Integer integer : params.getSeverities()) {
             ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
             if (integer != null) {
                 Map mapFilter = new HashMap();
-                mapFilter.put("severity",integer);
+                mapFilter.put("severity", integer);
                 params_pro.setFilter(mapFilter);
                 List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, authToken);
                 List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
-                for(ZabbixProblemDTO zabbixProblemDTO:listZ) {
-                    if("0".equals(claimType)){
+                for (ZabbixProblemDTO zabbixProblemDTO : listZ) {
+                    if ("0".equals(claimType)) {
                         ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
                         problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
@@ -157,7 +162,7 @@ public class ProblemServiceImpl implements ProblemService {
                             problemClaimDTO.setIsClaim(0);
                             problemClaimDTOS.add(problemClaimDTO);
                         }
-                    }else if("1".equals(claimType)){
+                    } else if ("1".equals(claimType)) {
                         ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
                         problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
@@ -165,7 +170,7 @@ public class ProblemServiceImpl implements ProblemService {
                             problemClaimDTO.setIsClaim(temp.getIsClaim());
                             problemClaimDTOS.add(problemClaimDTO);
                         }
-                    }else{
+                    } else {
                         ProblemClaimDTO problemClaimDTO = new ProblemClaimDTO();
                         problemClaimDTO.setZabbixProblemDTO(zabbixProblemDTO);
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
@@ -235,17 +240,22 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<MonitorClaimEntity> findClaimByUser(String problemName,int resolveType) {
+    public List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         SysUserEntity user = sysUserRepo.findByUsername(username);
-        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(),problemName,resolveType);
+        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(), problemName, resolveType);
         return list;
     }
 
     @Override
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
-        monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(),monitorClaimEntity.getIsRegister(),monitorClaimEntity.getIsResolve(),monitorClaimEntity.getProblemHandleTime());
+        if (monitorClaimEntity.getIsResolve() == ConstUtil.RESOLVED) {
+            monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime(), new Timestamp(System.currentTimeMillis()));
+        } else {
+            monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime());
+        }
     }
+
     @Override
     public MonitorClaimEntity findByProblemId(String problemId) {
         return monitorClaimRepo.getMonitorClaimEntityById(problemId);
@@ -268,7 +278,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set hostId
-        if(params.getHostId() != null) {
+        if (params.getHostId() != null) {
             List<String> hostIds = new ArrayList<>();
             hostIds.add(params.getHostId());
             params_pro.setHostids(hostIds);
@@ -285,7 +295,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set name
-        if(params.getName() != null && params.getName().length() > 0) {
+        if (params.getName() != null && params.getName().length() > 0) {
             Map<String, Object> mapSearch = new HashMap();
             mapSearch.put("name", params.getName());
             params_pro.setSearch(mapSearch);
@@ -306,6 +316,20 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName) {
-        return monitorClaimRepo.findByIsResolveAndProblemName(1,problemName);
+        return monitorClaimRepo.findByIsResolveAndProblemName(1, problemName);
+    }
+
+    @Override
+    public List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName, String resolveTimeStart, String resolveTimeEnd) {
+        LocalDateTime resolveTimeStart1 = LocalDateTime.parse(resolveTimeStart + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime resolveTimeEnd1 = LocalDateTime.parse(resolveTimeEnd + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return monitorClaimRepo.findByIsResolveAndProblemName(1, problemName, resolveTimeStart1, resolveTimeEnd1);
+    }
+
+    @Override
+    public List<MonitorClaimEntity> findByIsResolve(String resolveTimeStart, String resolveTimeEnd) throws Exception {
+        LocalDateTime resolveTimeStart1 = LocalDateTime.parse(resolveTimeStart + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime resolveTimeEnd1 = LocalDateTime.parse(resolveTimeEnd + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return monitorClaimRepo.findByIsResolve(resolveTimeStart1, resolveTimeEnd1);
     }
 }

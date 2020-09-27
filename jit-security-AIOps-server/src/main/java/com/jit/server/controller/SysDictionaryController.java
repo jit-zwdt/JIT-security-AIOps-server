@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/sys/dictionary")
-public class DictionaryController {
+public class SysDictionaryController {
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -104,6 +104,7 @@ public class DictionaryController {
     @PostMapping("/addDictionary")
     public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {
         try{
+            sysDictionaryEntity.setDictCode(sysDictionaryEntity.getDictCode().trim().toLowerCase());
             return Result.SUCCESS(dictionaryService.addDictionary(sysDictionaryEntity));
         }catch (Exception e){
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
@@ -204,7 +205,7 @@ public class DictionaryController {
     public Result checkDictCode(@PathVariable String dictCode) {
         try {
             if (StringUtils.isNotBlank(dictCode)) {
-                SysDictionaryEntity sysDictionaryEntity = dictionaryService.getByDictCode(dictCode);
+                SysDictionaryEntity sysDictionaryEntity = dictionaryService.getByDictCode(dictCode.trim().toLowerCase());
                 if (sysDictionaryEntity == null) {
                     return Result.SUCCESS(false);
                 }

@@ -78,9 +78,9 @@ public class ProblemController {
     @PostMapping("/findBySeverityLevel")
     public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletResponse resp) throws IOException {
         try {
-            if(params != null && params.getSeverities() != null) {
+            if (params != null && params.getSeverities() != null) {
                 List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params);
-                if(null != result && !CollectionUtils.isEmpty(result)) {
+                if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
@@ -88,7 +88,7 @@ public class ProblemController {
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -96,80 +96,84 @@ public class ProblemController {
 
     @PostMapping("/addClaim")
     public Result addClaim(@RequestBody MonitorClaimEntity monitorClaimEntity) {
-        try{
-            if(monitorClaimEntity!=null){
+        try {
+            if (monitorClaimEntity != null) {
                 monitorClaimEntity.setClaimTime(LocalDateTime.now());
                 problemService.addCalim(monitorClaimEntity);
                 return Result.SUCCESS(null);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/findClaimByUser")
-    public Result findClaimByUser(@RequestParam(value = "problemName")String problemName,@RequestParam(value = "resolveType")String resolveType) {
-        try{
-            if(resolveType == null || ("").equals(resolveType)){
+    public Result findClaimByUser(@RequestParam(value = "problemName") String problemName, @RequestParam(value = "resolveType") String resolveType) {
+        try {
+            if (resolveType == null || ("").equals(resolveType)) {
                 resolveType = "-1";
             }
-            List<MonitorClaimEntity> list = problemService.findClaimByUser(problemName,Integer.parseInt(resolveType));
+            List<MonitorClaimEntity> list = problemService.findClaimByUser(problemName, Integer.parseInt(resolveType));
             return Result.SUCCESS(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/updateClaimAfterRegister")
     public Result updateClaimAfterRegister(@RequestBody MonitorClaimEntity monitorClaimEntity) {
-        try{
+        try {
             problemService.updateClaimAfterRegister(monitorClaimEntity);
             return Result.SUCCESS(null);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
     @PostMapping("/findByProblemId")
-    public Result findByProblemId(@RequestParam(value = "problemId")  String problemId) {
-        try{
-            if(problemId!=null){
-                Map<String,Object> map = new HashMap<>();
+    public Result findByProblemId(@RequestParam(value = "problemId") String problemId) {
+        try {
+            if (problemId != null) {
+                Map<String, Object> map = new HashMap<>();
                 MonitorClaimEntity monitorClaimEntity = problemService.findByProblemId(problemId);
-                map.put("claimOpinion",monitorClaimEntity.getClaimOpinion());
-                map.put("role",sysRoleRepo.getOne(monitorClaimEntity.getClaimRoleId()).getRoleName());
-                map.put("user",sysUserRepo.getOne(monitorClaimEntity.getClaimUserId()).getUsername());
+                map.put("claimOpinion", monitorClaimEntity.getClaimOpinion());
+                map.put("role", sysRoleRepo.getOne(monitorClaimEntity.getClaimRoleId()).getRoleName());
+                map.put("user", sysUserRepo.getOne(monitorClaimEntity.getClaimUserId()).getUsername());
                 return Result.SUCCESS(map);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/problemSolveReport")
-    public Result problemSolveReport(@RequestParam("problemType")String problemType,@RequestParam("problemName")String problemName) {
-        try{
-            List<MonitorClaimEntity> claimList = problemService.findByIsResolve();
-            if(StringUtils.isNotEmpty(problemName)){
-                claimList = problemService.findByIsResolveAndProblemName(problemName);
+    public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd) {
+        try {
+            List<MonitorClaimEntity> claimList = null;
+            if(StringUtils.isNotEmpty(resolveTimeStart) && StringUtils.isNotEmpty(resolveTimeEnd)){
+                claimList = problemService.findByIsResolve(resolveTimeStart,resolveTimeEnd);
+                if (StringUtils.isNotEmpty(problemName)) {
+                    claimList = problemService.findByIsResolveAndProblemName(problemName,resolveTimeStart,resolveTimeEnd);
+                }
             }
             List<ProblemSolveReportDTO> resultList = new ArrayList<>();
-            if(CollectionUtils.isEmpty(claimList)){
+            if (CollectionUtils.isEmpty(claimList)) {
                 return Result.SUCCESS(null);
             }
-            for(int i = 0; i < claimList.size();i ++){
+            for (int i = 0; i < claimList.size(); i++) {
                 ProblemSolveReportDTO result = new ProblemSolveReportDTO();
                 List<MonitorRegisterEntity> regList = registerService.findByClaimIdAndIsResolve(claimList.get(i).getId());
-                if(StringUtils.isNotEmpty(problemType)){
-                    regList = registerService.findByClaimIdAndProblemType(claimList.get(i).getId(),problemType);
+                if (StringUtils.isNotEmpty(problemType)) {
+                    regList = registerService.findByClaimIdAndProblemType(claimList.get(i).getId(), problemType);
                 }
-                if(regList != null && !CollectionUtils.isEmpty(regList)) {
-                    for(MonitorRegisterEntity mm : regList){
+                if (regList != null && !CollectionUtils.isEmpty(regList)) {
+                    for (MonitorRegisterEntity mm : regList) {
                         result.setRegister(mm);
                     }
                 } else {
@@ -182,7 +186,7 @@ public class ProblemController {
                 resultList.add(result);
             }
             return Result.SUCCESS(resultList);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
@@ -196,7 +200,7 @@ public class ProblemController {
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
