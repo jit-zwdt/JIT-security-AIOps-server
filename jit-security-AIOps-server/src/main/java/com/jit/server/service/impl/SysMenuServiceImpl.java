@@ -8,6 +8,7 @@ import com.jit.server.pojo.SysRoleEntity;
 import com.jit.server.pojo.SysRoleMenuEntity;
 import com.jit.server.repository.SysMenuRepo;
 import com.jit.server.service.SysMenuService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,7 +160,7 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     @Override
     public Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception {
-        return sysMenuRepo.findByIdAndIsDeleted(id, 0);
+        return sysMenuRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
@@ -200,7 +201,7 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public Boolean getValidationName(String path, String oldPath) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path, 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path, ConstUtil.IS_NOT_DELETED);
         System.out.println(sysMenuEntities);
         if (path.equals(oldPath)) {
             return true;
@@ -220,7 +221,7 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public Boolean getValidationTitle(String name, String oldName) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name, 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name, ConstUtil.IS_NOT_DELETED);
         System.out.println(sysMenuEntities);
         if (name.equals(oldName)) {
             return true;
@@ -240,7 +241,7 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public Boolean getValidationComponent(String component, String oldComponent) {
-        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component, 0);
+        List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component, ConstUtil.IS_NOT_DELETED);
         System.out.println(sysMenuEntities);
         if (component.equals("Layout")) {
             return true;

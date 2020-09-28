@@ -4,6 +4,7 @@ import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.repository.AssetsRepo;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,7 @@ public class AssetsServiceImpl implements AssetsService {
                      le : lessThanOrEqualTo（小于或等于）
                      **/
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), 0));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     /** 资产登记时间 **/
                     if (params.getRegisterStartDate() != null) {
                         list.add(cb.greaterThanOrEqualTo(createTimeField, params.getRegisterStartDate()));

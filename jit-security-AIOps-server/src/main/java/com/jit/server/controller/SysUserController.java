@@ -6,6 +6,7 @@ import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -81,7 +82,7 @@ public class SysUserController {
             if (bean.isPresent()) {
                 SysUserEntity sysUserEntity = bean.get();
                 sysUserEntity.setGmtModified(LocalDateTime.now());
-                sysUserEntity.setIsDeleted(1);
+                sysUserEntity.setIsDeleted(ConstUtil.IS_DELETED);
                 SysUserEntity sysUser = sysUserService.addUser(sysUserEntity);
                 return Result.SUCCESS(sysUser);
             } else {

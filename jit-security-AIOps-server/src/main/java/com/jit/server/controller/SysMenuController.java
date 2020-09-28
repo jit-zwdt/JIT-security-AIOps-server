@@ -7,6 +7,7 @@ import com.jit.server.pojo.SysMenuEntity;
 import com.jit.server.request.MenuParams;
 import com.jit.server.service.SysMenuService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -111,7 +112,7 @@ public class SysMenuController {
                 sysMenuEntity.setOrderNum(Integer.parseInt(menuParams.getOrderNum()));
                 sysMenuEntity.setRedirect(menuParams.getRedirect());
                 sysMenuEntity.setIsRoute(Integer.parseInt(menuParams.getIsRoute()));
-                sysMenuEntity.setIsDeleted(0);
+                sysMenuEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 sysMenuService.addSysMenu(sysMenuEntity);
                 return Result.SUCCESS(sysMenuEntity);
             } else {
@@ -175,7 +176,7 @@ public class SysMenuController {
                 SysMenuEntity sysMenuEntity = bean.get();
                 sysMenuEntity.setGmtModified(LocalDateTime.now());
                 sysMenuEntity.setUpdateBy(userService.findIdByUsername());
-                sysMenuEntity.setIsDeleted(1);
+                sysMenuEntity.setIsDeleted(ConstUtil.IS_DELETED);
                 sysMenuService.updateSysMenu(sysMenuEntity);
                 return Result.SUCCESS(sysMenuEntity);
             } else {

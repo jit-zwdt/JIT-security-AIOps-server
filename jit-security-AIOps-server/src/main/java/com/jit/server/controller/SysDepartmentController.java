@@ -4,6 +4,7 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysDepartmentEntity;
 import com.jit.server.service.SysDepartmentService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class SysDepartmentController {
                     }
                     department.setGmtCreate(LocalDateTime.now());
                     department.setCreateBy(userService.findIdByUsername());
-                    department.setIsDeleted(0);
+                    department.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                     id = sysDepartmentService.saveOrUpdateDepartment(department);
                 } else {
                     SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartment(department.getId());

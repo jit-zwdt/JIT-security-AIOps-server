@@ -8,6 +8,7 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.service.DictionaryService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class SysDictionaryController {
             if (bean.isPresent()) {
                 SysDictionaryEntity sysDictionaryEntity = bean.get();
                 sysDictionaryEntity.setGmtModified(LocalDateTime.now());
-                sysDictionaryEntity.setIsDeleted(1);
+                sysDictionaryEntity.setIsDeleted(ConstUtil.IS_DELETED);
                 SysDictionaryEntity dictionaryEntity = dictionaryService.updateDictionary(sysDictionaryEntity);
                 return Result.SUCCESS(dictionaryEntity);
             } else {
@@ -148,7 +149,7 @@ public class SysDictionaryController {
             if (bean.isPresent()) {
                 SysDictionaryItemEntity sysDictionaryItemEntity = bean.get();
                 sysDictionaryItemEntity.setGmtModified(LocalDateTime.now());
-                sysDictionaryItemEntity.setIsDeleted(1);
+                sysDictionaryItemEntity.setIsDeleted(ConstUtil.IS_DELETED);
                 SysDictionaryItemEntity dictionaryItemEntity = dictionaryService.updateDictionaryItem(sysDictionaryItemEntity);
                 return Result.SUCCESS(dictionaryItemEntity);
             } else {

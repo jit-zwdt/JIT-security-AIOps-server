@@ -5,6 +5,7 @@ import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class SysUserServiceImpl implements SysUserService {
                 @Override
                 public Predicate toPredicate(Root<SysUserEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     if (StringUtils.isNotBlank(param.getUsername())) {
                         list.add(cb.equal(root.get("username").as(String.class), param.getUsername()));
                     }
@@ -125,6 +126,6 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUserEntity getByUserName(String username) {
-        return sysUserRepo.findByUsernameAndIsDeleted(username, 0);
+        return sysUserRepo.findByUsernameAndIsDeleted(username, ConstUtil.IS_NOT_DELETED);
     }
 }

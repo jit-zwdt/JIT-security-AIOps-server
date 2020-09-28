@@ -7,6 +7,7 @@ import com.jit.server.request.TrendParams;
 import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.MonitorHostDetailBindItemsService;
 import com.jit.server.service.TrendService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
@@ -71,7 +72,7 @@ public class TrendController {
                 MonitorHostDetailBindItems monitorHostDetailBindItems = new MonitorHostDetailBindItems();
                 BeanUtils.copyProperties(trendParams, monitorHostDetailBindItems);
                 monitorHostDetailBindItems.setGmtCreate(LocalDateTime.now());
-                monitorHostDetailBindItems.setIsDeleted(0);
+                monitorHostDetailBindItems.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 monitorHostDetailBindItems = monitorHostDetailBindItemsService.saveOrUpdateMonitorHostDetailBindItems(monitorHostDetailBindItems);
                 if (StringUtils.isNotBlank(monitorHostDetailBindItems.getId())) {
                     return Result.SUCCESS(null);
@@ -94,7 +95,7 @@ public class TrendController {
                 MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = new MonitorHostDetailBindGraphs();
                 BeanUtils.copyProperties(trendParams, monitorHostDetailBindGraphs);
                 monitorHostDetailBindGraphs.setGmtCreate(LocalDateTime.now());
-                monitorHostDetailBindGraphs.setIsDeleted(0);
+                monitorHostDetailBindGraphs.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
                 if (StringUtils.isNotBlank(monitorHostDetailBindGraphs.getId())) {
                     return Result.SUCCESS(null);
@@ -155,7 +156,7 @@ public class TrendController {
     @PostMapping("/findHostDetailItems/{hostId}")
     public Result findHostDetailItems(@PathVariable String hostId) {
         try {
-            return Result.SUCCESS(monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, 0));
+            return Result.SUCCESS(monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, ConstUtil.IS_NOT_DELETED));
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -164,7 +165,7 @@ public class TrendController {
     @PostMapping("/findHostDetailGraphs/{hostId}")
     public Result findHostDetailGraphs(@PathVariable String hostId) {
         try {
-            return Result.SUCCESS(monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, 0));
+            return Result.SUCCESS(monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, ConstUtil.IS_NOT_DELETED));
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -177,7 +178,7 @@ public class TrendController {
             if (trendParams != null && StringUtils.isNotBlank(trendParams.getHostId()) && StringUtils.isNotBlank(trendParams.getItemId())) {
                 String hostId = trendParams.getHostId();
                 String itemId = trendParams.getItemId();
-                MonitorHostDetailBindItems monitorHostDetailBindItems = monitorHostDetailBindItemsService.findByHostIdAndItemIdAndIsDeleted(hostId, itemId, 0);
+                MonitorHostDetailBindItems monitorHostDetailBindItems = monitorHostDetailBindItemsService.findByHostIdAndItemIdAndIsDeleted(hostId, itemId, ConstUtil.IS_NOT_DELETED);
                 if (monitorHostDetailBindItems != null) {
                     return Result.SUCCESS(true);
                 } else {
@@ -197,7 +198,7 @@ public class TrendController {
             if (trendParams != null && StringUtils.isNotBlank(trendParams.getHostId()) && StringUtils.isNotBlank(trendParams.getGraphId())) {
                 String hostId = trendParams.getHostId();
                 String graphId = trendParams.getGraphId();
-                MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findByHostIdAndGraphIdAndIsDeleted(hostId, graphId, 0);
+                MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findByHostIdAndGraphIdAndIsDeleted(hostId, graphId, ConstUtil.IS_NOT_DELETED);
                 if (monitorHostDetailBindGraphs != null) {
                     return Result.SUCCESS(true);
                 } else {

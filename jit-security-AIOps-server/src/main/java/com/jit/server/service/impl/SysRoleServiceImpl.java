@@ -10,6 +10,7 @@ import com.jit.server.repository.SysRoleMenuRepo;
 import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRoleRepo;
 import com.jit.server.service.SysRoleService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class SysRoleServiceImpl implements SysRoleService {
                 @Override
                 public Predicate toPredicate(Root<SysRoleEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     String roleName = param.get("roleName") != null ? param.get("roleName").toString() : "";
                     if (StringUtils.isNotBlank(roleName)) {
                         list.add(cb.like(root.get("roleName").as(String.class), "%" + roleName + "%"));
@@ -84,7 +85,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Override
     public SysRoleEntity findByIdAndIsDeleted(String id) throws Exception {
-        return sysRoleRepo.findByIdAndIsDeleted(id, 0);
+        return sysRoleRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
@@ -127,12 +128,12 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Override
     public SysUserRoleEntity getSysUserRole(String roleId, String userId) throws Exception {
-        return sysUserRoleRepo.findByRoleIdAndUserIdAndIsDeleted(roleId, userId, 0);
+        return sysUserRoleRepo.findByRoleIdAndUserIdAndIsDeleted(roleId, userId, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
     public List<SysUserRoleEntity> getSysUserRolesByRoleId(String roleId) throws Exception {
-        return sysUserRoleRepo.findByRoleIdAndIsDeleted(roleId, 0);
+        return sysUserRoleRepo.findByRoleIdAndIsDeleted(roleId, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
@@ -175,7 +176,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     @Override
     public SysRoleMenuEntity getRoleMenuByRoleId(String roleId) throws Exception {
-        return sysRoleMenuRepo.findByRoleIdAndIsDeleted(roleId, 0);
+        return sysRoleMenuRepo.findByRoleIdAndIsDeleted(roleId, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override

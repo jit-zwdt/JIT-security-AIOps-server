@@ -5,6 +5,7 @@ import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.repository.MonitorTemplatesRepo;
 import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.service.MonitorTemplatesService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
                 @Override
                 public Predicate toPredicate(Root<MonitorTemplatesEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     if (StringUtils.isNotBlank(param.getName())) {
                         list.add(cb.equal(root.get("name").as(String.class), param.getName()));
                     }
@@ -94,11 +95,11 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
 
     @Override
     public List<MonitorTemplatesEntity> getMonitorTemplatesByTypeId(String typdId) throws Exception {
-        return monitorTemplatesRepo.findByTypeIdAndIsDeletedOrderByOrderNum(typdId, 0);
+        return monitorTemplatesRepo.findByTypeIdAndIsDeletedOrderByOrderNum(typdId, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
     public List<MonitorTemplatesEntity> getMonitorTemplatesByTypeIdAndNameLike(String typeId, String keyword) throws Exception {
-        return monitorTemplatesRepo.findByTypeIdAndIsDeletedAndNameLike(typeId, 0, keyword);
+        return monitorTemplatesRepo.findByTypeIdAndIsDeletedAndNameLike(typeId, ConstUtil.IS_NOT_DELETED, keyword);
     }
 }

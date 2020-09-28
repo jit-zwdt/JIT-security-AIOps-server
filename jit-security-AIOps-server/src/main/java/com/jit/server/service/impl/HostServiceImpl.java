@@ -9,6 +9,7 @@ import com.jit.server.request.HostParams;
 import com.jit.server.service.HostService;
 import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.*;
@@ -921,7 +922,7 @@ public class HostServiceImpl implements HostService {
             String typeId = (String) params.get("typeId");
             if (StringUtils.isNotEmpty(typeId)) {
                 String groupName = (String) params.get("groupName");
-                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId, 0);
+                List<HostEntity> hostList = hostRepo.findByTypeIdAndDeleted(typeId, ConstUtil.IS_NOT_DELETED);
                 if (null != hostList && !CollectionUtils.isEmpty(hostList)) {
                     List<String> hostIds = new ArrayList<>();
                     for (HostEntity host : hostList) {
@@ -1179,7 +1180,7 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<HostEntity> getHosts() throws Exception {
-        return hostRepo.findByDeleted(0);
+        return hostRepo.findByDeleted(ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
@@ -1195,7 +1196,7 @@ public class HostServiceImpl implements HostService {
      */
     @Override
     public Boolean checkObjectName(String objectName, String odlObjectName) throws Exception {
-        List<HostEntity> hostEntities = hostRepo.findByObjectNameAndDeleted(objectName, 0);
+        List<HostEntity> hostEntities = hostRepo.findByObjectNameAndDeleted(objectName, ConstUtil.IS_NOT_DELETED);
         if (objectName.equals(odlObjectName)) {
             return true;
         }
@@ -1213,7 +1214,7 @@ public class HostServiceImpl implements HostService {
      */
     @Override
     public Boolean checkBusinessName(String businessName, String odlBusinessName) {
-        List<HostEntity> hostEntities = hostRepo.findByBusinessNameAndDeleted(businessName, 0);
+        List<HostEntity> hostEntities = hostRepo.findByBusinessNameAndDeleted(businessName,  ConstUtil.IS_NOT_DELETED);
         if (businessName.equals(odlBusinessName)) {
             return true;
         }
