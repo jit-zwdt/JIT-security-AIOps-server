@@ -45,7 +45,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
                 @Override
                 public Predicate toPredicate(Root<SysScheduleTaskEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(String.class), "0"));
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     String jobClassName = param.get("jobClassName") != null ? param.get("jobClassName").toString() : "";
                     if (StringUtils.isNotBlank(jobClassName)) {
                         list.add(cb.like(root.get("jobClassName").as(String.class), "%" + jobClassName + "%"));

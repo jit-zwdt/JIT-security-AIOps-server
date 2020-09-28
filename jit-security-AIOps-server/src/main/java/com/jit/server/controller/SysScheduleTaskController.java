@@ -137,7 +137,7 @@ public class SysScheduleTaskController {
                     boolean res = sysScheduleTaskService.stopScheduleTask(key);
                     log.info("删除任务{}，结果{}", key, res);
                     if (res) {
-                        sysScheduleTaskEntity.setIsDeleted(1);
+                        sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_DELETED);
                         sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
                         sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
                         sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);

@@ -6,6 +6,7 @@ import com.jit.server.repository.DictionaryItemRepo;
 import com.jit.server.repository.DictionaryRepo;
 import com.jit.server.service.DictionaryService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,17 +65,17 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public SysDictionaryEntity getByDictName(String dictName) {
-        return dictionaryRepo.findByDictNameAndIsDeleted(dictName, 0);
+        return dictionaryRepo.findByDictNameAndIsDeleted(dictName, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
     public SysDictionaryEntity getByDictCode(String dictCode) {
-        return dictionaryRepo.findByDictCodeAndIsDeleted(dictCode, 0);
+        return dictionaryRepo.findByDictCodeAndIsDeleted(dictCode, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
     public SysDictionaryItemEntity getByItemText(String itemName, String dictId) {
-        return dictionaryItemRepo.findByItemTextAndDictIdAndIsDeleted(itemName, dictId, 0);
+        return dictionaryItemRepo.findByItemTextAndDictIdAndIsDeleted(itemName, dictId, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override

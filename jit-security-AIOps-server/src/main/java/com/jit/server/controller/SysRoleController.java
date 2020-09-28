@@ -8,6 +8,7 @@ import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.request.RoleParams;
 import com.jit.server.service.SysRoleService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +99,7 @@ public class SysRoleController {
                     role.setRoleName(roleParams.getRoleName());
                     role.setRoleSign(roleParams.getRoleSign());
                     role.setRemark(roleParams.getRemark());
-                    role.setIsDeleted(0);
+                    role.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                     role.setGmtCreate(LocalDateTime.now());
                     role.setCreateBy(userService.findIdByUsername());
                     id = sysRoleService.saveOrUpdateRole(role).getId();
@@ -156,7 +157,7 @@ public class SysRoleController {
                 if (sysRoleEntity == null) {
                     return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
                 } else {
-                    sysRoleEntity.setIsDeleted(1);
+                    sysRoleEntity.setIsDeleted(ConstUtil.IS_DELETED);
                     sysRoleEntity.setGmtModified(LocalDateTime.now());
                     sysRoleEntity.setUpdateBy(userService.findIdByUsername());
                     sysRoleService.saveOrUpdateRole(sysRoleEntity);
@@ -219,7 +220,7 @@ public class SysRoleController {
                         for (SysUserRoleEntity sysUserRoleEntity : sysUserRoleEntityList) {
                             userId = sysUserRoleEntity.getUserId();
                             if (!value.contains(userId)) {
-                                sysUserRoleEntity.setIsDeleted(1);
+                                sysUserRoleEntity.setIsDeleted(ConstUtil.IS_DELETED);
                                 sysUserRoleEntity.setGmtModified(LocalDateTime.now());
                                 sysUserRoleEntity.setUpdateBy(userService.findIdByUsername());
                                 sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
@@ -237,7 +238,7 @@ public class SysRoleController {
                             sysUserRoleEntity.setUserId(userId);
                             sysUserRoleEntity.setCreateBy(userService.findIdByUsername());
                             sysUserRoleEntity.setGmtCreate(LocalDateTime.now());
-                            sysUserRoleEntity.setIsDeleted(0);
+                            sysUserRoleEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                             sysRoleService.saveOrUpdateUserRole(sysUserRoleEntity);
                         }
                     }

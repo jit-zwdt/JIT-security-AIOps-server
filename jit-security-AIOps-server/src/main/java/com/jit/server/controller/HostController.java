@@ -5,6 +5,7 @@ import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
 import com.jit.server.request.HostViewInfoParams;
 import com.jit.server.service.HostService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -42,7 +43,7 @@ public class HostController {
                 BeanUtils.copyProperties(params, host);
                 host.setGmtCreate(LocalDateTime.now());
                 host.setGmtModified(LocalDateTime.now());
-                host.setDeleted(0);
+                host.setDeleted(ConstUtil.IS_NOT_DELETED);
                 if(StringUtils.isNotEmpty(hostService.addHost(host))){
                     return Result.SUCCESS(null);
                 }else{
@@ -89,7 +90,7 @@ public class HostController {
             if (bean.isPresent()) {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
-                host.setDeleted(1);
+                host.setDeleted(ConstUtil.IS_DELETED);
                 if(StringUtils.isNotEmpty(hostService.deleteHost(host))){
                     return Result.SUCCESS(host);
                 }else{

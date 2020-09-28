@@ -5,6 +5,7 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -60,7 +61,7 @@ public class AssetsController {
             if (assets != null) {
                 assets.setGmtCreate(LocalDateTime.now());
                 assets.setGmtModified(LocalDateTime.now());
-                assets.setIsDeleted(0);
+                assets.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 assetsService.addAssets(assets);
                 return Result.SUCCESS(null);
             } else {
@@ -107,7 +108,7 @@ public class AssetsController {
             if (bean.isPresent()) {
                 MonitorAssetsEntity assets = bean.get();
                 assets.setGmtModified(LocalDateTime.now());
-                assets.setIsDeleted(1);
+                assets.setIsDeleted(ConstUtil.IS_DELETED);
                 assetsService.updateAssets(assets);
                 return Result.SUCCESS(assets);
             } else {
