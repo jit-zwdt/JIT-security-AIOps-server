@@ -28,5 +28,6 @@ public class TrendParams {
     private String itemName;
     private String graphId;
     private String graphName;
+    private String units;
 
 }

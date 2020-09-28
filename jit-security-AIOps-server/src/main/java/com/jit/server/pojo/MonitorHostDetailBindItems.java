@@ -75,4 +75,10 @@ public class MonitorHostDetailBindItems {
     @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     private LocalDateTime gmtModified;
 
+    /**
+     * 监控项单位
+     */
+    @Column(name = "units")
+    private String units;
+
 }
