@@ -8,4 +8,6 @@ package com.jit.server.service;
 public interface ZabbixAuthService {
 
     String getAuth() throws Exception;
+
+    String getAuth(String key) throws Exception;
 }

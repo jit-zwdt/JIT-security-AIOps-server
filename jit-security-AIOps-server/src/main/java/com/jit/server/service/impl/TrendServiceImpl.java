@@ -1,24 +1,20 @@
 package com.jit.server.service.impl;
 
 
-import com.jit.server.request.ItemParams;
 import com.jit.server.request.TrendParams;
-import com.jit.server.service.ItemService;
 import com.jit.server.service.TrendService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.StringUtils;
-import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
-import com.jit.zabbix.client.dto.ZabbixUpdateItemDTO;
-import com.jit.zabbix.client.request.ZabbixGetItemParams;
 import com.jit.zabbix.client.request.ZabbixGetTrendParams;
-import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixTrendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class TrendServiceImpl implements TrendService {
@@ -37,12 +33,10 @@ public class TrendServiceImpl implements TrendService {
     public static final List<String> TREND_ARRAY_NAME = Collections.singletonList("clock");
 
     @Override
-    public List<ZabbixGetTrendDTO> getTrendInfoList(TrendParams trendParams) throws Exception {
+    public List<ZabbixGetTrendDTO> getTrendInfoList(TrendParams trendParams, String authToken) throws Exception {
         if (trendParams == null) {
             return null;
         }
-        //获得token
-        String authToken = zabbixAuthService.getAuth();
         if (StringUtils.isEmpty(authToken)) {
             return null;
         }

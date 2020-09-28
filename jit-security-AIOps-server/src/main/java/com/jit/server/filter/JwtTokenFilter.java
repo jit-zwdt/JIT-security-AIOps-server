@@ -2,6 +2,7 @@ package com.jit.server.filter;
 
 import com.jit.server.security.MyAccessDeniedHandler;
 import com.jit.server.security.MyUserDetailService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private MyAccessDeniedHandler authenticationEntryPoint;
-    public static final String HEADER_STRING = "Authorization";
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String token = httpServletRequest.getHeader(HEADER_STRING);
+        String token = httpServletRequest.getHeader(ConstUtil.HEADER_STRING);
         if(null != token) {
             try {
                 String username = jwtTokenUtil.getUsernameFromToken(token);

@@ -46,4 +46,14 @@ public class ConstUtil {
      * 是否解决 （0：未解决；1：解决）
      */
     public static final int RESOLVED = 1;
+
+    /**
+     * 认证header
+     */
+    public static final String HEADER_STRING = "Authorization";
+
+    /**
+     * authMap
+     */
+    public static final String AUTH_MAP = "authMap";
 }

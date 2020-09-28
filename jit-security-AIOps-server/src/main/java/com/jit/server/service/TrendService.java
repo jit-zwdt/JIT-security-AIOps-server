@@ -6,5 +6,5 @@ import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
 import java.util.List;
 
 public interface TrendService {
-    public List<ZabbixGetTrendDTO> getTrendInfoList(TrendParams trendParams) throws Exception;
+    List<ZabbixGetTrendDTO> getTrendInfoList(TrendParams trendParams, String auth) throws Exception;
 }

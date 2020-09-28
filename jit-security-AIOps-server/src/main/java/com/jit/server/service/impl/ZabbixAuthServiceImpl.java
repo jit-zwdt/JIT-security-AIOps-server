@@ -2,11 +2,15 @@ package com.jit.server.service.impl;
 
 import com.jit.server.repository.SysUserRepo;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.zabbix.client.service.ZabbixApiService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ZabbixAuthServiceImpl implements ZabbixAuthService {
@@ -18,6 +22,9 @@ public class ZabbixAuthServiceImpl implements ZabbixAuthService {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Override
     public String getAuth() throws Exception {
@@ -41,5 +48,17 @@ public class ZabbixAuthServiceImpl implements ZabbixAuthService {
         }
 
         return null;
+    }
+
+    /**
+     * 获取保存在Context中的auth信息
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String getAuth(String key) throws Exception {
+        ConcurrentHashMap<String, String> authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
+        return authMap.get(key);
     }
 }

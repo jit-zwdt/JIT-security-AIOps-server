@@ -7,6 +7,8 @@ import com.jit.server.request.TrendParams;
 import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.MonitorHostDetailBindItemsService;
 import com.jit.server.service.TrendService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -38,11 +41,15 @@ public class TrendController {
     @Autowired
     private MonitorHostDetailBindGraphsService monitorHostDetailBindGraphsService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/getItemInfoList")
-    public Result getItemInfoList(@RequestBody TrendParams trendParams, HttpServletResponse resp) throws IOException {
+    public Result getItemInfoList(@RequestBody TrendParams trendParams, HttpServletRequest req) throws IOException {
         try {
             if (trendParams != null && trendParams.getItemids() != null) {
-                List<ZabbixGetTrendDTO> result = trendService.getTrendInfoList(trendParams);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixGetTrendDTO> result = trendService.getTrendInfoList(trendParams, auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
