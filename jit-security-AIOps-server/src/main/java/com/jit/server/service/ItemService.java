@@ -6,6 +6,6 @@ import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import java.util.List;
 
 public interface ItemService {
-    public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams) throws Exception;
+    public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams,String auth) throws Exception;
     public String updateItemStatus(String itemId, String status) throws Exception;
 }

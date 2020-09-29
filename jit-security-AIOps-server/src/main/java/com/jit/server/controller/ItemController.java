@@ -4,6 +4,8 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.ItemService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -29,11 +32,15 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/getItemInfoList")
-    public Result getItemInfoList(@RequestBody ItemParams itemParams, HttpServletResponse resp) throws IOException {
+    public Result getItemInfoList(@RequestBody ItemParams itemParams, HttpServletRequest req) throws IOException {
         try {
             if (itemParams != null && itemParams.getHostids() != null) {
-                List<ZabbixGetItemDTO> result = itemService.getItemInfoList(itemParams);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixGetItemDTO> result = itemService.getItemInfoList(itemParams,auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {

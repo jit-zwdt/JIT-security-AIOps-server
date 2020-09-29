@@ -88,7 +88,7 @@ public class GraphItemController {
                     ItemParams itemParams = new ItemParams();
                     itemParams.setItemids(itemids);
                     itemParams.setHostids(graphItemParams.getHostids());
-                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams);
+                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth);
                     if (item != null) {
                         finalResult.put("itemData", item);
                     }

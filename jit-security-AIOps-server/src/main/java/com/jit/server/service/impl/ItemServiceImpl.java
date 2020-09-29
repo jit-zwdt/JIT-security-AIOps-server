@@ -33,15 +33,11 @@ public class ItemServiceImpl implements ItemService {
     public static final List<String> ITEM_ARRAY_NAME = Collections.singletonList("name");
 
     @Override
-    public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams) throws Exception {
+    public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams,String auth) throws Exception {
         if (itemParams == null) {
             return null;
         }
-        //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
-            return null;
-        }
+
         ZabbixGetItemParams params = new ZabbixGetItemParams();
         List<String> hostids = itemParams.getHostids();
         if (hostids != null && !CollectionUtils.isEmpty(hostids)) {
@@ -74,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
             params.setItemIds(itemids);
 
         }
-        return zabbixItemService.get(params, authToken);
+        return zabbixItemService.get(params, auth);
     }
 
     @Override
