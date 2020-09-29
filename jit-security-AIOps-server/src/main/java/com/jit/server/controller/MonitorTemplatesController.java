@@ -9,6 +9,7 @@ import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.MonitorTypeService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -77,9 +79,9 @@ public class MonitorTemplatesController {
      */
     @ResponseBody
     @PostMapping(value = "/getZabbixTemplates")
-    public Result getZabbixTemplates() {
+    public Result getZabbixTemplates(HttpServletRequest req) {
         try {
-            String auth = zabbixAuthService.getAuth();
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
             params.setOutput("extend");
             List<ZabbixGetTemplateDTO> zabbixGetTemplateDTOList = zabbixTemplateService.get(params, auth);
@@ -165,7 +167,8 @@ public class MonitorTemplatesController {
 
     @ResponseBody
     @PostMapping(value = "/checkItems")
-    public Result checkItems(@RequestParam String templates) {
+    public Result checkItems(@RequestParam String templates, HttpServletRequest req
+    ) {
         try {
             if (StringUtils.isNotBlank(templates)) {
                 //error msg
@@ -173,7 +176,7 @@ public class MonitorTemplatesController {
                 Map<String, String> titleMap = new HashMap<>();
                 String[] temps = templates.split(",");
                 List<String> tempList;
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 List<List<ZabbixGetItemDTO>> list = new ArrayList<>(temps.length);
                 ZabbixGetItemParams zabbixGetItemParams = new ZabbixGetItemParams();
                 zabbixGetItemParams.setOutput("extend");

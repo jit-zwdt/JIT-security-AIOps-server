@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.MediaTypeParams;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixCreateMediaTypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetMediaTypeDTO;
@@ -16,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +42,10 @@ public class MediaTypeController {
 
     @ResponseBody
     @PostMapping(value = "/getMediaTypes")
-    public Result getMediaTypes(@RequestBody MediaTypeParams params) {
+    public Result getMediaTypes(@RequestBody MediaTypeParams params , HttpServletRequest req) {
 
         try {
-            String auth = zabbixAuthService.getAuth();
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
             if (params != null) {
                 String name = params.getName();
@@ -71,10 +73,10 @@ public class MediaTypeController {
     }
 
     @PutMapping("/updateStatus")
-    public Result updateStatus(@RequestParam String mediatypeid, @RequestParam("status") boolean status) {
+    public Result updateStatus(@RequestParam String mediatypeid, @RequestParam("status") boolean status , HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(mediatypeid)) {
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
                 List<String> mediatypeIds = new ArrayList<>(1);
                 mediatypeIds.add(mediatypeid);
@@ -101,7 +103,7 @@ public class MediaTypeController {
     }
 
     @PostMapping("/addMediaType")
-    public Result addMediaType(@RequestBody MediaTypeParams params) {
+    public Result addMediaType(@RequestBody MediaTypeParams params, HttpServletRequest req) {
         try {
             if (params != null) {
                 ZabbixCreateMediaTypeDTO zabbixCreateMediaTypeDTO = new ZabbixCreateMediaTypeDTO();
@@ -111,7 +113,7 @@ public class MediaTypeController {
                 zabbixCreateMediaTypeDTO.setSmtpAuthentication(params.getSmtpAuthentication() == 0 ? false : true);
                 zabbixCreateMediaTypeDTO.setContentType(params.getContentType() == 0 ? false : true);
                 zabbixCreateMediaTypeDTO.setStatus(!params.isStatus());
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 String mediaTypeId = zabbixMediaTypeService.create(zabbixCreateMediaTypeDTO, auth);
                 if (StringUtils.isNotBlank(mediaTypeId)) {
                     return Result.SUCCESS(mediaTypeId);
@@ -127,12 +129,12 @@ public class MediaTypeController {
     }
 
     @DeleteMapping("/deleteMediaType/{id}")
-    public Result deleteMediaType(@PathVariable String id) {
+    public Result deleteMediaType(@PathVariable String id , HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(id)) {
                 List<String> mediaTypeIds = new ArrayList<>(1);
                 mediaTypeIds.add(id);
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 List<String> ids = zabbixMediaTypeService.delete(mediaTypeIds, auth);
                 if (ids != null && !ids.isEmpty()) {
                     return Result.SUCCESS(ids);
@@ -149,10 +151,10 @@ public class MediaTypeController {
 
     @ResponseBody
     @PostMapping(value = "/findByMediaTypeId/{id}")
-    public Result findByMediaTypeId(@PathVariable String id) {
+    public Result findByMediaTypeId(@PathVariable String id , HttpServletRequest req) {
         if (StringUtils.isNotBlank(id)) {
             try {
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
                 List<String> mediatypeIds = new ArrayList<>(1);
                 mediatypeIds.add(id);
@@ -176,10 +178,10 @@ public class MediaTypeController {
     }
 
     @PutMapping("/updateMediaType/{id}")
-    public Result updateMediaType(@PathVariable String id, @RequestBody MediaTypeParams params) {
+    public Result updateMediaType(@PathVariable String id, @RequestBody MediaTypeParams params, HttpServletRequest req) {
         try {
             if (params != null && StringUtils.isNotBlank(id)) {
-                String auth = zabbixAuthService.getAuth();
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 ZabbixGetMediaTypeParams zabbixGetMediaTypeParams = new ZabbixGetMediaTypeParams();
                 List<String> mediatypeIds = new ArrayList<>(1);
                 mediatypeIds.add(id);

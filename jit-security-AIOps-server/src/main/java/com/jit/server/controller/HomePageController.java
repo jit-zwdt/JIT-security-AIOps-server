@@ -90,7 +90,7 @@ public class HomePageController {
                             jsonObject.put("typeId", typeIds.get(typeIds.indexOf(typeId) - 1));
                             jsonObject.put("hostIds", hostIds);
                             jsonObject.put("hostCount", hostIds.size());
-                            jsonObject.put("problemsSeverityCount", countProblemsGroupBySeverity(hostIds));
+                            jsonObject.put("problemsSeverityCount", countProblemsGroupBySeverity(hostIds,req));
                             jsonArray.add(jsonObject);
                         }
                         hostIds = new ArrayList<>();
@@ -103,7 +103,7 @@ public class HomePageController {
                     jsonObject.put("typeId", typeId);
                     jsonObject.put("hostIds", hostIds);
                     jsonObject.put("hostCount", hostIds.size());
-                    jsonObject.put("problemsSeverityCount", countProblemsGroupBySeverity(hostIds));
+                    jsonObject.put("problemsSeverityCount", countProblemsGroupBySeverity(hostIds ,req));
                     jsonArray.add(jsonObject);
                 }
             }
@@ -121,7 +121,7 @@ public class HomePageController {
      * @return
      * @throws Exception
      */
-    private Map<String, Integer> countProblemsGroupBySeverity(List<String> hostIds) throws Exception {
+    private Map<String, Integer> countProblemsGroupBySeverity(List<String> hostIds, HttpServletRequest req) throws Exception {
         Map<String, Integer> res = new HashMap<>();
         res.put("notClassifiedCount", 0);
         res.put("informationCount", 0);
@@ -130,7 +130,7 @@ public class HomePageController {
         res.put("highCount", 0);
         res.put("disasterCount", 0);
         if (hostIds != null && !hostIds.isEmpty()) {
-            String auth = zabbixAuthService.getAuth();
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             ZabbixGetProblemParams zabbixGetProblemParams = new ZabbixGetProblemParams();
             zabbixGetProblemParams.setHostids(hostIds);
             zabbixGetProblemParams.setOutput("extend");
@@ -177,13 +177,13 @@ public class HomePageController {
 
     @ResponseBody
     @PostMapping(value = "/getTimeTop5ItemInfo/{item}")
-    public Result getTimeTop5ItemInfo(@PathVariable String item) {
+    public Result getTimeTop5ItemInfo(@PathVariable String item ,HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(item)) {
                 //items key
                 String key = paramsConfig.getItem().get(item);
                 if (StringUtils.isNotBlank(key)) {
-                    String auth = zabbixAuthService.getAuth();
+                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                     List<Object> hosts = hostService.getHostIds();
                     List<String> hostIds = new ArrayList<>(hosts != null ? hosts.size() : 1);
                     Map<String, String> hostNameMap = new HashMap<>(hosts != null ? hosts.size() : 1);
