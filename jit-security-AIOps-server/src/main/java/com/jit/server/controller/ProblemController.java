@@ -13,6 +13,7 @@ import com.jit.server.request.ProblemParams;
 import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
@@ -63,7 +64,8 @@ public class ProblemController {
     public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         System.out.println(params);
         try {
-            List<ProblemHostDTO> result = problemService.findProblemHost(params,req);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            List<ProblemHostDTO> result = problemService.findProblemHost(params,auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -80,7 +82,8 @@ public class ProblemController {
     public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletRequest req) throws IOException {
         try {
             if (params != null && params.getSeverities() != null) {
-                List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params, auth);
                 if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -195,7 +198,8 @@ public class ProblemController {
     @PostMapping("/getAlertdata")
     public Result getAlertdata(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         try {
-            List<ZabbixProblemDTO> result = problemService.getAlertdata(params,req);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            List<ZabbixProblemDTO> result = problemService.getAlertdata(params,auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {

@@ -32,13 +32,8 @@ public class TriggerServiceImpl implements TriggerService {
     public static final String TRIGGER_EXTEND = "extend";
 
     @Override
-    public List<ZabbixTriggerDTO> findByCondition(TriggerParams params, HttpServletRequest req) throws Exception {
+    public List<ZabbixTriggerDTO> findByCondition(TriggerParams params, String auth) throws Exception {
         if (params == null) {
-            return null;
-        }
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetTriggerParams _params = new ZabbixGetTriggerParams();
@@ -58,7 +53,7 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     @Override
-    public String updateTriggerStatus(String triggerId, String status,HttpServletRequest req) throws Exception {
+    public String updateTriggerStatus(String triggerId, String status,String auth) throws Exception {
         if (StringUtils.isEmpty(triggerId) || StringUtils.isEmpty(status)) {
             return null;
         }
@@ -69,16 +64,11 @@ public class TriggerServiceImpl implements TriggerService {
         ZabbixUpdateTriggerDTO dto = new ZabbixUpdateTriggerDTO();
         dto.setId(triggerId.trim());
         dto.setStatus("1".equals(status.trim()) ? true : false);
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
         return zabbixTriggerService.update(dto, auth);
     }
 
     @Override
-    public String updateTriggerPriority(String triggerId, String priority,HttpServletRequest req) throws Exception {
+    public String updateTriggerPriority(String triggerId, String priority,String auth) throws Exception {
         if (StringUtils.isEmpty(priority) || StringUtils.isEmpty(priority)) {
             return null;
         }
@@ -86,21 +76,12 @@ public class TriggerServiceImpl implements TriggerService {
         ZabbixUpdateTriggerDTO dto = new ZabbixUpdateTriggerDTO();
         dto.setId(triggerId.trim());
         dto.setPriority(TriggerPriority.fromValue(Integer.parseInt(priority)));
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
         return zabbixTriggerService.update(dto, auth);
     }
 
     @Override
-    public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,HttpServletRequest req) throws Exception {
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
+    public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,String auth) throws Exception {
+
         ZabbixGetTriggerParams paramsTrigger = new ZabbixGetTriggerParams();
         if (params.getDescription() != null && !"".equals(params.getDescription().trim())) {
             Map<String, Object> search = new HashMap<>();

@@ -35,13 +35,8 @@ public class GraphItemServiceImpl implements GraphItemService {
     public static final String GITEM_NAME = "name";
 
     @Override
-    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams, HttpServletRequest req) throws Exception {
+    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams, String auth) throws Exception {
         if (graphItemParams == null) {
-            return null;
-        }
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetGraphItemParams params = new ZabbixGetGraphItemParams();

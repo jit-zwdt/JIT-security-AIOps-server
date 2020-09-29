@@ -39,13 +39,8 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
     public static final String GPRO_NAME = "name";
 
     @Override
-    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams , HttpServletRequest req) throws Exception {
+    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams , String auth) throws Exception {
         if (graphPrototypeParams == null) {
-            return null;
-        }
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetGraphPrototypeParams params = new ZabbixGetGraphPrototypeParams();
@@ -88,11 +83,7 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
     }
 
     @Override
-    public List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req) throws Exception {
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if(StringUtils.isEmpty(auth)){
-            return null;
-        }
+    public List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,String auth) throws Exception {
         if(CollectionUtils.isEmpty(zabbixCreateGraphPrototypeParams.getGitems())){
             return null;
         }

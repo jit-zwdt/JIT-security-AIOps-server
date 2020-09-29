@@ -90,13 +90,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ProblemHostDTO> findProblemHost(ProblemParams params, HttpServletRequest req) throws Exception {
-        // get token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
-
+    public List<ProblemHostDTO> findProblemHost(ProblemParams params, String auth) throws Exception {
         // get host info
         List<Object> hostInfo = hostRepo.getHostIdsAndIp();
 
@@ -130,12 +124,8 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params, HttpServletRequest req) throws Exception {
+    public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params, String auth) throws Exception {
         List<ProblemClaimDTO> list = new ArrayList<>();
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
         String claimType = params.getClaimType();
         if (claimType == null || ("").equals(claimType)) {
             claimType = "-1";
@@ -257,12 +247,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params,HttpServletRequest req) throws Exception {
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
-
+    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params,String auth) throws Exception {
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
 
         // set severity

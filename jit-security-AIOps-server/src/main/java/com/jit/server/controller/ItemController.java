@@ -57,7 +57,8 @@ public class ItemController {
     @PutMapping("/updateItemStatus/{id}")
     public Result updateItemStatus(@PathVariable String id, @RequestParam("status") String status, HttpServletRequest req) {
         try{
-            if(StringUtils.isNotEmpty(itemService.updateItemStatus(id, status,req))){
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            if(StringUtils.isNotEmpty(itemService.updateItemStatus(id, status,auth))){
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);

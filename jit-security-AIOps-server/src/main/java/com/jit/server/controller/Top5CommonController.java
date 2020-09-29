@@ -3,6 +3,8 @@ package com.jit.server.controller;
 import com.jit.server.config.ParamsConfig;
 import com.jit.server.request.Top5Params;
 import com.jit.server.service.HostService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class Top5CommonController {
 
     @Autowired
     private HostService hostService;
+
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
 
     public static final String METHOD_NAME = "getMonitor";
 
@@ -95,7 +100,8 @@ public class Top5CommonController {
                 params.put("subtypeId", subtypeId);
                 params.put("itemKey", itemKey);
                 params.put("valueType", valueType);*/
-                return hostService.getTop5ByItem(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                return hostService.getTop5ByItem(params, auth);
             } else {
                 return null;
             }

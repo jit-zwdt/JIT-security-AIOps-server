@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface TriggerService {
-    List<ZabbixTriggerDTO> findByCondition(TriggerParams params, HttpServletRequest req) throws Exception;
-    String updateTriggerStatus(String triggerId, String status,HttpServletRequest req) throws Exception;
-    String updateTriggerPriority(String id, String priority,HttpServletRequest req) throws Exception;
-    List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,HttpServletRequest req) throws Exception;
+    List<ZabbixTriggerDTO> findByCondition(TriggerParams params,String auth ) throws Exception;
+    String updateTriggerStatus(String triggerId, String status,String auth ) throws Exception;
+    String updateTriggerPriority(String id, String priority ,String auth) throws Exception;
+    List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,String auth ) throws Exception;
 }

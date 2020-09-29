@@ -6,6 +6,8 @@ import com.jit.server.request.ProblemParams;
 import com.jit.server.request.TriggerConditionParams;
 import com.jit.server.request.TriggerParams;
 import com.jit.server.service.TriggerService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -33,12 +35,16 @@ public class TriggerController {
     @Autowired
     TriggerService triggerService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody TriggerParams params, HttpServletRequest req
     ) throws IOException {
         try{
             if(params!=null&&params.getHostId()!=null){
-                List<ZabbixTriggerDTO> result= triggerService.findByCondition(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixTriggerDTO> result= triggerService.findByCondition(params, auth);
                 if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -55,7 +61,8 @@ public class TriggerController {
     @PutMapping("/updateTriggerStatus/{id}")
     public Result updateTriggerStatus(@PathVariable String id, @RequestParam("status") String status, HttpServletRequest req) {
         try{
-            if(StringUtils.isNotEmpty(triggerService.updateTriggerStatus(id, status, req))){
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            if(StringUtils.isNotEmpty(triggerService.updateTriggerStatus(id, status, auth))){
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -69,7 +76,8 @@ public class TriggerController {
     public Result updateTriggerPriority(@PathVariable String id, @RequestParam("priority") String priority, HttpServletRequest req
     ) {
         try{
-            if(StringUtils.isNotEmpty(triggerService.updateTriggerPriority(id, priority, req))){
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            if(StringUtils.isNotEmpty(triggerService.updateTriggerPriority(id, priority, auth))){
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -82,7 +90,8 @@ public class TriggerController {
     @PutMapping("/findTriggerAll")
     public Result findTriggerAll(@RequestBody TriggerParams params, HttpServletRequest req) throws IOException {
         try{
-            List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params, req);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params, auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {

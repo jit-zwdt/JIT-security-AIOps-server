@@ -5,6 +5,7 @@ import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
 import com.jit.server.request.HostViewInfoParams;
 import com.jit.server.service.HostService;
+import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -36,6 +37,9 @@ public class HostController {
     @Autowired
     HostService hostService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/addHost")
     public Result addHost(@RequestBody HostParams params, HttpServletRequest req) {
         try{
@@ -45,7 +49,8 @@ public class HostController {
                 host.setGmtCreate(LocalDateTime.now());
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(ConstUtil.IS_NOT_DELETED);
-                if(StringUtils.isNotEmpty(hostService.addHost(host, req))){
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                if(StringUtils.isNotEmpty(hostService.addHost(host, auth))){
                     return Result.SUCCESS(null);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -68,7 +73,8 @@ public class HostController {
                     HostEntity host = bean.get();
                     BeanUtils.copyProperties(params, host);
                     host.setGmtModified(LocalDateTime.now());
-                    if(StringUtils.isNotEmpty(hostService.updateHost(host, req))){
+                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    if(StringUtils.isNotEmpty(hostService.updateHost(host, auth))){
                         return Result.SUCCESS(host);
                     }else{
                         return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -92,7 +98,8 @@ public class HostController {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(ConstUtil.IS_DELETED);
-                if(StringUtils.isNotEmpty(hostService.deleteHost(host,req))){
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                if(StringUtils.isNotEmpty(hostService.deleteHost(host,auth))){
                     return Result.SUCCESS(host);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -113,7 +120,8 @@ public class HostController {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
                 host.setEnableMonitor(enableMonitor.trim());
-                if(StringUtils.isNotEmpty(hostService.updateHostEnableMonitor(host, req))){
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                if(StringUtils.isNotEmpty(hostService.updateHostEnableMonitor(host, auth))){
                     return Result.SUCCESS(host);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -190,7 +198,8 @@ public class HostController {
     public Result<HostEntity> findHostAvailable(@RequestBody String[] hostIds, HttpServletRequest req) {
         try{
             if(hostIds!=null && hostIds.length>0){
-                List<ZabbixHostDTO> result = hostService.getHostAvailableFromZabbix(Arrays.asList(hostIds), req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixHostDTO> result = hostService.getHostAvailableFromZabbix(Arrays.asList(hostIds), auth);
                 if (result!=null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 }else{
@@ -215,7 +224,8 @@ public class HostController {
                 Map<String, Object> params = new HashMap<>();
                 params.put("typeId", typeId);
                 params.put("groupName", groupName);
-                List<ZabbixHostGroupDTO> resultList= hostService.findHostGroupByTypeId(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixHostGroupDTO> resultList= hostService.findHostGroupByTypeId(params, auth);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {
@@ -239,7 +249,8 @@ public class HostController {
                 params.put("subtypeId", subtypeId);
                 params.put("itemKey", itemKey);
                 params.put("valueType", valueType);*/
-                List<Map<String, String>> resultList= hostService.getTop5ByItem(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<Map<String, String>> resultList= hostService.getTop5ByItem(params, auth);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {
@@ -262,7 +273,8 @@ public class HostController {
                /* params.put("typeId", typeId);
                 params.put("subtypeId", subtypeId);
                 params.put("valueType", valueType);*/
-                List<Map<String, String>> resultList= hostService.getTop5ByTrigger(params, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<Map<String, String>> resultList= hostService.getTop5ByTrigger(params, auth);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {

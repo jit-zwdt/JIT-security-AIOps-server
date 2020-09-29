@@ -41,11 +41,7 @@ public class UserServiceImpl implements UserService {
     private SysUserRepo sysUserRepo;
 
     @Override
-    public List<ZabbixUserDTO> getUserInfo(String alias, HttpServletRequest req) throws Exception {
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
+    public List<ZabbixUserDTO> getUserInfo(String alias, String auth) throws Exception {
 
         ZabbixGetUserParams params_user = new ZabbixGetUserParams();
         params_user.setOutput(EXTEND);
@@ -59,11 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserParams> getUserAndMediaInfo(String alias, String userid,HttpServletRequest req) throws Exception {
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
+    public List<UserParams> getUserAndMediaInfo(String alias, String userid,String auth) throws Exception {
         ZabbixGetUserParams params_user = new ZabbixGetUserParams();
         params_user.setOutput(EXTEND);
         if (!StringUtils.isEmpty(alias)) {
@@ -115,11 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUserInfo(String userId, List<UserParams> params, HttpServletRequest req) throws Exception {
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if (StringUtils.isEmpty(auth)) {
-            return null;
-        }
+    public String updateUserInfo(String userId, List<UserParams> params, String auth) throws Exception {
         ZabbixUpdateMediaDTO zabbixUpdateMediaDTO = new ZabbixUpdateMediaDTO();
         if (!StringUtils.isEmpty(userId)) {
             zabbixUpdateMediaDTO.setUserid(userId);

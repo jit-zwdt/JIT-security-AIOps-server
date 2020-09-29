@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public String updateItemStatus(String itemId, String status, HttpServletRequest req) throws Exception {
+    public String updateItemStatus(String itemId, String status ,String auth) throws Exception {
         if(StringUtils.isEmpty(itemId) || StringUtils.isEmpty(status)){
             return null;
         }
@@ -87,11 +87,6 @@ public class ItemServiceImpl implements ItemService {
         ZabbixUpdateItemDTO dto = new ZabbixUpdateItemDTO();
         dto.setId(itemId.trim());
         dto.setStatus("1".equals(status.trim())?true:false);
-        //获得token
-        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-        if(StringUtils.isEmpty(auth)){
-            return null;
-        }
         return zabbixItemService.update(dto, auth);
     }
 }

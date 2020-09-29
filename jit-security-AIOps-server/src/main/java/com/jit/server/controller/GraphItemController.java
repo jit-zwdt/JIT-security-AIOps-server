@@ -51,7 +51,8 @@ public class GraphItemController {
     public Result getGProInfoList(@RequestBody GraphItemParams graphItemParams, HttpServletRequest req) throws IOException {
         try {
             if (graphItemParams != null) {
-                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -71,12 +72,14 @@ public class GraphItemController {
         try {
             if (graphItemParams != null) {
                 Map<String, Object> finalResult = new HashMap<>();
-                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,auth);
                 finalResult.put("gItemData", result);
                 if (graphItemParams.getGraphids() != null && !CollectionUtils.isEmpty(graphItemParams.getGraphids())) {
                     GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
                     graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
-                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,req);
+                    String auth1 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,auth1);
                     finalResult.put("graphData", graph);
                 }
                 List<String> itemids = new ArrayList<>();
@@ -84,11 +87,11 @@ public class GraphItemController {
                     itemids.add(z.getItemId());
                 }
                 if (itemids != null && !CollectionUtils.isEmpty(itemids)) {
-                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    String auth2 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                     ItemParams itemParams = new ItemParams();
                     itemParams.setItemids(itemids);
                     itemParams.setHostids(graphItemParams.getHostids());
-                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth);
+                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth2);
                     if (item != null) {
                         finalResult.put("itemData", item);
                     }

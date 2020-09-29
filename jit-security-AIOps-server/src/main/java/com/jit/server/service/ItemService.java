@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ItemService {
     public List<ZabbixGetItemDTO> getItemInfoList(ItemParams itemParams,String auth) throws Exception;
-    public String updateItemStatus(String itemId, String status, HttpServletRequest req) throws Exception;
+    public String updateItemStatus(String itemId, String status,String auth) throws Exception;
 }

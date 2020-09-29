@@ -6,6 +6,8 @@ import com.jit.server.request.GraphPrototypeParams;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.GraphPrototypeService;
 import com.jit.server.service.ItemService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
@@ -31,11 +33,15 @@ public class GraphPrototypeController {
     @Autowired
     private GraphPrototypeService graphPrototypeService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/getGProInfoList")
     public Result getGProInfoList(@RequestBody GraphPrototypeParams graphPrototypeParams, HttpServletRequest req) throws IOException {
         try {
             if (graphPrototypeParams != null) {
-                List<ZabbixGetGraphPrototypeDTO> result = graphPrototypeService.getGProList(graphPrototypeParams,req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<ZabbixGetGraphPrototypeDTO> result = graphPrototypeService.getGProList(graphPrototypeParams,auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -51,10 +57,12 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/createGpro")
-    public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams, HttpServletRequest req) throws IOException {
+    public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
+    ) throws IOException {
         try {
             if(zabbixCreateGraphPrototypeParams != null && zabbixCreateGraphPrototypeParams.getGitems() !=null){
-                List<String> graphids = graphPrototypeService.createGPro(zabbixCreateGraphPrototypeParams, req);
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<String> graphids = graphPrototypeService.createGPro(zabbixCreateGraphPrototypeParams, auth);
                 if(graphids != null && !CollectionUtils.isEmpty(graphids)){
                     return Result.SUCCESS(graphids);
                 }else {

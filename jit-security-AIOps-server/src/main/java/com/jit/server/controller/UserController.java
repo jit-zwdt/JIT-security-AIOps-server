@@ -4,6 +4,8 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.UserParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
+import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,14 @@ public class UserController {
     @Autowired
     private SysUserService sysUserService;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/getUserInfo")
     public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletRequest req) {
         try {
-            List<ZabbixUserDTO> result = userService.getUserInfo(alias, req);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            List<ZabbixUserDTO> result = userService.getUserInfo(alias, auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -42,7 +48,8 @@ public class UserController {
     @PostMapping("/getUserAndMediaInfo")
     public Result getUserAndMediaInfo(@RequestParam(value = "alias", required = false) String alias, @RequestParam(value = "userid", required = false) String userid, HttpServletRequest req) {
         try {
-            List<UserParams> result = userService.getUserAndMediaInfo(alias, userid, req);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            List<UserParams> result = userService.getUserAndMediaInfo(alias, userid, auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -72,7 +79,8 @@ public class UserController {
     public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData, HttpServletRequest req) {
         try {
             if (tempData != null) {
-                return Result.SUCCESS(userService.updateUserInfo(id, tempData, req));
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                return Result.SUCCESS(userService.updateUserInfo(id, tempData, auth));
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
