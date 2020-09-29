@@ -7,11 +7,12 @@ import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.request.ZabbixCreateGraphPrototypeParams;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
 public interface GraphPrototypeService {
-    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams) throws Exception;
+    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams, HttpServletRequest req) throws Exception;
 
-    List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams) throws Exception;
+    List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams, HttpServletRequest req) throws Exception;
 }

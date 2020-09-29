@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -36,7 +37,7 @@ public class HostController {
     HostService hostService;
 
     @PostMapping("/addHost")
-    public Result addHost(@RequestBody HostParams params) {
+    public Result addHost(@RequestBody HostParams params, HttpServletRequest req) {
         try{
             if(params!=null){
                 HostEntity host = new HostEntity();
@@ -44,7 +45,7 @@ public class HostController {
                 host.setGmtCreate(LocalDateTime.now());
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(ConstUtil.IS_NOT_DELETED);
-                if(StringUtils.isNotEmpty(hostService.addHost(host))){
+                if(StringUtils.isNotEmpty(hostService.addHost(host, req))){
                     return Result.SUCCESS(null);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -59,7 +60,7 @@ public class HostController {
     }
 
     @PutMapping("/updateHost/{id}")
-    public Result<HostEntity> updateHost(@RequestBody HostParams params, @PathVariable String id) {
+    public Result<HostEntity> updateHost(@RequestBody HostParams params, @PathVariable String id, HttpServletRequest req) {
         try{
             if(params!=null && StringUtils.isNotEmpty(id)){
                 Optional<HostEntity> bean = hostService.findByHostId(id);
@@ -67,7 +68,7 @@ public class HostController {
                     HostEntity host = bean.get();
                     BeanUtils.copyProperties(params, host);
                     host.setGmtModified(LocalDateTime.now());
-                    if(StringUtils.isNotEmpty(hostService.updateHost(host))){
+                    if(StringUtils.isNotEmpty(hostService.updateHost(host, req))){
                         return Result.SUCCESS(host);
                     }else{
                         return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -84,14 +85,14 @@ public class HostController {
     }
 
     @DeleteMapping("/deleteHost/{id}")
-    public Result deleteHost(@PathVariable String id) {
+    public Result deleteHost(@PathVariable String id, HttpServletRequest req) {
         try{
             Optional<HostEntity> bean = hostService.findByHostId(id);
             if (bean.isPresent()) {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
                 host.setDeleted(ConstUtil.IS_DELETED);
-                if(StringUtils.isNotEmpty(hostService.deleteHost(host))){
+                if(StringUtils.isNotEmpty(hostService.deleteHost(host,req))){
                     return Result.SUCCESS(host);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -105,14 +106,14 @@ public class HostController {
     }
 
     @PutMapping("/updateHostEnableMonitor/{id}")
-    public Result updateHostEnableMonitor(@PathVariable String id, @RequestParam("enableMonitor") String enableMonitor) {
+    public Result updateHostEnableMonitor(@PathVariable String id, @RequestParam("enableMonitor") String enableMonitor, HttpServletRequest req) {
         try{
             Optional<HostEntity> bean = hostService.findByHostId(id);
             if (bean.isPresent() && StringUtils.isNotEmpty(enableMonitor)) {
                 HostEntity host = bean.get();
                 host.setGmtModified(LocalDateTime.now());
                 host.setEnableMonitor(enableMonitor.trim());
-                if(StringUtils.isNotEmpty(hostService.updateHostEnableMonitor(host))){
+                if(StringUtils.isNotEmpty(hostService.updateHostEnableMonitor(host, req))){
                     return Result.SUCCESS(host);
                 }else{
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -186,10 +187,10 @@ public class HostController {
     }
 
     @PostMapping("/findHostAvailable")
-    public Result<HostEntity> findHostAvailable(@RequestBody String[] hostIds) {
+    public Result<HostEntity> findHostAvailable(@RequestBody String[] hostIds, HttpServletRequest req) {
         try{
             if(hostIds!=null && hostIds.length>0){
-                List<ZabbixHostDTO> result = hostService.getHostAvailableFromZabbix(Arrays.asList(hostIds));
+                List<ZabbixHostDTO> result = hostService.getHostAvailableFromZabbix(Arrays.asList(hostIds), req);
                 if (result!=null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 }else{
@@ -208,13 +209,13 @@ public class HostController {
      * @return
      */
     @PostMapping(value = "/getZabbixHostGroupByHostType")
-    public Result getZabbixHostGroupByHostType(@RequestParam("typeId") String typeId, @RequestParam(value = "groupName",required = false) String groupName) {
+    public Result getZabbixHostGroupByHostType(@RequestParam("typeId") String typeId, @RequestParam(value = "groupName",required = false) String groupName, HttpServletRequest req) {
         try{
             if(typeId!=null){
                 Map<String, Object> params = new HashMap<>();
                 params.put("typeId", typeId);
                 params.put("groupName", groupName);
-                List<ZabbixHostGroupDTO> resultList= hostService.findHostGroupByTypeId(params);
+                List<ZabbixHostGroupDTO> resultList= hostService.findHostGroupByTypeId(params, req);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {
@@ -230,7 +231,7 @@ public class HostController {
     }
 
     @PostMapping(value = "/getTop5ByItem")
-    public Result getTop5ByItem(@RequestBody Map<String, Object> params) {
+    public Result getTop5ByItem(@RequestBody Map<String, Object> params, HttpServletRequest req) {
         //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
         try{
             if(params!=null){
@@ -238,7 +239,7 @@ public class HostController {
                 params.put("subtypeId", subtypeId);
                 params.put("itemKey", itemKey);
                 params.put("valueType", valueType);*/
-                List<Map<String, String>> resultList= hostService.getTop5ByItem(params);
+                List<Map<String, String>> resultList= hostService.getTop5ByItem(params, req);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {
@@ -254,14 +255,14 @@ public class HostController {
     }
 
     @PostMapping(value = "/getTop5ByTrigger")
-    public Result getTop5ByTrigger(@RequestBody Map<String, Object> params) {
+    public Result getTop5ByTrigger(@RequestBody Map<String, Object> params, HttpServletRequest req) {
         //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
         try{
             if(params!=null){
                /* params.put("typeId", typeId);
                 params.put("subtypeId", subtypeId);
                 params.put("valueType", valueType);*/
-                List<Map<String, String>> resultList= hostService.getTop5ByTrigger(params);
+                List<Map<String, String>> resultList= hostService.getTop5ByTrigger(params, req);
                 if (null != resultList && !CollectionUtils.isEmpty(resultList)) {
                     return Result.SUCCESS(resultList);
                 } else {

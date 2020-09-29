@@ -4,6 +4,7 @@ package com.jit.server.service.impl;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.ItemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixUpdateItemDTO;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public String updateItemStatus(String itemId, String status) throws Exception {
+    public String updateItemStatus(String itemId, String status, HttpServletRequest req) throws Exception {
         if(StringUtils.isEmpty(itemId) || StringUtils.isEmpty(status)){
             return null;
         }
@@ -86,10 +88,10 @@ public class ItemServiceImpl implements ItemService {
         dto.setId(itemId.trim());
         dto.setStatus("1".equals(status.trim())?true:false);
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if(StringUtils.isEmpty(auth)){
             return null;
         }
-        return zabbixItemService.update(dto, authToken);
+        return zabbixItemService.update(dto, auth);
     }
 }

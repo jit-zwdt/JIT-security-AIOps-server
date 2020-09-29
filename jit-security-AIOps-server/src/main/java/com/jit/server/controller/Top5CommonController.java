@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,8 @@ public class Top5CommonController {
 
     @ResponseBody
     @PostMapping(value = "/getTop5Msg")
-    public Result getTop5Msg(@RequestBody Top5Params params) {
+    public Result getTop5Msg(@RequestBody Top5Params params, HttpServletRequest req
+    ) {
         Result result = null;
         String typeId = params.getTypeId();
         String subTypeId = params.getSubTypeId();
@@ -60,7 +62,7 @@ public class Top5CommonController {
                     for (String k : itemKeys) {
                         methodParam.put("itemKey", k);
                         if ("top5ByItem".equals(method)) {
-                            List<Map<String, String>> resList = getTop5ByItem(methodParam);
+                            List<Map<String, String>> resList = getTop5ByItem(methodParam, req);
                             if (resList != null) {
                                 resultList.addAll(resList);
                             }
@@ -85,14 +87,15 @@ public class Top5CommonController {
      * @param params
      * @return
      */
-    private List<Map<String, String>> getTop5ByItem(Map<String, Object> params) {
+    private List<Map<String, String>> getTop5ByItem(Map<String, Object> params, HttpServletRequest req
+    ) {
         try {
             if (params != null) {
                /* params.put("typeId", typeId);
                 params.put("subtypeId", subtypeId);
                 params.put("itemKey", itemKey);
                 params.put("valueType", valueType);*/
-                return hostService.getTop5ByItem(params);
+                return hostService.getTop5ByItem(params, req);
             } else {
                 return null;
             }

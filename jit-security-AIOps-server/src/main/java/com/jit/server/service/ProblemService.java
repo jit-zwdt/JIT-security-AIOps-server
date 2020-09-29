@@ -7,14 +7,15 @@ import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.request.ProblemParams;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface ProblemService {
     List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception;
 
-    List<ProblemHostDTO> findProblemHost(ProblemParams params) throws Exception;
+    List<ProblemHostDTO> findProblemHost(ProblemParams params, HttpServletRequest req) throws Exception;
 
-    List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception;
+    List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params, HttpServletRequest req) throws Exception;
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
 
@@ -24,7 +25,7 @@ public interface ProblemService {
 
     MonitorClaimEntity findByProblemId(String problemId);
 
-    List<ZabbixProblemDTO> getAlertdata(ProblemParams params) throws Exception;
+    List<ZabbixProblemDTO> getAlertdata(ProblemParams params, HttpServletRequest req) throws Exception;
 
     List<MonitorClaimEntity> findAllClaim();
 

@@ -7,6 +7,7 @@ import com.jit.server.request.ItemParams;
 import com.jit.server.service.GraphPrototypeService;
 import com.jit.server.service.ItemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,13 +39,13 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
     public static final String GPRO_NAME = "name";
 
     @Override
-    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams) throws Exception {
+    public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams , HttpServletRequest req) throws Exception {
         if (graphPrototypeParams == null) {
             return null;
         }
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetGraphPrototypeParams params = new ZabbixGetGraphPrototypeParams();
@@ -82,13 +84,13 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
         if (itemIds != null && !CollectionUtils.isEmpty(itemIds)) {
             params.setItemIds(itemIds);
         }
-        return zabbixGraphPrototypeService.get(params, authToken);
+        return zabbixGraphPrototypeService.get(params, auth);
     }
 
     @Override
-    public List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
-        if(StringUtils.isEmpty(authToken)){
+    public List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req) throws Exception {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if(StringUtils.isEmpty(auth)){
             return null;
         }
         if(CollectionUtils.isEmpty(zabbixCreateGraphPrototypeParams.getGitems())){
@@ -99,6 +101,6 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
             g.setColor(g.getColor().substring(1));
         }
 
-        return zabbixGraphPrototypeService.create(zabbixCreateGraphPrototypeParams,authToken);
+        return zabbixGraphPrototypeService.create(zabbixCreateGraphPrototypeParams,auth);
     }
 }

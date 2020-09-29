@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -33,10 +34,11 @@ public class TriggerController {
     TriggerService triggerService;
 
     @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody TriggerParams params, HttpServletResponse resp) throws IOException {
+    public Result findByCondition(@RequestBody TriggerParams params, HttpServletRequest req
+    ) throws IOException {
         try{
             if(params!=null&&params.getHostId()!=null){
-                List<ZabbixTriggerDTO> result= triggerService.findByCondition(params);
+                List<ZabbixTriggerDTO> result= triggerService.findByCondition(params, req);
                 if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -51,9 +53,9 @@ public class TriggerController {
         }
     }
     @PutMapping("/updateTriggerStatus/{id}")
-    public Result updateTriggerStatus(@PathVariable String id, @RequestParam("status") String status) {
+    public Result updateTriggerStatus(@PathVariable String id, @RequestParam("status") String status, HttpServletRequest req) {
         try{
-            if(StringUtils.isNotEmpty(triggerService.updateTriggerStatus(id, status))){
+            if(StringUtils.isNotEmpty(triggerService.updateTriggerStatus(id, status, req))){
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -64,9 +66,10 @@ public class TriggerController {
     }
 
     @PutMapping("/updateTriggerPriority/{id}")
-    public Result updateTriggerPriority(@PathVariable String id, @RequestParam("priority") String priority) {
+    public Result updateTriggerPriority(@PathVariable String id, @RequestParam("priority") String priority, HttpServletRequest req
+    ) {
         try{
-            if(StringUtils.isNotEmpty(triggerService.updateTriggerPriority(id, priority))){
+            if(StringUtils.isNotEmpty(triggerService.updateTriggerPriority(id, priority, req))){
                 return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
@@ -77,9 +80,9 @@ public class TriggerController {
     }
 
     @PutMapping("/findTriggerAll")
-    public Result findTriggerAll(@RequestBody TriggerParams params, HttpServletResponse resp) throws IOException {
+    public Result findTriggerAll(@RequestBody TriggerParams params, HttpServletRequest req) throws IOException {
         try{
-            List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params);
+            List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params, req);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {

@@ -51,7 +51,7 @@ public class GraphItemController {
     public Result getGProInfoList(@RequestBody GraphItemParams graphItemParams, HttpServletRequest req) throws IOException {
         try {
             if (graphItemParams != null) {
-                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams);
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,req);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -71,12 +71,12 @@ public class GraphItemController {
         try {
             if (graphItemParams != null) {
                 Map<String, Object> finalResult = new HashMap<>();
-                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams);
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,req);
                 finalResult.put("gItemData", result);
                 if (graphItemParams.getGraphids() != null && !CollectionUtils.isEmpty(graphItemParams.getGraphids())) {
                     GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
                     graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
-                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams);
+                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,req);
                     finalResult.put("graphData", graph);
                 }
                 List<String> itemids = new ArrayList<>();

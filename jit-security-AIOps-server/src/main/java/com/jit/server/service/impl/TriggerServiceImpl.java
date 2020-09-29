@@ -7,6 +7,7 @@ import com.jit.server.request.TriggerParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.TriggerService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
@@ -17,6 +18,7 @@ import com.jit.zabbix.client.service.ZabbixTriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
@@ -30,13 +32,13 @@ public class TriggerServiceImpl implements TriggerService {
     public static final String TRIGGER_EXTEND = "extend";
 
     @Override
-    public List<ZabbixTriggerDTO> findByCondition(TriggerParams params) throws Exception {
+    public List<ZabbixTriggerDTO> findByCondition(TriggerParams params, HttpServletRequest req) throws Exception {
         if (params == null) {
             return null;
         }
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetTriggerParams _params = new ZabbixGetTriggerParams();
@@ -52,11 +54,11 @@ public class TriggerServiceImpl implements TriggerService {
             _params.setFilter(filter);
         }
 
-        return zabbixTriggerService.get(_params, authToken);
+        return zabbixTriggerService.get(_params, auth);
     }
 
     @Override
-    public String updateTriggerStatus(String triggerId, String status) throws Exception {
+    public String updateTriggerStatus(String triggerId, String status,HttpServletRequest req) throws Exception {
         if (StringUtils.isEmpty(triggerId) || StringUtils.isEmpty(status)) {
             return null;
         }
@@ -68,15 +70,15 @@ public class TriggerServiceImpl implements TriggerService {
         dto.setId(triggerId.trim());
         dto.setStatus("1".equals(status.trim()) ? true : false);
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
-        return zabbixTriggerService.update(dto, authToken);
+        return zabbixTriggerService.update(dto, auth);
     }
 
     @Override
-    public String updateTriggerPriority(String triggerId, String priority) throws Exception {
+    public String updateTriggerPriority(String triggerId, String priority,HttpServletRequest req) throws Exception {
         if (StringUtils.isEmpty(priority) || StringUtils.isEmpty(priority)) {
             return null;
         }
@@ -85,18 +87,18 @@ public class TriggerServiceImpl implements TriggerService {
         dto.setId(triggerId.trim());
         dto.setPriority(TriggerPriority.fromValue(Integer.parseInt(priority)));
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
-        return zabbixTriggerService.update(dto, authToken);
+        return zabbixTriggerService.update(dto, auth);
     }
 
     @Override
-    public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params) throws Exception {
+    public List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,HttpServletRequest req) throws Exception {
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetTriggerParams paramsTrigger = new ZabbixGetTriggerParams();
@@ -113,6 +115,6 @@ public class TriggerServiceImpl implements TriggerService {
         paramsTrigger.setOutput(TRIGGER_EXTEND);
         paramsTrigger.setSelectFunctions(TRIGGER_EXTEND);
 
-        return zabbixTriggerService.get(paramsTrigger, authToken);
+        return zabbixTriggerService.get(paramsTrigger, auth);
     }
 }

@@ -4,6 +4,7 @@ import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.UserParams;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixUpdateMediaDTO;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +41,9 @@ public class UserServiceImpl implements UserService {
     private SysUserRepo sysUserRepo;
 
     @Override
-    public List<ZabbixUserDTO> getUserInfo(String alias) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+    public List<ZabbixUserDTO> getUserInfo(String alias, HttpServletRequest req) throws Exception {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
 
@@ -53,13 +55,13 @@ public class UserServiceImpl implements UserService {
             params_user.setSearch(search);
         }
 
-        return zabbixUserService.get(params_user, authToken);
+        return zabbixUserService.get(params_user, auth);
     }
 
     @Override
-    public List<UserParams> getUserAndMediaInfo(String alias, String userid) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+    public List<UserParams> getUserAndMediaInfo(String alias, String userid,HttpServletRequest req) throws Exception {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetUserParams params_user = new ZabbixGetUserParams();
@@ -78,7 +80,7 @@ public class UserServiceImpl implements UserService {
             params_user.setSelectUsrgrps(EXTEND);
         }
 
-        List<ZabbixUserDTO> dtoList = zabbixUserService.get(params_user, authToken);
+        List<ZabbixUserDTO> dtoList = zabbixUserService.get(params_user, auth);
         List<UserParams> userParamList = new ArrayList<>();
         UserParams userparam;
         if (!CollectionUtils.isEmpty(dtoList)) {
@@ -113,9 +115,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUserInfo(String userId, List<UserParams> params) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+    public String updateUserInfo(String userId, List<UserParams> params, HttpServletRequest req) throws Exception {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixUpdateMediaDTO zabbixUpdateMediaDTO = new ZabbixUpdateMediaDTO();
@@ -135,7 +137,7 @@ public class UserServiceImpl implements UserService {
             }
             zabbixUpdateMediaDTO.setList(zabbixMediasList);
         }
-        return zabbixUserService.update(zabbixUpdateMediaDTO, authToken);
+        return zabbixUserService.update(zabbixUpdateMediaDTO, auth);
     }
 
     @Override

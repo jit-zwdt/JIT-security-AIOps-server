@@ -6,8 +6,9 @@ import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.request.ZabbixCreateGraphPrototypeParams;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface GraphItemService {
-    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams) throws Exception;
+    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams, HttpServletRequest req) throws Exception;
 }

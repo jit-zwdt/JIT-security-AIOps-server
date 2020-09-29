@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -31,10 +32,10 @@ public class GraphPrototypeController {
     private GraphPrototypeService graphPrototypeService;
 
     @PostMapping("/getGProInfoList")
-    public Result getGProInfoList(@RequestBody GraphPrototypeParams graphPrototypeParams, HttpServletResponse resp) throws IOException {
+    public Result getGProInfoList(@RequestBody GraphPrototypeParams graphPrototypeParams, HttpServletRequest req) throws IOException {
         try {
             if (graphPrototypeParams != null) {
-                List<ZabbixGetGraphPrototypeDTO> result = graphPrototypeService.getGProList(graphPrototypeParams);
+                List<ZabbixGetGraphPrototypeDTO> result = graphPrototypeService.getGProList(graphPrototypeParams,req);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -50,10 +51,10 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/createGpro")
-    public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams) throws IOException {
+    public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams, HttpServletRequest req) throws IOException {
         try {
             if(zabbixCreateGraphPrototypeParams != null && zabbixCreateGraphPrototypeParams.getGitems() !=null){
-                List<String> graphids = graphPrototypeService.createGPro(zabbixCreateGraphPrototypeParams);
+                List<String> graphids = graphPrototypeService.createGPro(zabbixCreateGraphPrototypeParams, req);
                 if(graphids != null && !CollectionUtils.isEmpty(graphids)){
                     return Result.SUCCESS(graphids);
                 }else {

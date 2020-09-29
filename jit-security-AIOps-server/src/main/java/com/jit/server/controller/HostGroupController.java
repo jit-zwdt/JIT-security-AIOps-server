@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
@@ -9,6 +10,7 @@ import com.jit.zabbix.client.service.ZabbixHostGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -35,9 +37,9 @@ public class HostGroupController {
      */
     @ResponseBody
     @PostMapping(value = "/getZabbixHostGroup")
-    public Result getZabbixHostGroup() {
+    public Result getZabbixHostGroup(HttpServletRequest req) {
         try {
-            String auth = zabbixAuthService.getAuth();
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             ZabbixGetHostGroupParams params = new ZabbixGetHostGroupParams();
             params.setOutput("extend");
             List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(params, auth);

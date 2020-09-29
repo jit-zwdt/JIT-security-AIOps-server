@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -24,9 +25,9 @@ public class UserController {
     private SysUserService sysUserService;
 
     @PostMapping("/getUserInfo")
-    public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletResponse resp) {
+    public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletRequest req) {
         try {
-            List<ZabbixUserDTO> result = userService.getUserInfo(alias);
+            List<ZabbixUserDTO> result = userService.getUserInfo(alias, req);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -39,9 +40,9 @@ public class UserController {
     }
 
     @PostMapping("/getUserAndMediaInfo")
-    public Result getUserAndMediaInfo(@RequestParam(value = "alias", required = false) String alias, @RequestParam(value = "userid", required = false) String userid, HttpServletResponse resp) {
+    public Result getUserAndMediaInfo(@RequestParam(value = "alias", required = false) String alias, @RequestParam(value = "userid", required = false) String userid, HttpServletRequest req) {
         try {
-            List<UserParams> result = userService.getUserAndMediaInfo(alias, userid);
+            List<UserParams> result = userService.getUserAndMediaInfo(alias, userid, req);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -68,10 +69,10 @@ public class UserController {
     }
 
     @PostMapping("/updateUserAndMediaInfo/{id}")
-    public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData) {
+    public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData, HttpServletRequest req) {
         try {
             if (tempData != null) {
-                return Result.SUCCESS(userService.updateUserInfo(id, tempData));
+                return Result.SUCCESS(userService.updateUserInfo(id, tempData, req));
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

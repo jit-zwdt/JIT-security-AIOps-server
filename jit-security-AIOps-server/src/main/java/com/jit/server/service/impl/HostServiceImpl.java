@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -148,9 +149,9 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String addHost(HostEntity host) throws Exception {
+    public String addHost(HostEntity host,HttpServletRequest req) throws Exception {
         //调用zabbix接口进行保存
-        String hostid = createHostToZabbix(host);
+        String hostid = createHostToZabbix(host,req);
         if (StringUtils.isNotEmpty(hostid)) {
             host.setHostId(hostid.trim());
             //保存到本地
@@ -160,14 +161,14 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String deleteHost(HostEntity host) throws Exception {
+    public String deleteHost(HostEntity host , HttpServletRequest req) throws Exception {
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         //调用zabbix接口进行删除
-        String hostid = zabbixHostService.delete(host.getHostId(), authToken);
+        String hostid = zabbixHostService.delete(host.getHostId(), auth);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
@@ -181,9 +182,9 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String updateHost(HostEntity host) throws Exception {
+    public String updateHost(HostEntity host, HttpServletRequest req) throws Exception {
         //调用zabbix接口进行保存
-        String hostid = updateHostToZabbix(host);
+        String hostid = updateHostToZabbix(host,req);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
@@ -192,9 +193,9 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String updateHostEnableMonitor(HostEntity host) throws Exception {
+    public String updateHostEnableMonitor(HostEntity host ,HttpServletRequest req) throws Exception {
         //调用zabbix接口进行保存
-        String hostid = updateHostStatusToZabbix(host.getHostId(), host.getEnableMonitor());
+        String hostid = updateHostStatusToZabbix(host.getHostId(), host.getEnableMonitor(),req);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
             hostRepo.save(host);
@@ -211,7 +212,7 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public List<ZabbixHostDTO> getHostAvailableFromZabbix(List<String> hostIds) throws Exception {
+    public List<ZabbixHostDTO> getHostAvailableFromZabbix(List<String> hostIds,HttpServletRequest req) throws Exception {
         //hostids 必填项
         if (hostIds == null || CollectionUtils.isEmpty(hostIds)) {
             return null;
@@ -220,11 +221,11 @@ public class HostServiceImpl implements HostService {
         ZabbixGetHostParams params = new ZabbixGetHostParams();
         params.setHostIds(hostIds);
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
-        return zabbixHostService.get(params, authToken);
+        return zabbixHostService.get(params, auth);
     }
 
     /**
@@ -323,7 +324,7 @@ public class HostServiceImpl implements HostService {
      * @return
      * @throws ZabbixApiException
      */
-    private String createHostToZabbix(HostEntity host) throws Exception {
+    private String createHostToZabbix(HostEntity host,HttpServletRequest req) throws Exception {
         //主机名称、主机组、主机接口 必填项
         if (host == null || StringUtils.isEmpty(host.getObjectName())) {
             return null;
@@ -610,11 +611,11 @@ public class HostServiceImpl implements HostService {
         }
 
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
-        return zabbixHostService.create(dto, authToken);
+        return zabbixHostService.create(dto, auth);
     }
 
     /**
@@ -624,7 +625,7 @@ public class HostServiceImpl implements HostService {
      * @return
      * @throws ZabbixApiException
      */
-    private String updateHostToZabbix(HostEntity host) throws Exception {
+    private String updateHostToZabbix(HostEntity host, HttpServletRequest req) throws Exception {
         //hostid 必填项
         if (host == null || StringUtils.isEmpty(host.getHostId())) {
             return null;
@@ -664,13 +665,13 @@ public class HostServiceImpl implements HostService {
 
         //主机接口信息
         //获得token
-        String _authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(_authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetHostInterfaceParams params = new ZabbixGetHostInterfaceParams();
         params.setHostIds(Arrays.asList(new String[]{host.getHostId().trim()}));
-        List<ZabbixHostInterface> zabbixHostInterfaceList = zabbixHostInterfaceService.get(params, _authToken);
+        List<ZabbixHostInterface> zabbixHostInterfaceList = zabbixHostInterfaceService.get(params, auth);
         if (zabbixHostInterfaceList != null && !CollectionUtils.isEmpty(zabbixHostInterfaceList)) {
             String isIp = "1";
             String isDns = "2";
@@ -874,11 +875,11 @@ public class HostServiceImpl implements HostService {
         }
 
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String token = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(token)) {
             return null;
         }
-        return zabbixHostService.update(dto, authToken);
+        return zabbixHostService.update(dto, token);
     }
 
     /**
@@ -889,7 +890,7 @@ public class HostServiceImpl implements HostService {
      * @return
      * @throws ZabbixApiException
      */
-    private String updateHostStatusToZabbix(String hostId, String status) throws Exception {
+    private String updateHostStatusToZabbix(String hostId, String status, HttpServletRequest req) throws Exception {
         //hostid status 必填项
         if (StringUtils.isEmpty(hostId) || StringUtils.isEmpty(status)) {
             return null;
@@ -902,11 +903,11 @@ public class HostServiceImpl implements HostService {
         dto.setId(hostId.trim());
         dto.setUnmonitored("1".equals(status.trim()) ? false : true);
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
-        return zabbixHostService.update(dto, authToken);
+        return zabbixHostService.update(dto, auth);
     }
 
     /**
@@ -917,7 +918,7 @@ public class HostServiceImpl implements HostService {
      * @throws Exception
      */
     @Override
-    public List<ZabbixHostGroupDTO> findHostGroupByTypeId(Map<String, Object> params) throws Exception {
+    public List<ZabbixHostGroupDTO> findHostGroupByTypeId(Map<String, Object> params,HttpServletRequest req) throws Exception {
         if (params != null) {
             String typeId = (String) params.get("typeId");
             if (StringUtils.isNotEmpty(typeId)) {
@@ -939,11 +940,11 @@ public class HostServiceImpl implements HostService {
                             _params.setSearch(search);
                         }
                         //获得token
-                        String authToken = zabbixAuthService.getAuth();
-                        if (StringUtils.isEmpty(authToken)) {
+                        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                        if (StringUtils.isEmpty(auth)) {
                             return null;
                         }
-                        return zabbixHostGroupService.get(_params, authToken);
+                        return zabbixHostGroupService.get(_params, auth);
                     }
                 }
             }
@@ -959,7 +960,7 @@ public class HostServiceImpl implements HostService {
      * @throws Exception
      */
     @Override
-    public List<Map<String, String>> getTop5ByItem(Map<String, Object> params) throws Exception {
+    public List<Map<String, String>> getTop5ByItem(Map<String, Object> params,HttpServletRequest req) throws Exception {
         List<Map<String, String>> result = new ArrayList<>();
         if (params != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -974,8 +975,8 @@ public class HostServiceImpl implements HostService {
             }
 
             //获得token
-            String authToken = zabbixAuthService.getAuth();
-            if (StringUtils.isEmpty(authToken)) {
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            if (StringUtils.isEmpty(auth)) {
                 return null;
             }
 
@@ -1010,7 +1011,7 @@ public class HostServiceImpl implements HostService {
             filter.put("key_", itemKey.trim());
             itemParams.setFilter(filter);
 
-            List<ZabbixGetItemDTO> itemList = zabbixItemService.get(itemParams, authToken);
+            List<ZabbixGetItemDTO> itemList = zabbixItemService.get(itemParams, auth);
             ZabbixGetHistoryParams historyParams = null;
             for (ZabbixGetItemDTO dto : itemList) {
                 String hostId = dto.getHostId();
@@ -1033,7 +1034,7 @@ public class HostServiceImpl implements HostService {
                         _map.put("itemId", itemId);
                         _map.put("itemName", itemName);
 
-                        List<ZabbixHistoryDTO> historyList = zabbixHistoryService.get(historyParams, authToken);
+                        List<ZabbixHistoryDTO> historyList = zabbixHistoryService.get(historyParams, auth);
                         if (historyList != null && !CollectionUtils.isEmpty(historyList)) {
                             ZabbixHistoryDTO history = historyList.get(0);
                             try {
@@ -1097,7 +1098,7 @@ public class HostServiceImpl implements HostService {
      * @throws Exception
      */
     @Override
-    public List<Map<String, String>> getTop5ByTrigger(Map<String, Object> params) throws Exception {
+    public List<Map<String, String>> getTop5ByTrigger(Map<String, Object> params, HttpServletRequest req) throws Exception {
         List<Map<String, String>> result = new ArrayList<>();
         if (params != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -1107,8 +1108,8 @@ public class HostServiceImpl implements HostService {
             String valueType = (String) params.get("valueType");
 
             //获得token
-            String authToken = zabbixAuthService.getAuth();
-            if (StringUtils.isEmpty(authToken)) {
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            if (StringUtils.isEmpty(auth)) {
                 return null;
             }
 
@@ -1142,7 +1143,7 @@ public class HostServiceImpl implements HostService {
                 triggerParams.setFilter(filter);
                 triggerParams.setSortFields(Arrays.asList(new String[]{"priority"}));
                 triggerParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
-                List<ZabbixTriggerDTO> triggerList = zabbixTriggerService.get(triggerParams, authToken);
+                List<ZabbixTriggerDTO> triggerList = zabbixTriggerService.get(triggerParams, auth);
                 if (triggerList != null && !CollectionUtils.isEmpty(triggerList)) {
                     map.put("value", String.valueOf(triggerList.size()));
                     result.add(map);

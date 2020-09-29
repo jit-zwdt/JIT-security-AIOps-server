@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -89,10 +90,10 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ProblemHostDTO> findProblemHost(ProblemParams params) throws Exception {
+    public List<ProblemHostDTO> findProblemHost(ProblemParams params, HttpServletRequest req) throws Exception {
         // get token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
 
@@ -111,7 +112,7 @@ public class ProblemServiceImpl implements ProblemService {
         // for each hostId, find problem
         for (String hostId : mapHostInfo.keySet()) {
             params.setHostId(hostId);
-            List<ZabbixProblemDTO> problems = findByCondition(params, authToken);
+            List<ZabbixProblemDTO> problems = findByCondition(params, auth);
             if (problems != null) {
                 for (ZabbixProblemDTO problem : problems) {
                     ProblemHostDTO problemHostDTO = new ProblemHostDTO();
@@ -129,10 +130,10 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
+    public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params, HttpServletRequest req) throws Exception {
         List<ProblemClaimDTO> list = new ArrayList<>();
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         String claimType = params.getClaimType();
@@ -145,7 +146,7 @@ public class ProblemServiceImpl implements ProblemService {
                 Map mapFilter = new HashMap();
                 mapFilter.put("severity", integer);
                 params_pro.setFilter(mapFilter);
-                List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, authToken);
+                List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, auth);
                 List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
                 for (ZabbixProblemDTO zabbixProblemDTO : listZ) {
                     if ("0".equals(claimType)) {
@@ -256,9 +257,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params) throws Exception {
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params,HttpServletRequest req) throws Exception {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
 
@@ -295,7 +296,7 @@ public class ProblemServiceImpl implements ProblemService {
             params_pro.setSearch(mapSearch);
         }
 
-        return zabbixProblemService.get(params_pro, authToken);
+        return zabbixProblemService.get(params_pro, auth);
     }
 
     @Override

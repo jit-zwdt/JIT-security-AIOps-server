@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -59,10 +60,10 @@ public class ProblemController {
 //    }
 
     @PostMapping("/findProblemHost")
-    public Result findProblemHost(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+    public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         System.out.println(params);
         try {
-            List<ProblemHostDTO> result = problemService.findProblemHost(params);
+            List<ProblemHostDTO> result = problemService.findProblemHost(params,req);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -76,10 +77,10 @@ public class ProblemController {
 
 
     @PostMapping("/findBySeverityLevel")
-    public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletResponse resp) throws IOException {
+    public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletRequest req) throws IOException {
         try {
             if (params != null && params.getSeverities() != null) {
-                List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params);
+                List<ProblemClaimDTO> result = problemService.findBySeverityLevel(params, req);
                 if (null != result && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {
@@ -192,9 +193,9 @@ public class ProblemController {
     }
 
     @PostMapping("/getAlertdata")
-    public Result getAlertdata(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
+    public Result getAlertdata(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         try {
-            List<ZabbixProblemDTO> result = problemService.getAlertdata(params);
+            List<ZabbixProblemDTO> result = problemService.getAlertdata(params,req);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {

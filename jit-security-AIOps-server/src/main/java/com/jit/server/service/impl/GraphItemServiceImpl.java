@@ -6,6 +6,7 @@ import com.jit.server.request.GraphPrototypeParams;
 import com.jit.server.service.GraphItemService;
 import com.jit.server.service.GraphPrototypeService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +35,13 @@ public class GraphItemServiceImpl implements GraphItemService {
     public static final String GITEM_NAME = "name";
 
     @Override
-    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams) throws Exception {
+    public List<ZabbixGetGraphItemDTO> getGItemList(GraphItemParams graphItemParams, HttpServletRequest req) throws Exception {
         if (graphItemParams == null) {
             return null;
         }
         //获得token
-        String authToken = zabbixAuthService.getAuth();
-        if (StringUtils.isEmpty(authToken)) {
+        String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+        if (StringUtils.isEmpty(auth)) {
             return null;
         }
         ZabbixGetGraphItemParams params = new ZabbixGetGraphItemParams();
@@ -70,6 +72,6 @@ public class GraphItemServiceImpl implements GraphItemService {
             mapFilter.put(GITEM_STATUS, graphItemParams.getStatus());
             params.setFilter(mapFilter);
         }
-        return zabbixGraphItemService.get(params, authToken);
+        return zabbixGraphItemService.get(params, auth);
     }
 }
