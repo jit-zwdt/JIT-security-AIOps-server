@@ -26,6 +26,9 @@ public class ZabbixAuthServiceImpl implements ZabbixAuthService {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @Override
     public String getAuth() throws Exception {
 
@@ -52,6 +55,7 @@ public class ZabbixAuthServiceImpl implements ZabbixAuthService {
 
     /**
      * 获取保存在Context中的auth信息
+     *
      * @param key
      * @return
      * @throws Exception
@@ -60,5 +64,18 @@ public class ZabbixAuthServiceImpl implements ZabbixAuthService {
     public String getAuth(String key) throws Exception {
         ConcurrentHashMap<String, String> authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
         return authMap.get(key);
+    }
+
+    /**
+     * 由于调用zabbix接口需要使用到auth，多次重复登录zabbix回导致产生大量的开放会话记录。所以将zabbix登录信息保存到Context中。
+     *
+     * @param key
+     */
+    @Override
+    public void setAuthToApplicationContext(String key) throws Exception {
+        ConcurrentHashMap<String, String> authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
+        if (authMap.get(key) == null) {
+            authMap.put(key, zabbixAuthService.getAuth());
+        }
     }
 }

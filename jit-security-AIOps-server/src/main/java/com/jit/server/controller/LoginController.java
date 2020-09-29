@@ -4,7 +4,10 @@ import com.jit.server.exception.AccountDisabledException;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.service.AuthService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.*;
+import com.jit.server.util.JwtTokenDto;
+import com.jit.server.util.MD5Util;
+import com.jit.server.util.RandomUtil;
+import com.jit.server.util.Result;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -14,13 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class LoginController {
@@ -29,9 +30,6 @@ public class LoginController {
 
     @Resource
     private CacheManager cacheManager;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private ZabbixAuthService zabbixAuthService;
@@ -57,7 +55,7 @@ public class LoginController {
             // check token
             JwtTokenDto token = authService.login(username, password);
             if (null != token) {
-                setAuthToApplicationContext(token.getAccess_token());
+                zabbixAuthService.setAuthToApplicationContext(token.getAccess_token());
                 return Result.SUCCESS(token);
             } else {
                 return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
@@ -78,7 +76,7 @@ public class LoginController {
         try {
             JwtTokenDto token = authService.login(username, password);
             if (null != token) {
-                setAuthToApplicationContext(token.getAccess_token());
+                zabbixAuthService.setAuthToApplicationContext(token.getAccess_token());
                 return Result.SUCCESS(token);
             } else {
                 return Result.ERROR(ExceptionEnum.LOGIN_PASSWORD_OR_USRNAME_EXCEPTION);
@@ -122,19 +120,4 @@ public class LoginController {
         }
     }
 
-    /**
-     * 由于调用zabbix接口需要使用到auth，多次重复登录zabbix回导致产生大量的开放会话记录。所以将zabbix登录信息保存到Context中。
-     *
-     * @param key
-     */
-    private void setAuthToApplicationContext(String key) throws Exception {
-        ConcurrentHashMap<String, String> authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
-        if (authMap == null) {
-            webApplicationContext.getServletContext().setAttribute(ConstUtil.AUTH_MAP, new ConcurrentHashMap<>(16));
-            authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
-        }
-        if (authMap.get(key) == null) {
-            authMap.put(key, zabbixAuthService.getAuth());
-        }
-    }
 }

@@ -1,9 +1,12 @@
 package com.jit.server.config;
 
-import com.jit.server.filter.JwtTokenFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import com.jit.server.util.ConstUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Description:
@@ -12,14 +15,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class BaseConfig {
-   /* @Bean
-    public FilterRegistrationBean addFilterRegistrationBean() {
-        //filter registerclass
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new JwtTokenFilter());
-        //Interfaces to be filtered
-        registration.addUrlPatterns("/api/getAuth");
-        registration.addUrlPatterns("/host/createHost");
-        return registration;
-    }*/
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Bean
+    public void authMapBean() {
+        ConcurrentHashMap<String, String> authMap = (ConcurrentHashMap<String, String>) webApplicationContext.getServletContext().getAttribute(ConstUtil.AUTH_MAP);
+        if (authMap == null) {
+            webApplicationContext.getServletContext().setAttribute(ConstUtil.AUTH_MAP, new ConcurrentHashMap<>(16));
+        }
+    }
 }

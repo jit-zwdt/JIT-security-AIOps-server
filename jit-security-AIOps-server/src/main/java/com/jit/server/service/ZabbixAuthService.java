@@ -10,4 +10,6 @@ public interface ZabbixAuthService {
     String getAuth() throws Exception;
 
     String getAuth(String key) throws Exception;
+
+    void setAuthToApplicationContext(String key) throws Exception;
 }
