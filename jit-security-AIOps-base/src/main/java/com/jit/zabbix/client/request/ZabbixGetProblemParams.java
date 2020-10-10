@@ -35,6 +35,8 @@ public class ZabbixGetProblemParams extends CommonGetParams {
     private ProblemSource source;
     private ProblemObject object;
     private boolean acknowledged;
+    @Singular
+    private List<Integer> severities;
     private ProblemSeverity severity;
     private ProblemEvaltype evaltype;
 

@@ -85,6 +85,7 @@ public class ProblemController {
     public Result addClaim(@RequestBody MonitorClaimEntity monitorClaimEntity) {
         try {
             if (monitorClaimEntity != null) {
+                monitorClaimEntity.setGmtCreate(LocalDateTime.now());
                 monitorClaimEntity.setClaimTime(LocalDateTime.now());
                 problemService.addCalim(monitorClaimEntity);
                 return Result.SUCCESS(null);
@@ -128,7 +129,7 @@ public class ProblemController {
                 MonitorClaimEntity monitorClaimEntity = problemService.findByProblemId(problemId);
                 map.put("claimOpinion", monitorClaimEntity.getClaimOpinion());
                 map.put("role", sysRoleRepo.getOne(monitorClaimEntity.getClaimRoleId()).getRoleName());
-                map.put("user", sysUserRepo.getOne(monitorClaimEntity.getClaimUserId()).getUsername());
+                map.put("user", sysUserRepo.findNameById(monitorClaimEntity.getClaimUserId()));
                 return Result.SUCCESS(map);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);

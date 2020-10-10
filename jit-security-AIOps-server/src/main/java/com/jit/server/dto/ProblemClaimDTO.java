@@ -16,4 +16,5 @@ import lombok.experimental.SuperBuilder;
 public class ProblemClaimDTO {
     private ZabbixProblemDTO zabbixProblemDTO;
     private int isClaim;
+    private String claimUser;
 }

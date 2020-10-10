@@ -95,9 +95,10 @@ public class ProblemServiceImpl implements ProblemService {
             List<String> hostIds = new ArrayList<>(hostInfo.size());
             // create a map to store host information, using host id as key
             Map<String, Object[]> mapHostInfo = new HashMap<>(hostInfo.size());
-            String hostid = "";
+            String hostid;
+            Object[] host;
             for (int i = 0; i < hostInfo.size(); i++) {
-                Object[] host = (Object[]) hostInfo.get(i);
+                host = (Object[]) hostInfo.get(i);
                 hostid = host[0] != null ? host[0].toString() : "";
                 mapHostInfo.put(hostid, host);
                 hostIds.add(hostid);
@@ -131,15 +132,25 @@ public class ProblemServiceImpl implements ProblemService {
     public List<ProblemClaimDTO> findBySeverityLevel(ProblemClaimParams params, String auth) throws Exception {
         List<ProblemClaimDTO> list = new ArrayList<>();
         String claimType = params.getClaimType();
-        if (claimType == null || ("").equals(claimType)) {
+        if (claimType == null || "".equals(claimType)) {
             claimType = "-1";
         }
-        for (Integer integer : params.getSeverities()) {
+        List<Object> hostInfo = hostRepo.getHostIdsAndIp();
+        if (hostInfo != null && !hostInfo.isEmpty()) {
+            List<String> hostIds = new ArrayList<>(hostInfo.size());
+            String hostid;
+            Object[] host;
+            for (int i = 0; i < hostInfo.size(); i++) {
+                host = (Object[]) hostInfo.get(i);
+                hostid = host[0] != null ? host[0].toString() : "";
+                hostIds.add(hostid);
+            }
+
             ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
-            if (integer != null) {
-                Map mapFilter = new HashMap();
-                mapFilter.put("severity", integer);
-                params_pro.setFilter(mapFilter);
+            List<Integer> severities = params.getSeverities();
+            if (severities != null && !severities.isEmpty()) {
+                params_pro.setSeverities(severities);
+                params_pro.setHostids(hostIds);
                 List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, auth);
                 List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
                 for (ZabbixProblemDTO zabbixProblemDTO : listZ) {
@@ -149,6 +160,7 @@ public class ProblemServiceImpl implements ProblemService {
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
                         if (temp == null) {
                             problemClaimDTO.setIsClaim(0);
+                            problemClaimDTO.setClaimUser("-");
                             problemClaimDTOS.add(problemClaimDTO);
                         }
                     } else if ("1".equals(claimType)) {
@@ -157,6 +169,7 @@ public class ProblemServiceImpl implements ProblemService {
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
                         if (temp != null) {
                             problemClaimDTO.setIsClaim(temp.getIsClaim());
+                            problemClaimDTO.setClaimUser(sysUserRepo.findNameById(temp.getClaimUserId()));
                             problemClaimDTOS.add(problemClaimDTO);
                         }
                     } else {
@@ -165,15 +178,19 @@ public class ProblemServiceImpl implements ProblemService {
                         MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
                         if (temp != null) {
                             problemClaimDTO.setIsClaim(temp.getIsClaim());
+                            problemClaimDTO.setClaimUser(sysUserRepo.findNameById(temp.getClaimUserId()));
+                        } else {
+                            problemClaimDTO.setClaimUser("-");
                         }
                         problemClaimDTOS.add(problemClaimDTO);
                     }
                 }
                 list.addAll(problemClaimDTOS);
             }
+            return list;
+        } else {
+            return null;
         }
-        return list;
-
     }
 
     @Override
