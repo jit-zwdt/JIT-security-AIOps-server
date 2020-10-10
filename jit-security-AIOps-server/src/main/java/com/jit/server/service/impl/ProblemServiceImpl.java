@@ -12,15 +12,14 @@ import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
-import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,7 +46,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception {
-        if (StringUtils.isEmpty(authToken)) {
+        if (StringUtils.isBlank(authToken)) {
             return null;
         }
 
@@ -61,10 +60,8 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set hostId
-        if (params.getHostId() != null) {
-            List<String> hostIds = new ArrayList<>();
-            hostIds.add(params.getHostId());
-            params_pro.setHostids(hostIds);
+        if (params.getHostIds() != null) {
+            params_pro.setHostids(Arrays.asList(params.getHostIds().split(",")));
         }
 
         // set timeFrom
@@ -94,33 +91,40 @@ public class ProblemServiceImpl implements ProblemService {
         // get host info
         List<Object> hostInfo = hostRepo.getHostIdsAndIp();
 
-        // create a map to store host information, using host id as key
-        Map<String, Object[]> mapHostInfo = new HashMap<>();
-        for (int i = 0; i < hostInfo.size(); i++) {
-            Object[] host = (Object[]) hostInfo.get(i);
-            mapHostInfo.put(host[0].toString(), host);
-        }
+        if (hostInfo != null && !hostInfo.isEmpty()) {
+            List<String> hostIds = new ArrayList<>(hostInfo.size());
+            // create a map to store host information, using host id as key
+            Map<String, Object[]> mapHostInfo = new HashMap<>(hostInfo.size());
+            String hostid = "";
+            for (int i = 0; i < hostInfo.size(); i++) {
+                Object[] host = (Object[]) hostInfo.get(i);
+                hostid = host[0] != null ? host[0].toString() : "";
+                mapHostInfo.put(hostid, host);
+                hostIds.add(hostid);
+            }
 
-        List<ProblemHostDTO> problemHostDTOs = new ArrayList<>();
-
-        // for each hostId, find problem
-        for (String hostId : mapHostInfo.keySet()) {
-            params.setHostId(hostId);
+            // get problems
+            List<ProblemHostDTO> problemHostDTOs = new ArrayList<>();
+            if (StringUtils.isBlank(params.getHostIds())) {
+                params.setHostIds(StringUtils.join(hostIds, ","));
+            }
+            // for each hostId, find problem
             List<ZabbixProblemDTO> problems = findByCondition(params, auth);
             if (problems != null) {
                 for (ZabbixProblemDTO problem : problems) {
                     ProblemHostDTO problemHostDTO = new ProblemHostDTO();
                     problemHostDTO.setZabbixProblemDTO(problem);
-                    Object[] obj = mapHostInfo.get(hostId);
+                    Object[] obj = mapHostInfo.get(problem.getHostid());
                     problemHostDTO.setHostId(obj[0].toString());
                     problemHostDTO.setHostName(obj[1].toString());
                     problemHostDTO.setIp(obj[2].toString());
                     problemHostDTOs.add(problemHostDTO);
                 }
             }
-
+            return problemHostDTOs;
+        } else {
+            return null;
         }
-        return problemHostDTOs;
     }
 
     @Override
@@ -172,53 +176,6 @@ public class ProblemServiceImpl implements ProblemService {
 
     }
 
-//    @Override
-//    public List<ZabbixProblemDTO> findBySeverityLevel(ProblemClaimParams params) throws Exception {
-//        List<ZabbixProblemDTO> list = new ArrayList<>();
-//        String authToken = zabbixAuthService.getAuth();
-//        if (StringUtils.isEmpty(authToken)) {
-//            return null;
-//        }
-//
-//        List<Object> listHostRepo = hostRepo.getHostIdsAndIp();
-//        List<ProblemHostDTO> problemHostDTOS = new ArrayList<>();
-//        List<Integer> integerList = new ArrayList<>();
-//        for (int i = 0, len = listHostRepo.size(); i < len; i++) {
-//            ProblemHostDTO problemHostDTO = new ProblemHostDTO();
-//            Object[] objs = (Object[]) listHostRepo.get(i);
-//            problemHostDTO.setHostId(objs[0].toString());
-//            integerList.add(Integer.parseInt(objs[0].toString()));
-//            problemHostDTO.setHostName(objs[1].toString());
-//            problemHostDTO.setIp(objs[2].toString());
-//            problemHostDTOS.add(problemHostDTO);
-//        }
-//        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
-//        Map mapFilter = new HashMap();
-//        if (params.getSeverities() != null) {
-//            mapFilter.put("severity", params.getSeverities());
-//        }
-//        if (listHostRepo != null) {
-//            mapFilter.put("hostids", integerList);
-//        }
-//        List<String> ll = new ArrayList<>();
-//        ll.add("severity");
-//        params_pro.setSortFields(ll);
-//        List<String> ss = new ArrayList<>();
-//        ss.add("DESC");
-//        params_pro.setSortOrder(ss);
-//        list = zabbixProblemService.get(params_pro, authToken);
-//        for(ZabbixProblemDTO zabbixProblemDTO:list){
-//            MonitorClaimEntity temp = monitorClaimRepo.getMonitorClaimEntityById(zabbixProblemDTO.getId());
-//            if(temp!= null){
-//                if(zabbixProblemDTO.getId().equals(temp.getProblemId())){
-//                    zabbixProblemDTO.setIsClaim(temp.getIsClaim());
-//                }
-//            }
-//        }
-//        return list;
-//
-//    }
-
     @Override
     public void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception {
         monitorClaimRepo.save(monitorClaimEntity);
@@ -247,7 +204,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params,String auth) throws Exception {
+    public List<ZabbixProblemDTO> getAlertdata(ProblemParams params, String auth) throws Exception {
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
 
         // set severity
@@ -258,10 +215,8 @@ public class ProblemServiceImpl implements ProblemService {
         }
 
         // set hostId
-        if (params.getHostId() != null) {
-            List<String> hostIds = new ArrayList<>();
-            hostIds.add(params.getHostId());
-            params_pro.setHostids(hostIds);
+        if (params.getHostIds() != null) {
+            params_pro.setHostids(Arrays.asList(params.getHostIds().split(",")));
         }
 
         // set timeFrom

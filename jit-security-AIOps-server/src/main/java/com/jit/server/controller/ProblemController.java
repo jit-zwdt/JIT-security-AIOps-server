@@ -22,7 +22,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,27 +44,11 @@ public class ProblemController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
-//    @PostMapping("/findByCondition")
-//    public Result findByCondition(@RequestBody ProblemParams params, HttpServletResponse resp) throws IOException {
-//        try {
-//            List<ZabbixProblemDTO> result = problemService.findByCondition(params);
-//            if (null != result && !CollectionUtils.isEmpty(result)) {
-//                return Result.SUCCESS(result);
-//            } else {
-//                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-//            }
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
-//        }
-//    }
-
     @PostMapping("/findProblemHost")
     public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
-        System.out.println(params);
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-            List<ProblemHostDTO> result = problemService.findProblemHost(params,auth);
+            List<ProblemHostDTO> result = problemService.findProblemHost(params, auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
@@ -160,10 +143,10 @@ public class ProblemController {
     public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd) {
         try {
             List<MonitorClaimEntity> claimList = null;
-            if(StringUtils.isNotEmpty(resolveTimeStart) && StringUtils.isNotEmpty(resolveTimeEnd)){
-                claimList = problemService.findByIsResolve(resolveTimeStart,resolveTimeEnd);
+            if (StringUtils.isNotEmpty(resolveTimeStart) && StringUtils.isNotEmpty(resolveTimeEnd)) {
+                claimList = problemService.findByIsResolve(resolveTimeStart, resolveTimeEnd);
                 if (StringUtils.isNotEmpty(problemName)) {
-                    claimList = problemService.findByIsResolveAndProblemName(problemName,resolveTimeStart,resolveTimeEnd);
+                    claimList = problemService.findByIsResolveAndProblemName(problemName, resolveTimeStart, resolveTimeEnd);
                 }
             }
             List<ProblemSolveReportDTO> resultList = new ArrayList<>();
@@ -199,7 +182,7 @@ public class ProblemController {
     public Result getAlertdata(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-            List<ZabbixProblemDTO> result = problemService.getAlertdata(params,auth);
+            List<ZabbixProblemDTO> result = problemService.getAlertdata(params, auth);
             if (null != result && !CollectionUtils.isEmpty(result)) {
                 return Result.SUCCESS(result);
             } else {
