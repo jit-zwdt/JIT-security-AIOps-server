@@ -71,6 +71,17 @@ public class SysDictionaryController {
         }
     }
 
+    @ResponseBody
+    @GetMapping(value = "/getDictByCode/{code}")
+    public Result getDictByCode(@PathVariable("code") String code) {
+        try {
+            return Result.SUCCESS(dictionaryService.getDictByCode(code));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
     @DeleteMapping("/deleteDictionary/{id}")
     public Result deleteDictionary(@PathVariable String id) {
         try {

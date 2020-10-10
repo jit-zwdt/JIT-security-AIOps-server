@@ -9,8 +9,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * @Description table monitor_assets: table entity
  * @author zengxin_miao
+ * @Description table monitor_assets: table entity
  * @Date: 2020/09/01 09:32:38
  */
 @Entity
@@ -37,7 +37,7 @@ public class MonitorAssetsEntity {
     private String number;
 
     /**
-     * 资产分类 1：网络设备；2：通讯设备；3：服务器；4：云平台；
+     * 资产类别 0：硬件；1：软件
      */
     @Column(name = "type")
     private String type;
@@ -47,6 +47,12 @@ public class MonitorAssetsEntity {
      */
     @Column(name = "state")
     private String state;
+
+    /**
+     * 资产分类
+     */
+    @Column(name = "classify")
+    private String classify;
 
     /**
      * 资产国标大类
@@ -87,7 +93,7 @@ public class MonitorAssetsEntity {
     /**
      * 资产登记时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "register_date")
     private LocalDateTime registerDate;
 
@@ -100,9 +106,9 @@ public class MonitorAssetsEntity {
     /**
      * 资产修改时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "update_date")
-    private LocalDateTime  updateDate;
+    private LocalDateTime updateDate;
 
     /**
      * 资产位置
@@ -113,9 +119,9 @@ public class MonitorAssetsEntity {
     /**
      * 资产注销时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "logout_date")
-    private LocalDateTime  logoutDate;
+    private LocalDateTime logoutDate;
 
     /**
      * 删除标识 0：表示未删除， 1：表示删除
@@ -126,9 +132,9 @@ public class MonitorAssetsEntity {
     /**
      * 财务入账日期
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "date_recorded")
-    private LocalDateTime  dateRecorded;
+    private LocalDateTime dateRecorded;
 
     /**
      * 价值
@@ -181,15 +187,15 @@ public class MonitorAssetsEntity {
     /**
      * 创建时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_create")
-    private LocalDateTime  gmtCreate;
+    private LocalDateTime gmtCreate;
 
     /**
      * 修改时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_modified")
-    private LocalDateTime  gmtModified;
+    private LocalDateTime gmtModified;
 
 }

@@ -56,4 +56,14 @@ public class ConstUtil {
      * authMap
      */
     public static final String AUTH_MAP = "authMap";
+
+    /**
+     * 状态（0：为启用；1：启用）
+     */
+    public static final int STATUS_UNUSED = 0;
+
+    /**
+     * 状态（0：为启用；1：启用）
+     */
+    public static final int STATUS_USING = 1;
 }

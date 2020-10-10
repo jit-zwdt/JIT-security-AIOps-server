@@ -19,4 +19,7 @@ public interface DictionaryItemRepo  extends JpaRepository<SysDictionaryItemEnti
 
     @Query(value = "select di.* from sys_dict_item di,sys_dict d where di.is_deleted = 0 and d.is_deleted = 0 and di.dict_id = d.id and if(?1 != '',d.dict_code = ?1,1=1)",nativeQuery = true)
     List<SysDictionaryItemEntity> getDictionaryByCode(String code);
+
+    @Query(value = "select di.item_text,di.item_value,di.status from sys_dict_item di,sys_dict d where di.is_deleted = 0 and d.is_deleted = 0 and di.dict_id = d.id and d.dict_code = ?1 order by di.sort_order",nativeQuery = true)
+    List<Object> getDictByCode(String code);
 }

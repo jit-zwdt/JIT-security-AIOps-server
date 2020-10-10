@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.DictDTO;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.repository.DictionaryItemRepo;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,6 +83,36 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public List<SysDictionaryItemEntity> getDictionaryByCode(String code) {
         return dictionaryItemRepo.getDictionaryByCode(code);
+    }
+
+    @Override
+    public List<DictDTO> getDictByCode(String code) {
+        List<Object> dictList = dictionaryItemRepo.getDictByCode(code);
+        if (dictList != null && !dictList.isEmpty()) {
+            List<DictDTO> dictDTOList = new ArrayList<>(dictList.size());
+            Object[] object;
+            DictDTO dictDTO;
+            for (int i = 0, len = dictList.size(); i < len; i++) {
+                object = (Object[]) dictList.get(i);
+                dictDTO = new DictDTO();
+                dictDTO.setText(object[0] != null ? object[0].toString() : "");
+                dictDTO.setValue(object[1] != null ? object[1].toString() : "");
+                if(object[2] != null){
+                    if(ConstUtil.STATUS_UNUSED == Integer.parseInt(object[2].toString())){
+                        dictDTO.setStatus(true);
+                    }else{
+                        dictDTO.setStatus(false);
+                    }
+                }else{
+                    dictDTO.setStatus(true);
+                }
+
+                dictDTOList.add(dictDTO);
+            }
+            return dictDTOList;
+        } else {
+            return null;
+        }
     }
 
     @Override

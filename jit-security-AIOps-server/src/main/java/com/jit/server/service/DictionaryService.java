@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.DictDTO;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 
@@ -34,4 +35,6 @@ public interface DictionaryService {
     SysDictionaryItemEntity getByItemText(String itemName,String dictId);
 
     List<SysDictionaryItemEntity> getDictionaryByCode(String code);
+
+    List<DictDTO> getDictByCode(String code) throws Exception;
 }
