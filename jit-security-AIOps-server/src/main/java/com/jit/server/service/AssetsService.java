@@ -18,7 +18,7 @@ public interface AssetsService {
 
     void updateAssets(MonitorAssetsEntity assets) throws Exception;
 
-    List<MonitorAssetsEntity> findByConditionInfo() throws Exception;
+    List<Object> findByConditionInfo() throws Exception;
 
     List<Object> getHardwareInfo() throws Exception;
 }

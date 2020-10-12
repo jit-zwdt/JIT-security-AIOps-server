@@ -15,9 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -131,59 +133,9 @@ public class AssetsController {
     @PostMapping("/findByConditionInfo")
     public Result findByConditionInfo() {
         try {
-            List<MonitorAssetsEntity> ListResult = assetsService.findByConditionInfo();
-            if (null != ListResult) {
-                List<Map> ListResult1 = new ArrayList<>();
-                List<Map> ListResult2 = new ArrayList<>();
-                List<Map> ListResult3 = new ArrayList<>();
-                List<Map> ListResult4 = new ArrayList<>();
-                for (MonitorAssetsEntity ret : ListResult) {
-                    if ("1".equals(ret.getType())) {
-                        Map map = new HashMap();
-                        map.put("id", ret.getId());
-                        map.put("name", ret.getName());
-                        ListResult1.add(map);
-                    } else if ("2".equals(ret.getType())) {
-                        Map map = new HashMap();
-                        map.put("id", ret.getId());
-                        map.put("name", ret.getName());
-                        ListResult2.add(map);
-                    } else if ("3".equals(ret.getType())) {
-                        Map map = new HashMap();
-                        map.put("id", ret.getId());
-                        map.put("name", ret.getName());
-                        ListResult3.add(map);
-                    } else if ("4".equals(ret.getType())) {
-                        Map map = new HashMap();
-                        map.put("id", ret.getId());
-                        map.put("name", ret.getName());
-                        ListResult4.add(map);
-                    }
-
-                }
-                Map<String, Object> resultmap1 = new HashMap<>();
-                resultmap1.put("id", "1");
-                resultmap1.put("name", "网络设备");
-                resultmap1.put("items", ListResult1);
-                Map<String, Object> resultmap2 = new HashMap<>();
-                resultmap2.put("id", "2");
-                resultmap2.put("name", "通讯设备");
-                resultmap2.put("items", ListResult2);
-                Map<String, Object> resultmap3 = new HashMap<>();
-                resultmap3.put("id", "3");
-                resultmap3.put("name", "服务器");
-                resultmap3.put("items", ListResult3);
-                Map<String, Object> resultmap4 = new HashMap<>();
-                resultmap4.put("id", "4");
-                resultmap4.put("name", "云平台");
-                resultmap4.put("items", ListResult4);
-                List<Map<String, Object>> result = new ArrayList<>();
-
-                result.add(resultmap1);
-                result.add(resultmap2);
-                result.add(resultmap3);
-                result.add(resultmap4);
-                return Result.SUCCESS(result);
+            List<Object> listResult = assetsService.findByConditionInfo();
+            if (null != listResult && !listResult.isEmpty()) {
+                return Result.SUCCESS(listResult);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }

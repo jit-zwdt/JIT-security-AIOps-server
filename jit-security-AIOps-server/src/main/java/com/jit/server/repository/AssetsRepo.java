@@ -24,4 +24,7 @@ public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, 
 
     @Query(value = "select e.id,e.name,e.number from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0'")
     List<Object> findHardwareInfo();
+
+    @Query(value = "select e.id,e.name,e.number,e.ip from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0' and e.ip is not null and length(e.ip) > 0")
+    List<Object> findByConditionInfo();
 }
