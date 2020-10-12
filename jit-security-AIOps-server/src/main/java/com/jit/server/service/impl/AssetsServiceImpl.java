@@ -119,4 +119,9 @@ public class AssetsServiceImpl implements AssetsService {
     public List<MonitorAssetsEntity> findByConditionInfo() throws Exception {
         return this.assetsRepo.findAll();
     }
+
+    @Override
+    public List<Object> getHardwareInfo() throws Exception {
+        return assetsRepo.findHardwareInfo();
+    }
 }

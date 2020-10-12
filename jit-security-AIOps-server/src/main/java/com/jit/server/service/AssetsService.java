@@ -8,10 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssetsService {
-    public Page<MonitorAssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception;
-    public void addAssets(MonitorAssetsEntity assets) throws Exception;
-    public void deleteAssets(String id) throws Exception;
-    public Optional<MonitorAssetsEntity> findByAssetsId(String id)  throws Exception;
-    public void updateAssets(MonitorAssetsEntity assets) throws Exception;
-    public List<MonitorAssetsEntity> findByConditionInfo() throws Exception;
+    Page<MonitorAssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception;
+
+    void addAssets(MonitorAssetsEntity assets) throws Exception;
+
+    void deleteAssets(String id) throws Exception;
+
+    Optional<MonitorAssetsEntity> findByAssetsId(String id) throws Exception;
+
+    void updateAssets(MonitorAssetsEntity assets) throws Exception;
+
+    List<MonitorAssetsEntity> findByConditionInfo() throws Exception;
+
+    List<Object> getHardwareInfo() throws Exception;
 }

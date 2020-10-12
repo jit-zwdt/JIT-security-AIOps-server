@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -40,27 +40,27 @@ public class AssetsParams {
 
     private String belongsPerson;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime registerDate;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate registerDate;
 
     private String registrant;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime updateDate;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate updateDate;
 
     private String location;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime logoutDate;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate logoutDate;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     private LocalDateTime registerStartDate;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     private LocalDateTime registerEndDate;
 
-    @JsonDeserialize(using= CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime dateRecorded;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate dateRecorded;
 
     private String worth;
 
@@ -77,4 +77,8 @@ public class AssetsParams {
     private String brand;
 
     private String productModel;
+
+    private String classify;
+
+    private String parentId;
 }

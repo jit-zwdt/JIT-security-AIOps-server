@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -82,6 +83,21 @@ public final class CustomJsonSerializer {
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 LocalDateTime localDateTimeBack = LocalDateTime.parse(date, df);
                 return localDateTimeBack;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public static class LocalDateStrDeserializer extends JsonDeserializer<LocalDate> {
+
+        @Override
+        public LocalDate deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            String date = jsonParser.getText();
+            if (date != null && !"".equals(date) && !"0".equals(date)) {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDateBack = LocalDate.parse(date, df);
+                return localDateBack;
             } else {
                 return null;
             }

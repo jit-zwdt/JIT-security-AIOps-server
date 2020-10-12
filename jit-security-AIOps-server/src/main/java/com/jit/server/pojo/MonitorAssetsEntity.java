@@ -1,11 +1,11 @@
 package com.jit.server.pojo;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -93,9 +93,8 @@ public class MonitorAssetsEntity {
     /**
      * 资产登记时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "register_date")
-    private LocalDateTime registerDate;
+    private LocalDate registerDate;
 
     /**
      * 登记人
@@ -106,9 +105,8 @@ public class MonitorAssetsEntity {
     /**
      * 资产修改时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "update_date")
-    private LocalDateTime updateDate;
+    private LocalDate updateDate;
 
     /**
      * 资产位置
@@ -119,9 +117,8 @@ public class MonitorAssetsEntity {
     /**
      * 资产注销时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "logout_date")
-    private LocalDateTime logoutDate;
+    private LocalDate logoutDate;
 
     /**
      * 删除标识 0：表示未删除， 1：表示删除
@@ -132,9 +129,8 @@ public class MonitorAssetsEntity {
     /**
      * 财务入账日期
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "date_recorded")
-    private LocalDateTime dateRecorded;
+    private LocalDate dateRecorded;
 
     /**
      * 价值
@@ -187,15 +183,19 @@ public class MonitorAssetsEntity {
     /**
      * 创建时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_create")
     private LocalDateTime gmtCreate;
 
     /**
      * 修改时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "gmt_modified")
     private LocalDateTime gmtModified;
+
+    /**
+     * 父硬件ID
+     */
+    @Column(name = "parent_id")
+    private String parentId;
 
 }

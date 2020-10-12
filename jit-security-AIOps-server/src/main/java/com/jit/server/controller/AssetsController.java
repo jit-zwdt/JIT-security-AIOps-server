@@ -33,7 +33,7 @@ public class AssetsController {
     AssetsService assetsService;
 
     @PostMapping("/findByCondition")
-    public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) throws IOException {
+    public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
         try {
             if (params != null) {
                 Page<MonitorAssetsEntity> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());
@@ -61,6 +61,7 @@ public class AssetsController {
             if (assets != null) {
                 assets.setGmtCreate(LocalDateTime.now());
                 assets.setGmtModified(LocalDateTime.now());
+                assets.setAmount(1);
                 assets.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 assetsService.addAssets(assets);
                 return Result.SUCCESS(null);
@@ -98,12 +99,6 @@ public class AssetsController {
     @DeleteMapping("/deleteAssets/{id}")
     public Result deleteAssets(@PathVariable String id) {
         try {
-            /*if (StringUtils.isNotEmpty(id)) {
-                assetsService.deleteAssets(id);
-                return Result.SUCCESS(null);
-            }else{
-                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
-            }*/
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {
                 MonitorAssetsEntity assets = bean.get();
@@ -134,7 +129,7 @@ public class AssetsController {
     }
 
     @PostMapping("/findByConditionInfo")
-    public Result findByConditionInfo() throws IOException {
+    public Result findByConditionInfo() {
         try {
             List<MonitorAssetsEntity> ListResult = assetsService.findByConditionInfo();
             if (null != ListResult) {
@@ -194,6 +189,20 @@ public class AssetsController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @GetMapping("/getHardwareInfo")
+    public Result getHardwareInfo() {
+        try {
+            List<Object> listResult = assetsService.getHardwareInfo();
+            if (listResult != null && !listResult.isEmpty()) {
+                return Result.SUCCESS(listResult);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
