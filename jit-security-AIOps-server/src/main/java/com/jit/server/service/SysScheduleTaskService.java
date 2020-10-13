@@ -1,6 +1,7 @@
 package com.jit.server.service;
 
 import com.jit.server.pojo.SysScheduleTaskEntity;
+import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.util.PageRequest;
 import org.springframework.data.domain.Page;
 
@@ -24,4 +25,10 @@ public interface SysScheduleTaskService {
     List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression) throws Exception;
 
     List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception;
+
+    String addScheduleTask(ScheduleTaskParams scheduleTaskParams) throws Exception;
+
+    void delScheduleTask(String id) throws Exception;
+
+    void changeStatus(String id) throws Exception;
 }

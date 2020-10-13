@@ -2,11 +2,11 @@ package com.jit.server.controller;
 
 import com.jit.server.exception.CronExpression;
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.exception.SchedulerExistedException;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.SysScheduleTaskService;
 import com.jit.server.service.UserService;
-import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,32 +57,9 @@ public class SysScheduleTaskController {
     @PostMapping("/addScheduleTask")
     public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
         try {
-            String id = scheduleTaskParams.getId();
-            String jobClassName = scheduleTaskParams.getJobClassName();
-            String jobMethodName = scheduleTaskParams.getJobMethodName();
-            String cronExpression = scheduleTaskParams.getCronExpression();
-            if (vaildateParams(id, jobClassName, jobMethodName, cronExpression)) {
-                return Result.ERROR(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION);
-            }
-            SysScheduleTaskEntity sysScheduleTaskEntity;
-            if (StringUtils.isBlank(scheduleTaskParams.getId())) {
-                sysScheduleTaskEntity = new SysScheduleTaskEntity();
-                sysScheduleTaskEntity.setGmtCreate(LocalDateTime.now());
-                sysScheduleTaskEntity.setCreateBy(userService.findIdByUsername());
-                sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
-            } else {
-                sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(scheduleTaskParams.getId());
-                sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
-                sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
-            }
-            sysScheduleTaskEntity.setJobClassName(jobClassName);
-            sysScheduleTaskEntity.setJobMethodName(jobMethodName);
-            sysScheduleTaskEntity.setCronExpression(cronExpression);
-            sysScheduleTaskEntity.setJsonParam(scheduleTaskParams.getJsonParam());
-            sysScheduleTaskEntity.setDescription(scheduleTaskParams.getDescription());
-            sysScheduleTaskEntity.setJobGroup("".equals(scheduleTaskParams.getJobGroup()) ? null : scheduleTaskParams.getJobGroup());
-            sysScheduleTaskEntity.setStatus(scheduleTaskParams.getStatus());
-            return Result.SUCCESS(sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity));
+            return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
+        } catch (SchedulerExistedException e) {
+            return Result.ERROR(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION);
         } catch (ClassNotFoundException e) {
             return Result.ERROR(ExceptionEnum.SCHEDULER_USE_CLASS_EXCEPTION);
         } catch (NoSuchMethodException e) {
@@ -97,6 +73,7 @@ public class SysScheduleTaskController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
 
     /**
      * check param jobClassName, jobMethodName, cronExpression
@@ -128,27 +105,8 @@ public class SysScheduleTaskController {
     @DeleteMapping(value = "/delScheduleTask/{id}")
     public Result delScheduleTask(@PathVariable String id) {
         try {
-            if (StringUtils.isNotBlank(id)) {
-                SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(id);
-                if (sysScheduleTaskEntity == null) {
-                    return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
-                } else {
-                    String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
-                    boolean res = sysScheduleTaskService.stopScheduleTask(key);
-                    log.info("删除任务{}，结果{}", key, res);
-                    if (res) {
-                        sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_DELETED);
-                        sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
-                        sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
-                        sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
-                        return Result.SUCCESS(true);
-                    } else {
-                        return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
-                    }
-                }
-            } else {
-                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
-            }
+            sysScheduleTaskService.delScheduleTask(id);
+            return Result.SUCCESS(true);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
@@ -159,36 +117,8 @@ public class SysScheduleTaskController {
     @PutMapping(value = "/changeStatus/{id}")
     public Result changeStatus(@PathVariable String id) {
         try {
-            if (StringUtils.isNotBlank(id)) {
-                SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(id);
-                if (sysScheduleTaskEntity == null) {
-                    return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
-                } else {
-                    if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus()) {
-                        String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
-                        boolean res = sysScheduleTaskService.stopScheduleTask(key);
-                        log.info("删除任务{}，结果{}", key, res);
-                        if (res) {
-                            sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_STOP);
-                            sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
-                            sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
-                            sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
-                            return Result.SUCCESS(true);
-                        } else {
-                            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
-                        }
-                    } else {
-                        sysScheduleTaskService.startScheduleTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
-                        sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_NORMAL);
-                        sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
-                        sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
-                        sysScheduleTaskService.saveAndScheduleJob(sysScheduleTaskEntity);
-                        return Result.SUCCESS(true);
-                    }
-                }
-            } else {
-                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
-            }
+            sysScheduleTaskService.changeStatus(id);
+            return Result.SUCCESS(true);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);

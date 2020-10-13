@@ -1,11 +1,16 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.config.CronTaskRegistrar;
+import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.exception.SchedulerExistedException;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.repository.SysScheduleTaskRepo;
+import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.SysScheduleTaskService;
+import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +34,7 @@ import java.util.Map;
  * @Date: 2020.09.14
  */
 @Service
+@Slf4j
 public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
 
     @Autowired
@@ -35,6 +42,9 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
 
     @Autowired
     private CronTaskRegistrar cronTaskRegistrar;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Page<SysScheduleTaskEntity> getSysScheduleTasks(PageRequest<Map<String, Object>> params) {
@@ -124,4 +134,116 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
         return sysScheduleTaskRepo.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
     }
 
+    @Override
+    public String addScheduleTask(ScheduleTaskParams scheduleTaskParams) throws Exception {
+        String id = scheduleTaskParams.getId();
+        String jobClassName = scheduleTaskParams.getJobClassName();
+        String jobMethodName = scheduleTaskParams.getJobMethodName();
+        String cronExpression = scheduleTaskParams.getCronExpression();
+        if (vaildateParams(id, jobClassName, jobMethodName, cronExpression)) {
+            throw new SchedulerExistedException(String.valueOf(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION));
+        }
+        SysScheduleTaskEntity sysScheduleTaskEntity;
+        if (StringUtils.isBlank(scheduleTaskParams.getId())) {
+            sysScheduleTaskEntity = new SysScheduleTaskEntity();
+            sysScheduleTaskEntity.setGmtCreate(LocalDateTime.now());
+            sysScheduleTaskEntity.setCreateBy(userService.findIdByUsername());
+            sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+        } else {
+            sysScheduleTaskEntity = this.getSysScheduleTaskById(scheduleTaskParams.getId());
+            sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
+            sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
+        }
+        sysScheduleTaskEntity.setJobClassName(jobClassName);
+        sysScheduleTaskEntity.setJobMethodName(jobMethodName);
+        sysScheduleTaskEntity.setCronExpression(cronExpression);
+        sysScheduleTaskEntity.setJsonParam(scheduleTaskParams.getJsonParam());
+        sysScheduleTaskEntity.setDescription(scheduleTaskParams.getDescription());
+        sysScheduleTaskEntity.setJobGroup("".equals(scheduleTaskParams.getJobGroup()) ? null : scheduleTaskParams.getJobGroup());
+        sysScheduleTaskEntity.setStatus(scheduleTaskParams.getStatus());
+
+        return this.saveAndScheduleJob(sysScheduleTaskEntity);
+    }
+
+    /**
+     * check param jobClassName, jobMethodName, cronExpression
+     *
+     * @param id
+     * @param jobClassName
+     * @param jobMethodName
+     * @param cronExpression
+     * @return
+     * @throws Exception
+     */
+    private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
+        boolean res = false;
+        if (StringUtils.isBlank(id)) {
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
+            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
+                res = true;
+            }
+        } else {
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
+            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
+                res = true;
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public void delScheduleTask(String id) throws Exception {
+        if (StringUtils.isNotBlank(id)) {
+            SysScheduleTaskEntity sysScheduleTaskEntity = this.getSysScheduleTaskById(id);
+            if (sysScheduleTaskEntity == null) {
+                throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
+            } else {
+                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                boolean res = this.stopScheduleTask(key);
+                log.info("删除任务{}，结果{}", key, res);
+                if (res || ConstUtil.STATUS_STOP == sysScheduleTaskEntity.getStatus()) {
+                    sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_DELETED);
+                    sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
+                    sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
+                    this.saveAndScheduleJob(sysScheduleTaskEntity);
+                } else {
+                    throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
+                }
+            }
+        } else {
+            throw new Exception(String.valueOf(ExceptionEnum.PARAMS_NULL_EXCEPTION));
+        }
+    }
+
+    @Override
+    public void changeStatus(String id) throws Exception {
+        if (StringUtils.isNotBlank(id)) {
+            SysScheduleTaskEntity sysScheduleTaskEntity = this.getSysScheduleTaskById(id);
+            if (sysScheduleTaskEntity == null) {
+                throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
+            } else {
+                if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus()) {
+                    String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                    boolean res = this.stopScheduleTask(key);
+                    log.info("删除任务{}，结果{}", key, res);
+                    if (res) {
+                        sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_STOP);
+                        sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
+                        sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
+                        this.saveAndScheduleJob(sysScheduleTaskEntity);
+                    } else {
+                        throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
+                    }
+                } else {
+                    this.startScheduleTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
+                    sysScheduleTaskEntity.setStatus(ConstUtil.STATUS_NORMAL);
+                    sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
+                    sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
+                    this.saveAndScheduleJob(sysScheduleTaskEntity);
+                }
+            }
+        } else {
+            throw new Exception(String.valueOf(ExceptionEnum.PARAMS_NULL_EXCEPTION));
+        }
+    }
 }

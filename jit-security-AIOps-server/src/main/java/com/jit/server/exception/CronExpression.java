@@ -8,14 +8,14 @@ package com.jit.server.exception;
 public class CronExpression extends ReflectiveOperationException {
 
     /**
-     * Constructs a <code>NoSuchMethodException</code> without a detail message.
+     * Constructs a <code>CronExpression</code> without a detail message.
      */
     public CronExpression() {
         super();
     }
 
     /**
-     * Constructs a <code>NoSuchMethodException</code> with a detail message.
+     * Constructs a <code>CronExpression</code> with a detail message.
      *
      * @param s the detail message.
      */
