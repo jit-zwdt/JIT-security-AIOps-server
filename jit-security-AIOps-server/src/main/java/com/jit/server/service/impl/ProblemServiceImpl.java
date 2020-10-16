@@ -151,6 +151,8 @@ public class ProblemServiceImpl implements ProblemService {
             if (severities != null && !severities.isEmpty()) {
                 params_pro.setSeverities(severities);
                 params_pro.setHostids(hostIds);
+                params_pro.setSortFields(Arrays.asList(new String[]{"eventid"}));
+                params_pro.setSortOrder(Arrays.asList(new String[]{"DESC"}));
                 List<ZabbixProblemDTO> listZ = zabbixProblemService.get(params_pro, auth);
                 List<ProblemClaimDTO> problemClaimDTOS = new ArrayList<>();
                 for (ZabbixProblemDTO zabbixProblemDTO : listZ) {
