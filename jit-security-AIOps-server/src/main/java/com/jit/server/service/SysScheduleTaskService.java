@@ -22,9 +22,9 @@ public interface SysScheduleTaskService {
 
     List<SysScheduleTaskEntity> getScheduleTaskList() throws Exception;
 
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression) throws Exception;
+    List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
 
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception;
+    List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
 
     String addScheduleTask(ScheduleTaskParams scheduleTaskParams) throws Exception;
 

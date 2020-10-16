@@ -101,7 +101,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
                 }
             }
             if (ConstUtil.STATUS_STOP == sysScheduleTaskEntity.getStatus() && ConstUtil.IS_NOT_DELETED == sysScheduleTaskEntity.getIsDeleted()) {
-                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + "){" + sysScheduleTaskEntity.getJsonParam() + "}";
                 cronTaskRegistrar.removeCronTask(key);
             }
         }
@@ -125,13 +125,13 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     }
 
     @Override
-    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression) throws Exception {
-        return sysScheduleTaskRepo.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
+    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
+        return sysScheduleTaskRepo.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression, param);
     }
 
     @Override
-    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
-        return sysScheduleTaskRepo.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
+    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
+        return sysScheduleTaskRepo.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression, param);
     }
 
     @Override
@@ -140,7 +140,8 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
         String jobClassName = scheduleTaskParams.getJobClassName();
         String jobMethodName = scheduleTaskParams.getJobMethodName();
         String cronExpression = scheduleTaskParams.getCronExpression();
-        if (vaildateParams(id, jobClassName, jobMethodName, cronExpression)) {
+        String param = scheduleTaskParams.getJsonParam();
+        if (vaildateParams(id, jobClassName, jobMethodName, cronExpression, param)) {
             throw new SchedulerExistedException(String.valueOf(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION));
         }
         SysScheduleTaskEntity sysScheduleTaskEntity;
@@ -166,7 +167,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     }
 
     /**
-     * check param jobClassName, jobMethodName, cronExpression
+     * check param jobClassName, jobMethodName, cronExpression, param
      *
      * @param id
      * @param jobClassName
@@ -175,15 +176,15 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
      * @return
      * @throws Exception
      */
-    private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
+    private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
         boolean res = false;
         if (StringUtils.isBlank(id)) {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression, param);
             if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
                 res = true;
             }
         } else {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
+            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression, param);
             if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
                 res = true;
             }
@@ -198,7 +199,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
             if (sysScheduleTaskEntity == null) {
                 throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
             } else {
-                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + "){" + sysScheduleTaskEntity.getJsonParam() + "}";
                 boolean res = this.stopScheduleTask(key);
                 log.info("删除任务{}，结果{}", key, res);
                 if (res || ConstUtil.STATUS_STOP == sysScheduleTaskEntity.getStatus()) {
@@ -223,7 +224,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
                 throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
             } else {
                 if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus()) {
-                    String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + ")";
+                    String key = sysScheduleTaskEntity.getJobClassName() + "." + sysScheduleTaskEntity.getJobMethodName() + "(" + sysScheduleTaskEntity.getCronExpression() + "){" + sysScheduleTaskEntity.getJsonParam() + "}";
                     boolean res = this.stopScheduleTask(key);
                     log.info("删除任务{}，结果{}", key, res);
                     if (res) {

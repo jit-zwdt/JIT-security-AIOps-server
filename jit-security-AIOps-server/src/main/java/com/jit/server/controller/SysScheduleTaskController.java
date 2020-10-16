@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,33 +71,6 @@ public class SysScheduleTaskController {
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
-    }
-
-
-    /**
-     * check param jobClassName, jobMethodName, cronExpression
-     *
-     * @param id
-     * @param jobClassName
-     * @param jobMethodName
-     * @param cronExpression
-     * @return
-     * @throws Exception
-     */
-    private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression) throws Exception {
-        boolean res = false;
-        if (StringUtils.isBlank(id)) {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = sysScheduleTaskService.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression);
-            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
-                res = true;
-            }
-        } else {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = sysScheduleTaskService.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression);
-            if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
-                res = true;
-            }
-        }
-        return res;
     }
 
     @ResponseBody

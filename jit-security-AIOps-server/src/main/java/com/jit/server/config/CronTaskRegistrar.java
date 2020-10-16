@@ -83,7 +83,7 @@ public class CronTaskRegistrar implements DisposableBean {
         if (!CronValidate.isValidExpression(cronExpression)) {
             throw new CronExpression("cron is not valid");
         }
-        String key = className + "." + methodName + "(" + cronExpression + ")";
+        String key = className + "." + methodName + "(" + cronExpression + "){" + param + "}";
         SchedulingRunnable task = new SchedulingRunnable(className, methodName, param);
         addCronTask(key, new CronTask(task, cronExpression));
     }

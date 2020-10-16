@@ -21,10 +21,10 @@ public interface SysScheduleTaskRepo extends JpaRepository<SysScheduleTaskEntity
 
     List<SysScheduleTaskEntity> findByIsDeletedAndStatusOrderByGmtCreate(int isNotDeleted, int status);
 
-    @Query("select s from SysScheduleTaskEntity s where s.isDeleted = 0 and s.jobClassName = ?1 and s.jobMethodName = ?2 and s.cronExpression = ?3 order by s.gmtCreate")
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression);
+    @Query("select s from SysScheduleTaskEntity s where s.isDeleted = 0 and s.jobClassName = ?1 and s.jobMethodName = ?2 and s.cronExpression = ?3 and s.jsonParam = ?4 order by s.gmtCreate")
+    List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param);
 
-    @Query("select s from SysScheduleTaskEntity s where s.isDeleted = 0 and s.id <> ?1 and s.jobClassName = ?2 and s.jobMethodName = ?3 and s.cronExpression = ?4 order by s.gmtCreate")
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression);
+    @Query("select s from SysScheduleTaskEntity s where s.isDeleted = 0 and s.id <> ?1 and s.jobClassName = ?2 and s.jobMethodName = ?3 and s.cronExpression = ?4 and s.jsonParam = ?5 order by s.gmtCreate")
+    List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param);
 
 }
