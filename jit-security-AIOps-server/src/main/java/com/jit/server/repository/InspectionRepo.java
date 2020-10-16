@@ -22,7 +22,7 @@ public interface InspectionRepo extends JpaRepository<HostEntity, String>, JpaSp
     @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0")
     List<HostEntity> getHostInfo();
 
-    @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0 and h.id = ?1")
+    @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0 and h.hostId = ?1")
     List<HostEntity> getHostInfoById(String id);
 
 }

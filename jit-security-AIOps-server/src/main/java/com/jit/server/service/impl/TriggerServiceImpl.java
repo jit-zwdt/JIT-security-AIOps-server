@@ -98,4 +98,19 @@ public class TriggerServiceImpl implements TriggerService {
 
         return zabbixTriggerService.get(paramsTrigger, auth);
     }
+
+    @Override
+    public List<ZabbixTriggerDTO> findTriggerById(String[] params,String auth) throws Exception {
+
+        ZabbixGetTriggerParams paramsTrigger = new ZabbixGetTriggerParams();
+        if (params != null) {
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("triggerid", params);
+            paramsTrigger.setFilter(filter);
+        }
+        paramsTrigger.setOutput(TRIGGER_EXTEND);
+        paramsTrigger.setSelectFunctions(TRIGGER_EXTEND);
+
+        return zabbixTriggerService.get(paramsTrigger, auth);
+    }
 }

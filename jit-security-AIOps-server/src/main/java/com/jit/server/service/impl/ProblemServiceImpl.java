@@ -284,4 +284,15 @@ public class ProblemServiceImpl implements ProblemService {
         LocalDateTime resolveTimeEnd1 = LocalDateTime.parse(resolveTimeEnd + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         return monitorClaimRepo.findByIsResolve(resolveTimeStart1, resolveTimeEnd1);
     }
+
+    @Override
+    public List<ZabbixProblemDTO> findProblemById(String[] params,String auth) throws Exception {
+        ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
+        if (params!= null ) {
+            Map<String, Object> mapFilter = new HashMap();
+            mapFilter.put("objectid", params);
+            params_pro.setFilter(mapFilter);
+        }
+        return zabbixProblemService.get(params_pro, auth);
+    }
 }

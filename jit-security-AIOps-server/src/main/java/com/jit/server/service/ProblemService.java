@@ -36,4 +36,6 @@ public interface ProblemService {
     List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName);
 
     List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName, String resolveTimeStart, String resolveTimeEnd);
+
+    List<ZabbixProblemDTO> findProblemById(String[] params,String auth) throws Exception;
 }
