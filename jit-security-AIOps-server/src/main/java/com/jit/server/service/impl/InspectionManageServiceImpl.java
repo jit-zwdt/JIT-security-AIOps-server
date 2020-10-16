@@ -1,23 +1,24 @@
 package com.jit.server.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.jit.server.config.FtpConfig;
 import com.jit.server.pojo.HostEntity;
-import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.InspectionRepo;
 import com.jit.server.service.InspectionManageService;
+import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.StringUtils;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,8 @@ import java.util.UUID;
 public class InspectionManageServiceImpl implements InspectionManageService {
     @Autowired
     private InspectionRepo inspectionRepo;
+    @Autowired
+    private FtpConfig ftpConfig;
 
     @Override
     public List<HostEntity> getHostInfo(String id) throws Exception {
@@ -43,22 +46,21 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     }
 
     @Override
-    public String createPDF() throws Exception {
+    public void createPDF(String jsonresult) throws Exception {
         try {
             String filename = UUID.randomUUID().toString();
             String basePath = getResourceBasePath();
             String resourcePath = new File(basePath, "src/main/java/com/jit/server/file/pdf/" + filename + ".pdf").getAbsolutePath();
             ensureDirectory(resourcePath);
             String filepath = resourcePath;
-            makeDocumentdata(filepath);
-            return filepath;
+            makeDocumentdata(filepath, jsonresult);
+            makepdf(filepath);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
-    public static void makeDocumentdata(String filepath) {
+    public static void makeDocumentdata(String filepath, String jsonresult) {
         Document document = new Document(PageSize.A4);
         try {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filepath));
@@ -71,11 +73,11 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             docTitle.setAlignment(Element.ALIGN_CENTER);
             docTitle.setSpacingBefore(10);
             document.add(docTitle);
-            PdfPTable table = createHeaderTable();
+            PdfPTable table = createHeaderTable(jsonresult);
             document.add(table);
             Paragraph blankRow = new Paragraph(18f, " ", title40);
             document.add(blankRow);
-            PdfPTable tableChild = createChildTable();
+            PdfPTable tableChild = createChildTable(jsonresult);
             document.add(tableChild);
             document.add(blankRow);
             PdfPTable tableFooter = createFooterTable();
@@ -89,7 +91,12 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         }
     }
 
-    public static PdfPTable createHeaderTable() throws DocumentException, IOException {
+    public static PdfPTable createHeaderTable(String jsonresult) throws DocumentException, IOException {
+        JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+        String sumNum = jsonObject.get("sumNum")+"";
+        String exSumNum =  jsonObject.get("exSumNum")+"";
+        String schemeName =  jsonObject.get("schemeName")+"";
+
         BaseFont bfChinese = BaseFont.createFont( "STSongStd-Light" ,"UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
         Font font = new Font(bfChinese, 12,Font.NORMAL);
 
@@ -101,20 +108,14 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         table.setLockedWidth(true); //锁定列宽
         PdfPCell cell;
 
-        // Set Column widths
-//        float[] columnWidths = { 1f, 1f, 1f, 1f};
-//        table.setWidths(columnWidths);
-//        int size = 15;
-
-        cell = new PdfPCell(new Paragraph("巡检对象", font));
-//        cell1.setBorderColor(BaseColor.BLUE);
+        cell = new PdfPCell(new Paragraph("巡检计划名称", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("服务器【Windows0717】", font));
+        cell = new PdfPCell(new Paragraph(schemeName, font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -165,10 +166,46 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
+        cell = new PdfPCell(new Paragraph("巡检总数", font));
+        cell.setPaddingLeft(10);
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(17);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Paragraph(sumNum+"", font));
+        cell.setPaddingLeft(10);
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(17);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Paragraph("异常数量", font));
+        cell.setPaddingLeft(10);
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(17);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Paragraph(exSumNum+"", font));
+        cell.setPaddingLeft(10);
+        try {
+            if (exSumNum != null &&  Integer.valueOf(exSumNum) > 0) {
+                cell.setBorderColor(BaseColor.RED);
+            }
+        }catch(Exception e) {
+             e.printStackTrace();
+        }
+
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(17);
+        table.addCell(cell);
+
         return table;
     }
 
-    public static PdfPTable createChildTable() throws DocumentException, IOException {
+    public static PdfPTable createChildTable(String jsonresult) throws DocumentException, IOException {
         BaseFont bfChinese = BaseFont.createFont( "STSongStd-Light" ,"UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
         Font font = new Font(bfChinese, 12,Font.NORMAL);
         Font font8 = new Font(bfChinese, 8,Font.NORMAL);
@@ -179,16 +216,26 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         table.setSpacingAfter(10f); // Space after table
         table.setTotalWidth(500); //设置列宽
         table.setLockedWidth(true); //锁定列宽
+        int width[] = {5,20,60,20};
+        table.setWidths(width);
         PdfPCell cell;
 
-        cell = new PdfPCell(new Paragraph("检查项目", font));
+        cell = new PdfPCell(new Paragraph("序号", font));
+        cell.setPaddingLeft(1);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(17);
+        table.addCell(cell);
+
+
+        cell = new PdfPCell(new Paragraph("主机名称", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("结果", font));
+        cell = new PdfPCell(new Paragraph("巡检对象", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -200,52 +247,47 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setMinimumHeight(17);
-        cell.setColspan(2);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("内存", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
+        JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+        String resultData = jsonObject.get("resultData") + "";
+        JSONArray infojson = JSONArray.parseArray(resultData);
+        for (int i = 0; i < infojson.size(); i++) {
+            JSONObject job = infojson.getJSONObject(i);
 
-        cell = new PdfPCell(new Paragraph("正常", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
+            String num = job.get("num") + "";
+            String hostname = job.get("hostname") + "";
+            String description = job.get("description") + "";
+            String datainfo = job.get("datainfo") + "";
 
-        cell = new PdfPCell(new Paragraph("内存使用率：20%", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        cell.setColspan(2);
-        table.addCell(cell);
+            cell = new PdfPCell(new Paragraph(num, font8));
+            cell.setPaddingLeft(1);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setMinimumHeight(17);
+            table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("磁盘空间", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
+            cell = new PdfPCell(new Paragraph(hostname, font8));
+            cell.setPaddingLeft(10);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setMinimumHeight(17);
+            table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("异常", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
+            cell = new PdfPCell(new Paragraph(description, font8));
+            cell.setPaddingLeft(10);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setMinimumHeight(17);
+            table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("磁盘空间使用率：98%！请联系负责人进行排查。", font8));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        cell.setColspan(2);
-        table.addCell(cell);
+            cell = new PdfPCell(new Paragraph(datainfo, font8));
+            cell.setPaddingLeft(10);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setMinimumHeight(17);
+            table.addCell(cell);
+        }
 
         return table;
     }
@@ -309,16 +351,71 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         try {
             path = new File(ResourceUtils.getURL("classpath:").getPath());
         } catch (FileNotFoundException e) {
-            // nothing to do
+            e.printStackTrace();
         }
         if (path == null || !path.exists()) {
             path = new File("");
         }
 
         String pathStr = path.getAbsolutePath();
-        // 如果是在eclipse中运行，则和target同级目录,如果是jar部署到服务器，则默认和jar包同级
         pathStr = pathStr.replace("\\target\\classes", "");
 
         return pathStr;
     }
+
+    public String makepdf(String filepath) throws Exception {
+        if (filepath == null) {
+            throw new Exception("pdf路径为空");
+        }
+        String url = "";
+        File file = new File(filepath);
+        if (file.exists()) {
+            FileInputStream input = null;
+            try {
+                input = new FileInputStream(file);
+                url = makeftp(input, filepath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (input != null) {
+                    input.close();
+                }
+                if (file != null) {
+                    file.delete();
+                }
+            }
+            return url;
+        } else {
+            return url;
+        }
+    }
+
+    public String makeftp(FileInputStream file, String filepath) throws Exception {
+        FTPClient ftp = null;
+        String url = "";
+        try {
+            if (file != null) {
+                String path = "/patrol/";
+                FtpClientUtil a = new FtpClientUtil();
+                ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
+                url = a.uploadFile(ftp, path, filepath, file);
+                url = url.replace("/", "");
+                return url;
+            } else {
+                return url;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ftp.isConnected()) {
+                try {
+                    ftp.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return url;
+    }
+
 }
