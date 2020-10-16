@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.CronExpressionDTO;
 import com.jit.server.pojo.SysCronExpressionEntity;
 import com.jit.server.repository.SysCronExpressionRepo;
 import com.jit.server.service.SysCronExpressionService;
@@ -52,6 +53,26 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
             //分页的定义
             Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
             return sysCronExpressionRepo.findAll(spec, pageable);
+        }
+        return null;
+    }
+
+    @Override
+    public List<CronExpressionDTO> getCronExpressionObject() throws Exception {
+        List<CronExpressionDTO> res;
+        List<Object> objectList = sysCronExpressionRepo.getCronExpressionObject();
+        if (objectList != null && !objectList.isEmpty()) {
+            res = new ArrayList<>(objectList.size());
+            Object[] object;
+            CronExpressionDTO cronExpressionDTO;
+            for (int i = 0, len = objectList.size(); i < len; i++) {
+                object = (Object[]) objectList.get(i);
+                cronExpressionDTO = new CronExpressionDTO();
+                cronExpressionDTO.setCronExpressionDesc(object[0] != null ? object[0].toString() : "");
+                cronExpressionDTO.setCronExpression(object[1] != null ? object[1].toString() : "");
+                res.add(cronExpressionDTO);
+            }
+            return res;
         }
         return null;
     }
