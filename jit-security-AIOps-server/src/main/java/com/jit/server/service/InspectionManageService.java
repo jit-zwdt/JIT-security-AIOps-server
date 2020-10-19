@@ -2,6 +2,8 @@ package com.jit.server.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
+import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 
 import java.util.List;
 

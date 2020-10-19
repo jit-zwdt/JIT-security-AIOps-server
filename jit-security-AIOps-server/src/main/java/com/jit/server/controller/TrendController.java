@@ -3,15 +3,14 @@ package com.jit.server.controller;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.pojo.MonitorHostDetailBindItems;
+import com.jit.server.request.HistoryParams;
 import com.jit.server.request.TrendParams;
-import com.jit.server.service.MonitorHostDetailBindGraphsService;
-import com.jit.server.service.MonitorHostDetailBindItemsService;
-import com.jit.server.service.TrendService;
+import com.jit.server.service.*;
 import com.jit.server.util.ConstUtil;
-import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
+import com.jit.zabbix.client.dto.ZabbixHistoryDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ import java.util.List;
 @RequestMapping("/trend")
 public class TrendController {
     @Autowired
-    private TrendService trendService;
+    private HistoryService historyService;
 
     @Autowired
     private MonitorHostDetailBindItemsService monitorHostDetailBindItemsService;
@@ -46,11 +45,11 @@ public class TrendController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getItemInfoList")
-    public Result getItemInfoList(@RequestBody TrendParams trendParams, HttpServletRequest req) throws IOException {
+    public Result getItemInfoList(@RequestBody HistoryParams historyParams, HttpServletRequest req) throws IOException {
         try {
-            if (trendParams != null && trendParams.getItemids() != null) {
+            if (historyParams != null && historyParams.getItemids() != null) {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-                List<ZabbixGetTrendDTO> result = trendService.getTrendInfoList(trendParams, auth);
+                List<ZabbixHistoryDTO> result = historyService.getHistoryInfoList(historyParams, auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
                     return Result.SUCCESS(result);
                 } else {

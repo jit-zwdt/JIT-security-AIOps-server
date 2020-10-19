@@ -68,23 +68,37 @@ public class FtpClientUtil {
      * @return boolean
      */
     public String uploadFile(FTPClient ftp, String path, String fileName, InputStream inputStream) {
-        boolean status = fileName.contains("/");
-        if(status){
-            String[] a = fileName.split("/");
-            try {
-                for (int i=0;i<a.length-1;i++) {
-                    if (!ftp.changeWorkingDirectory(a[i])) {
-                        ftp.makeDirectory(a[i]);
-                        ftp.changeWorkingDirectory(a[i]);
-                    }
-                    path += a[i]+"/";
-                }
-                fileName = fileName.substring(fileName.lastIndexOf("/"),fileName.length());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try {
+            boolean status = fileName.contains("/");
+            if(status){
+                String[] a = fileName.split("/");
+                try {
+                    for (int i=0;i<a.length-1;i++) {
+                        if (!ftp.changeWorkingDirectory(a[i])) {
+                            ftp.makeDirectory(a[i]);
+                            ftp.changeWorkingDirectory(a[i]);
+                        }
+                        path += a[i]+"/";
+                    }
+                    fileName = fileName.substring(fileName.lastIndexOf("/"),fileName.length());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            boolean pathstatus = path.contains("/");
+            if(pathstatus){
+                String[] a = path.split("/");
+                try {
+                    for (int i=0;i<a.length;i++) {
+                        if (!ftp.changeWorkingDirectory(a[i])) {
+                            ftp.makeDirectory(a[i]);
+                            ftp.changeWorkingDirectory(a[i]);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             //重新命名不重复的文件名
             fileName = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."), fileName.length());
             path = new String(path.getBytes("GBK"), "ISO-8859-1");
@@ -196,4 +210,5 @@ public class FtpClientUtil {
         // 把outStream里的数据写入内存
         return outStream.toByteArray();
     }
+
 }

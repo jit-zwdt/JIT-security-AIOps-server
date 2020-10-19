@@ -1,6 +1,7 @@
 package com.jit.server.repository;
 
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,7 +18,7 @@ import java.util.List;
  * @Date: 2020/09/23 10:25
  */
 @Repository
-public interface InspectionRepo extends JpaRepository<HostEntity, String>, JpaSpecificationExecutor<HostEntity> {
+public interface InspectionRepo extends JpaRepository<MonitorSchemeTimerTaskEntity, String>, JpaSpecificationExecutor<MonitorSchemeTimerTaskEntity> {
 
     @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0")
     List<HostEntity> getHostInfo();
