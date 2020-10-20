@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.dto.CronExpressionDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysCronExpressionEntity;
 import com.jit.server.service.SysCronExpressionService;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,4 +43,18 @@ public class SysCronExpressionController {
         }
     }
 
+    /**
+     * 获取所有的巡检时间数据
+     * @return 统一返回对象 封装了巡检时间数据对象集合
+     */
+    @PostMapping("/getCronExpressionObject")
+    public Result getCronExpressionObject(){
+        try {
+            List<CronExpressionDTO> cronExpressionObject = sysCronExpressionService.getCronExpressionObject();
+            return Result.SUCCESS(cronExpressionObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 }
