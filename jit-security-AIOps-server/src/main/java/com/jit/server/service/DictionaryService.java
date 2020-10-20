@@ -18,7 +18,7 @@ public interface DictionaryService {
 
     SysDictionaryEntity addDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception;
 
-    List<SysDictionaryItemEntity> findByDictId(String id,String itemName,int status,int currentPage,int pageSize);
+    List<SysDictionaryItemEntity> findByDictId(String id, String itemName, int status, int currentPage, int pageSize);
 
     Optional<SysDictionaryItemEntity> findDictionaryItemById(String id);
 
@@ -26,15 +26,25 @@ public interface DictionaryService {
 
     SysDictionaryItemEntity addDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception;
 
-    int getDictionaryItemCount(String id,String itemText,int status);
+    int getDictionaryItemCount(String id, String itemText, int status);
 
     SysDictionaryEntity getByDictName(String dictName);
 
     SysDictionaryEntity getByDictCode(String dictCode);
 
-    SysDictionaryItemEntity getByItemText(String itemName,String dictId);
+    SysDictionaryItemEntity getByItemText(String itemName, String dictId);
 
     List<SysDictionaryItemEntity> getDictionaryByCode(String code);
 
     List<DictDTO> getDictByCode(String code) throws Exception;
+
+    /**
+     * 根据字典编码和子项值获取子项名称
+     *
+     * @param dictCode  这个应该从也页面获取
+     * @param itemValue
+     * @return
+     * @throws Exception
+     */
+    String getItemTextByDictCodeAndItemValue(String dictCode, String itemValue) throws Exception;
 }
