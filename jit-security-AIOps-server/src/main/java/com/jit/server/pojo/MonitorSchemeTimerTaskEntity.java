@@ -53,6 +53,12 @@ public class MonitorSchemeTimerTaskEntity {
 	private java.time.LocalDateTime gmtModified;
 
 	/**
+	 * 父级 ID 如果没有父级 ID 默认为 1
+	 */
+	@Column(name = "parent_id")
+	private String parentId;
+
+	/**
 	 * 创建者
 	 */
 	@Column(name = "create_by")

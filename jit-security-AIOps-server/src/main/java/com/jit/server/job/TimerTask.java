@@ -38,6 +38,7 @@ public class TimerTask {
         String info = jsonObject.get("info") + "";
         String scheduleId = jsonObject.get("scheduleId") + "";
         String username = jsonObject.get("username") + "";
+        String parentId = jsonObject.get("parentId") + "";
         JSONArray infojson = JSONArray.parseArray(info);
         if (infojson == null) {
             throw new Exception("巡检对象参数异常");
@@ -88,6 +89,7 @@ public class TimerTask {
         jsonresult.put("schemeName", schemeName);
         jsonresult.put("scheduleId", scheduleId);
         jsonresult.put("username", username);
+        jsonresult.put("parentId" , parentId);
         inspectionManageService.createPDF(jsonresult.toString());
 
     }
