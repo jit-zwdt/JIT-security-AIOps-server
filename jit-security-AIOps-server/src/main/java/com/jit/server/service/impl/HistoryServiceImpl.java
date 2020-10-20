@@ -35,6 +35,7 @@ public class HistoryServiceImpl implements HistoryService {
         ZabbixGetHistoryParams params = new ZabbixGetHistoryParams();
         List<String> itemids = historyParams.getItemids();
         if (itemids != null && !CollectionUtils.isEmpty(itemids)) {
+            params.setHistory(historyParams.getHistory());
             params.setItemIds(itemids);
             params.setSortFields(TREND_ARRAY_NAME);
             params.setLimit(ConstUtil.LIMIT_MAX);

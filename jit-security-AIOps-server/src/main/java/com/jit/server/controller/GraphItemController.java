@@ -97,6 +97,12 @@ public class GraphItemController {
                         HistoryParams historyParams = new HistoryParams();
                         List<String> _itemId = new ArrayList<>();
                         _itemId.add(result.get(i).getItemId());
+                        for(int j = 0; j < item.size(); j++){
+                            if(result.get(i).getItemId().equals(item.get(j).getId())){
+                                historyParams.setHistory(item.get(j).getValueType().getValue());
+                                break;
+                            }
+                        }
                         historyParams.setItemids(_itemId);
                         historyParams.setTimefrom(graphItemParams.getTimefrom());
                         historyParams.setTimetill(graphItemParams.getTimetill());

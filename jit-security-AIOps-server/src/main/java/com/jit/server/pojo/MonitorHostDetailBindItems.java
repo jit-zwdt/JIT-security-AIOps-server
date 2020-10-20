@@ -54,6 +54,12 @@ public class MonitorHostDetailBindItems {
     private String itemName;
 
     /**
+     * 要返回的历史对象类型
+     */
+    @Column(name = "value_type")
+    private int valueType;
+
+    /**
      * 删除标识 0：表示未删除， 1：表示删除
      */
     @Column(name = "is_deleted")
