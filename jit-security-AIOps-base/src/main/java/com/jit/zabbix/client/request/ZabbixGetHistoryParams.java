@@ -21,6 +21,7 @@ import java.util.List;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ZabbixGetHistoryParams extends CommonGetParams {
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int history;
     @JsonProperty("hostids")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

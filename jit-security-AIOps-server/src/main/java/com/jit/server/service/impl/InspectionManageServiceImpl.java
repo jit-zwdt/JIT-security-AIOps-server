@@ -9,8 +9,11 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import com.jit.server.repository.InspectionRepo;
 import com.jit.server.service.InspectionManageService;
+import com.jit.server.service.UserService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -19,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +34,6 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     private InspectionRepo inspectionRepo;
     @Autowired
     private FtpConfig ftpConfig;
-
     @Override
     public List<HostEntity> getHostInfo(String id) throws Exception {
         try {
@@ -54,7 +59,8 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             ensureDirectory(resourcePath);
             String filepath = resourcePath;
             makeDocumentdata(filepath, jsonresult);
-            makepdf(filepath);
+            String url = makepdf(filepath, jsonresult);
+            createSchemeTable(url, jsonresult);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -363,7 +369,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return pathStr;
     }
 
-    public String makepdf(String filepath) throws Exception {
+    public String makepdf(String filepath, String jsonresult) throws Exception {
         if (filepath == null) {
             throw new Exception("pdf路径为空");
         }
@@ -373,7 +379,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             FileInputStream input = null;
             try {
                 input = new FileInputStream(file);
-                url = makeftp(input, filepath);
+                url = makeftp(input, filepath, jsonresult);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -390,12 +396,20 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         }
     }
 
-    public String makeftp(FileInputStream file, String filepath) throws Exception {
+    public String makeftp(FileInputStream file, String filepath, String jsonresult) throws Exception {
         FTPClient ftp = null;
         String url = "";
         try {
             if (file != null) {
-                String path = "/patrol/";
+                JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+                String schemeName =  jsonObject.get("schemeName")+"";
+                if (schemeName == null || schemeName.equals("")) {
+                    schemeName = "巡检计划";
+                }
+                SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHH");
+                SimpleDateFormat sft = new SimpleDateFormat("yyyyMMdd");
+                Date date = new Date();
+                String path = "/"+sft.format(date)+"/"+schemeName+"/"+sf.format(date)+"/";
                 FtpClientUtil a = new FtpClientUtil();
                 ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
                 url = a.uploadFile(ftp, path, filepath, file);
@@ -417,5 +431,26 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         }
         return url;
     }
+
+    public void createSchemeTable(String url, String jsonresult) throws Exception {
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+            String scheduleId = jsonObject.get("scheduleId")+"";
+            String schemeName = jsonObject.get("schemeName")+"";
+            String username = jsonObject.get("username")+"";
+            MonitorSchemeTimerTaskEntity schemeTimerTaskEntity = new MonitorSchemeTimerTaskEntity();
+            schemeTimerTaskEntity.setScheduleId(scheduleId);
+            schemeTimerTaskEntity.setSchemeName(schemeName);
+            schemeTimerTaskEntity.setFtpUrl(url);
+            schemeTimerTaskEntity.setGmtCreate(LocalDateTime.now());
+            schemeTimerTaskEntity.setCreateBy(username);
+            schemeTimerTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            inspectionRepo.save(schemeTimerTaskEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
 
 }

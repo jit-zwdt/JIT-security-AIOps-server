@@ -2,11 +2,10 @@ package com.jit.server.job;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
-import com.jit.server.service.TriggerService;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +36,8 @@ public class TimerTask {
         String schemeName = jsonObject.get("schemeName")+"";
         String auth = jsonObject.get("auth") + "";
         String info = jsonObject.get("info") + "";
+        String scheduleId = jsonObject.get("scheduleId") + "";
+        String username = jsonObject.get("username") + "";
         JSONArray infojson = JSONArray.parseArray(info);
         if (infojson == null) {
             throw new Exception("巡检对象参数异常");
@@ -85,6 +86,8 @@ public class TimerTask {
         jsonresult.put("exSumNum", result.size());
         jsonresult.put("resultData", resultData);
         jsonresult.put("schemeName", schemeName);
+        jsonresult.put("scheduleId", scheduleId);
+        jsonresult.put("username", username);
         inspectionManageService.createPDF(jsonresult.toString());
 
     }

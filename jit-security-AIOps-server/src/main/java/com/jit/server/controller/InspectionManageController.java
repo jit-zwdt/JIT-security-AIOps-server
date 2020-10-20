@@ -1,12 +1,13 @@
 package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPObject;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.SysScheduleTaskService;
+import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 @RestController
@@ -34,6 +32,9 @@ public class InspectionManageController {
 
     @Autowired
     private ZabbixAuthService zabbixAuthService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/getHostInfo")
     public Result getHostInfo(@RequestParam("id") String id) {
@@ -56,8 +57,10 @@ public class InspectionManageController {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
             String auth = zabbixAuthService.getAuth();
+            String username = userService.findIdByUsername();
             JSONObject jsonObject = JSONObject.parseObject(param);
             jsonObject.put("auth",auth);
+            jsonObject.put("username",username);
             ScheduleTaskParams st = new ScheduleTaskParams();
             st.setCronExpression(jsonObject.get("timerTask")+"");
             st.setJobClassName("com.jit.server.job.TimerTask");
