@@ -2,6 +2,7 @@ package com.jit.server.service.impl;
 
 
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.util.SeverityEnum;
@@ -28,21 +29,36 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Autowired
     private MonitorClaimRepo monitorClaimRepo;
 
+    @Autowired
+    private HostRepo hostRepo;
+
     @Override
     public List<String> getTheDateNewProblemList(String auth) throws Exception {
         List<String> res = null;
         ZabbixGetProblemParams zabbixGetProblemParams = new ZabbixGetProblemParams();
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDate localDate = LocalDateTime.now().toLocalDate();
-        zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
-        zabbixGetProblemParams.setTime_till(String.valueOf(LocalDateTime.parse(localDate + " 23:59:59", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
-        zabbixGetProblemParams.setSortFields(Arrays.asList(new String[]{"eventid"}));
-        zabbixGetProblemParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
-        List<ZabbixProblemDTO> zabbixProblemDTOList = zabbixProblemService.get(zabbixGetProblemParams, auth);
-        if (zabbixProblemDTOList != null && !zabbixProblemDTOList.isEmpty()) {
-            res = new ArrayList<>();
-            for (ZabbixProblemDTO zabbixProblemDTO : zabbixProblemDTOList) {
-                res.add("主机名：" + zabbixProblemDTO.getHost() + "，严重等级：" + SeverityEnum.fromValue(zabbixProblemDTO.getSeverity().getValue()).name() + "，问题描述：" + zabbixProblemDTO.getName());
+        List<Object> hostIds = hostRepo.getHostIds();
+        if (hostIds != null && !hostIds.isEmpty()) {
+            List<String> hostIdList = new ArrayList<>(hostIds.size());
+            Object[] host;
+            String hostId;
+            for (int i = 0; i < hostIds.size(); i++) {
+                host = (Object[]) hostIds.get(i);
+                hostId = host[0] != null ? host[0].toString() : "";
+                hostIdList.add(hostId);
+            }
+            zabbixGetProblemParams.setHostids(hostIdList);
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDate localDate = LocalDateTime.now().toLocalDate();
+            zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
+            zabbixGetProblemParams.setTime_till(String.valueOf(LocalDateTime.parse(localDate + " 23:59:59", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
+            zabbixGetProblemParams.setSortFields(Arrays.asList(new String[]{"eventid"}));
+            zabbixGetProblemParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
+            List<ZabbixProblemDTO> zabbixProblemDTOList = zabbixProblemService.get(zabbixGetProblemParams, auth);
+            if (zabbixProblemDTOList != null && !zabbixProblemDTOList.isEmpty()) {
+                res = new ArrayList<>();
+                for (ZabbixProblemDTO zabbixProblemDTO : zabbixProblemDTOList) {
+                    res.add("主机名：" + zabbixProblemDTO.getHost() + "，严重等级：" + SeverityEnum.fromValue(zabbixProblemDTO.getSeverity().getValue()).name() + "，问题描述：" + zabbixProblemDTO.getName());
+                }
             }
         }
         return res;
