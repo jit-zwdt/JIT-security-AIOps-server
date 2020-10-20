@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * @Description: table assets entity
@@ -53,11 +52,11 @@ public class AssetsParams {
     @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
     private LocalDate logoutDate;
 
-    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime registerStartDate;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate registerStartDate;
 
-    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
-    private LocalDateTime registerEndDate;
+    @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
+    private LocalDate registerEndDate;
 
     @JsonDeserialize(using = CustomJsonSerializer.LocalDateStrDeserializer.class)
     private LocalDate dateRecorded;

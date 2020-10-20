@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserParams> getUserAndMediaInfo(String alias, String userid,String auth) throws Exception {
+    public List<UserParams> getUserAndMediaInfo(String alias, String userid, String auth) throws Exception {
         ZabbixGetUserParams params_user = new ZabbixGetUserParams();
         params_user.setOutput(EXTEND);
         if (!StringUtils.isEmpty(alias)) {
@@ -133,6 +133,16 @@ public class UserServiceImpl implements UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (StringUtils.isNotEmpty(username)) {
             return sysUserRepo.findIdByUsername(username);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String findNamebyUsername() throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (StringUtils.isNotEmpty(username)) {
+            return sysUserRepo.findNameByUsername(username);
         } else {
             return null;
         }

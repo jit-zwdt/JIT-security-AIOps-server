@@ -16,9 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,9 +36,7 @@ public class AssetsServiceImpl implements AssetsService {
                 @Override
                 public Predicate toPredicate(Root<MonitorAssetsEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     /** 可添加你的其他搜索过滤条件 默认已有创建时间过滤 **/
-                    Path<LocalDateTime> createTimeField = root.get("registerDate");
-                    Path<LocalDateTime> endTimeField = root.get("logoutDate");
-                    //Path<String> categoryIdField=root.get("categoryId");
+                    Path<LocalDate> createTimeField = root.get("registerDate");
 
                     /**
                      between : between and
@@ -57,7 +54,7 @@ public class AssetsServiceImpl implements AssetsService {
                         list.add(cb.greaterThanOrEqualTo(createTimeField, params.getRegisterStartDate()));
                     }
                     if (params.getRegisterEndDate() != null) {
-                        list.add(cb.lessThanOrEqualTo(endTimeField, params.getRegisterEndDate()));
+                        list.add(cb.lessThanOrEqualTo(createTimeField, params.getRegisterEndDate()));
                     }
                     /** 资产名称 **/
                     if (StringUtils.isNotEmpty(params.getName())) {
