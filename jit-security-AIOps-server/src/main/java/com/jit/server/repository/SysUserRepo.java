@@ -28,8 +28,11 @@ public interface SysUserRepo extends JpaRepository<SysUserEntity, String>, JpaSp
     @Query("SELECT u.id FROM SysUserEntity u WHERE u.status = 1 and u.username = ?1 and u.isDeleted = 0")
     String findIdByUsername(String username);
 
-    SysUserEntity findByUsernameAndIsDeleted(String username,int isDeleted);
+    SysUserEntity findByUsernameAndIsDeleted(String username, int isDeleted);
 
     @Query("SELECT u.name FROM SysUserEntity u WHERE u.id = ?1 and u.isDeleted = 0")
     String findNameById(String id);
+
+    @Query("SELECT u.name FROM SysUserEntity u WHERE u.username = ?1 and u.isDeleted = 0")
+    String findNameByUsername(String username);
 }

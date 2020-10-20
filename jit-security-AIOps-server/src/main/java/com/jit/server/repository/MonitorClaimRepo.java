@@ -41,4 +41,13 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
 
     @Query("select e from MonitorClaimEntity e where e.isResolve= 1 and e.resolveTime >= ?1 and e.resolveTime <= ?2")
     List<MonitorClaimEntity> findByIsResolve(LocalDateTime resolveTimeStart, LocalDateTime resolveTimeEnd);
+
+    @Query("select e from MonitorClaimEntity e where e.isDeleted= 0 and e.isResolve = 0 and e.claimTime >= ?1 and e.claimTime <= ?2")
+    List<MonitorClaimEntity> getClaimedMonitorClaimEntityByDate(LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
+
+    @Query("select distinct e from MonitorClaimEntity e,MonitorRegisterEntity r where e.isDeleted= 0 and e.isRegister = 1 and e.isResolve = 0 and e.id = r.claimId and r.gmtCreate >= ?1 and r.gmtCreate <= ?2")
+    List<MonitorClaimEntity> getProcessingMonitorClaimEntityByDate(LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
+
+    @Query("select distinct e from MonitorClaimEntity e,MonitorRegisterEntity r where e.isDeleted= 0 and e.isRegister = 1 and e.isResolve = 1 and e.id = r.claimId and r.isResolve = 1 and r.gmtCreate >= ?1 and r.gmtCreate <= ?2")
+    List<MonitorClaimEntity> getSolvedMonitorClaimEntityByDate(LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
 }
