@@ -2,8 +2,10 @@ package com.jit.server.service.impl;
 
 
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
+import com.jit.server.repository.MonitorDailyOperationReportRepo;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.util.SeverityEnum;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
@@ -31,6 +33,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
     @Autowired
     private HostRepo hostRepo;
+
+    @Autowired
+    private MonitorDailyOperationReportRepo monitorDailyOperationReportRepo;
 
     @Override
     public List<String> getTheDateNewProblemList(String auth) throws Exception {
@@ -186,5 +191,10 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
             }
         }
         return res;
+    }
+
+    @Override
+    public MonitorDailyOperationReportEntity addDailyOperationReport(MonitorDailyOperationReportEntity monitorDailyOperationReportEntity) throws Exception {
+        return monitorDailyOperationReportRepo.saveAndFlush(monitorDailyOperationReportEntity);
     }
 }

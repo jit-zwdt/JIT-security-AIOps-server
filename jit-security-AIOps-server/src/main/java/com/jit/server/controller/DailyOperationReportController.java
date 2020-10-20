@@ -1,19 +1,20 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
+import com.jit.server.request.DailyOperationReportParams;
+import com.jit.server.request.HostParams;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -77,5 +78,26 @@ public class DailyOperationReportController {
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
     }
+
+    @ResponseBody
+    @PostMapping(value = "/addDailyOperationReport")
+    public Result addDailyOperationReport(@RequestBody DailyOperationReportParams params, HttpServletRequest req) {
+        try {
+            if (params != null) {
+                MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
+                BeanUtils.copyProperties(params, monitorDailyOperationReportEntity);
+                monitorDailyOperationReportEntity.setGmtCreate(LocalDateTime.now());
+                monitorDailyOperationReportEntity.setGmtModified(LocalDateTime.now());
+                monitorDailyOperationReportEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+                return Result.SUCCESS(dailyOperationReportService.addDailyOperationReport(monitorDailyOperationReportEntity));
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
 
 }

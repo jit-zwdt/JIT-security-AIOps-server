@@ -1,5 +1,7 @@
 package com.jit.server.service;
 
+import com.jit.server.pojo.MonitorDailyOperationReportEntity;
+
 import java.util.List;
 
 public interface DailyOperationReportService {
@@ -18,4 +20,6 @@ public interface DailyOperationReportService {
     List<String> getTheDateSolvedProblemList(String auth) throws Exception;
 
     List<String> getTheMonthSolvedProblemList(String auth) throws Exception;
+
+    MonitorDailyOperationReportEntity addDailyOperationReport(MonitorDailyOperationReportEntity monitorDailyOperationReportEntity) throws Exception;
 }
