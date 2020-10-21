@@ -71,10 +71,15 @@ public class InspectionManageController {
             st.setJobMethodName("taskWithParams");
             st.setJsonParam(jsonObject.toString());
             //进行正常的添加 quartz 操作
-            String info = sysScheduleTaskService.addScheduleTask(st);
-            if (info!=null) {
-                return Result.SUCCESS(info);
+            String id = sysScheduleTaskService.addScheduleTask(st);
+            //调用保存方法进行 monitor_scheme_timer_task 表数据的更新操作
+            monitorSchemeTimerTaskEntity.setScheduleId(id);
+            inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
+            if (id!=null) {
+                return Result.SUCCESS(id);
             }else{
+                // 模拟数据的回滚操作
+                inspectionManageService.deleteMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity.getId());
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -148,11 +153,25 @@ public class InspectionManageController {
 
     /**
      * 根据 id 删除数据数据 如果有子数据也会自动删除子数据
+     * @param id monitor_scheme_timer_task 表的 id
+     * @param scheduleId sys_schedule_task 表的 id
      * @return 统一返回对象
      */
-    @DeleteMapping("/deleteMonitorSchemeTimerTask/{id}")
-    public Result deleteMonitorSchemeTimerTask(@PathVariable String id){
-        inspectionManageService.deleteMonitorSchemeTimerTask(id);
+    @DeleteMapping("/deleteMonitorSchemeTimerTask/{id}/{scheduleId}")
+    public Result deleteMonitorSchemeTimerTask(@PathVariable String id , @PathVariable String scheduleId){
+        //非空校验
+        if (id == null) {
+            return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+        }
+        try {
+            //删除 monitor_scheme_timer_task 的数据
+            inspectionManageService.deleteMonitorSchemeTimerTask(id);
+            //删除 sys_schedule_task 的数据
+            sysScheduleTaskService.delScheduleTask(scheduleId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
         return Result.SUCCESS(null);
     }
 }

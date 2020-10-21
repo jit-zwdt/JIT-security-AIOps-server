@@ -534,6 +534,29 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     }
 
     /**
+     * 根据传入的 MonitorSchemeTimerTaskEntity 对象数据进行更新/保存的操作
+     * @param monitorSchemeTimerTask 对象数据
+     * @return 保存的 MonitorSchemeTimerTaskEntity 数据对象
+     */
+    @Override
+    public MonitorSchemeTimerTaskEntity addMonitorSchemeTimerTask(MonitorSchemeTimerTaskEntity monitorSchemeTimerTask){
+        MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
+        try {
+            //设置共有值
+            monitorSchemeTimerTask.setFtpUrl("");
+            monitorSchemeTimerTask.setGmtCreate(LocalDateTime.now());
+            monitorSchemeTimerTask.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            monitorSchemeTimerTask.setParentId("1");
+            //进行数据的保存操作
+            monitorSchemeTimerTaskEntity = inspectionRepo.save(monitorSchemeTimerTask);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return monitorSchemeTimerTaskEntity;
+    }
+
+    /**
      * 根据传入的 ID 删除数据 如果数据 id 跟其他的子数据关联也会进行删除操作
      * @param id id 主键
      */

@@ -33,4 +33,11 @@ public interface InspectionManageService {
      * @param id id 主键
      */
     void deleteMonitorSchemeTimerTask(String id);
+
+    /**
+     * 根据传入的 MonitorSchemeTimerTaskEntity 对象数据进行更新/保存的操作
+     * @param monitorSchemeTimerTask 对象数据
+     * @return 保存的 MonitorSchemeTimerTaskEntity 数据对象
+     */
+    MonitorSchemeTimerTaskEntity addMonitorSchemeTimerTask(MonitorSchemeTimerTaskEntity monitorSchemeTimerTask);
 }
