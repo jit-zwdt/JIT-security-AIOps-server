@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
+import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import com.jit.server.repository.InspectionRepo;
@@ -19,18 +20,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,6 +43,8 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     private InspectionRepo inspectionRepo;
     @Autowired
     private FtpConfig ftpConfig;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Override
     public List<HostEntity> getHostInfo(String id) throws Exception {
         try {
@@ -470,42 +473,88 @@ public class InspectionManageServiceImpl implements InspectionManageService {
      * @return 分页的 MonitorSchemeTimerTaskEntity 集合对象
      */
     @Override
-    public Page<MonitorSchemeTimerTaskEntity> getMonitorSchemeTimerTasks(PageRequest<Map<String, Object>> params) {
+    public Page<MonitorSchemeTimerTaskEntityDto> getMonitorSchemeTimerTasks(PageRequest<Map<String, Object>> params){
         Map<String, Object> param = params.getParam();
-        if (param != null && !param.isEmpty()) {
-            //条件
-            Specification<MonitorSchemeTimerTaskEntity> spec = new Specification<MonitorSchemeTimerTaskEntity>() {
-                @Override
-                public Predicate toPredicate(Root<MonitorSchemeTimerTaskEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
-                    String jobClassName = param.get("schemeName") != null ? param.get("schemeName").toString() : "";
-                    if (StringUtils.isNotBlank(jobClassName)) {
-                        list.add(cb.like(root.get("schemeName").as(String.class), "%" + jobClassName + "%"));
-                    }
-                    // 如果 parentId 不是空的情况下则查询所有的 二级菜单
-                    String parentId = param.get("parentId") + "";
-                    if(parentId != null && !parentId.equals("")){
-                        //查询所有的一级菜单的条件
-                        list.add(cb.equal(root.get("parentId").as(String.class), "1"));
-                    } else {
-                        //查询所有的二级菜单的条件
-                        list.add(cb.notEqual(root.get("parentId").as(String.class), "1"));
-                    }
-
-                    Predicate[] arr = new Predicate[list.size()];
-                    return cb.and(list.toArray(arr));
-                }
-            };
-            //排序的定义
-            List<Sort.Order> orderList = new ArrayList<>();
-            orderList.add(new Sort.Order(Sort.Direction.DESC, "gmtCreate"));
-            Sort sort = Sort.by(orderList);
-            //分页的定义
-            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-            return inspectionRepo.findAll(spec, pageable);
+        String schemeName = param.get("schemeName")!= null ? param.get("schemeName").toString() : "";
+        String parentId = param.get("parentId")!= null ? param.get("parentId").toString() : "";
+        //"2019-10-12 10:00:00"
+        Date gmtCreate = param.get("gmtCreate")!= null ? new Date() : null;
+        //拼接动态条件语句的 sql 语句
+        StringBuffer comditionalSQL = new StringBuffer();
+        //排序语句的 sql 语句
+        String orderbySQL = "order by t.gmtCreate desc";
+        //主 sql 语句
+        String baseSQL = "select t.id , t.scheduleId , t.ftpUrl , t.schemeName , t.parentId , t.gmtCreate , t.gmtModified , t.createBy , t.updateBy , t.isDeleted  , t2.status from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
+        //查询条数的 sql 语句
+        String countSQL = "select count(*) from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
+        //map用来组装SQL占位符和对应的值
+        Map<String, Object> map = new HashMap<String, Object>();
+        //添加值
+        map.put("schemeName" , "%"+schemeName+"%");
+        //组装查询一级菜单或者二级菜单的情况
+        if (StringUtils.isNotEmpty(parentId)) {
+            comditionalSQL.append("and t.parentId <> '1' ");
+        }else {
+            comditionalSQL.append("and t.parentId = '1' ");
         }
-        return null;
+        //组装查询日期
+        if(gmtCreate != null){
+            comditionalSQL.append("and t.gmtCreate > :gmtCreate ");
+            map.put("gmtCreate" , gmtCreate);
+        }
+        //组装SQL
+        String resSQL = baseSQL + comditionalSQL.toString() + orderbySQL;
+        countSQL = countSQL + comditionalSQL;
+        //创建查询对象
+        Query res = this.entityManager.createQuery(resSQL);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            res.setParameter(entry.getKey(), entry.getValue());
+        }
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize());
+        //设置分页对象
+        res.setFirstResult((int) pageable.getOffset());
+        res.setMaxResults(pageable.getPageSize());
+        //创建 HQL 执行器
+        Query countQuery = entityManager.createQuery(countSQL);
+
+        //为执行器参数赋值
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            countQuery.setParameter(entry.getKey(), entry.getValue());
+        }
+        //返回条数
+        Long totalCount = (Long) countQuery.getSingleResult();
+
+        //返回数据
+        List<Object[]> resultList = res.getResultList();
+
+        //封装数据对象
+        List<MonitorSchemeTimerTaskEntityDto> monitorSchemeTimerTasks = null;
+        if(resultList != null){
+            //创建集合
+            monitorSchemeTimerTasks = new ArrayList<>();
+            for(int i = 0 ; i < resultList.size() ; i++){
+                //将对象取出
+                Object[] obj = resultList.get(i);
+                //创建对象
+                MonitorSchemeTimerTaskEntityDto monitorSchemeTimerTask = new MonitorSchemeTimerTaskEntityDto();
+                //进行强转赋值
+                monitorSchemeTimerTask.setId(obj[0]+"");
+                monitorSchemeTimerTask.setScheduleId(obj[1]+"");
+                monitorSchemeTimerTask.setFtpUrl(obj[2]+"");
+                monitorSchemeTimerTask.setSchemeName(obj[3]+"");
+                monitorSchemeTimerTask.setParentId(obj[4]+"");
+                monitorSchemeTimerTask.setGmtCreate((java.time.LocalDateTime)obj[5]);
+                monitorSchemeTimerTask.setGmtModified((java.time.LocalDateTime)obj[6]);
+                monitorSchemeTimerTask.setCreateBy(obj[7]+"");
+                monitorSchemeTimerTask.setUpdateBy(obj[8]+"");
+                monitorSchemeTimerTask.setIsDeleted((Long)obj[9]);
+                monitorSchemeTimerTask.setStatus((int)obj[10]);
+                monitorSchemeTimerTasks.add(monitorSchemeTimerTask);
+            }
+        }
+        //转换成为 Page 对象进行值的
+        Page<MonitorSchemeTimerTaskEntityDto> page = new PageImpl<>(monitorSchemeTimerTasks, pageable, totalCount.longValue());
+        return page;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
@@ -137,7 +138,7 @@ public class InspectionManageController {
     @PostMapping(value = "/getMonitorSchemeTimerTasks")
     public Result getMonitorSchemeTimerTasks(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
-            Page<MonitorSchemeTimerTaskEntity> sysScheduleTaskEntities = inspectionManageService.getMonitorSchemeTimerTasks(params);
+            Page<MonitorSchemeTimerTaskEntityDto> sysScheduleTaskEntities = inspectionManageService.getMonitorSchemeTimerTasks(params);
             Map<String, Object> result = new HashMap<>(5);
             result.put("page", params.getPage());
             result.put("size", params.getSize());
