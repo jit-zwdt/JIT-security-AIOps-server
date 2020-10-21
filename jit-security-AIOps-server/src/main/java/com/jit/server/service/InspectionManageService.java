@@ -27,4 +27,10 @@ public interface InspectionManageService {
      * @return 添加的 MonitorSchemeTimerTaskEntity 对象
      */
     MonitorSchemeTimerTaskEntity addMonitorSchemeTimerTask(String jsonresult);
+
+    /**
+     * 根据传入的 ID 删除数据 如果数据 id 跟其他的子数据关联也会进行删除操作
+     * @param id id 主键
+     */
+    void deleteMonitorSchemeTimerTask(String id);
 }

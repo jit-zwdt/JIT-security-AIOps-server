@@ -124,6 +124,8 @@ public class InspectionManageController {
 
     /**
      * 根据传递的参数进行查询 巡检信息
+     * 默认情况下查询所有的父级别数据
+     * 如果需要查询所有的子数据需要传入 parentId 字段值不为 null 就可以
      * @param params 参数对象
      * @return Result 返回值对象
      */
@@ -142,5 +144,15 @@ public class InspectionManageController {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
+    }
+
+    /**
+     * 根据 id 删除数据数据 如果有子数据也会自动删除子数据
+     * @return 统一返回对象
+     */
+    @DeleteMapping("/deleteMonitorSchemeTimerTask/{id}")
+    public Result deleteMonitorSchemeTimerTask(@PathVariable String id){
+        inspectionManageService.deleteMonitorSchemeTimerTask(id);
+        return Result.SUCCESS(null);
     }
 }

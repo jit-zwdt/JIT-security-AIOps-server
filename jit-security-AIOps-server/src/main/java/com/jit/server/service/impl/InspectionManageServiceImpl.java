@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -530,5 +531,16 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         } finally {
         }
         return monitorSchemeTimerTaskEntity;
+    }
+
+    /**
+     * 根据传入的 ID 删除数据 如果数据 id 跟其他的子数据关联也会进行删除操作
+     * @param id id 主键
+     */
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void deleteMonitorSchemeTimerTask(String id) {
+        //修改数据的删除标识 级联修改
+        inspectionRepo.updateIsDeleteById(ConstUtil.IS_DELETED , id, id);
     }
 }
