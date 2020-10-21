@@ -1,17 +1,11 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.request.GraphItemParams;
-import com.jit.server.request.GraphPrototypeParams;
-import com.jit.server.request.ItemParams;
-import com.jit.server.request.TrendParams;
+import com.jit.server.request.*;
 import com.jit.server.service.*;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
-import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
-import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
-import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
-import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
+import com.jit.zabbix.client.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +28,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/gItem")
 public class GraphItemController {
+
+    @Autowired
+    private HistoryService historyService;
     @Autowired
     private GraphItemService graphItemService;
     @Autowired
@@ -95,19 +92,19 @@ public class GraphItemController {
                     if (item != null) {
                         finalResult.put("itemData", item);
                     }
-                    List<List<ZabbixGetTrendDTO>> trendList = new ArrayList<>();
+                    List<List<ZabbixHistoryDTO>> hisList = new ArrayList<>();
                     for (int i = 0; i < result.size(); i++) {
-                        TrendParams trendParams = new TrendParams();
+                        HistoryParams historyParams = new HistoryParams();
                         List<String> _itemId = new ArrayList<>();
                         _itemId.add(result.get(i).getItemId());
-                        trendParams.setItemids(_itemId);
-                        trendParams.setTimefrom(graphItemParams.getTimefrom());
-                        trendParams.setTimetill(graphItemParams.getTimetill());
-                        List<ZabbixGetTrendDTO> trend = trendService.getTrendInfoList(trendParams, auth);
-                        trendList.add(trend);
+                        historyParams.setItemids(_itemId);
+                        historyParams.setTimefrom(graphItemParams.getTimefrom());
+                        historyParams.setTimetill(graphItemParams.getTimetill());
+                        List<ZabbixHistoryDTO> trend = historyService.getHistoryInfoList(historyParams, auth);
+                         hisList.add(trend);
                     }
-                    if (trendList != null) {
-                        finalResult.put("trendListData", trendList);
+                    if (hisList != null) {
+                        finalResult.put("trendListData", hisList);
                     }
                 }
                 if (finalResult != null) {
