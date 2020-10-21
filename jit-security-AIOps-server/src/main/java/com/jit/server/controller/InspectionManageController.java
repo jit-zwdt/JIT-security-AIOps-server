@@ -53,7 +53,7 @@ public class InspectionManageController {
     }
 
     @PostMapping("/addTimerTaskInfo")
-    public Result addTimerTaskInfo(@RequestParam("param") String param) {
+    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) {
         try {
             if (param == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -62,22 +62,28 @@ public class InspectionManageController {
             String username = userService.findIdByUsername();
             JSONObject jsonObject = JSONObject.parseObject(param);
             // 在 monitor_scheme_timer_task 表中添加一条主数据 其他的数据都是跟着这条数据进行添加的
-            MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
-            jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
+            MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
+            if (id == null) {
+                monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
+                jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
+            }
             jsonObject.put("auth",auth);
             jsonObject.put("username",username);
             ScheduleTaskParams st = new ScheduleTaskParams();
+            st.setId(id);
             st.setCronExpression(jsonObject.get("timerTask")+"");
             st.setJobClassName("com.jit.server.job.TimerTask");
             st.setJobMethodName("taskWithParams");
             st.setJsonParam(jsonObject.toString());
             //进行正常的添加 quartz 操作
-            String id = sysScheduleTaskService.addScheduleTask(st);
+            String sysScheduleId = sysScheduleTaskService.addScheduleTask(st);
             //调用保存方法进行 monitor_scheme_timer_task 表数据的更新操作
-            monitorSchemeTimerTaskEntity.setScheduleId(id);
-            inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
-            if (id!=null) {
-                return Result.SUCCESS(id);
+            if (id == null) {
+                monitorSchemeTimerTaskEntity.setScheduleId(sysScheduleId);
+                inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
+            }
+            if (sysScheduleId!=null) {
+                return Result.SUCCESS(sysScheduleId);
             }else{
                 // 模拟数据的回滚操作
                 inspectionManageService.deleteMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity.getId());
