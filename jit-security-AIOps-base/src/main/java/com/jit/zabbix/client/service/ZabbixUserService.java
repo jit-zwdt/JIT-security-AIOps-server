@@ -43,4 +43,10 @@ public class ZabbixUserService {
         }
         return ids.get(0);
     }
+
+    public boolean logout(String auth) throws ZabbixApiException {
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(UserMethod.logout, new Object[]{}, auth);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        return response.getResult().asBoolean();
+    }
 }
