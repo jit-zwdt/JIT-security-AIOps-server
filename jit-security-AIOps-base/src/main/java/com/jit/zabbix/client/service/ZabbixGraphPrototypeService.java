@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,6 +62,21 @@ public class ZabbixGraphPrototypeService {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(GraphPrototypeMethod.CREATE, dto, auth);
         System.err.println("request::::::::::"+request);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        List<String> graphids = jsonMapper.getList(response.getResult(),"graphids",String.class);
+        if (CollectionUtils.isEmpty(graphids)) {
+            throw new ZabbixApiException("Aucun id recu.");
+        }
+        return graphids;
+    }
+
+    public List<String> delete(String graphid, String auth) throws ZabbixApiException {
+        List<String> ids = new ArrayList<>();
+        ids.add(graphid);
+        System.err.println("dto::::::::::::::;"+graphid);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(GraphPrototypeMethod.DELETE, ids, auth);
+        System.err.println("request::::::::::"+request);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        System.err.println("response::::::::::"+response);
         List<String> graphids = jsonMapper.getList(response.getResult(),"graphids",String.class);
         if (CollectionUtils.isEmpty(graphids)) {
             throw new ZabbixApiException("Aucun id recu.");

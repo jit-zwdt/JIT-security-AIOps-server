@@ -15,4 +15,6 @@ public interface GraphPrototypeService {
     public List<ZabbixGetGraphPrototypeDTO> getGProList(GraphPrototypeParams graphPrototypeParams, String auth) throws Exception;
 
     List<String> createGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams, String auth) throws Exception;
+
+    List<String> deleteGPro(String graphid, String auth) throws Exception;
 }
