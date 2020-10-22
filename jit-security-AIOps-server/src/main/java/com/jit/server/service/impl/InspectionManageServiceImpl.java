@@ -34,6 +34,8 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -473,12 +475,16 @@ public class InspectionManageServiceImpl implements InspectionManageService {
      * @return 分页的 MonitorSchemeTimerTaskEntity 集合对象
      */
     @Override
-    public Page<MonitorSchemeTimerTaskEntityDto> getMonitorSchemeTimerTasks(PageRequest<Map<String, Object>> params){
+    public Page<MonitorSchemeTimerTaskEntityDto> getMonitorSchemeTimerTasks(PageRequest<Map<String, Object>> params) throws ParseException {
         Map<String, Object> param = params.getParam();
         String schemeName = param.get("schemeName")!= null ? param.get("schemeName").toString() : "";
         String parentId = param.get("parentId")!= null ? param.get("parentId").toString() : "";
         //"2019-10-12 10:00:00"
-        Date gmtCreate = param.get("gmtCreate")!= null ? new Date() : null;
+        //声明日期格式转换对象
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        //进行字符串转换 LocalDateTime 对象
+        LocalDateTime startGmtCreate = param.get("startGmtCreate")!= null ? LocalDateTime.parse(param.get("startGmtCreate").toString() , dateTimeFormatter) : null;
+        LocalDateTime endGmtCreate = param.get("endGmtCreate")!= null ? LocalDateTime.parse(param.get("endGmtCreate").toString() , dateTimeFormatter) : null;
         //拼接动态条件语句的 sql 语句
         StringBuffer comditionalSQL = new StringBuffer();
         //排序语句的 sql 语句
@@ -498,9 +504,10 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             comditionalSQL.append("and t.parentId = '1' ");
         }
         //组装查询日期
-        if(gmtCreate != null){
-            comditionalSQL.append("and t.gmtCreate > :gmtCreate ");
-            map.put("gmtCreate" , gmtCreate);
+        if(startGmtCreate != null && endGmtCreate != null){
+            comditionalSQL.append("and t.gmtCreate between :startGmtCreate and :endGmtCreate ");
+            map.put("startGmtCreate" , startGmtCreate);
+            map.put("endGmtCreate" , endGmtCreate);
         }
         //组装SQL
         String resSQL = baseSQL + comditionalSQL.toString() + orderbySQL;

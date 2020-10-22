@@ -95,7 +95,7 @@ public class InspectionManageController {
     }
 
     @PostMapping("/makePdf")
-    public void makePdf(HttpServletResponse response, HttpServletRequest request) {
+    public void makePdf(HttpServletResponse response) {
         try {
 //            String filename = inspectionManageService.createPDF();
 //            if (filename == null) {

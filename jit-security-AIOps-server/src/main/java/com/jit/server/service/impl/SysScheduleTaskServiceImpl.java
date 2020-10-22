@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jit.server.config.CronTaskRegistrar;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.exception.SchedulerExistedException;
@@ -95,6 +96,11 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
             if (ConstUtil.STATUS_NORMAL == sysScheduleTaskEntity.getStatus() && ConstUtil.IS_NOT_DELETED == sysScheduleTaskEntity.getIsDeleted()) {
                 try {
                     // 定时器添加
+                    // 在添加定时器之前把传递的参数添加一个添加定时任务表数据的 ID
+                    JSONObject jsonObject = JSONObject.parseObject(sysScheduleTaskEntity.getJsonParam());
+                    jsonObject.put("scheduleId" , id);
+                    sysScheduleTaskEntity.setJsonParam(jsonObject.toJSONString());
+                    // 添加定时任务
                     cronTaskRegistrar.addCronTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
                 } catch (Exception e) {
                     sysScheduleTaskRepo.deleteById(id);
