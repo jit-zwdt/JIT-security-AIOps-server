@@ -5,6 +5,7 @@ import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
+import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.SysScheduleTaskService;
@@ -79,6 +80,8 @@ public class InspectionManageController {
             st.setCronExpression(jsonObject.get("timerTask")+"");
             st.setJobClassName("com.jit.server.job.TimerTask");
             st.setJobMethodName("taskWithParams");
+            // 设置初始状态为关闭
+            st.setStatus(1);
             st.setJsonParam(jsonObject.toString());
             //进行正常的添加 quartz 操作
             String sysScheduleId = sysScheduleTaskService.addScheduleTask(st);
@@ -87,6 +90,21 @@ public class InspectionManageController {
                 monitorSchemeTimerTaskEntity.setScheduleId(sysScheduleId);
                 inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
             }
+            // 在定时器添加之前进行查询当前添加成功的表的数据的操作
+            SysScheduleTaskEntity scheduleTask = sysScheduleTaskService.getSysScheduleTaskById(sysScheduleId);
+            // 获取传递的参数
+            JSONObject JsonParam = JSONObject.parseObject(scheduleTask.getJsonParam());
+            // 设置 scheduleId 值
+            JsonParam.put("scheduleId" , sysScheduleId);
+            // 设置 st 对象的 sysScheduleId 设置完成后可以进行更新操作
+            st.setId(sysScheduleId);
+            // 设置传入参数对象
+            st.setJsonParam(JsonParam.toJSONString());
+            // 调用添加方法会自动的进行更新操作
+            sysScheduleTaskService.addScheduleTask(st);
+            // 调用方法进行状态的修改
+            sysScheduleTaskService.changeStatus(sysScheduleId);
+            // 添加定时任务
             if (sysScheduleId!=null) {
                 return Result.SUCCESS(sysScheduleId);
             }else{

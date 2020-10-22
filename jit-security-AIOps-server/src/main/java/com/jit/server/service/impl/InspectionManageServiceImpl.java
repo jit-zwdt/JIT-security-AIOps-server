@@ -488,7 +488,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         //拼接动态条件语句的 sql 语句
         StringBuffer comditionalSQL = new StringBuffer();
         //排序语句的 sql 语句
-        String orderbySQL = "order by t.gmtCreate desc";
+        String orderbySQL = "order by t.gmtCreate asc";
         //主 sql 语句
         String baseSQL = "select t.id , t.scheduleId , t.ftpUrl , t.schemeName , t.parentId , t.gmtCreate , t.gmtModified , t.createBy , t.updateBy , t.isDeleted  , t2.status from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
         //查询条数的 sql 语句
