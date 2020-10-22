@@ -101,7 +101,7 @@ public class FtpClientUtil {
             }
             //重新命名不重复的文件名
             fileName = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."), fileName.length());
-            path = new String(path.getBytes("GBK"), "ISO-8859-1");
+//            path = new String(path.getBytes("GBK"), "ISO-8859-1");
             //转到指定上传目录
             ftp.changeWorkingDirectory(path);
             //将上传文件存储到指定目录

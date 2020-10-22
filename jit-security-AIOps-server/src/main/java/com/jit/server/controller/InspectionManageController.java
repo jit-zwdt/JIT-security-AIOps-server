@@ -10,14 +10,19 @@ import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.SysScheduleTaskService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import sun.net.ftp.FtpClient;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,42 +100,43 @@ public class InspectionManageController {
     }
 
     @PostMapping("/makePdf")
-    public void makePdf(HttpServletResponse response) {
+    public void makePdf(String ftpFilePath, HttpServletResponse response) {
+        // 声明输出流对象
+        OutputStream os = null;
+        // 声明 FTP 工具类对象
+        FtpClientUtil ftpClientUtil = null;
+        // 声明 FTP 客户端对象
+        FTPClient ftpClient = null;
         try {
-//            String filename = inspectionManageService.createPDF();
-//            if (filename == null) {
-//                return;
-//            }
-//            File file = new File(filename);
-//            if (file.exists()) {
-//                FileInputStream input = null;
-//                try {
-//                    input = new FileInputStream(file);
-//                    byte[] buffer = new byte[1024 * 10];
-//                    ServletOutputStream out = null;
-//                    int len = 0;
-//                    out = response.getOutputStream();
-//                    while ((len = input.read(buffer)) != -1) {
-//                        out.write(buffer, 0, len);
-//                    }
-//                    response.setCharacterEncoding("utf-8");
-//                    response.setContentType("application/pdf");
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    if (input != null) {
-//                        input.close();
-//                    }
-//                    if (file != null) {
-//                        file.delete();
-//                    }
-//                }
-//            } else {
-//                return;
-//            }
-        } catch (Exception e) {
+            //创建 FtpUtil 对象
+            ftpClientUtil = new FtpClientUtil();
+            //获取 FTP 连接对象
+            ftpClient = ftpClientUtil.getConnectionFTP("172.16.15.10", 21, "jitutil", "dota&csjit3368");
+            //输出流构建
+            os = response.getOutputStream();
+            //设置返回值属性
+            response.setCharacterEncoding("utf-8");
+            //设置返回的文件是 pdf 文件
+            response.setContentType("application/pdf");
+            //获取文件并打入流中
+            ftpClient.retrieveFile(ftpFilePath, os);
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(os != null){
+                try {
+                    // 关闭流对象
+                    os.close();
+                    // 关闭 FTP 对象
+                    ftpClientUtil.closeFTP(ftpClient);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
