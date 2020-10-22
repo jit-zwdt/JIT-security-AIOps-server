@@ -9,18 +9,32 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import com.jit.server.repository.InspectionRepo;
 import com.jit.server.service.InspectionManageService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.FtpClientUtil;
-import com.jit.server.util.StringUtils;
+import com.jit.server.util.PageRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class InspectionManageServiceImpl implements InspectionManageService {
@@ -28,7 +42,6 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     private InspectionRepo inspectionRepo;
     @Autowired
     private FtpConfig ftpConfig;
-
     @Override
     public List<HostEntity> getHostInfo(String id) throws Exception {
         try {
@@ -54,7 +67,9 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             ensureDirectory(resourcePath);
             String filepath = resourcePath;
             makeDocumentdata(filepath, jsonresult);
-            makepdf(filepath);
+            //获取创建的 URL
+            String url = makepdf(filepath, jsonresult);
+            createSchemeTable(url, jsonresult);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -363,7 +378,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return pathStr;
     }
 
-    public String makepdf(String filepath) throws Exception {
+    public String makepdf(String filepath, String jsonresult) throws Exception {
         if (filepath == null) {
             throw new Exception("pdf路径为空");
         }
@@ -373,7 +388,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             FileInputStream input = null;
             try {
                 input = new FileInputStream(file);
-                url = makeftp(input, filepath);
+                url = makeftp(input, filepath, jsonresult);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -390,16 +405,25 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         }
     }
 
-    public String makeftp(FileInputStream file, String filepath) throws Exception {
+    public String makeftp(FileInputStream file, String filepath, String jsonresult) throws Exception {
         FTPClient ftp = null;
         String url = "";
         try {
             if (file != null) {
-                String path = "/patrol/";
+                JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+                String schemeName =  jsonObject.get("schemeName")+"";
+                if (schemeName == null || schemeName.equals("")) {
+                    schemeName = "巡检计划";
+                }
+                SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHH");
+                SimpleDateFormat sft = new SimpleDateFormat("yyyyMMdd");
+                Date date = new Date();
+                String path = "/"+sft.format(date)+"/"+schemeName+"/"+sf.format(date)+"/";
                 FtpClientUtil a = new FtpClientUtil();
                 ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
                 url = a.uploadFile(ftp, path, filepath, file);
-                url = url.replace("/", "");
+                // 注释掉了本行代码添加了 '/' 的处理
+//                url = url.replace("/", "");
                 return url;
             } else {
                 return url;
@@ -418,4 +442,105 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return url;
     }
 
+    public void createSchemeTable(String url, String jsonresult) throws Exception {
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+            String scheduleId = jsonObject.get("scheduleId")+"";
+            String schemeName = jsonObject.get("schemeName")+"";
+            String username = jsonObject.get("username")+"";
+            String parentId = jsonObject.get("parentId") + "";
+            MonitorSchemeTimerTaskEntity schemeTimerTaskEntity = new MonitorSchemeTimerTaskEntity();
+            schemeTimerTaskEntity.setScheduleId(scheduleId);
+            schemeTimerTaskEntity.setSchemeName(schemeName);
+            schemeTimerTaskEntity.setFtpUrl(url);
+            schemeTimerTaskEntity.setGmtCreate(LocalDateTime.now());
+            schemeTimerTaskEntity.setCreateBy(username);
+            schemeTimerTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            schemeTimerTaskEntity.setParentId(parentId);
+            inspectionRepo.save(schemeTimerTaskEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+    /**
+     * 获取分页的数据 定时任务管理数据 分页  巡检数据
+     * @param params 参数对象
+     * @return 分页的 MonitorSchemeTimerTaskEntity 集合对象
+     */
+    @Override
+    public Page<MonitorSchemeTimerTaskEntity> getMonitorSchemeTimerTasks(PageRequest<Map<String, Object>> params) {
+        Map<String, Object> param = params.getParam();
+        if (param != null && !param.isEmpty()) {
+            //条件
+            Specification<MonitorSchemeTimerTaskEntity> spec = new Specification<MonitorSchemeTimerTaskEntity>() {
+                @Override
+                public Predicate toPredicate(Root<MonitorSchemeTimerTaskEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    List<Predicate> list = new ArrayList<Predicate>();
+                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+                    String jobClassName = param.get("schemeName") != null ? param.get("schemeName").toString() : "";
+                    if (StringUtils.isNotBlank(jobClassName)) {
+                        list.add(cb.like(root.get("schemeName").as(String.class), "%" + jobClassName + "%"));
+                    }
+                    // 如果 parentId 不是空的情况下则查询所有的 二级菜单
+                    String parentId = param.get("parentId") + "";
+                    if(parentId != null && !parentId.equals("")){
+                        //查询所有的一级菜单的条件
+                        list.add(cb.equal(root.get("parentId").as(String.class), "1"));
+                    } else {
+                        //查询所有的二级菜单的条件
+                        list.add(cb.notEqual(root.get("parentId").as(String.class), "1"));
+                    }
+
+                    Predicate[] arr = new Predicate[list.size()];
+                    return cb.and(list.toArray(arr));
+                }
+            };
+            //排序的定义
+            List<Sort.Order> orderList = new ArrayList<>();
+            orderList.add(new Sort.Order(Sort.Direction.DESC, "gmtCreate"));
+            Sort sort = Sort.by(orderList);
+            //分页的定义
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
+            return inspectionRepo.findAll(spec, pageable);
+        }
+        return null;
+    }
+
+    /**
+     * 根据传入的 Json 数据进行构建一个父对象
+     * @param jsonresult json 格式的数据
+     */
+    @Override
+    public MonitorSchemeTimerTaskEntity addMonitorSchemeTimerTask(String jsonresult){
+        MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+            String schemeName = jsonObject.get("schemeName")+"";
+            MonitorSchemeTimerTaskEntity schemeTimerTaskEntity = new MonitorSchemeTimerTaskEntity();
+            schemeTimerTaskEntity.setScheduleId("null");
+            schemeTimerTaskEntity.setFtpUrl("");
+            schemeTimerTaskEntity.setSchemeName(schemeName);
+            schemeTimerTaskEntity.setGmtCreate(LocalDateTime.now());
+            schemeTimerTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            schemeTimerTaskEntity.setParentId("1");
+            monitorSchemeTimerTaskEntity = inspectionRepo.save(schemeTimerTaskEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return monitorSchemeTimerTaskEntity;
+    }
+
+    /**
+     * 根据传入的 ID 删除数据 如果数据 id 跟其他的子数据关联也会进行删除操作
+     * @param id id 主键
+     */
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void deleteMonitorSchemeTimerTask(String id) {
+        //修改数据的删除标识 级联修改
+        inspectionRepo.updateIsDeleteById(ConstUtil.IS_DELETED , id, id);
+    }
 }

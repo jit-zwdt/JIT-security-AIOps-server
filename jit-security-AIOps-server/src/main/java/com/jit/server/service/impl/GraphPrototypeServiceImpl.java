@@ -94,4 +94,13 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
 
         return zabbixGraphPrototypeService.create(zabbixCreateGraphPrototypeParams,auth);
     }
+
+    @Override
+    public List<String> deleteGPro(String graphid, String auth) throws Exception {
+        if(graphid.isEmpty()){
+            return null;
+        }
+
+        return zabbixGraphPrototypeService.delete(graphid,auth);
+    }
 }

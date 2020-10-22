@@ -10,6 +10,7 @@ import com.jit.server.repository.SysRoleRepo;
 import com.jit.server.repository.SysUserRepo;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.request.ProblemParams;
+import com.jit.server.service.DictionaryService;
 import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
@@ -43,6 +44,9 @@ public class ProblemController {
     private MonitorRegisterService registerService;
     @Autowired
     private ZabbixAuthService zabbixAuthService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @PostMapping("/findProblemHost")
     public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
@@ -141,7 +145,7 @@ public class ProblemController {
     }
 
     @PostMapping("/problemSolveReport")
-    public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd) {
+    public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd, @RequestParam("dictCode") String dictCode) {
         try {
             List<MonitorClaimEntity> claimList = null;
             if (StringUtils.isNotEmpty(resolveTimeStart) && StringUtils.isNotEmpty(resolveTimeEnd)) {
@@ -162,6 +166,7 @@ public class ProblemController {
                 }
                 if (regList != null && !CollectionUtils.isEmpty(regList)) {
                     for (MonitorRegisterEntity mm : regList) {
+                        mm.setProblemType(dictionaryService.getItemTextByDictCodeAndItemValue(dictCode, mm.getProblemType()));
                         result.setRegister(mm);
                     }
                 } else {

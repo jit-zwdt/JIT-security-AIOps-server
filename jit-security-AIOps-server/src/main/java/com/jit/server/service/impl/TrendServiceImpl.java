@@ -21,8 +21,7 @@ public class TrendServiceImpl implements TrendService {
 
     @Autowired
     private ZabbixTrendService zabbixTrendService;
-    @Autowired
-    private ZabbixAuthService zabbixAuthService;
+
     public static final String TREND_OUTPUT_ITEMID = "itemid";
     public static final String TREND_OUTPUT_CLOCK = "clock";
     public static final String TREND_OUTPUT_NUM = "num";

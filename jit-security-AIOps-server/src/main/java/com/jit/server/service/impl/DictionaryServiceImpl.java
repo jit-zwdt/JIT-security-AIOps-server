@@ -97,13 +97,13 @@ public class DictionaryServiceImpl implements DictionaryService {
                 dictDTO = new DictDTO();
                 dictDTO.setText(object[0] != null ? object[0].toString() : "");
                 dictDTO.setValue(object[1] != null ? object[1].toString() : "");
-                if(object[2] != null){
-                    if(ConstUtil.STATUS_UNUSED == Integer.parseInt(object[2].toString())){
+                if (object[2] != null) {
+                    if (ConstUtil.STATUS_UNUSED == Integer.parseInt(object[2].toString())) {
                         dictDTO.setStatus(true);
-                    }else{
+                    } else {
                         dictDTO.setStatus(false);
                     }
-                }else{
+                } else {
                     dictDTO.setStatus(true);
                 }
 
@@ -149,5 +149,10 @@ public class DictionaryServiceImpl implements DictionaryService {
             sysDictionaryItemEntity.setGmtCreate(LocalDateTime.now());
         }
         return dictionaryItemRepo.save(sysDictionaryItemEntity);
+    }
+
+    @Override
+    public String getItemTextByDictCodeAndItemValue(String dictCode, String itemValue) throws Exception {
+        return dictionaryItemRepo.findItemTextByDictCodeAndItemValue(dictCode, itemValue);
     }
 }

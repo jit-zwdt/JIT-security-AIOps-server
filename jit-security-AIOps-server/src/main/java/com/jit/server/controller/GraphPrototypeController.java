@@ -76,4 +76,25 @@ public class GraphPrototypeController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    @PostMapping("/deleteGpro")
+    public Result deleteGpro(@RequestParam("graphid") String graphid,HttpServletRequest req
+    ) throws IOException {
+        try {
+            if(!graphid.isEmpty()){
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<String> graphids = graphPrototypeService.deleteGPro(graphid, auth);
+                if(graphids != null && !CollectionUtils.isEmpty(graphids)){
+                    return Result.SUCCESS(graphids);
+                }else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

@@ -5,10 +5,12 @@ import com.jit.server.dto.ProblemRegisterDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.service.MonitorRegisterService;
+import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -32,6 +34,8 @@ public class RegisterController {
     public Result addRegister(@RequestBody MonitorRegisterEntity monitorRegisterEntity) {
         try{
             if(monitorRegisterEntity!=null){
+                monitorRegisterEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+                monitorRegisterEntity.setGmtCreate(LocalDateTime.now());
                 return Result.SUCCESS(registerService.addRegister(monitorRegisterEntity));
             }else{
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
