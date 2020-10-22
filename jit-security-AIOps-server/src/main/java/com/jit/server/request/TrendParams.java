@@ -21,7 +21,7 @@ public class TrendParams {
     private List<String> itemids;
     private String timefrom;
     private String timetill;
-
+    private int valueType;
     private String hostId;
     private String typeId;
     private String itemId;

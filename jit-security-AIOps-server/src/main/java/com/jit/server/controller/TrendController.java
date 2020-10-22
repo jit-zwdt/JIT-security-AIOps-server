@@ -72,6 +72,7 @@ public class TrendController {
                 BeanUtils.copyProperties(trendParams, monitorHostDetailBindItems);
                 monitorHostDetailBindItems.setGmtCreate(LocalDateTime.now());
                 monitorHostDetailBindItems.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+                monitorHostDetailBindItems.setValueType(trendParams.getValueType());
                 monitorHostDetailBindItems = monitorHostDetailBindItemsService.saveOrUpdateMonitorHostDetailBindItems(monitorHostDetailBindItems);
                 if (StringUtils.isNotBlank(monitorHostDetailBindItems.getId())) {
                     return Result.SUCCESS(null);
