@@ -3,9 +3,12 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.config.ParamsConfig;
+import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.request.ProblemParams;
 import com.jit.server.service.HomePageService;
 import com.jit.server.service.HostService;
+import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
@@ -22,6 +25,7 @@ import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixProblemService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +44,9 @@ public class HomePageController {
 
     @Autowired
     private HomePageService homePageService;
+
+    @Autowired
+    private ProblemService problemService;
 
     @Autowired
     private ZabbixProblemService zabbixProblemService;
@@ -221,6 +228,36 @@ public class HomePageController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    /**
+     * 主页获取图表的信息统计图需要的数据接口 统计了异常的情况的数量
+     * @return JSON 对象拼接的数据
+     */
+    @PostMapping("/getInformationStatistics")
+    public Result getInformationStatistics(HttpServletRequest request){
+        try {
+            // 根据当前登入对象的令牌获取 zabbix 的登录令牌
+            String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
+            // 创建查询全部参数的构建对象
+            ProblemParams problemParams = new ProblemParams();
+            problemParams.setSeverity(null);
+            problemParams.setTimeFrom("NaN");
+            problemParams.setTimeTill("NaN");
+            problemParams.setName("");
+            // 调用业务层接口查询全部的数据
+            List<ProblemHostDTO> ProblemHosts = problemService.findProblemHost(problemParams, auth);
+            // 再次封装数据进行状态的自主拼接
+            JSONObject jsonObject = homePageService.getStatisticalJson(ProblemHosts);
+            if (null != jsonObject && !jsonObject.isEmpty()) {
+                return Result.SUCCESS(jsonObject);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
