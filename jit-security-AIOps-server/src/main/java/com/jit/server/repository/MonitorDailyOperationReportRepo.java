@@ -13,4 +13,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MonitorDailyOperationReportRepo extends JpaRepository<MonitorDailyOperationReportEntity, String>, JpaSpecificationExecutor<MonitorDailyOperationReportEntity> {
 
+    MonitorDailyOperationReportEntity findByIdAndIsDeleted(String id, int isNotDeleted);
 }

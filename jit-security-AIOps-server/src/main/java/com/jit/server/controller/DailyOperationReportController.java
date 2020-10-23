@@ -1,24 +1,25 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.request.DailyOperationReportParams;
-import com.jit.server.request.HostParams;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
+import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zengxin_miao
@@ -99,5 +100,39 @@ public class DailyOperationReportController {
         }
     }
 
+    @ResponseBody
+    @PostMapping(value = "/getDailyOperationReports")
+    public Result getDailyOperationReports(@RequestBody PageRequest<Map<String, String>> params) {
+
+        try {
+            Page<MonitorDailyOperationReportEntity> monitorDailyOperationReportEntities = dailyOperationReportService.getDailyOperationReports(params);
+            Map<String, Object> result = new HashMap<>();
+            result.put("page", params.getPage());
+            result.put("size", params.getSize());
+            result.put("totalRow", monitorDailyOperationReportEntities.getTotalElements());
+            result.put("totalPage", monitorDailyOperationReportEntities.getTotalPages());
+            result.put("dataList", monitorDailyOperationReportEntities.getContent());
+            return Result.SUCCESS(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/getDailyOperationReported")
+    public Result getDailyOperationReported(@RequestParam String id) {
+
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                return Result.SUCCESS(dailyOperationReportService.getDailyOperationReportById(id));
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
 
 }
