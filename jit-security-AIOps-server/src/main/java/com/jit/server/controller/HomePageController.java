@@ -261,6 +261,66 @@ public class HomePageController {
         }
     }
 
+    /**
+     * 主页获取图表的信息统计图需要的数据接口 统计了常见问题排名 TOP5 的数据
+     * @return JSON 对象拼接的数据
+     */
+    @PostMapping("/getFAQTop5")
+    public Result getFAQTop5(HttpServletRequest request){
+        try {
+            // 根据当前登入对象的令牌获取 zabbix 的登录令牌
+            String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
+            // 创建查询全部参数的构建对象
+            ProblemParams problemParams = new ProblemParams();
+            problemParams.setSeverity(null);
+            problemParams.setTimeFrom("NaN");
+            problemParams.setTimeTill("NaN");
+            problemParams.setName("");
+            // 调用业务层接口查询全部的数据
+            List<ProblemHostDTO> ProblemHosts = problemService.findProblemHost(problemParams, auth);
+            // 再次封装数据进行状态的自主拼接
+            JSONArray jsonArray = homePageService.getFAQJson(ProblemHosts);
+            if (null != jsonArray && !jsonArray.isEmpty()) {
+                return Result.SUCCESS(jsonArray);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    /**
+     * 主页获取图表的信息统计图需要的数据接口 统计了设备异常服务器 TOP10 的排名
+     * @return JSON 对象拼接的数据
+     */
+    @PostMapping("/getHostErrorTop10")
+    public Result getHostErrorTop10(HttpServletRequest request){
+        try {
+            // 根据当前登入对象的令牌获取 zabbix 的登录令牌
+            String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
+            // 创建查询全部参数的构建对象
+            ProblemParams problemParams = new ProblemParams();
+            problemParams.setSeverity(null);
+            problemParams.setTimeFrom("NaN");
+            problemParams.setTimeTill("NaN");
+            problemParams.setName("");
+            // 调用业务层接口查询全部的数据
+            List<ProblemHostDTO> ProblemHosts = problemService.findProblemHost(problemParams, auth);
+            // 再次封装数据进行状态的自主拼接
+            JSONArray jsonArray = homePageService.getHostErrorJson(ProblemHosts);
+            if (null != jsonArray && !jsonArray.isEmpty()) {
+                return Result.SUCCESS(jsonArray);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
     private ItemC getItemLastvalue(String hostId, String key, String auth) throws Exception {
         ItemC res = null;
         String[] keys = key.split(ConstUtil.PROP_DIVIDER);

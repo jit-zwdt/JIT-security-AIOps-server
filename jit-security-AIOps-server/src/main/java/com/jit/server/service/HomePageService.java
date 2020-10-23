@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.dto.ProblemHostDTO;
 
@@ -15,4 +16,18 @@ public interface HomePageService {
      * @return 统计信息
      */
     JSONObject getStatisticalJson(List<ProblemHostDTO> problemHosts);
+
+    /**
+     * 根据所有的问题信息进行常见问题信息 Top5 排名信息的构建
+     * @param problemHosts 所有的问题信息
+     * @return 统计信息
+     */
+    JSONArray getFAQJson(List<ProblemHostDTO> problemHosts);
+
+    /**
+     * 根据所有的问题信息进行设备异常服务器 TOP10 排名信息的构建
+     * @param problemHosts 所有的问题信息
+     * @return 统计信息
+     */
+    JSONArray getHostErrorJson(List<ProblemHostDTO> problemHosts);
 }
