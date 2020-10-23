@@ -416,14 +416,10 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         try {
             if (file != null) {
                 JSONObject jsonObject = JSONObject.parseObject(jsonresult);
-                String schemeName =  jsonObject.get("schemeName")+"";
-                if (schemeName == null || schemeName.equals("")) {
-                    schemeName = "巡检计划";
-                }
                 SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHH");
                 SimpleDateFormat sft = new SimpleDateFormat("yyyyMMdd");
                 Date date = new Date();
-                String path = "/"+sft.format(date)+"/"+schemeName+"/"+sf.format(date)+"/";
+                String path = "/"+sft.format(date)+"/"+sf.format(date)+"/";
                 FtpClientUtil a = new FtpClientUtil();
                 ftp = a.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
                 url = a.uploadFile(ftp, path, filepath, file);
