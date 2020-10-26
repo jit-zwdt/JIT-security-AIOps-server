@@ -202,16 +202,16 @@ public class MonitorAssetsEntity {
      * CPU 参数值
      */
     @Column(name = "cpu")
-    private String cpu;
+    private Integer cpu;
     /**
-     * 内存参数值
+     * 内存参数值 单位 G
      */
     @Column(name = "memory")
-    private String memory;
+    private Integer memory;
     /**
-     * 硬件参数值
+     * 硬件参数值 单位 T
      */
     @Column(name = "hard_disk")
-    private String hardDisk;
+    private Integer hardDisk;
 
 }

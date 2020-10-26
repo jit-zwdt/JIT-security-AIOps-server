@@ -6,10 +6,7 @@ import com.jit.server.config.ParamsConfig;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.ProblemParams;
-import com.jit.server.service.HomePageService;
-import com.jit.server.service.HostService;
-import com.jit.server.service.ProblemService;
-import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.service.*;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
@@ -65,6 +62,9 @@ public class HomePageController {
 
     @Autowired
     private ZabbixHistoryService zabbixHistoryService;
+
+    @Autowired
+    private AssetsService assetsService;
 
 
     @ResponseBody
@@ -318,6 +318,23 @@ public class HomePageController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    /**
+     * 主页获取图表的信息统计图需要的数据接口 统计了资产信息的数据 主机数量和 CPU 和 内存大小总数
+     * @return JSON 对象拼接的数据
+     */
+    @GetMapping("/getAssetData")
+    public Result getAssetData(){
+        //调用资产管理层进行数据的查询
+        List<Object[]> sumResult = assetsService.getCountAndSum();
+        // 再次封装数据进行状态的自主拼接
+        JSONObject jsonObject = homePageService.getAssetsSumJson(sumResult);
+        if (null != jsonObject && !jsonObject.isEmpty()) {
+            return Result.SUCCESS(jsonObject);
+        } else {
+            return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
         }
     }
 

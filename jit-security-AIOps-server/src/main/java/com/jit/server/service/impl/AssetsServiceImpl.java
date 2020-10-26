@@ -121,4 +121,13 @@ public class AssetsServiceImpl implements AssetsService {
     public List<Object> getHardwareInfo() throws Exception {
         return assetsRepo.findHardwareInfo();
     }
+
+    /**
+     * 根据查询语句查询条数和总 CPU 大小 , 内存大小 , 硬件大小
+     * @return 数据数组
+     */
+    @Override
+    public List<Object[]> getCountAndSum(){
+        return assetsRepo.getCountAndSum();
+    }
 }

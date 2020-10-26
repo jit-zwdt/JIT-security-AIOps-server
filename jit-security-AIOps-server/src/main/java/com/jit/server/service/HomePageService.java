@@ -30,4 +30,11 @@ public interface HomePageService {
      * @return 统计信息
      */
     JSONArray getHostErrorJson(List<ProblemHostDTO> problemHosts);
+
+    /**
+     * 根据返回的条数数据进行数据的拼接 Json 串
+     * @param sumResult 查询的数据
+     * @return 统计信息
+     */
+    JSONObject getAssetsSumJson(List<Object[]> sumResult);
 }

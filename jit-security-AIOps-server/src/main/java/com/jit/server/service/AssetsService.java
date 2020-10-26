@@ -21,4 +21,10 @@ public interface AssetsService {
     List<Object> findByConditionInfo() throws Exception;
 
     List<Object> getHardwareInfo() throws Exception;
+
+    /**
+     * 根据查询语句查询条数和总 CPU 大小 , 内存大小 , 硬件大小
+     * @return 数据数组
+     */
+    List<Object[]> getCountAndSum();
 }

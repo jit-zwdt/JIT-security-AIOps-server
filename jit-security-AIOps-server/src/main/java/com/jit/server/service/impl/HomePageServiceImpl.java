@@ -164,6 +164,20 @@ public class HomePageServiceImpl implements HomePageService {
         return jsonArray;
     }
 
+    @Override
+    public JSONObject getAssetsSumJson(List<Object[]> sumResult) {
+        //创建 JSONObject 对象
+        JSONObject jsonObject = new JSONObject();
+        //获取第一行数据
+        Object[] oneData = sumResult.get(0);
+        //进行值的添加
+        jsonObject.put("number" , oneData[0]);
+        jsonObject.put("cpu" , oneData[1]);
+        jsonObject.put("memory" , oneData[2]);
+        jsonObject.put("hardDisk" , oneData[3]);
+        return jsonObject;
+    }
+
     /**
      * 对 ProblemHostDTO 对象根据 hostId 进行排序
      * @param problemHostList 需要排序的 ProblemHostDTO 数组对象
