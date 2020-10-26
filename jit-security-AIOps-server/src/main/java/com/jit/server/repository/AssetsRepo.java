@@ -32,6 +32,6 @@ public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, 
      * 根据查询语句查询条数和总 CPU 大小 , 内存大小 , 硬件大小
      * @return 数据数组
      */
-    @Query(value = "select count(t.id) as number , sum(t.cpu) , sum(t.memory) , sum(t.hardDisk) from MonitorAssetsEntity t where t.type = '0'")
+    @Query(value = "select count(t.id) as number , sum(t.cpu) , sum(t.memory) , sum(t.hardDisk) from MonitorAssetsEntity t where t.type = '0' and t.isDeleted = 0")
     List<Object[]> getCountAndSum();
 }

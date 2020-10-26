@@ -171,10 +171,10 @@ public class HomePageServiceImpl implements HomePageService {
         //获取第一行数据
         Object[] oneData = sumResult.get(0);
         //进行值的添加
-        jsonObject.put("number" , oneData[0]);
-        jsonObject.put("cpu" , oneData[1]);
-        jsonObject.put("memory" , oneData[2]);
-        jsonObject.put("hardDisk" , oneData[3]);
+        jsonObject.put("number" , oneData[0] == null ? 0 : oneData[0]);
+        jsonObject.put("cpu" , oneData[1] == null ? 0 : oneData[0]);
+        jsonObject.put("memory" , oneData[2] == null ? 0 : oneData[0]);
+        jsonObject.put("hardDisk" , oneData[3] == null ? 0 : oneData[0]);
         return jsonObject;
     }
 
