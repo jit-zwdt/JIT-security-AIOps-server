@@ -1,6 +1,7 @@
 package com.jit.controller;
 
 import com.jit.Application;
+import com.jit.server.service.AssetsService;
 import com.jit.server.util.FtpClientUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
