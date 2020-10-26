@@ -198,4 +198,20 @@ public class MonitorAssetsEntity {
     @Column(name = "parent_id")
     private String parentId;
 
+    /**
+     * CPU 参数值
+     */
+    @Column(name = "cpu")
+    private String cpu;
+    /**
+     * 内存参数值
+     */
+    @Column(name = "memory")
+    private String memory;
+    /**
+     * 硬件参数值
+     */
+    @Column(name = "hard_disk")
+    private String hardDisk;
+
 }

@@ -80,4 +80,17 @@ public class AssetsParams {
     private String classify;
 
     private String parentId;
+
+    /**
+     * CPU 参数值
+     */
+    private String cpu;
+    /**
+     * 内存参数值
+     */
+    private String memory;
+    /**
+     * 硬件参数值
+     */
+    private String hardDisk;
 }
