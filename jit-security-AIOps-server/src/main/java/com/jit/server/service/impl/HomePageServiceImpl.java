@@ -120,7 +120,7 @@ public class HomePageServiceImpl implements HomePageService {
         //前面的代码已经做完了计数和拿到名字的处理 这里的代码进行排序 倒序排列大的在前 自定义排序
         sortBasicMapMessageList(basicMapMessage);
         //根据数组的前<?>条数据返回对应的 JSONObject 对象
-        for(int i = 0 ; i <= topSize ; i++){
+        for(int i = 0 ; i < topSize ; i++){
             jsonArray.add(basicMapMessage.get(i));
         }
         //创建 JSONObject 对象进行返回值
@@ -157,7 +157,7 @@ public class HomePageServiceImpl implements HomePageService {
         //前面的代码已经做完了计数和拿到名字的处理 这里的代码进行排序 倒序排列大的在前 自定义排序
         sortBasicMapMessageList(basicMapMessage);
         //根据数组的前<?>条数据返回对应的 JSONObject 对象
-        for(int i = 0 ; i <= topSize ; i++){
+        for(int i = 0 ; i < topSize ; i++){
             jsonArray.add(basicMapMessage.get(i));
         }
         //创建 JSONObject 对象进行返回值
