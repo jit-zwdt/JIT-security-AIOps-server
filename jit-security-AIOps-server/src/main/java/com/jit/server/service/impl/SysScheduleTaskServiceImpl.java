@@ -7,7 +7,6 @@ import com.jit.server.exception.SchedulerExistedException;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.repository.SysScheduleTaskRepo;
 import com.jit.server.request.ScheduleTaskParams;
-import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.SysScheduleTaskService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
