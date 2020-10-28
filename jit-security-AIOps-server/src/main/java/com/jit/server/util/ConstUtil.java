@@ -66,4 +66,9 @@ public class ConstUtil {
      * 状态（0：为启用；1：启用）
      */
     public static final int STATUS_USING = 1;
+
+    /**
+     * jit 主机群组
+     */
+    public static final String HOSTGROUP_NAME = "正元";
 }
