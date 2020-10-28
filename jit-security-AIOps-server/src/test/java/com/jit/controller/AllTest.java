@@ -71,4 +71,12 @@ public class AllTest {
         boolean flag = sysCronExpressionService.checkAddCronExpressionDesc("每隔10");
         System.out.println(flag);
     }
+
+    /**
+     * 测试删除方法
+     */
+    @Test
+    public void testDelCronExpression(){
+        sysCronExpressionService.delCronExpression("1");
+    }
 }

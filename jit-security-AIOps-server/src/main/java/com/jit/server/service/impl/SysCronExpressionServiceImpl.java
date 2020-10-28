@@ -114,7 +114,7 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
     @Override
     public boolean checkAddCronExpression(String cronExpression){
         // 查看表达式和表达式名称是否具有重复的数据
-        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpression(cronExpression);
+        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpressionAndIsDeleted(cronExpression , 0);
         if(sysCronExpression == null){
             return false;
         }
@@ -129,7 +129,7 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
     @Override
     public boolean checkAddCronExpressionDesc(String cronExpressionDesc) {
         // 查看表达式和表达式名称是否具有重复的数据
-        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpressionDesc(cronExpressionDesc);
+        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpressionDescAndIsDeleted(cronExpressionDesc , 0);
         if(sysCronExpression == null){
             return false;
         }
@@ -144,6 +144,6 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
     @Override
     @Transactional
     public void delCronExpression(String id) {
-        sysCronExpressionRepo.deleteById(id);
+        sysCronExpressionRepo.updateIsDeleteByID(1 , id);
     }
 }
