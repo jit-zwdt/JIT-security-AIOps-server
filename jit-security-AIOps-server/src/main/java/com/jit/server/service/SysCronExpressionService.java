@@ -20,4 +20,10 @@ public interface SysCronExpressionService {
      * @return 添加成功的时间表达式对象
      */
     SysCronExpressionEntity addCronExpression(SysCronExpressionEntity cronExpression);
+
+    /**
+     * 根据时间表达式的 ID 删除一条数据
+     * @param id 时间表达式的 id
+     */
+    void delCronExpression(String id);
 }

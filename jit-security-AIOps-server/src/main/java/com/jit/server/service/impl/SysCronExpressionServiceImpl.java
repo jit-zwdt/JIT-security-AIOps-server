@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -102,5 +103,16 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
         //调用添加方法进行添加
         sysCronExpressionRepo.save(cronExpression);
         return cronExpression;
+    }
+
+    /**
+     * 根据时间表达式的 ID 删除一条数据
+     *
+     * @param id 时间表达式的 id
+     */
+    @Override
+    @Transactional
+    public void delCronExpression(String id) {
+        sysCronExpressionRepo.deleteById(id);
     }
 }

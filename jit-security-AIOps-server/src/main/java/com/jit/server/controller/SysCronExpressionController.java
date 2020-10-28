@@ -50,12 +50,27 @@ public class SysCronExpressionController {
      */
     @PostMapping("/addCronExpression")
     public Result addCronExpression(@RequestBody SysCronExpressionEntity cronExpression){
-        System.out.println(cronExpression);
         SysCronExpressionEntity cronExpressionData = sysCronExpressionService.addCronExpression(cronExpression);
         if(cronExpressionData.getId() != null){
             return Result.SUCCESS(cronExpressionData);
         }
         return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
+    }
+
+    /**
+     * 根据 ID 删除一个时间表达式对象
+     * @param id 需要删除的时间表达式的 ID
+     * @return 统一封装对象
+     */
+    @DeleteMapping("delCronExpression/{id}")
+    public Result delCronExpression(@PathVariable String id){
+        try {
+            sysCronExpressionService.delCronExpression(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+        return Result.SUCCESS(id);
     }
 
     /**
