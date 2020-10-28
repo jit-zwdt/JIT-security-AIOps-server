@@ -52,30 +52,32 @@ public class HomePageServiceImpl implements HomePageService {
         //灾难信息统计
         int disaster = 0;
         // 首先遍历数据集合
-        for(int i = 0 ; i < problemHosts.size() ; i++){
-            //获取 problemHost 对象
-            ProblemHostDTO problemHost = problemHosts.get(i);
-            //获取里面的真实数据
-            ZabbixProblemDTO zabbixProblem = problemHost.getZabbixProblemDTO();
-            //进行数据的桶位相加
-            if(zabbixProblem.getSeverity() == ProblemSeverity.NOT_CLASSIFIED){
-                //未定义
-                not_classified++;
-            }else if(zabbixProblem.getSeverity() == ProblemSeverity.INFORMATION){
-                //信息
-                information++;
-            }else if(zabbixProblem.getSeverity() == ProblemSeverity.WARNING){
-                //警告
-                warning++;
-            }else if(zabbixProblem.getSeverity() == ProblemSeverity.AVERAGE){
-                //一般严重
-                average++;
-            }else if(zabbixProblem.getSeverity() == ProblemSeverity.HIGH){
-                //严重
-                high++;
-            }else if(zabbixProblem.getSeverity() == ProblemSeverity.DISASTER){
-                //灾难
-                disaster++;
+        if(problemHosts != null){
+            for(int i = 0 ; i < problemHosts.size() ; i++){
+                //获取 problemHost 对象
+                ProblemHostDTO problemHost = problemHosts.get(i);
+                //获取里面的真实数据
+                ZabbixProblemDTO zabbixProblem = problemHost.getZabbixProblemDTO();
+                //进行数据的桶位相加
+                if(zabbixProblem.getSeverity() == ProblemSeverity.NOT_CLASSIFIED){
+                    //未定义
+                    not_classified++;
+                }else if(zabbixProblem.getSeverity() == ProblemSeverity.INFORMATION){
+                    //信息
+                    information++;
+                }else if(zabbixProblem.getSeverity() == ProblemSeverity.WARNING){
+                    //警告
+                    warning++;
+                }else if(zabbixProblem.getSeverity() == ProblemSeverity.AVERAGE){
+                    //一般严重
+                    average++;
+                }else if(zabbixProblem.getSeverity() == ProblemSeverity.HIGH){
+                    //严重
+                    high++;
+                }else if(zabbixProblem.getSeverity() == ProblemSeverity.DISASTER){
+                    //灾难
+                    disaster++;
+                }
             }
         }
         //未定义信息统计添加
@@ -107,11 +109,13 @@ public class HomePageServiceImpl implements HomePageService {
         int topSize = 5;
         //创建一个 String 类型的 List 集合对象
         List<String> questionStringList = new ArrayList<>();
-        for(int i = 0 ; i < problemHosts.size() ; i++) {
-            //获取 problemHost 对象
-            ProblemHostDTO problemHost = problemHosts.get(i);
-            //获取名称并添加到 questionStringList 中
-            questionStringList.add(problemHost.getZabbixProblemDTO().getName());
+        if(problemHosts != null){
+            for(int i = 0 ; i < problemHosts.size() ; i++) {
+                //获取 problemHost 对象
+                ProblemHostDTO problemHost = problemHosts.get(i);
+                //获取名称并添加到 questionStringList 中
+                questionStringList.add(problemHost.getZabbixProblemDTO().getName());
+            }
         }
         //对字符串数组对象进行排序(自定义排序)
         sortStringList(questionStringList);
@@ -120,8 +124,10 @@ public class HomePageServiceImpl implements HomePageService {
         //前面的代码已经做完了计数和拿到名字的处理 这里的代码进行排序 倒序排列大的在前 自定义排序
         sortBasicMapMessageList(basicMapMessage);
         //根据数组的前<?>条数据返回对应的 JSONObject 对象
-        for(int i = 0 ; i < topSize ; i++){
-            jsonArray.add(basicMapMessage.get(i));
+        if(basicMapMessage != null && !basicMapMessage.isEmpty()){
+            for(int i = 0 ; i < topSize ; i++){
+                jsonArray.add(basicMapMessage.get(i));
+            }
         }
         //创建 JSONObject 对象进行返回值
         return jsonArray;
@@ -140,15 +146,17 @@ public class HomePageServiceImpl implements HomePageService {
         int topSize = 10;
         //创建一个 String 类型的 List 集合对象
         List<ProblemHostDTO> problemHostList = new ArrayList<>();
-        for(int i = 0 ; i < problemHosts.size() ; i++) {
-            ProblemHostDTO ph = new ProblemHostDTO();
-            //获取 problemHost 对象
-            ProblemHostDTO problemHost = problemHosts.get(i);
-            //赋值操作
-            ph.setHostId(problemHost.getHostId());
-            ph.setHostName(problemHost.getHostName());
-            //获取名称并添加到 questionStringList 中
-            problemHostList.add(ph);
+        if(problemHosts != null){
+            for(int i = 0 ; i < problemHosts.size() ; i++) {
+                ProblemHostDTO ph = new ProblemHostDTO();
+                //获取 problemHost 对象
+                ProblemHostDTO problemHost = problemHosts.get(i);
+                //赋值操作
+                ph.setHostId(problemHost.getHostId());
+                ph.setHostName(problemHost.getHostName());
+                //获取名称并添加到 questionStringList 中
+                problemHostList.add(ph);
+            }
         }
         //对字符串数组对象进行排序(自定义排序)
         sortProblemHostDTOList(problemHostList);
@@ -157,8 +165,10 @@ public class HomePageServiceImpl implements HomePageService {
         //前面的代码已经做完了计数和拿到名字的处理 这里的代码进行排序 倒序排列大的在前 自定义排序
         sortBasicMapMessageList(basicMapMessage);
         //根据数组的前<?>条数据返回对应的 JSONObject 对象
-        for(int i = 0 ; i < topSize ; i++){
-            jsonArray.add(basicMapMessage.get(i));
+        if(basicMapMessage != null && !basicMapMessage.isEmpty()){
+            for(int i = 0 ; i < topSize ; i++){
+                jsonArray.add(basicMapMessage.get(i));
+            }
         }
         //创建 JSONObject 对象进行返回值
         return jsonArray;
