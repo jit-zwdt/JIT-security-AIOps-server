@@ -44,6 +44,21 @@ public class SysCronExpressionController {
     }
 
     /**
+     * 添加一个时间表达式对象
+     * @param cronExpression 时间表达式对戏
+     * @return 统一封装对象
+     */
+    @PostMapping("/addCronExpression")
+    public Result addCronExpression(@RequestBody SysCronExpressionEntity cronExpression){
+        System.out.println(cronExpression);
+        SysCronExpressionEntity cronExpressionData = sysCronExpressionService.addCronExpression(cronExpression);
+        if(cronExpressionData.getId() != null){
+            return Result.SUCCESS(cronExpressionData);
+        }
+        return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
+    }
+
+    /**
      * 获取所有的巡检时间数据
      * @return 统一返回对象 封装了巡检时间数据对象集合
      */

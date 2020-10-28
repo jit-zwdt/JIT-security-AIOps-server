@@ -1,7 +1,9 @@
 package com.jit.controller;
 
 import com.jit.Application;
+import com.jit.server.pojo.SysCronExpressionEntity;
 import com.jit.server.service.AssetsService;
+import com.jit.server.service.SysCronExpressionService;
 import com.jit.server.util.FtpClientUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -26,6 +28,9 @@ public class AllTest {
     @Autowired
     private AssetsService assetsService;
 
+    @Autowired
+    private SysCronExpressionService sysCronExpressionService;
+
     /**
      * 测试 FTP 文件下载
      * @throws IOException
@@ -42,5 +47,19 @@ public class AllTest {
         ftpClient.retrieveFile("/20201022/oldwang 测试巡检数据01/2020102215/631255a6-778b-46ef-884f-ca43f65b3106.pdf", os);
         //关闭流对象
         os.close();
+    }
+
+    /**
+     * 测试添加时间表达式对象
+     */
+    @Test
+    public void testAddCronExpression(){
+        //创建需要添加的对象
+        SysCronExpressionEntity cronExpression = new SysCronExpressionEntity();
+        cronExpression.setCronExpressionDesc("1111");
+        cronExpression.setCronExpression("* * * * * *");
+        //测试添加
+        SysCronExpressionEntity cronExpressionEntity = sysCronExpressionService.addCronExpression(cronExpression);
+        System.out.println(cronExpressionEntity);
     }
 }

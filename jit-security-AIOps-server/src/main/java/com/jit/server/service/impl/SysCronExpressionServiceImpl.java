@@ -12,13 +12,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -75,5 +78,29 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
             return res;
         }
         return null;
+    }
+
+    /**
+     * 添加一个时间表达式对象数据
+     * @param cronExpression 时间表达式对象
+     * @return 添加成功的时间表达式对象
+     */
+    @Override
+    public SysCronExpressionEntity addCronExpression(SysCronExpressionEntity cronExpression) {
+        // 获取的登录人的用户名
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        //首先判断如果传过来的对象是 null 的值的话则进行赋值
+        if(cronExpression.getId() == null || cronExpression.getId().isEmpty()){//创建
+            //赋值为 null 防止前端传入的字符串为 ""
+            cronExpression.setId(null);
+            cronExpression.setCreateBy(username);
+            cronExpression.setGmtCreate(LocalDateTime.now());
+        }else{//修改
+            cronExpression.setUpdateBy(username);
+            cronExpression.setGmtModified(LocalDateTime.now());
+        }
+        //调用添加方法进行添加
+        sysCronExpressionRepo.save(cronExpression);
+        return cronExpression;
     }
 }
