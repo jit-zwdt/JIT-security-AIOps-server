@@ -88,6 +88,7 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
      */
     @Override
     public SysCronExpressionEntity addCronExpression(SysCronExpressionEntity cronExpression) {
+
         // 获取的登录人的用户名
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         //首先判断如果传过来的对象是 null 的值的话则进行赋值
@@ -103,6 +104,36 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
         //调用添加方法进行添加
         sysCronExpressionRepo.save(cronExpression);
         return cronExpression;
+    }
+
+    /**
+     * 根据表达式的描述和和表达式查询数据
+     * @param cronExpression SysCronExpressionEntity 对象
+     * @return 是否具有这个数据 true 有 false 没有
+     */
+    @Override
+    public boolean checkAddCronExpression(String cronExpression){
+        // 查看表达式和表达式名称是否具有重复的数据
+        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpression(cronExpression);
+        if(sysCronExpression == null){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 根据表达式的描述查询数据
+     * @param cronExpressionDesc 表达式描述查询数据
+     * @return 是否具有这个数据 true 有 false 没有
+     */
+    @Override
+    public boolean checkAddCronExpressionDesc(String cronExpressionDesc) {
+        // 查看表达式和表达式名称是否具有重复的数据
+        SysCronExpressionEntity sysCronExpression = sysCronExpressionRepo.findByCronExpressionDesc(cronExpressionDesc);
+        if(sysCronExpression == null){
+            return false;
+        }
+        return true;
     }
 
     /**

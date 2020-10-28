@@ -22,6 +22,20 @@ public interface SysCronExpressionService {
     SysCronExpressionEntity addCronExpression(SysCronExpressionEntity cronExpression);
 
     /**
+     * 根据表达式查询数据
+     * @param cronExpression 表达式
+     * @return 是否具有这个数据 true 有 false 没有
+     */
+    boolean checkAddCronExpression(String cronExpression);
+
+    /**
+     * 根据表达式的描述查询数据
+     * @param cronExpressionDesc 表达式描述查询数据
+     * @return 是否具有这个数据 true 有 false 没有
+     */
+    boolean checkAddCronExpressionDesc(String cronExpressionDesc);
+
+    /**
      * 根据时间表达式的 ID 删除一条数据
      * @param id 时间表达式的 id
      */

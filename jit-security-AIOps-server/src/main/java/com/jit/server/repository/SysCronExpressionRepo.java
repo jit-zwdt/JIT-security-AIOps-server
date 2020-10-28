@@ -18,4 +18,18 @@ public interface SysCronExpressionRepo extends JpaRepository<SysCronExpressionEn
 
     @Query("select e.cronExpressionDesc,e.cronExpression from SysCronExpressionEntity e where e.isDeleted = 0 ")
     List<Object> getCronExpressionObject();
+
+    /**
+     * 根据表达式查询表达式
+     * @param cronExpression 表达式
+     * @return 表达式对象
+     */
+    SysCronExpressionEntity findByCronExpression(String cronExpression);
+
+    /**
+     * 根据表达式描述查询表达式
+     * @param cronExpressionDesc 表达式描述
+     * @return 表达式对象
+     */
+    SysCronExpressionEntity findByCronExpressionDesc(String cronExpressionDesc);
 }

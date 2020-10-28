@@ -13,6 +13,8 @@ public enum ExceptionEnum {
     SCHEDULER_USE_CLASS_EXCEPTION(3002, "后台找不到定时任务执行类名"),
     SCHEDULER_USE_METHOD_EXCEPTION(3003, "后台找不到定时任务执行方法名"),
     SCHEDULER_CRON_EXPRESSION_EXCEPTION(3004, "cron表达式不正确"),
+    CRON_EXPRESSION_DESC_DATA_EXISTS(3006, "该表达式名称已经存在了"),
+    CRON_EXPRESSION_DATA_EXISTS(3007, "该表达式已经存在了"),
     SCHEDULER_EXISTED_EXCEPTION(3005, "任务已存在，请重新填写必要参数"),
     INNTER_EXCEPTION(500, "系统内部异常"),
     DATABASE_EXCEPTION(5001, "数据库连接异常"),

@@ -62,4 +62,13 @@ public class AllTest {
         SysCronExpressionEntity cronExpressionEntity = sysCronExpressionService.addCronExpression(cronExpression);
         System.out.println(cronExpressionEntity);
     }
+
+    /**
+     * 测试是有有对应的数据
+     */
+    @Test
+    public void testGetCronExpressionDesc(){
+        boolean flag = sysCronExpressionService.checkAddCronExpressionDesc("每隔10");
+        System.out.println(flag);
+    }
 }
