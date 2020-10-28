@@ -14,9 +14,12 @@ import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetTemplateDTO;
+import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.exception.ZabbixApiException;
+import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.request.ZabbixGetItemParams;
 import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
+import com.jit.zabbix.client.service.ZabbixHostGroupService;
 import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixTemplateService;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +56,9 @@ public class MonitorTemplatesController {
     @Autowired
     private ZabbixItemService zabbixItemService;
 
+    @Autowired
+    private ZabbixHostGroupService zabbixHostGroupService;
+
     @ResponseBody
     @PostMapping(value = "/getMonitorTemplates")
     public Result getMonitorTemplates(@RequestBody PageRequest<MonitorTemplatesParams> params) {
@@ -82,14 +88,41 @@ public class MonitorTemplatesController {
     public Result getZabbixTemplates(HttpServletRequest req) {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            // get groupids
+            List<String> groupids = getUserDefineHostgroup(auth);
             ZabbixGetTemplateParams params = new ZabbixGetTemplateParams();
             params.setOutput("extend");
+            List<String> order = new ArrayList<>();
+            order.add("name");
+            params.setSortOrder(order);
+            if (groupids != null) {
+                params.setGroupIds(groupids);
+            }
             List<ZabbixGetTemplateDTO> zabbixGetTemplateDTOList = zabbixTemplateService.get(params, auth);
             return Result.SUCCESS(zabbixGetTemplateDTOList);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
         }
+    }
+
+    private List<String> getUserDefineHostgroup(String auth) throws ZabbixApiException {
+        ZabbixGetHostGroupParams zabbixGetHostGroupParams = new ZabbixGetHostGroupParams();
+        zabbixGetHostGroupParams.setOutput("extend");
+        Map<String, Object> search = new HashMap<>(1);
+        search.put("name", ConstUtil.HOSTGROUP_NAME);
+        zabbixGetHostGroupParams.setSearch(search);
+        List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(zabbixGetHostGroupParams, auth);
+        List<String> groupids = new ArrayList<>();
+        if (zabbixHostGroupDTOList != null && !zabbixHostGroupDTOList.isEmpty()) {
+            for (ZabbixHostGroupDTO zabbixHostGroupDTO : zabbixHostGroupDTOList) {
+                groupids.add(zabbixHostGroupDTO.getId());
+            }
+        }
+        if (!groupids.isEmpty()) {
+            return groupids;
+        }
+        return null;
     }
 
     @ResponseBody
