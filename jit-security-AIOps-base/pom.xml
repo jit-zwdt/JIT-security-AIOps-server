@@ -17,9 +17,7 @@
     <description>jit-security-AIOps-base</description>
     <url>https://github.com/jit-zwdt/JIT-security-AIOps-server</url>
 
-    <dependencies>
-
-    </dependencies>
+    <dependencies></dependencies>
     <profiles>
         <!-- 本地开发环境 -->
         <profile>
@@ -60,5 +58,12 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--开启过滤，用指定的参数替换directory下的文件中的参数-->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 </project>
