@@ -248,6 +248,15 @@ public class HomePageServiceImpl implements HomePageService {
     private List<BasicMapMessage> getBasicMapMessageAsProblemHost(List<ProblemHostDTO> problemHostList){
         //声明集合对象
         List<BasicMapMessage> BasicMapMessages = new ArrayList<>();
+        // 如果整个字符串数组在最后的一位数和第一位的文字不一样才继续下面的判断 否则直接返回值
+        if(problemHostList.get(0).getHostId().equals(problemHostList.get(problemHostList.size() - 1))){
+            //构建返回的对象
+            BasicMapMessage basicMapMessage = new BasicMapMessage(problemHostList.get(0).getHostName() , problemHostList.size());
+            //添加到List对象中
+            BasicMapMessages.add(basicMapMessage);
+            //返回
+            return BasicMapMessages;
+        }
         //对排序的字符串做对比操作
         for(int i= 0 ; i < problemHostList.size() ;){
             //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
@@ -285,6 +294,16 @@ public class HomePageServiceImpl implements HomePageService {
     private List<BasicMapMessage> getBasicMapMessageAsString(List<String> stringList){
         //声明集合对象
         List<BasicMapMessage> BasicMapMessages = new ArrayList<>();
+        //对死循环进行处理
+        // 如果整个字符串数组在最后的一位数和第一位的文字不一样才继续下面的判断 否则直接返回值
+        if(stringList.get(0).equals(stringList.get(stringList.size() - 1))){
+            //构建返回的对象
+            BasicMapMessage basicMapMessage = new BasicMapMessage(stringList.get(0) , stringList.size());
+            //添加到数组对象中
+            BasicMapMessages.add(basicMapMessage);
+            //返回
+            return BasicMapMessages;
+        }
         //对排序的字符串做对比操作
         for(int i= 0 ; i < stringList.size() ;){
             //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
