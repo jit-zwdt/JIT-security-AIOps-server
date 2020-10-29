@@ -84,7 +84,11 @@ public class AssetsParams {
     /**
      * CPU 参数值
      */
-    private Integer cpu;
+    private Float cpu;
+    /**
+     * CPU 核心数
+     */
+    private Integer cpuCoreNumber;
     /**
      * 内存参数值 单位 G
      */

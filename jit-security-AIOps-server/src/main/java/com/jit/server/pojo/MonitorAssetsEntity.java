@@ -199,17 +199,23 @@ public class MonitorAssetsEntity {
     private String parentId;
 
     /**
-     * CPU 参数值
+     * CPU 大小
      */
     @Column(name = "cpu")
-    private Integer cpu;
+    private Float cpu;
+
+    /**
+     * CPU 核心数
+     */
+    @Column(name = "cpu_core_number")
+    private Integer cpuCoreNumber;
     /**
      * 内存参数值 单位 G
      */
     @Column(name = "memory")
     private Integer memory;
     /**
-     * 硬件参数值 单位 T
+     * 硬件参数值 单位 G
      */
     @Column(name = "hard_disk")
     private Integer hardDisk;
