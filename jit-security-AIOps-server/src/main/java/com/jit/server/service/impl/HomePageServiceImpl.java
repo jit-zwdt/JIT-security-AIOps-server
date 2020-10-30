@@ -249,7 +249,7 @@ public class HomePageServiceImpl implements HomePageService {
         //声明集合对象
         List<BasicMapMessage> BasicMapMessages = new ArrayList<>();
         // 如果整个字符串数组在最后的一位数和第一位的文字不一样才继续下面的判断 否则直接返回值
-        if(problemHostList.get(0).getHostId().equals(problemHostList.get(problemHostList.size() - 1))){
+        if(problemHostList.get(0).getHostId().equals(problemHostList.get(problemHostList.size() - 1).getHostId())){
             //构建返回的对象
             BasicMapMessage basicMapMessage = new BasicMapMessage(problemHostList.get(0).getHostName() , problemHostList.size());
             //添加到List对象中
