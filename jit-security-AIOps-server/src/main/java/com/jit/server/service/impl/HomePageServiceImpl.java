@@ -249,40 +249,42 @@ public class HomePageServiceImpl implements HomePageService {
         //声明集合对象
         List<BasicMapMessage> BasicMapMessages = new ArrayList<>();
         // 如果整个字符串数组在最后的一位数和第一位的文字不一样才继续下面的判断 否则直接返回值
-        if(problemHostList.get(0).getHostId().equals(problemHostList.get(problemHostList.size() - 1).getHostId())){
-            //构建返回的对象
-            BasicMapMessage basicMapMessage = new BasicMapMessage(problemHostList.get(0).getHostName() , problemHostList.size());
-            //添加到List对象中
-            BasicMapMessages.add(basicMapMessage);
-            //返回
-            return BasicMapMessages;
-        }
-        //对排序的字符串做对比操作
-        for(int i= 0 ; i < problemHostList.size() ;){
-            //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
-            boolean flag = true;
-            int count = 1;
-            //拿出字符串
-            String hostId = problemHostList.get(i).getHostId();
-            String hostName = problemHostList.get(i).getHostName();
-            //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
-            //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
-            while(hostId.equals(problemHostList.get(i + 1 == problemHostList.size() ? 1 : i + 1).getHostId())){
-                //进入首先吧 flag 的值变为 false 不让再次进行迭代
-                flag = false;
-                //计数器加 1
-                count ++;
-                //迭代
-                i++;
+        if (problemHostList != null && !problemHostList.isEmpty()) {
+            if(problemHostList.get(0).getHostId().equals(problemHostList.get(problemHostList.size() - 1).getHostId())){
+                //构建返回的对象
+                BasicMapMessage basicMapMessage = new BasicMapMessage(problemHostList.get(0).getHostName() , problemHostList.size());
+                //添加到List对象中
+                BasicMapMessages.add(basicMapMessage);
+                //返回
+                return BasicMapMessages;
             }
-            //如果 flag 是 true 则进行迭代否则不进行迭代
-            if(flag){
-                i++;
+            //对排序的字符串做对比操作
+            for(int i= 0 ; i < problemHostList.size() ;){
+                //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
+                boolean flag = true;
+                int count = 1;
+                //拿出字符串
+                String hostId = problemHostList.get(i).getHostId();
+                String hostName = problemHostList.get(i).getHostName();
+                //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
+                //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
+                while(hostId.equals(problemHostList.get(i + 1 == problemHostList.size() ? 1 : i + 1).getHostId())){
+                    //进入首先吧 flag 的值变为 false 不让再次进行迭代
+                    flag = false;
+                    //计数器加 1
+                    count ++;
+                    //迭代
+                    i++;
+                }
+                //如果 flag 是 true 则进行迭代否则不进行迭代
+                if(flag){
+                    i++;
+                }
+                //创建 BasicMapMessage 对象进行数据的添加
+                BasicMapMessage basicMapMessage = new BasicMapMessage(hostName , count);
+                //添加对象到 list 集合中
+                BasicMapMessages.add(basicMapMessage);
             }
-            //创建 BasicMapMessage 对象进行数据的添加
-            BasicMapMessage basicMapMessage = new BasicMapMessage(hostName , count);
-            //添加对象到 list 集合中
-            BasicMapMessages.add(basicMapMessage);
         }
         return BasicMapMessages;
     }
@@ -296,39 +298,41 @@ public class HomePageServiceImpl implements HomePageService {
         List<BasicMapMessage> BasicMapMessages = new ArrayList<>();
         //对死循环进行处理
         // 如果整个字符串数组在最后的一位数和第一位的文字不一样才继续下面的判断 否则直接返回值
-        if(stringList.get(0).equals(stringList.get(stringList.size() - 1))){
-            //构建返回的对象
-            BasicMapMessage basicMapMessage = new BasicMapMessage(stringList.get(0) , stringList.size());
-            //添加到数组对象中
-            BasicMapMessages.add(basicMapMessage);
-            //返回
-            return BasicMapMessages;
-        }
-        //对排序的字符串做对比操作
-        for(int i= 0 ; i < stringList.size() ;){
-            //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
-            boolean flag = true;
-            int count = 1;
-            //拿出字符串
-            String name = stringList.get(i);
-            //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
-            //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
-            while(name.equals(stringList.get(i + 1 == stringList.size() ? 1 : i + 1))){
-                //进入首先吧 flag 的值变为 false 不让再次进行迭代
-                flag = false;
-                //计数器加 1
-                count ++;
-                //迭代
-                i++;
+        if (stringList != null && !stringList.isEmpty()) {
+            if(stringList.get(0).equals(stringList.get(stringList.size() - 1))){
+                //构建返回的对象
+                BasicMapMessage basicMapMessage = new BasicMapMessage(stringList.get(0) , stringList.size());
+                //添加到数组对象中
+                BasicMapMessages.add(basicMapMessage);
+                //返回
+                return BasicMapMessages;
             }
-            //如果 flag 是 true 则进行迭代否则不进行迭代
-            if(flag){
-                i++;
+            //对排序的字符串做对比操作
+            for(int i= 0 ; i < stringList.size() ;){
+                //添加布尔类型的值 如果没有相等的则进行迭代不然会出现死循环
+                boolean flag = true;
+                int count = 1;
+                //拿出字符串
+                String name = stringList.get(i);
+                //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
+                //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
+                while(name.equals(stringList.get(i + 1 == stringList.size() ? 1 : i + 1))){
+                    //进入首先吧 flag 的值变为 false 不让再次进行迭代
+                    flag = false;
+                    //计数器加 1
+                    count ++;
+                    //迭代
+                    i++;
+                }
+                //如果 flag 是 true 则进行迭代否则不进行迭代
+                if(flag){
+                    i++;
+                }
+                //创建 BasicMapMessage 对象进行数据的添加
+                BasicMapMessage basicMapMessage = new BasicMapMessage(name , count);
+                //添加对象到 list 集合中
+                BasicMapMessages.add(basicMapMessage);
             }
-            //创建 BasicMapMessage 对象进行数据的添加
-            BasicMapMessage basicMapMessage = new BasicMapMessage(name , count);
-            //添加对象到 list 集合中
-            BasicMapMessages.add(basicMapMessage);
         }
         return BasicMapMessages;
     }
