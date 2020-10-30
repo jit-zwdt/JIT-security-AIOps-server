@@ -1013,11 +1013,12 @@ public class HostServiceImpl implements HostService {
                 for (int i = 0; i < result.size(); i++) {
                     try {
                         Map<String, String> _map = result.get(i);
-                        double d = Double.parseDouble(_map.get("value"));
-                        if ((d < 0.0001) && (d > -0.0001)) {
-                            result.remove(i);
-                        }
+                            double d = Double.parseDouble(_map.get("value"));
+                            if ((d < 0.0001) && (d > -0.0001)) {
+                                result.remove(i);
+                            }
                     } catch (Exception e) {
+                        result.remove(i);
                         break;
                     }
                 }
