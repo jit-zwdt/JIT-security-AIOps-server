@@ -270,7 +270,7 @@ public class HomePageServiceImpl implements HomePageService {
                 String hostName = problemHostList.get(i).getHostName();
                 //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
                 //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
-                while(hostId.equals(problemHostList.get(i + 1 == problemHostList.size() ? 1 : i + 1).getHostId())){
+                while(hostId.equals(problemHostList.get(i + 1 == problemHostList.size() ? 0 : i + 1).getHostId())){
                     //进入首先吧 flag 的值变为 false 不让再次进行迭代
                     //计数器加 1
                     count ++;
@@ -314,7 +314,7 @@ public class HomePageServiceImpl implements HomePageService {
                 String name = stringList.get(i);
                 //使用循环 如果两个字符串相等的话则进入循环否则不进入循环
                 //其实还是有 Bug 但是数据多了就不会出现 bug 了 这里的判断是最后的一位数如果和第一个数据相等则继续执行 但是一般情况下不会相等因为进行了排序 是这么处理越界异常的
-                while(name.equals(stringList.get(i + 1 == stringList.size() ? 1 : i + 1))){
+                while(name.equals(stringList.get(i + 1 == stringList.size() ? 0 : i + 1))){
                     //进入首先吧 flag 的值变为 false 不让再次进行迭代
                     //计数器加 1
                     count ++;
