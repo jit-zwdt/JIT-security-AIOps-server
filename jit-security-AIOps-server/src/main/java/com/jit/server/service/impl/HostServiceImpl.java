@@ -223,7 +223,7 @@ public class HostServiceImpl implements HostService {
      */
     private Page<Object> predicateQuery(HostParams params, Pageable pageable) {
         String comditionalSQL = "";
-        String orderbySQL = " order by hostentity.gmtCreate desc,hostentity.id ";
+        String orderbySQL = " order by hostentity.objectName,hostentity.gmtCreate desc ";
         String baseSQL = "SELECT " +
                 "hostentity.id, " +
                 "hostentity.hostId, " +
