@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @author zengxin_miao
@@ -73,6 +71,17 @@ public class Top5CommonController {
                             }
                         }
                     }
+                    Collections.sort(resultList, new Comparator<Map<String, String>>() {
+                        @Override
+                        public int compare(Map<String, String> map1, Map<String, String> map2) {
+                            double a = Double.parseDouble(map1.get("value"));
+                            double b = Double.parseDouble(map2.get("value"));
+                            BigDecimal bigDecimala = BigDecimal.valueOf(a);
+                            BigDecimal bigDecimalb = BigDecimal.valueOf(b);
+                            return bigDecimalb.compareTo(bigDecimala);
+                        }
+                    });
+                    resultList = resultList.subList(0, resultList.size() > 4 ? 5 : resultList.size());
                     return Result.SUCCESS(resultList);
                 }
             }

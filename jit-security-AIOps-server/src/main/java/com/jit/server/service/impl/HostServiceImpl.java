@@ -925,6 +925,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<Map<String, String>> getTop5ByItem(Map<String, Object> params,String auth) throws Exception {
         List<Map<String, String>> result = new ArrayList<>();
+        List<Map<String, String>> resultnew = new ArrayList<>();
         if (params != null) {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             Map<String, String> map = null;
@@ -987,32 +988,36 @@ public class HostServiceImpl implements HostService {
 
                 for (Map<String, String> _map : result) {
                     if (hostId.equals(_map.get("hostId"))) {
-                        _map.put("itemId", itemId);
-                        _map.put("itemName", itemName);
+                        Map<String, String> mapData = new HashMap<String, String>();
+                        mapData.put("hostId", _map.get("hostId"));
+                        mapData.put("hostName", _map.get("hostName"));
+                        mapData.put("itemId", itemId);
+                        mapData.put("itemName", itemName);
 
                         List<ZabbixHistoryDTO> historyList = zabbixHistoryService.get(historyParams, auth);
                         if (historyList != null && !CollectionUtils.isEmpty(historyList)) {
                             ZabbixHistoryDTO history = historyList.get(0);
                             try {
-                                _map.put("clock", df.format(history.getClock()));
+                                mapData.put("clock", df.format(history.getClock()));
                             } catch (Exception e) {
-                                _map.put("clock", "");
+                                mapData.put("clock", "");
                             }
-                            _map.put("value", history.getValue());
+                            mapData.put("value", history.getValue());
                         } else {
-                            _map.put("clock", "");
-                            _map.put("value", "0");
+                            mapData.put("clock", "");
+                            mapData.put("value", "0");
                         }
+                        resultnew.add(mapData);
                         break;
                     }
                 }
             }
 
-            if (!CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(itemList)) {
+            if (!CollectionUtils.isEmpty(resultnew)) {
                 // 比较value为0移除此数据
-                for (int i = 0; i < result.size(); i++) {
+                for (int i = 0; i < resultnew.size(); i++) {
                     try {
-                        Map<String, String> _map = result.get(i);
+                        Map<String, String> _map = resultnew.get(i);
                             double d = Double.parseDouble(_map.get("value"));
                             if ((d < 0.0001) && (d > -0.0001)) {
                                 result.remove(i);
@@ -1022,7 +1027,7 @@ public class HostServiceImpl implements HostService {
                         break;
                     }
                 }
-                Collections.sort(result, new Comparator<Map>() {
+                Collections.sort(resultnew, new Comparator<Map>() {
                     @Override
                     public int compare(Map o1, Map o2) {
                         try {
@@ -1040,9 +1045,9 @@ public class HostServiceImpl implements HostService {
                         }
                     }
                 });
-                result = result.subList(0, result.size() > 4 ? 5 : result.size());
+                resultnew = resultnew.subList(0, resultnew.size() > 4 ? 5 : resultnew.size());
             }
-            return result;
+            return resultnew;
         }
         return null;
     }
