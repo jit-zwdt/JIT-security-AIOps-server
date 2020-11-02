@@ -129,6 +129,9 @@ public class HostEntity {
     @Column(name = "host_oracle_macro_ip")
     private String oracleMacroIp;
 
+    @Column(name = "host_oracle_macro_port")
+    private String oracleMacroPort;
+
     @Column(name = "host_oracle_macro_asm")
     private String oracleMacroAsm;
 

@@ -158,4 +158,17 @@ public class AssetsController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    /**
+     * 根据传入 ip 的值判断是否有这条数据 如果有 返回 true 如果没有 返回 false
+     * @param ip
+     * @return
+     */
+    @GetMapping("/validateIp")
+    public Result validateIp(String ip){
+        // 调用方法验证 Ip 是否具有这个 Ip 地址
+        boolean flag = assetsService.validateIp(ip);
+        // 返回成功对象 flag 是业务层传输的值
+        return Result.SUCCESS(flag);
+    }
 }

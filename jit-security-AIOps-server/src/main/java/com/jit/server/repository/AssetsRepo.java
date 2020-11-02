@@ -22,7 +22,7 @@ public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, 
     @Override
     Page<MonitorAssetsEntity> findAll(Specification<MonitorAssetsEntity> spec, Pageable pageable);
 
-    @Query(value = "select e.id,e.name,e.number from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0'")
+    @Query(value = "select e.id,e.name,e.number,e.ip from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0'")
     List<Object> findHardwareInfo();
 
     @Query(value = "select e.id,e.name,e.number,e.ip from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0' and e.ip is not null and length(e.ip) > 0")
@@ -34,4 +34,12 @@ public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, 
      */
     @Query(value = "select count(t.id) as number , sum(t.cpu) , sum(t.memory) , sum(t.hardDisk) from MonitorAssetsEntity t where t.type = '0' and t.isDeleted = 0")
     List<Object[]> getCountAndSum();
+
+    /**
+     * 根据 Ip 查询数据
+     * @param ip ip
+     * @param isDeleted 是否删除 0 未删除 1 已删除
+     * @return MonitorAssetsEntity 集合对象
+     */
+    List<MonitorAssetsEntity> findByIpAndIsDeleted(String ip, int isDeleted);
 }

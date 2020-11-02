@@ -27,4 +27,11 @@ public interface AssetsService {
      * @return 数据数组
      */
     List<Object[]> getCountAndSum();
+
+    /**
+     * 根据传入的 ip 验证 Ip 值
+     * @param ip ip 值
+     * @return true 代表有这个数据 false 代表没有这个数据
+     */
+    boolean validateIp(String ip);
 }

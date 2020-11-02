@@ -532,6 +532,14 @@ public class HostServiceImpl implements HostService {
             macro.setValue(macro_oracle_ip.trim());
             macros.add(macro);
         }
+        String macro_oracle_port = host.getOracleMacroPort();
+        if (StringUtils.isNotEmpty(macro_oracle_port)) {
+            //ORACLE主机宏：oracle端口
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$PORT}");
+            macro.setValue(macro_oracle_port.trim());
+            macros.add(macro);
+        }
         String macro_oracle_asm = host.getOracleMacroAsm();
         if (StringUtils.isNotEmpty(macro_oracle_asm)) {
             //ORACLE主机宏：ASM卷名
