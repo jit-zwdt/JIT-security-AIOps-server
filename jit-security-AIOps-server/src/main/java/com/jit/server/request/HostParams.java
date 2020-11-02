@@ -57,6 +57,7 @@ public class HostParams {
     private String mssqlMacroPassword;
     private String mssqlMacroUsername;
     private String oracleMacroIp;
+    private String oracleMacroPort;
     private String oracleMacroAsm;
     private String oracleMacroDbname;
     private String oracleMacroPassword;
