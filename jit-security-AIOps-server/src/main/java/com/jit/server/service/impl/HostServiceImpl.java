@@ -1028,10 +1028,10 @@ public class HostServiceImpl implements HostService {
                         Map<String, String> _map = resultnew.get(i);
                             double d = Double.parseDouble(_map.get("value"));
                             if ((d < 0.0001) && (d > -0.0001)) {
-                                result.remove(i);
+                                resultnew.remove(i);
                             }
                     } catch (Exception e) {
-                        result.remove(i);
+                        resultnew.remove(i);
                         break;
                     }
                 }
