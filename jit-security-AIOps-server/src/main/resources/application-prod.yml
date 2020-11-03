@@ -1,17 +1,17 @@
 #server port
 server:
-  port: 8081
+  port: 8080
   compression:
     min-response-size:
 zabbix:
   api:
-    url: http://172.16.15.10/zabbix/
+    url: http://172.19.0.5:8080/
   username: Admin
   password: zabbix
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.15.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
     username: root
     password: root
     connectionTimeout: 20000
