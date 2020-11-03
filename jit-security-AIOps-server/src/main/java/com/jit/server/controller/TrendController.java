@@ -1,15 +1,16 @@
 package com.jit.server.controller;
 
+import com.jit.server.dto.MonitorHostDetailBindItemsDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.pojo.MonitorHostDetailBindItems;
-import com.jit.server.request.HistoryParams;
-import com.jit.server.request.TrendParams;
+import com.jit.server.request.*;
 import com.jit.server.service.*;
 import com.jit.server.util.ConstUtil;
-import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
-import com.jit.zabbix.client.dto.ZabbixGetTrendDTO;
+import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
+import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
+import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixHistoryDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -18,10 +19,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -33,7 +36,16 @@ import java.util.List;
 @RequestMapping("/trend")
 public class TrendController {
     @Autowired
+    private ItemService itemService;
+
+    @Autowired
     private HistoryService historyService;
+
+    @Autowired
+    private GraphItemService graphItemService;
+
+    @Autowired
+    private GraphPrototypeService graphPrototypeService;
 
     @Autowired
     private MonitorHostDetailBindItemsService monitorHostDetailBindItemsService;
@@ -154,18 +166,211 @@ public class TrendController {
     }
 
     @PostMapping("/findHostDetailItems/{hostId}")
-    public Result findHostDetailItems(@PathVariable String hostId) {
+    public Result findHostDetailItems(@PathVariable String hostId, @RequestBody HistoryParams historyParams, HttpServletRequest req) {
         try {
-            return Result.SUCCESS(monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, ConstUtil.IS_NOT_DELETED));
+            List<MonitorHostDetailBindItemsDTO> list = new ArrayList<>();
+            List<MonitorHostDetailBindItems> monitorHostDetailBindItems = monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, ConstUtil.IS_NOT_DELETED);
+            List<MonitorHostDetailBindItems> list1 = new ArrayList<>();
+            List<MonitorHostDetailBindItems> list2 = new ArrayList<>();
+            List<MonitorHostDetailBindItems> list3 = new ArrayList<>();
+            List<MonitorHostDetailBindItems> list4 = new ArrayList<>();
+            List<MonitorHostDetailBindItems> list5 = new ArrayList<>();
+            for(MonitorHostDetailBindItems m:monitorHostDetailBindItems){
+                if(m.getValueType() == 0){
+                    list1.add(m);
+                }
+                if(m.getValueType() == 1){
+                    list2.add(m);
+                }
+                if(m.getValueType() == 2){
+                    list3.add(m);
+                }
+                if(m.getValueType() == 3){
+                    list4.add(m);
+                }
+                if(m.getValueType() == 4){
+                    list5.add(m);
+                }
+            }
+
+            if(list1.size()>0){
+                HistoryParams type1 = new HistoryParams();
+                List<String> listType1 = new ArrayList<>();
+                for(MonitorHostDetailBindItems m:list1){
+                    listType1.add(m.getItemId());
+                }
+                type1.setItemids(listType1);
+                String auth1 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                MonitorHostDetailBindItemsDTO m1 = new MonitorHostDetailBindItemsDTO();
+                type1.setHistory(0);
+                type1.setTimefrom(historyParams.getTimefrom());
+                type1.setTimetill(historyParams.getTimetill());
+                List<ZabbixHistoryDTO> result1 = historyService.getHistoryInfoList(type1, auth1);
+                for(MonitorHostDetailBindItems m:list1){
+                    List<ZabbixHistoryDTO> listHistory1 = new ArrayList<>();
+                    m1.setMonitorHostDetailBindItems(m);
+                    for(ZabbixHistoryDTO z:result1){
+                        if(z.getItemId().equals(m.getItemId())){
+                            listHistory1.add(z);
+                        }
+                    }
+                    m1.setZabbixHistoryDTOs(listHistory1);
+                    list.add(m1);
+                }
+            }
+            if(list2.size()>0){
+                HistoryParams type2 = new HistoryParams();
+                List<String> listType2 = new ArrayList<>();
+                for(MonitorHostDetailBindItems m:list2){
+                    listType2.add(m.getItemId());
+                }
+                type2.setItemids(listType2);
+                String auth2 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                MonitorHostDetailBindItemsDTO m2 = new MonitorHostDetailBindItemsDTO();
+                type2.setHistory(1);
+                type2.setTimefrom(historyParams.getTimefrom());
+                type2.setTimetill(historyParams.getTimetill());
+                List<ZabbixHistoryDTO> result2 = historyService.getHistoryInfoList(type2, auth2);
+                for(MonitorHostDetailBindItems m:list2){
+                    List<ZabbixHistoryDTO> listHistory2 = new ArrayList<>();
+                    m2.setMonitorHostDetailBindItems(m);
+                    for(ZabbixHistoryDTO z:result2){
+                        if(z.getItemId().equals(m.getItemId())){
+                            listHistory2.add(z);
+                        }
+                    }
+                    m2.setZabbixHistoryDTOs(listHistory2);
+                    list.add(m2);
+                }
+            }
+            if(list3.size()>0){
+                HistoryParams type3 = new HistoryParams();
+                List<String> listType3 = new ArrayList<>();
+                for(MonitorHostDetailBindItems m:list3){
+                    listType3.add(m.getItemId());
+                }
+                type3.setItemids(listType3);
+                String auth3 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                MonitorHostDetailBindItemsDTO m3 = new MonitorHostDetailBindItemsDTO();
+                type3.setHistory(2);
+                type3.setTimefrom(historyParams.getTimefrom());
+                type3.setTimetill(historyParams.getTimetill());
+                List<ZabbixHistoryDTO> result3 = historyService.getHistoryInfoList(type3, auth3);
+                for(MonitorHostDetailBindItems m:list3){
+                    List<ZabbixHistoryDTO> listHistory3 = new ArrayList<>();
+                    m3.setMonitorHostDetailBindItems(m);
+                    for(ZabbixHistoryDTO z:result3){
+                        if(z.getItemId().equals(m.getItemId())){
+                            listHistory3.add(z);
+                        }
+                    }
+                    m3.setZabbixHistoryDTOs(listHistory3);
+                    list.add(m3);
+                }
+            }
+            if(list4.size()>0){
+                HistoryParams type4 = new HistoryParams();
+                List<String> listType4 = new ArrayList<>();
+                for(MonitorHostDetailBindItems m:list4){
+                    listType4.add(m.getItemId());
+                }
+                type4.setItemids(listType4);
+                String auth4 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                MonitorHostDetailBindItemsDTO m4 = new MonitorHostDetailBindItemsDTO();
+                type4.setHistory(3);
+                type4.setTimefrom(historyParams.getTimefrom());
+                type4.setTimetill(historyParams.getTimetill());
+                List<ZabbixHistoryDTO> result4 = historyService.getHistoryInfoList(type4, auth4);
+                for(MonitorHostDetailBindItems m:list4){
+                    List<ZabbixHistoryDTO> listHistory4 = new ArrayList<>();
+                    m4.setMonitorHostDetailBindItems(m);
+                    for(ZabbixHistoryDTO z:result4){
+                        if(z.getItemId().equals(m.getItemId())){
+                            listHistory4.add(z);
+                        }
+                    }
+                    m4.setZabbixHistoryDTOs(listHistory4);
+                    list.add(m4);
+                }
+            }
+            if(list5.size()>0){
+                HistoryParams type5 = new HistoryParams();
+                List<String> listType5 = new ArrayList<>();
+                for(MonitorHostDetailBindItems m:list5){
+                    listType5.add(m.getItemId());
+                }
+                type5.setItemids(listType5);
+                String auth5 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                MonitorHostDetailBindItemsDTO m5 = new MonitorHostDetailBindItemsDTO();
+                type5.setHistory(4);
+                type5.setTimefrom(historyParams.getTimefrom());
+                type5.setTimetill(historyParams.getTimetill());
+                List<ZabbixHistoryDTO> result5 = historyService.getHistoryInfoList(type5, auth5);
+                for(MonitorHostDetailBindItems m:list5){
+                    List<ZabbixHistoryDTO> listHistory5 = new ArrayList<>();
+                    m5.setMonitorHostDetailBindItems(m);
+                    for(ZabbixHistoryDTO z:result5){
+                        if(z.getItemId().equals(m.getItemId())){
+                            listHistory5.add(z);
+                        }
+                    }
+                    m5.setZabbixHistoryDTOs(listHistory5);
+                    list.add(m5);
+                }
+            }
+            return Result.SUCCESS(list);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
 
     @PostMapping("/findHostDetailGraphs/{hostId}")
-    public Result findHostDetailGraphs(@PathVariable String hostId) {
+    public Result findHostDetailGraphs(@PathVariable String hostId, @RequestBody GraphItemParams graphItemParams, HttpServletRequest req) {
         try {
-            return Result.SUCCESS(monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, ConstUtil.IS_NOT_DELETED));
+            List<Map<String, Object>> listFinal = new ArrayList<>();
+            List<MonitorHostDetailBindGraphs> list = monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, ConstUtil.IS_NOT_DELETED);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            for(MonitorHostDetailBindGraphs m:list){
+                Map<String, Object> finalResult = new HashMap<>();
+                List<String> listTemp = new ArrayList<>();
+                listTemp.add(m.getGraphId());
+                graphItemParams.setGraphids(listTemp);
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,auth);
+                finalResult.put("gItemData", result);
+                GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
+                graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
+                List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,auth);
+                finalResult.put("graphData", graph);
+                List<String> itemids = new ArrayList<>();
+                for (ZabbixGetGraphItemDTO z : result) {
+                    itemids.add(z.getItemId());
+                }
+                if (itemids != null && !CollectionUtils.isEmpty(itemids)) {
+                    ItemParams itemParams = new ItemParams();
+                    itemParams.setItemids(itemids);
+                    itemParams.setHostids(graphItemParams.getHostids());
+                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth);
+                    if (item != null) {
+                        finalResult.put("itemData", item);
+                    }
+                    List<String> _itemId = new ArrayList<>();
+                    HistoryParams historyParams = new HistoryParams();
+                    for (int i = 0; i < result.size(); i++) {
+                        _itemId.add(result.get(i).getItemId());
+                    }
+                    historyParams.setHistory(item.get(0).getValueType().getValue());
+                    historyParams.setTimefrom(graphItemParams.getTimefrom());
+                    historyParams.setTimetill(graphItemParams.getTimetill());
+                    historyParams.setItemids(_itemId);
+                    List<ZabbixHistoryDTO> trend = historyService.getHistoryInfoList(historyParams, auth);
+                    if (trend != null) {
+                        finalResult.put("trendListData", trend);
+                    }
+                }
+                listFinal.add(finalResult);
+            }
+
+            return Result.SUCCESS(listFinal);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }

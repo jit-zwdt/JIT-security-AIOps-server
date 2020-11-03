@@ -92,10 +92,9 @@ public class GraphItemController {
                     if (item != null) {
                         finalResult.put("itemData", item);
                     }
-                    List<List<ZabbixHistoryDTO>> hisList = new ArrayList<>();
+                    List<String> _itemId = new ArrayList<>();
+                    HistoryParams historyParams = new HistoryParams();
                     for (int i = 0; i < result.size(); i++) {
-                        HistoryParams historyParams = new HistoryParams();
-                        List<String> _itemId = new ArrayList<>();
                         _itemId.add(result.get(i).getItemId());
                         for(int j = 0; j < item.size(); j++){
                             if(result.get(i).getItemId().equals(item.get(j).getId())){
@@ -103,14 +102,13 @@ public class GraphItemController {
                                 break;
                             }
                         }
-                        historyParams.setItemids(_itemId);
-                        historyParams.setTimefrom(graphItemParams.getTimefrom());
-                        historyParams.setTimetill(graphItemParams.getTimetill());
-                        List<ZabbixHistoryDTO> trend = historyService.getHistoryInfoList(historyParams, auth);
-                         hisList.add(trend);
                     }
-                    if (hisList != null) {
-                        finalResult.put("trendListData", hisList);
+                    historyParams.setTimefrom(graphItemParams.getTimefrom());
+                    historyParams.setTimetill(graphItemParams.getTimetill());
+                    historyParams.setItemids(_itemId);
+                    List<ZabbixHistoryDTO> trend = historyService.getHistoryInfoList(historyParams, auth);
+                    if (trend != null) {
+                        finalResult.put("trendListData", trend);
                     }
                 }
                 if (finalResult != null) {
