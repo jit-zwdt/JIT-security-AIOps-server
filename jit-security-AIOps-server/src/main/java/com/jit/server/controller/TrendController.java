@@ -342,6 +342,7 @@ public class TrendController {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             for(MonitorHostDetailBindGraphs m:list){
                 Map<String, Object> finalResult = new HashMap<>();
+                finalResult.put("id", m.getId());
                 List<String> listTemp = new ArrayList<>();
                 listTemp.add(m.getGraphId());
                 graphItemParams.setGraphids(listTemp);
