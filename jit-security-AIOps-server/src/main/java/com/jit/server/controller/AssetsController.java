@@ -44,7 +44,7 @@ public class AssetsController {
             if (params != null) {
                 Page<MonitorAssetsEntity> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());
                 if (null != pageResult) {
-                    Map<String, Object> result = new HashMap<String, Object>();
+                    Map<String, Object> result = new HashMap<>(3);
                     result.put("totalRow", pageResult.getTotalElements());
                     result.put("totalPage", pageResult.getTotalPages());
                     result.put("dataList", pageResult.getContent());
