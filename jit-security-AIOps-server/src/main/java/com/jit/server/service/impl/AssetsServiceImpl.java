@@ -2,8 +2,10 @@ package com.jit.server.service.impl;
 
 import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.repository.AssetsRepo;
+import com.jit.server.repository.HostRepo;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
+import com.jit.server.service.HostService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
@@ -26,6 +29,9 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Autowired
     private AssetsRepo assetsRepo;
+
+    @Autowired
+    private HostRepo hostRepo;
 
     @Override
     public Page<MonitorAssetsEntity> findByCondition(AssetsParams params, int page, int size) throws Exception {
@@ -108,7 +114,11 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateAssets(MonitorAssetsEntity assets) throws Exception {
+        //更新主机的数据
+        hostRepo.updateIpByAssetsIdAndIsDeleted(assets.getIp() , assets.getId() , 0);
+        //更新数据
         assetsRepo.save(assets);
     }
 

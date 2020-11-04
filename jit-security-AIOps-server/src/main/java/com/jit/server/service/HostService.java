@@ -1,6 +1,7 @@
 package com.jit.server.service;
 
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.HostParams;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;

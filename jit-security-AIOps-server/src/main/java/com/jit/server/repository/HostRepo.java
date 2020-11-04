@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -77,4 +78,14 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
      * @return 查询到的数据结果集合
      */
     List<HostEntity> findByJmxIpAndDeleted(String jmxIp, int deleted);
+
+    /**
+     * 更新方法 更新主机的 所有跟 ip 关联的项目 根据 assetsId 改变值
+     * @param ip 需要更新的 Ip
+     * @param assetsId assetsId 主键 ID
+     * @param isDeleted 是否删除标识 0 未删除 1 删除
+     */
+    @Modifying
+    @Query("update HostEntity t set t.agentIp = :ip , t.jmxIp = :ip , t.snmpIp = :ip where t.assetsId = :assetsId and t.deleted = :isDeleted")
+    void updateIpByAssetsIdAndIsDeleted(String ip, String assetsId, int isDeleted);
 }
