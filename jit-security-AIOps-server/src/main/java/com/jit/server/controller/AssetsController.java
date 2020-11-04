@@ -5,6 +5,7 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
+import com.jit.server.service.HostService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -33,6 +34,9 @@ public class AssetsController {
 
     @Autowired
     AssetsService assetsService;
+
+    @Autowired
+    HostService hostService;
 
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
@@ -102,6 +106,16 @@ public class AssetsController {
     public Result deleteAssets(@PathVariable String id) {
         try {
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
+            MonitorAssetsEntity monitorAssetsEntity = bean.get();
+            //判断是否是硬件 如果是硬件进行进一步的判断进行删除 0 是硬件
+            if(monitorAssetsEntity.getType().equals("0")){
+                // 根据 IP 查询是否有对应的数据 如果有的话进行返回错误的判断
+                boolean flag = hostService.findByHostJmxIp(monitorAssetsEntity.getIp());
+                //如果存在数据直接返回 Error 错误
+                if(flag){
+                    return Result.ERROR(ExceptionEnum.ASSET_UNDER_MONITORING_EXISTS);
+                }
+            }
             if (bean.isPresent()) {
                 MonitorAssetsEntity assets = bean.get();
                 assets.setGmtModified(LocalDateTime.now());

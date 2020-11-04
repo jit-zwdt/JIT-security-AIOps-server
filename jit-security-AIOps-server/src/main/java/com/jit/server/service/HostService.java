@@ -1,6 +1,7 @@
 package com.jit.server.service;
 
 import com.jit.server.pojo.HostEntity;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.HostParams;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
@@ -43,4 +44,11 @@ public interface HostService {
     Boolean checkObjectName(String objectName, String odlObjectName) throws Exception;
 
     Boolean checkBusinessName(String businessName, String odlBusinessName);
+
+    /**
+     * 根据 JMX IP 查询是否有对应的数据 如果有的话返回 true 没有返回 false
+     * @param ip JMX IP
+     * @return 有: true 没有: false
+     */
+    boolean findByHostJmxIp(String ip);
 }
