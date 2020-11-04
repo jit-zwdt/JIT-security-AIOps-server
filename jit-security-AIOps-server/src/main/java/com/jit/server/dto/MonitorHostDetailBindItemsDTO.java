@@ -12,4 +12,5 @@ public class MonitorHostDetailBindItemsDTO {
 
     private MonitorHostDetailBindItems monitorHostDetailBindItems;
     private List<ZabbixHistoryDTO> zabbixHistoryDTOs;
+    private String itemId;
 }
