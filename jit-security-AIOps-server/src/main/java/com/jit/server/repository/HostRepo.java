@@ -80,12 +80,10 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
     List<HostEntity> findByJmxIpAndDeleted(String jmxIp, int deleted);
 
     /**
-     * 更新方法 更新主机的 所有跟 ip 关联的项目 根据 assetsId 改变值
-     * @param ip 需要更新的 Ip
-     * @param assetsId assetsId 主键 ID
-     * @param isDeleted 是否删除标识 0 未删除 1 删除
+     * 查询数据根据关联 ID 进行查询
+     * @param assetsId assetsId 关联ID
+     * @param isDeleted 是否删除 0 未删除 1 删除
+     * @return HostEntity 集合对象
      */
-    @Modifying
-    @Query("update HostEntity t set t.agentIp = :ip , t.jmxIp = :ip , t.snmpIp = :ip where t.assetsId = :assetsId and t.deleted = :isDeleted")
-    void updateIpByAssetsIdAndIsDeleted(String ip, String assetsId, int isDeleted);
+    List<HostEntity> findByAssetsIdAndDeleted(String assetsId, int isDeleted);
 }

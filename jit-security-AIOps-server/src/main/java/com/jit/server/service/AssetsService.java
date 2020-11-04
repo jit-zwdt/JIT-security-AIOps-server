@@ -4,6 +4,7 @@ import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.AssetsParams;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +35,11 @@ public interface AssetsService {
      * @return true 代表有这个数据 false 代表没有这个数据
      */
     boolean validateIp(String ip);
+
+    /**
+     * 根据传入的 number 验证 number 值 number: 资产编号
+     * @param number ip 值
+     * @return true 代表有这个数据 false 代表没有这个数据
+     */
+    boolean validateNumber(String number);
 }

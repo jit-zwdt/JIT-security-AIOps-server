@@ -42,4 +42,12 @@ public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, 
      * @return MonitorAssetsEntity 集合对象
      */
     List<MonitorAssetsEntity> findByIpAndIsDeleted(String ip, int isDeleted);
+
+    /**
+     * 根据 number 资产编号查询数据
+     * @param number 资产编号
+     * @param isDeleted 是否删除 0 未删除 1 已删除
+     * @return MonitorAssetsEntity 集合对象
+     */
+    List<MonitorAssetsEntity> findByNumberAndIsDeleted(String number, int isDeleted);
 }

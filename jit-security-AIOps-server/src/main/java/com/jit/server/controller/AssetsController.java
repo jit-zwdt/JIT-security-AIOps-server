@@ -2,10 +2,12 @@ package com.jit.server.controller;
 
 
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.service.HostService;
+import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,6 +40,9 @@ public class AssetsController {
 
     @Autowired
     HostService hostService;
+
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/findByCondition")
     public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
@@ -81,7 +87,7 @@ public class AssetsController {
     }
 
     @PutMapping("/updateAssets/{id}")
-    public Result<MonitorAssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id) {
+    public Result<MonitorAssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id, HttpServletRequest req) {
         try {
             if (params != null && StringUtils.isNotEmpty(id)) {
                 Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
@@ -89,6 +95,24 @@ public class AssetsController {
                     MonitorAssetsEntity assets = bean.get();
                     BeanUtils.copyProperties(params, assets);
                     assets.setGmtModified(LocalDateTime.now());
+                    // 拿到 Zabbix 的 Token 值
+                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    // 根据 ID 进行查询 host 主机的数据
+                    List<HostEntity> hosts = hostService.findByAssetsId(assets.getId());
+                    // 转成 stream 对象进行 map 操作
+                    hosts.stream().map((host) -> {
+                        host.setAgentIp(assets.getIp());
+                        host.setJmxIp(assets.getIp());
+                        host.setSnmpIp(assets.getIp());
+                        host.setGmtModified(LocalDateTime.now());
+                        return host;
+                    }).forEach((host) -> {
+                        try {
+                            hostService.updateHost(host, auth);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
                     assetsService.updateAssets(assets);
                     return Result.SUCCESS(assets);
                 } else {
@@ -175,13 +199,26 @@ public class AssetsController {
 
     /**
      * 根据传入 ip 的值判断是否有这条数据 如果有 返回 true 如果没有 返回 false
-     * @param ip
-     * @return
+     * @param ip Ip
+     * @return 统一封装返回对象
      */
     @GetMapping("/validateIp")
     public Result validateIp(String ip){
         // 调用方法验证 Ip 是否具有这个 Ip 地址
         boolean flag = assetsService.validateIp(ip);
+        // 返回成功对象 flag 是业务层传输的值
+        return Result.SUCCESS(flag);
+    }
+
+    /**
+     * 根据传入资产编号的值判断是否有这条数据 如果有 返回 true 如果没有 返回 false
+     * @param number 资产编号
+     * @return 统一封装返回对象
+     */
+    @GetMapping("/validateNumber")
+    public Result validateNumber(String number){
+        // 调用方法验证 Ip 是否具有这个 Ip 地址
+        boolean flag = assetsService.validateNumber(number);
         // 返回成功对象 flag 是业务层传输的值
         return Result.SUCCESS(flag);
     }

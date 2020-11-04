@@ -116,8 +116,6 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAssets(MonitorAssetsEntity assets) throws Exception {
-        //更新主机的数据
-        hostRepo.updateIpByAssetsIdAndIsDeleted(assets.getIp() , assets.getId() , 0);
         //更新数据
         assetsRepo.save(assets);
     }
@@ -149,7 +147,24 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public boolean validateIp(String ip) {
         //根据 Ip 查询数据
-        List<MonitorAssetsEntity> monitorAssets = assetsRepo.findByIpAndIsDeleted(ip , 0);
+        List<MonitorAssetsEntity> monitorAssets = assetsRepo.findByIpAndIsDeleted(ip , ConstUtil.IS_NOT_DELETED);
+        //判断查询的数据是否大于 0
+        if(monitorAssets.size() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 根据传入的 number 验证 number 值 number: 资产编号
+     * @param number ip 值
+     * @return true 代表有这个数据 false 代表没有这个数据
+     */
+    @Override
+    public boolean validateNumber(String number) {
+        //根据 Number 查询数据
+        List<MonitorAssetsEntity> monitorAssets = assetsRepo.findByNumberAndIsDeleted(number , ConstUtil.IS_NOT_DELETED);
         //判断查询的数据是否大于 0
         if(monitorAssets.size() > 0){
             return true;

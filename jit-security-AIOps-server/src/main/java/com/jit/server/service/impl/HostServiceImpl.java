@@ -1172,6 +1172,16 @@ public class HostServiceImpl implements HostService {
     }
 
     /**
+     * 查询主机数据根据 AssetsId 进行查询
+     * @param assetsId AssetsId 关联 ID
+     * @return HostEntity 数据
+     */
+    @Override
+    public List<HostEntity> findByAssetsId(String assetsId) {
+        return hostRepo.findByAssetsIdAndDeleted(assetsId , ConstUtil.IS_NOT_DELETED);
+    }
+
+    /**
      * 判断业务名称是否为空
      * @param businessName 业务名称
      * @param odlBusinessName 旧的业务名称
@@ -1197,7 +1207,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public boolean findByHostJmxIp(String ip) {
         //查询数据
-        List<HostEntity> hosts = hostRepo.findByJmxIpAndDeleted(ip , 0);
+        List<HostEntity> hosts = hostRepo.findByJmxIpAndDeleted(ip , ConstUtil.IS_NOT_DELETED);
         //如果查询的数据集有值返回 true 没有返回 false
         if(hosts != null && hosts.size() > 0){
             return true;

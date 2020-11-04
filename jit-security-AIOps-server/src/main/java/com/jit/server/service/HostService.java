@@ -51,4 +51,11 @@ public interface HostService {
      * @return 有: true 没有: false
      */
     boolean findByHostJmxIp(String ip);
+
+    /**
+     * 查询主机数据根据 AssetsId 进行查询
+     * @param assetsId AssetsId 关联 ID
+     * @return HostEntity 数据
+     */
+    List<HostEntity> findByAssetsId(String assetsId);
 }
