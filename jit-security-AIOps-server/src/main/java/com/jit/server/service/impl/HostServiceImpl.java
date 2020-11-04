@@ -1188,4 +1188,20 @@ public class HostServiceImpl implements HostService {
         }
         return true;
     }
+
+    /**
+     * 根据 JMX IP 查询是否有对应的数据 如果有的话返回 true 没有返回 false
+     * @param ip JMX IP
+     * @return 有: true 没有: false
+     */
+    @Override
+    public boolean findByHostJmxIp(String ip) {
+        //查询数据
+        List<HostEntity> hosts = hostRepo.findByJmxIpAndDeleted(ip , 0);
+        //如果查询的数据集有值返回 true 没有返回 false
+        if(hosts != null && hosts.size() > 0){
+            return true;
+        }
+        return false;
+    }
 }

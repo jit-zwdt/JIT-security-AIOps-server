@@ -16,6 +16,7 @@ public enum ExceptionEnum {
     CRON_EXPRESSION_DESC_DATA_EXISTS(3006, "该表达式名称已经存在了"),
     CRON_EXPRESSION_DATA_EXISTS(3007, "该表达式已经存在了"),
     SCHEDULER_EXISTED_EXCEPTION(3005, "任务已存在，请重新填写必要参数"),
+    ASSET_UNDER_MONITORING_EXISTS(3006, "删除的资产下有对应的监控项,请删除再操作"),
     INNTER_EXCEPTION(500, "系统内部异常"),
     DATABASE_EXCEPTION(5001, "数据库连接异常"),
     FILE_NOT_FOUND_EXCEPTION(5002, "文件不存在"),

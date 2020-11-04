@@ -69,4 +69,12 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
     List<HostEntity> findByObjectNameAndDeleted(String objectName, int i);
 
     List<HostEntity> findByBusinessNameAndDeleted(String businessName, int i);
+
+    /**
+     * 根据 JMX IP 查询对应的数据
+     * @param jmxIp JMX IP
+     * @param deleted 删除状态 0 未删除 1 删除
+     * @return 查询到的数据结果集合
+     */
+    List<HostEntity> findByJmxIpAndDeleted(String jmxIp, int deleted);
 }

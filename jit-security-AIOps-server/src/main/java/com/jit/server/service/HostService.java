@@ -43,4 +43,11 @@ public interface HostService {
     Boolean checkObjectName(String objectName, String odlObjectName) throws Exception;
 
     Boolean checkBusinessName(String businessName, String odlBusinessName);
+
+    /**
+     * 根据 JMX IP 查询是否有对应的数据 如果有的话返回 true 没有返回 false
+     * @param ip JMX IP
+     * @return 有: true 没有: false
+     */
+    boolean findByHostJmxIp(String ip);
 }
