@@ -25,7 +25,7 @@ import java.util.Map;
 public class ZabbixCreateGraphPrototypeParams{
 
     @JsonProperty("graphid")
-    protected String id;
+    protected String graphid;
 
     protected Integer height;
 

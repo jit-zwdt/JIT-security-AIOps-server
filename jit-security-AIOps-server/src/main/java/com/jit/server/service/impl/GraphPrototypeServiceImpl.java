@@ -96,6 +96,19 @@ public class GraphPrototypeServiceImpl implements GraphPrototypeService {
     }
 
     @Override
+    public List<String> updateGPro(ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams, String auth) throws Exception {
+        if(CollectionUtils.isEmpty(zabbixCreateGraphPrototypeParams.getGitems())){
+            return null;
+        }
+        List<GraphItem> list = zabbixCreateGraphPrototypeParams.getGitems();
+        for(GraphItem g:list){
+            g.setColor(g.getColor().substring(1));
+        }
+
+        return zabbixGraphPrototypeService.update(zabbixCreateGraphPrototypeParams,auth);
+    }
+
+    @Override
     public List<String> deleteGPro(String graphid, String auth) throws Exception {
         if(graphid.isEmpty()){
             return null;

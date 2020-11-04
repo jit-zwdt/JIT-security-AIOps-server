@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 /**
  * Zabbix Item DTO used as parameter in method item.get.
  *
@@ -20,5 +22,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZabbixGetItemDTO extends ZabbixItem {
-
+    List<ZabbixHistoryDTO> trend;
 }

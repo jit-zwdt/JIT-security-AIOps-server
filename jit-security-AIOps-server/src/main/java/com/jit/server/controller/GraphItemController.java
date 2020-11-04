@@ -8,10 +8,7 @@ import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -119,6 +116,21 @@ public class GraphItemController {
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/getGItemByGraphId/{graphid}")
+    public Result getGItemByGraphId(@PathVariable String graphid, HttpServletRequest req) throws IOException {
+        try {
+            GraphItemParams graphItemParams = new GraphItemParams();
+            List<String> list = new ArrayList<>();
+            list.add(graphid);
+            graphItemParams.setGraphids(list);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            return Result.SUCCESS(graphItemService.getGItemList(graphItemParams,auth));
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);

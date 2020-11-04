@@ -42,4 +42,9 @@ public class MonitorHostDetailBindGraphsImpl implements MonitorHostDetailBindGra
     public MonitorHostDetailBindGraphs findByHostIdAndGraphIdAndIsDeleted(String hostId, String graphId, int isDeleted) throws Exception {
         return monitorHostDetailBindGraphsRepo.findByHostIdAndGraphIdAndIsDeleted(hostId, graphId, isDeleted);
     }
+
+    @Override
+    public MonitorHostDetailBindGraphs deleteGraphs(String hostId, String graphId, int isDeleted) throws Exception {
+        return null;
+    }
 }

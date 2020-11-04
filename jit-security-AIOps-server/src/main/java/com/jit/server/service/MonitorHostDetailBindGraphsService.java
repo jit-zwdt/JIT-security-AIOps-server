@@ -19,4 +19,6 @@ public interface MonitorHostDetailBindGraphsService {
     MonitorHostDetailBindGraphs findById(String id) throws Exception;
 
     MonitorHostDetailBindGraphs findByHostIdAndGraphIdAndIsDeleted(String hostId, String graphId, int isDeleted) throws Exception;
+
+    MonitorHostDetailBindGraphs deleteGraphs(String hostId, String graphId, int isDeleted) throws Exception;
 }

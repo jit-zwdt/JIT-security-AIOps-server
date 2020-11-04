@@ -1,11 +1,14 @@
 package com.jit.server.controller;
 
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.request.CreateGraphPrototypeParams;
 import com.jit.server.request.GraphPrototypeParams;
 import com.jit.server.request.ItemParams;
+import com.jit.server.request.TrendParams;
 import com.jit.server.service.GraphPrototypeService;
 import com.jit.server.service.ItemService;
+import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
@@ -13,6 +16,7 @@ import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.request.ZabbixCreateGraphPrototypeParams;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -32,6 +37,9 @@ import java.util.List;
 public class GraphPrototypeController {
     @Autowired
     private GraphPrototypeService graphPrototypeService;
+
+    @Autowired
+    private MonitorHostDetailBindGraphsService monitorHostDetailBindGraphsService;
 
     @Autowired
     private ZabbixAuthService zabbixAuthService;
@@ -77,14 +85,41 @@ public class GraphPrototypeController {
         }
     }
 
-    @PostMapping("/deleteGpro")
-    public Result deleteGpro(@RequestParam("graphid") String graphid,HttpServletRequest req
+    @PostMapping("/updateGpro")
+    public Result updateGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
-            if(!graphid.isEmpty()){
+            if(zabbixCreateGraphPrototypeParams != null && zabbixCreateGraphPrototypeParams.getGitems() !=null){
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-                List<String> graphids = graphPrototypeService.deleteGPro(graphid, auth);
+                List<String> graphids = graphPrototypeService.updateGPro(zabbixCreateGraphPrototypeParams, auth);
                 if(graphids != null && !CollectionUtils.isEmpty(graphids)){
+                    return Result.SUCCESS(graphids);
+                }else {
+                    return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/deleteGpro")
+    public Result deleteGpro(@RequestBody TrendParams trendParams, HttpServletRequest req
+    ) throws IOException {
+        try {
+            if(!trendParams.getGraphId().isEmpty()){
+                String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                List<String> graphids = graphPrototypeService.deleteGPro(trendParams.getGraphId(), auth);
+                if(graphids != null && !CollectionUtils.isEmpty(graphids)){
+                    MonitorHostDetailBindGraphs monitorHostDetailBindGraphs = monitorHostDetailBindGraphsService.findByHostIdAndGraphIdAndIsDeleted(trendParams.getHostId(), trendParams.getGraphId(), ConstUtil.IS_NOT_DELETED);
+                    if (monitorHostDetailBindGraphs != null) {
+                        monitorHostDetailBindGraphs.setGmtModified(LocalDateTime.now());
+                        monitorHostDetailBindGraphs.setIsDeleted(ConstUtil.IS_DELETED);
+                        monitorHostDetailBindGraphsService.saveOrUpdateMonitorHostDetailBindGraphs(monitorHostDetailBindGraphs);
+                    }
                     return Result.SUCCESS(graphids);
                 }else {
                     return Result.ERROR(ExceptionEnum.OPERATION_EXCEPTION);

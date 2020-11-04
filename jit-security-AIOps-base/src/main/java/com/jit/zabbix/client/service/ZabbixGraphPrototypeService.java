@@ -69,6 +69,18 @@ public class ZabbixGraphPrototypeService {
         return graphids;
     }
 
+    public List<String> update(ZabbixCreateGraphPrototypeParams dto, String auth) throws ZabbixApiException {
+        System.err.println("dto::::::::::::::;"+dto);
+        com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(GraphPrototypeMethod.UPDATE, dto, auth);
+        System.err.println("request::::::::::"+request);
+        com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
+        List<String> graphids = jsonMapper.getList(response.getResult(),"graphids",String.class);
+        if (CollectionUtils.isEmpty(graphids)) {
+            throw new ZabbixApiException("Aucun id recu.");
+        }
+        return graphids;
+    }
+
     public List<String> delete(String graphid, String auth) throws ZabbixApiException {
         List<String> ids = new ArrayList<>();
         ids.add(graphid);
