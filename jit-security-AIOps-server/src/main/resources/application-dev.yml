@@ -3,6 +3,8 @@ server:
   port: 8081
   compression:
     min-response-size:
+  servlet:
+    context-path: /api
 zabbix:
   api:
     url: http://172.16.15.10/zabbix/
