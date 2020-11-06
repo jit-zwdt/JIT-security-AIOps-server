@@ -371,9 +371,7 @@ public class TrendController {
                         historyParams.setItemids(_itemId);
                         zabbixGetItemDTO.setTrend(historyService.getHistoryInfoList(historyParams, auth));
                     }
-                    if (item != null) {
-                        finalResult.put("itemData", item);
-                    }
+                    finalResult.put("itemData", item);
                 }
                 listFinal.add(finalResult);
             }

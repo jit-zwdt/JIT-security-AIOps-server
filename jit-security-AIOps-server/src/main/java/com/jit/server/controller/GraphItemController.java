@@ -72,41 +72,29 @@ public class GraphItemController {
                 if (graphItemParams.getGraphids() != null && !CollectionUtils.isEmpty(graphItemParams.getGraphids())) {
                     GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
                     graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
-                    String auth1 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,auth1);
+                    List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,auth);
                     finalResult.put("graphData", graph);
                 }
                 List<String> itemids = new ArrayList<>();
                 for (ZabbixGetGraphItemDTO z : result) {
                     itemids.add(z.getItemId());
                 }
-                if (itemids != null && !CollectionUtils.isEmpty(itemids)) {
-                    String auth2 = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                if (itemids.size() > 0) {
                     ItemParams itemParams = new ItemParams();
                     itemParams.setItemids(itemids);
                     itemParams.setHostids(graphItemParams.getHostids());
-                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth2);
-                    if (item != null) {
-                        finalResult.put("itemData", item);
+                    List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth);
+                    for(ZabbixGetItemDTO zabbixGetItemDTO:item){
+                        List<String> _itemId = new ArrayList<>();
+                        HistoryParams historyParams = new HistoryParams();
+                        _itemId.add(zabbixGetItemDTO.getId());
+                        historyParams.setHistory(item.get(0).getValueType().getValue());
+                        historyParams.setTimefrom(graphItemParams.getTimefrom());
+                        historyParams.setTimetill(graphItemParams.getTimetill());
+                        historyParams.setItemids(_itemId);
+                        zabbixGetItemDTO.setTrend(historyService.getHistoryInfoList(historyParams, auth));
                     }
-                    List<String> _itemId = new ArrayList<>();
-                    HistoryParams historyParams = new HistoryParams();
-                    for (int i = 0; i < result.size(); i++) {
-                        _itemId.add(result.get(i).getItemId());
-                        for(int j = 0; j < item.size(); j++){
-                            if(result.get(i).getItemId().equals(item.get(j).getId())){
-                                historyParams.setHistory(item.get(j).getValueType().getValue());
-                                break;
-                            }
-                        }
-                    }
-                    historyParams.setTimefrom(graphItemParams.getTimefrom());
-                    historyParams.setTimetill(graphItemParams.getTimetill());
-                    historyParams.setItemids(_itemId);
-                    List<ZabbixHistoryDTO> trend = historyService.getHistoryInfoList(historyParams, auth);
-                    if (trend != null) {
-                        finalResult.put("trendListData", trend);
-                    }
+                    finalResult.put("itemData", item);
                 }
                 if (finalResult != null) {
                     return Result.SUCCESS(finalResult);
