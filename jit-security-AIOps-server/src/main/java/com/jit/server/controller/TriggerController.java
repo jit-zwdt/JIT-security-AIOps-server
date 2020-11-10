@@ -13,6 +13,7 @@ import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.model.trigger.ZabbixTrigger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.*;
  * @Date: 2020/07/02 8:42
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/trigger")
 public class TriggerController {

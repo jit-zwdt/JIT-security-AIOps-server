@@ -7,6 +7,7 @@ import com.jit.server.service.SysCronExpressionService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/sys/cronExpression")
 public class SysCronExpressionController {

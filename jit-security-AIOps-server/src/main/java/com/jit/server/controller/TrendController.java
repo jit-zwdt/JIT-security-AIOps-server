@@ -12,6 +12,7 @@ import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixHistoryDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.Map;
  * @Date: 2020/07/21 16:30
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/trend")
 public class TrendController {

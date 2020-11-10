@@ -113,12 +113,8 @@ public class MonitorTemplatesController {
         zabbixGetHostGroupParams.setOutput("extend");
         Map<String, Object> search = new HashMap<>(1);
         search.put("name", ConstUtil.HOSTGROUP_NAME);
-        System.out.println("search"+search);
-        log.info("search:{}",search);
         zabbixGetHostGroupParams.setSearch(search);
         List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(zabbixGetHostGroupParams, auth);
-        System.out.println(zabbixHostGroupDTOList);
-        log.info("zabbixHostGroupDTOList:{}",zabbixHostGroupDTOList);
         List<String> groupids = new ArrayList<>();
         if (zabbixHostGroupDTOList != null && !zabbixHostGroupDTOList.isEmpty()) {
             for (ZabbixHostGroupDTO zabbixHostGroupDTO : zabbixHostGroupDTOList) {

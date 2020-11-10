@@ -12,6 +12,7 @@ import com.jit.zabbix.client.model.mediaType.MediaTypeSmtpSecurity;
 import com.jit.zabbix.client.model.mediaType.MediaTypeType;
 import com.jit.zabbix.client.request.ZabbixGetMediaTypeParams;
 import com.jit.zabbix.client.service.ZabbixMediaTypeService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @date 2020.07.22
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/mediaType")
 public class MediaTypeController {

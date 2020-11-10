@@ -202,7 +202,6 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public Boolean getValidationName(String path, String oldPath) {
         List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByPathIsAndIsDeleted(path, ConstUtil.IS_NOT_DELETED);
-        System.out.println(sysMenuEntities);
         if (path.equals(oldPath)) {
             return true;
         }
@@ -222,7 +221,6 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public Boolean getValidationTitle(String name, String oldName) {
         List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByNameIsAndIsDeleted(name, ConstUtil.IS_NOT_DELETED);
-        System.out.println(sysMenuEntities);
         if (name.equals(oldName)) {
             return true;
         }
@@ -242,7 +240,6 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public Boolean getValidationComponent(String component, String oldComponent) {
         List<SysMenuEntity> sysMenuEntities = sysMenuRepo.findByComponentIsAndIsDeleted(component, ConstUtil.IS_NOT_DELETED);
-        System.out.println(sysMenuEntities);
         if (component.equals("Layout")) {
             return true;
         }

@@ -20,6 +20,7 @@ import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.service.ZabbixHistoryService;
 import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixProblemService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +36,7 @@ import java.util.*;
  * @Author: zengxin_miao
  * @Date: 2020/07/30 15:46
  */
+@Slf4j
 @RestController
 @RequestMapping("/homePage")
 public class HomePageController {

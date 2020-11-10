@@ -1,5 +1,6 @@
 package com.jit.server.job;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -10,14 +11,14 @@ import java.time.LocalDateTime;
  * @Date: 2020/09/21
  */
 @Component("demoTask")
+@Slf4j
 public class DemoTask {
 
     public void taskWithParams(String param) {
-        System.out.println("这是有参示例任务：时间:" + LocalDateTime.now() + " 参数：" + param);
-
+        log.info("这是有参示例任务：时间:{} 参数：{}", LocalDateTime.now(), param);
     }
 
     public void taskNoParams() {
-        System.out.println("这是无参示例任务");
+        log.info("这是无参示例任务");
     }
 }

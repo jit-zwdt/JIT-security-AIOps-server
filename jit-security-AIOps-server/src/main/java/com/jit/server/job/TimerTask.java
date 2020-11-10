@@ -28,7 +28,6 @@ public class TimerTask {
     private InspectionManageService inspectionManageService;
 
     public void taskWithParams(String param) throws Exception {
-        System.out.println("这是有参示例任务：时间:" + LocalDateTime.now() + " 参数：" + param);
         if (param == null) {
             throw new Exception("参数异常");
         }
@@ -92,10 +91,6 @@ public class TimerTask {
         jsonresult.put("parentId" , parentId);
         inspectionManageService.createPDF(jsonresult.toString());
 
-    }
-
-    public void taskNoParams() {
-        System.out.println("这是无参示例任务");
     }
 
     private String checkSeverity(int value) {

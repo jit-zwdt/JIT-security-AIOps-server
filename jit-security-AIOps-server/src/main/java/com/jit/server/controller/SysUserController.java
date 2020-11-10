@@ -10,6 +10,7 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/sys/user")
 public class SysUserController {

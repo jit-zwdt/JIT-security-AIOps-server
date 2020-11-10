@@ -7,6 +7,7 @@ import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
 import com.jit.zabbix.client.service.ZabbixHostGroupService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
  * @date 2020.06.29
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/hostGroup")
 public class HostGroupController {

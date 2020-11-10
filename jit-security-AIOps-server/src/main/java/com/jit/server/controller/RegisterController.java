@@ -7,12 +7,14 @@ import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/register")
 public class RegisterController {

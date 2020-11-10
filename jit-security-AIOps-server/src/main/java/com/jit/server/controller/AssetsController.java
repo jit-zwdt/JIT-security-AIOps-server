@@ -12,6 +12,7 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ import java.util.Optional;
  * @Date: 2020/06/16 11:09
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/assets")
 public class AssetsController {

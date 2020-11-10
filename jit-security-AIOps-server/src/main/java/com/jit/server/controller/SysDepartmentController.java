@@ -6,6 +6,7 @@ import com.jit.server.service.SysDepartmentService;
 import com.jit.server.service.UserService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.List;
  * @date 2020.08.18
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/sys/department")
 public class SysDepartmentController {

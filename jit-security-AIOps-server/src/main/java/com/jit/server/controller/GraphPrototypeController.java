@@ -16,6 +16,7 @@ import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixGetGraphPrototypeDTO;
 import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.request.ZabbixCreateGraphPrototypeParams;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +33,7 @@ import java.util.List;
  * @Date: 2020/07/28 10:51
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/gPrototype")
 public class GraphPrototypeController {

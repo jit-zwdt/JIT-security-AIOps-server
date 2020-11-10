@@ -9,6 +9,7 @@ import com.jit.server.util.MD5Util;
 import com.jit.server.util.RandomUtil;
 import com.jit.server.util.Result;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class LoginController {
     @Autowired

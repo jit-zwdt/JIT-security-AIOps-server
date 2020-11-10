@@ -63,7 +63,7 @@ public class ZabbixApiService {
         log.debug("Making request to {} with body: {}", apiUrl, request);
         try {
             try {
-                System.out.println(new ObjectMapper().writeValueAsString(httpEntity));
+                log.debug(new ObjectMapper().writeValueAsString(httpEntity));
             }catch (Exception e){
                 e.printStackTrace();
             }

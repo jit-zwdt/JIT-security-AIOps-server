@@ -10,6 +10,7 @@ import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.service.DictionaryService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/sys/dictionary")
 public class SysDictionaryController {

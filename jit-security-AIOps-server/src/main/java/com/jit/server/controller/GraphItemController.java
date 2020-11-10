@@ -6,6 +6,7 @@ import com.jit.server.service.*;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @Date: 2020/07/29 14:46
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/gItem")
 public class GraphItemController {

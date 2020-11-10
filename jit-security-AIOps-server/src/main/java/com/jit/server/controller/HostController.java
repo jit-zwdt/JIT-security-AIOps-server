@@ -13,6 +13,7 @@ import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ import java.util.*;
  * @Date: 2020/06/17 17:42
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/host")
 public class HostController {

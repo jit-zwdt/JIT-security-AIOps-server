@@ -14,6 +14,7 @@ import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.FtpClientUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/inspection")
 public class InspectionManageController {

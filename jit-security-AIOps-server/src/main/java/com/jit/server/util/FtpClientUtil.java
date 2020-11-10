@@ -163,7 +163,6 @@ public class FtpClientUtil {
                     ftp.retrieveFile(new String(ff.getName().getBytes("GBK"), "ISO-8859-1"), outputStream);
                     outputStream.flush();
                     outputStream.close();
-                    System.out.println("下载成功");
                 }
             }
             ftp.logout();
