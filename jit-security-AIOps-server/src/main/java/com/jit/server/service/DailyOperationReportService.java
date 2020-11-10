@@ -5,6 +5,7 @@ import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.request.DailyOperationReportParams;
 import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.util.PageRequest;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -32,4 +33,11 @@ public interface DailyOperationReportService {
     Page<MonitorDailyOperationReportEntity> getDailyOperationReports(PageRequest<Map<String,String>> params) throws Exception;
 
     MonitorDailyOperationReportEntity getDailyOperationReportById(String id) throws Exception;
+
+    /**
+     * 导出 Xls 表格 数据根据传入的二维数组进行构建
+     * @param dataArray 二维数组数据对象
+     * @return Xls 表格对象
+     */
+    HSSFWorkbook exportDailyXls(String[][] dataArray);
 }

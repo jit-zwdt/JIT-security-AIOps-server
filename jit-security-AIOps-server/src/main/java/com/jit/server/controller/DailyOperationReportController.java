@@ -11,16 +11,21 @@ import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author zengxin_miao
@@ -137,4 +142,32 @@ public class DailyOperationReportController {
         }
     }
 
+    /**
+     * 下载运维日报的 Xls 文件
+     * @param dailyOperationReport 传入数据集对象
+     * @param response HttpServletResponse 对象
+     * @throws IOException
+     */
+    @PostMapping("/downLoadDaily")
+    public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response) throws IOException {
+        String[][] dataArray = {
+                {"出现问题" , dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail() , dailyOperationReport.getNewProblemTotal()} ,
+                {"认领问题" , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
+                {"处理中问题" , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,
+                {"解决问题" , dailyOperationReport.getSolvedProblemNum() , dailyOperationReport.getSolvedProblemDetail() , dailyOperationReport.getSolvedProblemTotail()}
+        };
+        //获取导出的 Xls 文件
+        HSSFWorkbook workbook = dailyOperationReportService.exportDailyXls(dataArray);
+        //获取响应流
+        OutputStream out = response.getOutputStream();
+        //设置响应协议为响应xls文件
+        response.setContentType("application/octet-stream");
+        //设置弹出框
+        response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
+        //写出
+        workbook.write(out);
+        out.flush();
+        //关闭流
+        out.close();
+    }
 }

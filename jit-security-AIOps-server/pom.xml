@@ -84,6 +84,11 @@
             <artifactId>flying-saucer-pdf-itext5</artifactId>
             <version>9.1.13</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.17</version>
+        </dependency>
     </dependencies>
     <profiles>
         <!-- 本地开发环境 -->
