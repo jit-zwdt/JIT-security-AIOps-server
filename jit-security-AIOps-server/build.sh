@@ -21,7 +21,7 @@ fi
 
 docker build -t $IMAGENAME:$VERSION $project
 
-docker run -p 8081:8080 -idt --name jit-aiops-server --network zabbix_net     $IMAGENAME:$VERSION
+docker run -p 8081:8080 -idt --name jit-aiops-server --network zabbix_net  --ip=172.19.0.6  $IMAGENAME:$VERSION
 
 
 # docker tag $IMAGENAME:$VERSION $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
