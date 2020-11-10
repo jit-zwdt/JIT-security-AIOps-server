@@ -22,6 +22,7 @@ import com.jit.zabbix.client.request.ZabbixGetTemplateParams;
 import com.jit.zabbix.client.service.ZabbixHostGroupService;
 import com.jit.zabbix.client.service.ZabbixItemService;
 import com.jit.zabbix.client.service.ZabbixTemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/monitorTemplates")
+@Slf4j
 public class MonitorTemplatesController {
 
     @Autowired
@@ -111,10 +113,12 @@ public class MonitorTemplatesController {
         zabbixGetHostGroupParams.setOutput("extend");
         Map<String, Object> search = new HashMap<>(1);
         search.put("name", ConstUtil.HOSTGROUP_NAME);
-        System.out.println(search);
+        System.out.println("search"+search);
+        log.info("search:{}",search);
         zabbixGetHostGroupParams.setSearch(search);
         List<ZabbixHostGroupDTO> zabbixHostGroupDTOList = zabbixHostGroupService.get(zabbixGetHostGroupParams, auth);
         System.out.println(zabbixHostGroupDTOList);
+        log.info("zabbixHostGroupDTOList:{}",zabbixHostGroupDTOList);
         List<String> groupids = new ArrayList<>();
         if (zabbixHostGroupDTOList != null && !zabbixHostGroupDTOList.isEmpty()) {
             for (ZabbixHostGroupDTO zabbixHostGroupDTO : zabbixHostGroupDTOList) {
