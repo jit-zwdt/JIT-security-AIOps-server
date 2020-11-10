@@ -45,10 +45,10 @@ ftp:
 ###################################
 logging:
   level:
-    root: info,console
+    root: info
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
-    level: debug
+    level: info
   file:
     name: ./logs/JIT-security-AIOps-server.log
