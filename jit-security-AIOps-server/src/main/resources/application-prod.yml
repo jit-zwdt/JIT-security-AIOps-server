@@ -51,4 +51,4 @@ logging:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
     level: info
   file:
-    name: ../logs/JIT-security-AIOps-server.log
+    name: ./logs/JIT-security-AIOps-server.log
