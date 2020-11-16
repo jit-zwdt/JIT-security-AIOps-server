@@ -100,6 +100,6 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
 
     @Override
     public List<MonitorTemplatesEntity> getMonitorTemplatesByTypeIdAndNameLike(String typeId, String keyword) throws Exception {
-        return monitorTemplatesRepo.findByTypeIdAndIsDeletedAndNameLike(typeId, ConstUtil.IS_NOT_DELETED, keyword);
+        return monitorTemplatesRepo.findByTypeIdAndIsDeletedAndNameLike(typeId, ConstUtil.IS_NOT_DELETED, "%" + keyword + "%");
     }
 }
