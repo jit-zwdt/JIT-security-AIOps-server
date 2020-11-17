@@ -195,7 +195,7 @@ public class ProblemController {
      * @throws IOException IO异常
      */
     @PostMapping("/downLoadFailureToSolve")
-    public void downLoadFailureToSolve(@RequestBody String tableData,HttpServletResponse response) throws IOException {
+    public void downLoadFailureToSolve(@RequestBody String tableData,HttpServletResponse response) {
         //首先对 JSON 格式的数据进行转换
         JSONArray jsonArray = JSONArray.parseArray(tableData);
         //将前端传来的数据转换成为 二维数组
@@ -224,19 +224,31 @@ public class ProblemController {
             //放入二维数组
             dataArray[i] = faultArray;
         }
-        //获取导出的 Xls 文件
-        HSSFWorkbook workbook = problemService.downLoadFailureToSolve(dataArray);
-        //获取响应流
-        OutputStream out = response.getOutputStream();
-        //设置响应协议为响应xls文件
-        response.setContentType("application/octet-stream");
-        //设置弹出框
-        response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
-        //写出
-        workbook.write(out);
-        out.flush();
-        //关闭流
-        out.close();
+        OutputStream out = null;
+        try {
+            //获取导出的 Xls 文件
+            HSSFWorkbook workbook = problemService.downLoadFailureToSolve(dataArray);
+            //获取响应流
+            out = response.getOutputStream();
+            //设置响应协议为响应xls文件
+            response.setContentType("application/octet-stream");
+            //设置弹出框
+            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xlsx");
+            //写出
+            workbook.write(out);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //关闭流
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @PostMapping("/getAlertdata")

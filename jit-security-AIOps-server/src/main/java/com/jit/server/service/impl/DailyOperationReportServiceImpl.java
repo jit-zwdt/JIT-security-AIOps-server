@@ -300,6 +300,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
         //创建文本的样式对象
         HSSFCellStyle cellTitleStyle = workbook.createCellStyle();
+        //自动换行
+        cellTitleStyle.setWrapText(true);//自动换行
         //设置文字居中样式
         cellTitleStyle.setAlignment(HorizontalAlignment.CENTER);
         //创建文字样式对象
@@ -336,6 +338,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         hssfRow = sheet.createRow(2);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellTextStyle.setWrapText(true);//自动换行
         //设置文字居中
         cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
         //设置边框
@@ -359,6 +363,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellTextStyle.setWrapText(true);//自动换行
         //设置文字居中
         cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
         //设置文字垂直居中
@@ -385,6 +391,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         hssfRow.setHeight((short)500);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellTextStyle.setWrapText(true);//自动换行
         //设置文字居中
         cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
         cellTextStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -398,6 +406,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         }
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellTextStyle.setWrapText(true);//自动换行
         //设置文字居中
         cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
         cellTextStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -411,6 +421,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         headCell.setCellStyle(cellTextStyle);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellTextStyle.setWrapText(true);//自动换行
         //设置文字居中
         cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
         cellTextStyle.setVerticalAlignment(VerticalAlignment.CENTER);

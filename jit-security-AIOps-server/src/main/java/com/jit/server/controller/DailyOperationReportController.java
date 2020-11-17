@@ -149,25 +149,37 @@ public class DailyOperationReportController {
      * @throws IOException
      */
     @PostMapping("/downLoadDaily")
-    public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response) throws IOException {
+    public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
         String[][] dataArray = {
-                {"出现问题" , dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail() , dailyOperationReport.getNewProblemTotal()} ,
+                {"出现问题" , dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,
                 {"认领问题" , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
                 {"处理中问题" , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,
                 {"解决问题" , dailyOperationReport.getSolvedProblemNum() , dailyOperationReport.getSolvedProblemDetail() , dailyOperationReport.getSolvedProblemTotail()}
         };
-        //获取导出的 Xls 文件
-        HSSFWorkbook workbook = dailyOperationReportService.exportDailyXls(dataArray);
-        //获取响应流
-        OutputStream out = response.getOutputStream();
-        //设置响应协议为响应xls文件
-        response.setContentType("application/octet-stream");
-        //设置弹出框
-        response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
-        //写出
-        workbook.write(out);
-        out.flush();
-        //关闭流
-        out.close();
+        OutputStream out = null;
+        try {
+            //获取导出的 Xls 文件
+            HSSFWorkbook workbook = dailyOperationReportService.exportDailyXls(dataArray);
+            //获取响应流
+            out = response.getOutputStream();
+            //设置响应协议为响应xls文件
+            response.setContentType("application/octet-stream");
+            //设置弹出框
+            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xlsx");
+            //写出
+            workbook.write(out);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                //关闭流
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
