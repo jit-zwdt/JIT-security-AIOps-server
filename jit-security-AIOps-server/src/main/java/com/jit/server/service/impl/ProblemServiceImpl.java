@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
@@ -16,6 +17,11 @@ import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -296,5 +302,131 @@ public class ProblemServiceImpl implements ProblemService {
             params_pro.setFilter(mapFilter);
         }
         return zabbixProblemService.get(params_pro, auth);
+    }
+
+    /**
+     * 根据传入的故障解决数据构建 xls 文件
+     * @param dataArray 故障解决数据 json 格式的字符串
+     * @return xls 文件对象
+     */
+    @Override
+    public HSSFWorkbook downLoadFailureToSolve(String[][] dataArray) {
+        //添加的数据的条数
+        int rowSize = dataArray.length;
+        //大标题的名称
+        String headName = "故障解决统计报表";
+        //安全的时间转换类对象的声明
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //转换时间字符串
+        String dataStr = formatter.format(LocalDateTime.now());
+        //表头
+        String[] tableHeader = {"序号","故障解决日期","故障名称","故障类型","处理角色","处理人","故障原因","处理过程","处理方式","故障持续时间","故障处理时长"};
+        //表的列数
+        short cellNumber = (short)tableHeader.length;
+        //创建一个Excel文件
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        //创建一个工作表
+        HSSFSheet sheet = workbook.createSheet(headName);
+        //设置列宽
+        sheet.setColumnWidth(0 , 256*10+184);
+        sheet.setColumnWidth(1 , 256*25+184);
+        sheet.setColumnWidth(2 , 256*40+184);
+        sheet.setColumnWidth(3 , 256*15+184);
+        sheet.setColumnWidth(4 , 256*15+184);
+        sheet.setColumnWidth(5 , 256*15+184);
+        sheet.setColumnWidth(6 , 256*25+184);
+        sheet.setColumnWidth(7 , 256*25+184);
+        sheet.setColumnWidth(8 , 256*25+184);
+        sheet.setColumnWidth(9 , 256*25+184);
+        sheet.setColumnWidth(10 , 256*25+184);
+        //创建合并的单元格
+        CellRangeAddress region = new CellRangeAddress(0 , 0  , 0  , cellNumber - 1);
+        //合并单元格
+        sheet.addMergedRegion(region);
+
+        //添加有信息标题
+        HSSFRow hssfRow = sheet.createRow(0);
+        HSSFCell headCell = hssfRow.createCell(0);
+        //设置标题
+        headCell.setCellValue(headName);
+
+        //创建文本的样式对象
+        HSSFCellStyle cellTitleStyle = workbook.createCellStyle();
+        //设置文字居中样式
+        cellTitleStyle.setAlignment(HorizontalAlignment.CENTER);
+        //创建文字样式对象
+        HSSFFont font = workbook.createFont();
+        //设置字体
+        font.setFontName("楷体");
+        //设置文字大小
+        font.setFontHeightInPoints((short)30);
+        //加粗
+        font.setBold(true);
+        //放入样式对象
+        cellTitleStyle.setFont(font);
+        //设置文字居中等样式加入对象
+        headCell.setCellStyle(cellTitleStyle);
+
+        //添加信息文字
+        hssfRow = sheet.createRow(1);
+        //创建正常的文字样式
+        HSSFCellStyle cellTextStyle = workbook.createCellStyle();
+        //设置文字居中
+        cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        //创建时间
+        headCell = hssfRow.createCell(cellNumber - 1);
+        headCell.setCellValue("日期:" + dataStr);
+        headCell.setCellStyle(cellTextStyle);
+
+        // 添加表头行
+        hssfRow = sheet.createRow(2);
+        //创建正常的文字样式
+        cellTextStyle = workbook.createCellStyle();
+        //设置文字居中
+        cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
+        //设置边框
+        cellTextStyle.setBorderBottom(BorderStyle.THIN);
+        cellTextStyle.setBorderLeft(BorderStyle.THIN);
+        cellTextStyle.setBorderRight(BorderStyle.THIN);
+        cellTextStyle.setBorderTop(BorderStyle.THIN);
+        //创建标题文字样式
+        font = workbook.createFont();
+        //设置加粗
+        font.setBold(true);
+        //放入
+        cellTextStyle.setFont(font);
+        //循环创建表头
+        for(int i = 0 ; i < cellNumber ; i++){
+            // 添加表头内容
+            headCell = hssfRow.createCell(i);
+            headCell.setCellValue(tableHeader[i]);
+            headCell.setCellStyle(cellTextStyle);
+        }
+
+        //创建正常的文字样式
+        cellTextStyle = workbook.createCellStyle();
+        //设置文字居中
+        cellTextStyle.setAlignment(HorizontalAlignment.CENTER);
+        //设置文字垂直居中
+        cellTextStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        //设置文字边框
+        cellTextStyle.setBorderBottom(BorderStyle.THIN);
+        cellTextStyle.setBorderLeft(BorderStyle.THIN);
+        cellTextStyle.setBorderRight(BorderStyle.THIN);
+        cellTextStyle.setBorderTop(BorderStyle.THIN);
+        //添加主表格数据
+        for(int i = 0 ; i < rowSize ; i++){
+            hssfRow = sheet.createRow(2 + 1 + i);
+            //添加文字
+            for(int b = 0 ; b < dataArray[i].length ; b++){
+                // 添加内容
+                headCell = hssfRow.createCell(b);
+                headCell.setCellValue(dataArray[i][b]);
+                headCell.setCellStyle(cellTextStyle);
+            }
+        }
+        //返回 Controller 进行处理
+        return workbook;
     }
 }

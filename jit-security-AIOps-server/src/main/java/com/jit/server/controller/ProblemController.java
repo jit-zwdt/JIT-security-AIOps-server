@@ -1,5 +1,7 @@
 package com.jit.server.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.dto.ProblemSolveReportDTO;
@@ -19,17 +21,17 @@ import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -184,6 +186,57 @@ public class ProblemController {
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
+    }
+
+    /**
+     * 根据传入的数据进行 Xls文件的构建生成下载
+     * @param tableData 需要生成 xls 的数据 json 格式的字符串
+     * @param response response 对象
+     * @throws IOException IO异常
+     */
+    @PostMapping("/downLoadFailureToSolve")
+    public void downLoadFailureToSolve(@RequestBody String tableData,HttpServletResponse response) throws IOException {
+        //首先对 JSON 格式的数据进行转换
+        JSONArray jsonArray = JSONArray.parseArray(tableData);
+        //将前端传来的数据转换成为 二维数组
+        String[][] dataArray = new String[jsonArray.size()][];
+        for(int i= 0 ; i < jsonArray.size() ; i++){
+            //取出里面的对象字符串并转换成为 JSON 对象
+            JSONObject faultElement = jsonArray.getJSONObject(i);
+            //取出里面的元素进行拼接数组对象
+            String index = faultElement.get("index") + "";
+            String user = (String) faultElement.get("user");
+            String role = (String) faultElement.get("role");
+            //取出里面的 claim 对象
+            JSONObject claim = faultElement.getJSONObject("claim");
+            String resolveTime = (String) claim.get("resolveTime");
+            String problemName = (String) claim.get("problemName");
+            String ns = (String) claim.get("ns");
+            String problemHandleTime = (String) claim.get("problemHandleTime");
+            //取出里面的 register 对象
+            JSONObject register = faultElement.getJSONObject("register");
+            String problemType = (String) register.get("problemType");
+            String problemReason = (String) register.get("problemReason");
+            String problemProcess = (String) register.get("problemProcess");
+            String problemSolution = (String) register.get("problemSolution");
+            //构建数组对象
+            String[] faultArray = {index , resolveTime , problemName , problemType , role , user , problemReason , problemProcess , problemSolution , ns , problemHandleTime};
+            //放入二维数组
+            dataArray[i] = faultArray;
+        }
+        //获取导出的 Xls 文件
+        HSSFWorkbook workbook = problemService.downLoadFailureToSolve(dataArray);
+        //获取响应流
+        OutputStream out = response.getOutputStream();
+        //设置响应协议为响应xls文件
+        response.setContentType("application/octet-stream");
+        //设置弹出框
+        response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
+        //写出
+        workbook.write(out);
+        out.flush();
+        //关闭流
+        out.close();
     }
 
     @PostMapping("/getAlertdata")
