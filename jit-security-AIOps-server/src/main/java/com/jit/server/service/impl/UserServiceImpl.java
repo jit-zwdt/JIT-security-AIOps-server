@@ -124,6 +124,9 @@ public class UserServiceImpl implements UserService {
                 zabbixMediasList.add(zabbixMediasUpdate);
             }
             zabbixUpdateMediaDTO.setList(zabbixMediasList);
+        } else {
+            List<ZabbixMediasUpdate> zabbixMediasList = new ArrayList<>();
+            zabbixUpdateMediaDTO.setList(zabbixMediasList);
         }
         return zabbixUserService.update(zabbixUpdateMediaDTO, auth);
     }
