@@ -6,6 +6,7 @@ import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.request.ProblemParams;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -38,4 +39,11 @@ public interface ProblemService {
     List<MonitorClaimEntity> findByIsResolveAndProblemName(String problemName, String resolveTimeStart, String resolveTimeEnd);
 
     List<ZabbixProblemDTO> findProblemById(String[] params,String auth) throws Exception;
+
+    /**
+     * 根据传入的故障解决数据构建 xls 文件
+     * @param dataArray 故障解决数据 json 格式的字符串
+     * @return xls 文件对象
+     */
+    HSSFWorkbook downLoadFailureToSolve(String[][] dataArray);
 }
