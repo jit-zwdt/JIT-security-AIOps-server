@@ -204,7 +204,7 @@ public class ProblemServiceImpl implements ProblemService {
     public List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         SysUserEntity user = sysUserRepo.findByUsername(username);
-        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(), problemName, resolveType);
+        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(), "%"+problemName+"%", resolveType);
         return list;
     }
 
