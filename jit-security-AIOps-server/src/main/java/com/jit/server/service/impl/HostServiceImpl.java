@@ -1,16 +1,13 @@
 package com.jit.server.service.impl;
 
-import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorTemplatesEntity;
-import com.jit.server.pojo.SysMenuEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.request.HostParams;
 import com.jit.server.service.HostService;
 import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
-import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
 import com.jit.zabbix.client.dto.*;
 import com.jit.zabbix.client.exception.ZabbixApiException;
@@ -22,8 +19,10 @@ import com.jit.zabbix.client.model.template.ZabbixTemplate;
 import com.jit.zabbix.client.request.*;
 import com.jit.zabbix.client.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -31,9 +30,10 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.*;
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigInteger;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -623,7 +623,7 @@ public class HostServiceImpl implements HostService {
             return null;
         }
         //主机信息
-        ZabbixHostDTO dto = new ZabbixHostDTO();
+        ZabbixUpdateHostDTO dto = new ZabbixUpdateHostDTO();
         dto.setId(host.getHostId().trim());
         if (host.getObjectName() != null) {
             dto.setTechnicalName(host.getObjectName());
@@ -880,7 +880,7 @@ public class HostServiceImpl implements HostService {
             return null;
         }
         //主机信息
-        ZabbixHostDTO dto = new ZabbixHostDTO();
+        ZabbixUpdateHostDTO dto = new ZabbixUpdateHostDTO();
         dto.setId(hostId.trim());
         dto.setUnmonitored("1".equals(status.trim()) ? false : true);
         return zabbixHostService.update(dto, auth);

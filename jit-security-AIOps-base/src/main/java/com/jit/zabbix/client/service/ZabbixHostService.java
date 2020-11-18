@@ -1,11 +1,7 @@
 package com.jit.zabbix.client.service;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jit.zabbix.client.dto.ZabbixHostDTO;
-import com.jit.zabbix.client.dto.ZabbixMassAddHostDTO;
-import com.jit.zabbix.client.dto.ZabbixMassRemoveHostDTO;
-import com.jit.zabbix.client.dto.ZabbixMassUpdateHostDTO;
+import com.jit.zabbix.client.dto.*;
 import com.jit.zabbix.client.exception.ZabbixApiException;
 import com.jit.zabbix.client.model.host.HostMethod;
 import com.jit.zabbix.client.request.ZabbixGetHostParams;
@@ -15,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -172,7 +167,7 @@ public class ZabbixHostService {
      * @return The list of affected hosts ids.
      * @throws ZabbixApiException When the response status is not 200 or the API returned an error.
      */
-    public String update(ZabbixHostDTO dto, String auth) throws ZabbixApiException {
+    public String update(ZabbixUpdateHostDTO dto, String auth) throws ZabbixApiException {
         com.jit.zabbix.client.request.JsonRPCRequest request = ZabbixApiUtils.buildRequest(HostMethod.UPDATE, dto, auth);
         com.jit.zabbix.client.response.JsonRPCResponse response = apiService.call(request);
         List<String> ids = jsonMapper.getList(response.getResult(), HOSTS_IDS_NODE, String.class);
