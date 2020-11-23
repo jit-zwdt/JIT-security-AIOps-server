@@ -214,7 +214,7 @@ public class SysUserController {
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         } finally {
-            if (ftpClient.isConnected()) {
+            if (ftpClient != null && ftpClient.isConnected()) {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
