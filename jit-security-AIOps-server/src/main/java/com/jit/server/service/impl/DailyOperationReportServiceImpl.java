@@ -300,8 +300,6 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
         //创建文本的样式对象
         HSSFCellStyle cellTitleStyle = workbook.createCellStyle();
-        //自动换行
-        cellTitleStyle.setWrapText(true);//自动换行
         //设置文字居中样式
         cellTitleStyle.setAlignment(HorizontalAlignment.CENTER);
         //创建文字样式对象
