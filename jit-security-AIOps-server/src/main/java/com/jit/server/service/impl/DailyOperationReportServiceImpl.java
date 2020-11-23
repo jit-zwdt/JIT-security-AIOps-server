@@ -8,6 +8,7 @@ import com.jit.server.repository.MonitorClaimRepo;
 import com.jit.server.repository.MonitorDailyOperationReportRepo;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.util.ConstUtil;
+import com.jit.server.util.ExportXlsFileConst;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.SeverityEnum;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
@@ -30,7 +31,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -55,6 +55,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Autowired
     private MonitorDailyOperationReportRepo monitorDailyOperationReportRepo;
 
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+
     @Override
     public List<String> getTheDateNewProblemList(String auth) throws Exception {
         List<String> res = null;
@@ -70,10 +72,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
                 hostIdList.add(hostId);
             }
             zabbixGetProblemParams.setHostids(hostIdList);
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDate localDate = LocalDateTime.now().toLocalDate();
-            zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
-            zabbixGetProblemParams.setTime_till(String.valueOf(LocalDateTime.parse(localDate + " 23:59:59", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
+            zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", formatter).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
+            zabbixGetProblemParams.setTime_till(String.valueOf(LocalDateTime.parse(localDate + " 23:59:59", formatter).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
             zabbixGetProblemParams.setSortFields(Arrays.asList(new String[]{"eventid"}));
             zabbixGetProblemParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
             List<ZabbixProblemDTO> zabbixProblemDTOList = zabbixProblemService.get(zabbixGetProblemParams, auth);
@@ -91,9 +92,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     public List<String> getTheMonthNewProblemList(String auth) throws Exception {
         List<String> res = null;
         ZabbixGetProblemParams zabbixGetProblemParams = new ZabbixGetProblemParams();
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDateTime.now().withDayOfMonth(1).toLocalDate();
-        zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", df).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
+        zabbixGetProblemParams.setTime_from(String.valueOf(LocalDateTime.parse(localDate + " 00:00:00", formatter).toInstant(ZoneOffset.ofHours(8)).toEpochMilli() / 1000));
         zabbixGetProblemParams.setSortFields(Arrays.asList(new String[]{"eventid"}));
         zabbixGetProblemParams.setSortOrder(Arrays.asList(new String[]{"DESC"}));
         List<ZabbixProblemDTO> zabbixProblemDTOList = zabbixProblemService.get(zabbixGetProblemParams, auth);
@@ -109,10 +109,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheDateClaimedProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", df);
-        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", formatter);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getClaimedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -126,11 +125,10 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheMonthClaimedProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate dateFrom = LocalDateTime.now().withDayOfMonth(1).toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", formatter);
         LocalDate dateTo = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", df);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getClaimedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -144,10 +142,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheDateProcessingProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", df);
-        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", formatter);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -161,11 +158,10 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheMonthProcessingProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate dateFrom = LocalDateTime.now().withDayOfMonth(1).toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", formatter);
         LocalDate dateTo = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", df);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -179,10 +175,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheDateSolvedProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", df);
-        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", formatter);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -196,11 +191,10 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Override
     public List<String> getTheMonthSolvedProblemList(String auth) throws Exception {
         List<String> res = null;
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate dateFrom = LocalDateTime.now().withDayOfMonth(1).toLocalDate();
-        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", df);
+        LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", formatter);
         LocalDate dateTo = LocalDateTime.now().toLocalDate();
-        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", df);
+        LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", formatter);
         List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
@@ -229,9 +223,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
                     if (StringUtils.isNotBlank(param.get("queryDate"))) {
                         String date = param.get("queryDate");
-                        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime startDateTime = LocalDateTime.parse(date + " 00:00:00", df);
-                        LocalDateTime endDateTime = LocalDateTime.parse(date + " 23:59:59", df);
+                        LocalDateTime startDateTime = LocalDateTime.parse(date + " 00:00:00", formatter);
+                        LocalDateTime endDateTime = LocalDateTime.parse(date + " 23:59:59", formatter);
                         list.add(cb.greaterThanOrEqualTo(root.get("gmtCreate"), startDateTime));
                         list.add(cb.lessThanOrEqualTo(root.get("gmtCreate"), endDateTime));
                     }
@@ -267,15 +260,13 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //添加的数据的条数
         int rowSize = dataArray.length;
         //大标题的名称
-        String headName = "运维日报";
-        //安全的时间转换类对象的声明
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        String headName = ExportXlsFileConst.OPERATION_REPORT_HEAD_NAME;
         //转换时间字符串
         String dataStr = formatter.format(LocalDateTime.now());
         //表头
-        String[] tableHeader = {"类别","当日新增数","当日新增详情","本月总数"};
+        String[] tableHeader = ExportXlsFileConst.OPERATION_REPORT_TABLE_HEADER;
         //运维人
-        String roleName = "管理员";
+        String roleName = ExportXlsFileConst.OPERATION_REPORT_ROLE_NAME;
         //表的列数
         short cellNumber=(short)tableHeader.length;
         //创建一个Excel文件
@@ -285,7 +276,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //设置列宽
         sheet.setColumnWidth(0 , 256*15+184);
         sheet.setColumnWidth(1 , 256*10+184);
-        sheet.setColumnWidth(2 , 256*50+184);
+        sheet.setColumnWidth(2 , 256*150+184);
         sheet.setColumnWidth(3 , 256*20+184);
         //创建合并的单元格
         CellRangeAddress region = new CellRangeAddress(0 , 0  , 0  , cellNumber - 1);
@@ -324,12 +315,12 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
         //创建运维人
         headCell = hssfRow.createCell(0);
-        headCell.setCellValue("运维人:" + roleName);
+        headCell.setCellValue(ExportXlsFileConst.OPERATION_MAINTENANCE_PERSON + roleName);
         headCell.setCellStyle(cellTextStyle);
 
         //创建时间
         headCell = hssfRow.createCell(cellNumber - 1);
-        headCell.setCellValue("时间:" + dataStr);
+        headCell.setCellValue(ExportXlsFileConst.TIME_CONST + dataStr);
         headCell.setCellStyle(cellTextStyle);
 
         // 添加表头行
@@ -372,6 +363,20 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellTextStyle.setBorderLeft(BorderStyle.THIN);
         cellTextStyle.setBorderRight(BorderStyle.THIN);
         cellTextStyle.setBorderTop(BorderStyle.THIN);
+
+        //创建主文字的样式
+        HSSFCellStyle cellMainTextStyle = workbook.createCellStyle();
+        //自动换行
+        cellMainTextStyle.setWrapText(true);//自动换行
+        //设置文字居中
+        cellMainTextStyle.setAlignment(HorizontalAlignment.LEFT);
+        //设置文字垂直居中
+        cellMainTextStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        //设置文字边框
+        cellMainTextStyle.setBorderBottom(BorderStyle.THIN);
+        cellMainTextStyle.setBorderLeft(BorderStyle.THIN);
+        cellMainTextStyle.setBorderRight(BorderStyle.THIN);
+        cellMainTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
         for(int i = 0 ; i < rowSize ; i++){
             hssfRow = sheet.createRow(2 + 1 + i);
@@ -380,7 +385,13 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
                 // 添加内容
                 headCell = hssfRow.createCell(b);
                 headCell.setCellValue(dataArray[i][b]);
-                headCell.setCellStyle(cellTextStyle);
+                if(b == 2){
+                    //设置文字样式
+                    headCell.setCellStyle(cellMainTextStyle);
+                }else {
+                    //设置文字样式
+                    headCell.setCellStyle(cellTextStyle);
+                }
             }
         }
         //添加尾行
@@ -415,7 +426,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellTextStyle.setBorderLeft(BorderStyle.THIN);
         //设置文字
         headCell = hssfRow.createCell(0);
-        headCell.setCellValue("负责人(签字)");
+        headCell.setCellValue(ExportXlsFileConst.PERSON_IN_CHARGE);
         headCell.setCellStyle(cellTextStyle);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
@@ -430,7 +441,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellTextStyle.setBorderRight(BorderStyle.THIN);
         //设置文字
         headCell = hssfRow.createCell(cellNumber - 1);
-        headCell.setCellValue("日期");
+        headCell.setCellValue(ExportXlsFileConst.DATE_CONST);
         headCell.setCellStyle(cellTextStyle);
         //返回 Controller 进行处理
         return workbook;
