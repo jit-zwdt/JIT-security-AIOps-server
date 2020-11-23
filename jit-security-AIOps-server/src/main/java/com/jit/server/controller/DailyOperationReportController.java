@@ -165,7 +165,7 @@ public class DailyOperationReportController {
             //设置响应协议为响应xls文件
             response.setContentType("application/octet-stream");
             //设置弹出框
-            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xlsx");
+            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
             //写出
             workbook.write(out);
             out.flush();
