@@ -122,9 +122,11 @@ public class ProblemServiceImpl implements ProblemService {
                     ProblemHostDTO problemHostDTO = new ProblemHostDTO();
                     problemHostDTO.setZabbixProblemDTO(problem);
                     Object[] obj = mapHostInfo.get(problem.getHostid());
-                    problemHostDTO.setHostId(obj[0].toString());
-                    problemHostDTO.setHostName(obj[1].toString());
-                    problemHostDTO.setIp(obj[2].toString());
+                    if (obj != null) {
+                        problemHostDTO.setHostId(obj[0].toString());
+                        problemHostDTO.setHostName(obj[1].toString());
+                        problemHostDTO.setIp(obj[2].toString());
+                    }
                     problemHostDTOs.add(problemHostDTO);
                 }
             }
