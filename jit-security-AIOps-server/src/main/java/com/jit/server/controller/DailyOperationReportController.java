@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,7 +152,10 @@ public class DailyOperationReportController {
      */
     @PostMapping("/downLoadDaily")
     public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
+        //声明日期转换对象
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         String[][] dataArray = {
+                {dailyOperationReport.getOperationUser() , formatter.format(dailyOperationReport.getOperationTime())},
                 {ExportXlsFileConst.OPERATION_REPORT_PROBLEMS, dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,
                 {ExportXlsFileConst.OPERATION_REPORT_CLAIM_PROBLEMS , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
                 {ExportXlsFileConst.OPERATION_REPORT_HANDLING_PROBLEMS , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,

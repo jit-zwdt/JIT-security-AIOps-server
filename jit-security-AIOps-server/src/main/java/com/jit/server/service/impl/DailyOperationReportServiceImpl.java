@@ -266,7 +266,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //表头
         String[] tableHeader = ExportXlsFileConst.OPERATION_REPORT_TABLE_HEADER;
         //运维人
-        String roleName = ExportXlsFileConst.OPERATION_REPORT_ROLE_NAME;
+        String roleName = dataArray[0][0];
         //表的列数
         short cellNumber=(short)tableHeader.length;
         //创建一个Excel文件
@@ -378,8 +378,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellMainTextStyle.setBorderRight(BorderStyle.THIN);
         cellMainTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
-        for(int i = 0 ; i < rowSize ; i++){
-            hssfRow = sheet.createRow(2 + 1 + i);
+        for(int i = 1 ; i < rowSize ; i++){
+            hssfRow = sheet.createRow(2 + i);
             //添加文字
             for(int b = 0 ; b < dataArray[i].length ; b++){
                 // 添加内容

@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.config.FtpConfig;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
@@ -45,6 +46,9 @@ public class InspectionManageController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FtpConfig ftpConfig;
 
     @PostMapping("/getHostInfo")
     public Result getHostInfo(@RequestParam("id") String id) {
@@ -131,7 +135,7 @@ public class InspectionManageController {
             //创建 FtpUtil 对象
             ftpClientUtil = new FtpClientUtil();
             //获取 FTP 连接对象
-            ftpClient = ftpClientUtil.getConnectionFTP("172.16.15.10", 21, "jitutil", "dota&csjit3368");
+            ftpClient = ftpClientUtil.getConnectionFTP(ftpConfig.getHostName(), ftpConfig.getPort(), ftpConfig.getUserName(), ftpConfig.getPassWord());
             //输出流构建
             os = response.getOutputStream();
             //设置返回值属性

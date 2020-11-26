@@ -28,11 +28,6 @@ public class ExportXlsFileConst {
     public static final String[] OPERATION_REPORT_TABLE_HEADER = {"类别","当日新增数","当日新增详情","本月总数"};
 
     /**
-     * 运维日报的运维人
-     */
-    public static final String OPERATION_REPORT_ROLE_NAME = "管理员";
-
-    /**
      * 运维日报数据的出现问题的表列第一个数据
      */
     public static final String OPERATION_REPORT_PROBLEMS = "出现问题";
