@@ -153,7 +153,7 @@ public class DailyOperationReportController {
     @PostMapping("/downLoadDaily")
     public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
         //声明日期转换对象
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String[][] dataArray = {
                 {dailyOperationReport.getOperationUser() , formatter.format(dailyOperationReport.getOperationTime())},
                 {ExportXlsFileConst.OPERATION_REPORT_PROBLEMS, dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,

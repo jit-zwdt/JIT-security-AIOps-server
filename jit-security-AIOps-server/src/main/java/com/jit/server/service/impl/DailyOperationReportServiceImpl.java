@@ -55,7 +55,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Autowired
     private MonitorDailyOperationReportRepo monitorDailyOperationReportRepo;
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<String> getTheDateNewProblemList(String auth) throws Exception {
@@ -261,8 +261,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         int rowSize = dataArray.length;
         //大标题的名称
         String headName = ExportXlsFileConst.OPERATION_REPORT_HEAD_NAME;
-        //转换时间字符串
-        String dataStr = formatter.format(LocalDateTime.now());
+        //获取时间字符串
+        String dataStr = dataArray[0][1];
         //表头
         String[] tableHeader = ExportXlsFileConst.OPERATION_REPORT_TABLE_HEADER;
         //运维人
