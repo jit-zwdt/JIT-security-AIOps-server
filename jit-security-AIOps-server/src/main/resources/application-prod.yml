@@ -36,7 +36,7 @@ spring:
 #--------------FTP配置-------------#
 ###################################
 ftp:
-  hostName: 172.16.15.10
+  hostName: 172.19.0.1
   port: 21
   userName: jitutil
   passWord: dota&csjit3368
