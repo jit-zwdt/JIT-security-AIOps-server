@@ -7,6 +7,7 @@ import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
+import com.jit.server.util.ExportXlsFileConst;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -151,10 +152,10 @@ public class DailyOperationReportController {
     @PostMapping("/downLoadDaily")
     public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
         String[][] dataArray = {
-                {"出现问题" , dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,
-                {"认领问题" , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
-                {"处理中问题" , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,
-                {"解决问题" , dailyOperationReport.getSolvedProblemNum() , dailyOperationReport.getSolvedProblemDetail() , dailyOperationReport.getSolvedProblemTotail()}
+                {ExportXlsFileConst.OPERATION_REPORT_PROBLEMS, dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,
+                {ExportXlsFileConst.OPERATION_REPORT_CLAIM_PROBLEMS , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
+                {ExportXlsFileConst.OPERATION_REPORT_HANDLING_PROBLEMS , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,
+                {ExportXlsFileConst.OPERATION_REPORT_SOLVE_PROBLEMS , dailyOperationReport.getSolvedProblemNum() , dailyOperationReport.getSolvedProblemDetail() , dailyOperationReport.getSolvedProblemTotail()}
         };
         OutputStream out = null;
         try {

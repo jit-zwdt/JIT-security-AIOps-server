@@ -45,6 +45,21 @@ public class SysCronExpressionController {
         }
     }
 
+    @PostMapping("getAllCronExpressions")
+    public Result getAllCronExpressions(){
+        try {
+            //调用 Service 层进行全部的时间表达式的查询操作
+            List<SysCronExpressionEntity> cronExpressions = sysCronExpressionService.findAllCronExpression();
+            //返回查询结果
+            return Result.SUCCESS(cronExpressions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //返回错误信息
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+
+    }
+
     /**
      * 添加一个时间表达式对象
      * @param cronExpression 时间表达式对戏

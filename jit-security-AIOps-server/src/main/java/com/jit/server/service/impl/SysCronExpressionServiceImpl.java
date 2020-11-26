@@ -142,8 +142,19 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
      * @param id 时间表达式的 id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delCronExpression(String id) {
         sysCronExpressionRepo.updateIsDeleteByID(1 , id);
+    }
+
+    /**
+     * 查询所有的时间表达式
+     *
+     * @return 时间表达式数据
+     */
+    @Override
+    public List<SysCronExpressionEntity> findAllCronExpression() {
+        //查询所有的数据并返回
+        return sysCronExpressionRepo.findAll();
     }
 }

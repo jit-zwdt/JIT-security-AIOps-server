@@ -1,6 +1,5 @@
 package com.jit.server.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
@@ -13,6 +12,7 @@ import com.jit.server.request.ProblemParams;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
+import com.jit.server.util.ExportXlsFileConst;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
@@ -316,13 +316,13 @@ public class ProblemServiceImpl implements ProblemService {
         //添加的数据的条数
         int rowSize = dataArray.length;
         //大标题的名称
-        String headName = "故障解决统计报表";
+        String headName = ExportXlsFileConst.TROUBLESHOOTING_HEAD_NAME;
         //安全的时间转换类对象的声明
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         //转换时间字符串
         String dataStr = formatter.format(LocalDateTime.now());
         //表头
-        String[] tableHeader = {"序号","故障解决日期","故障名称","故障类型","处理角色","处理人","故障原因","处理过程","处理方式","故障持续时间","故障处理时长"};
+        String[] tableHeader = ExportXlsFileConst.TROUBLESHOOTING_TABLE_HEADER;
         //表的列数
         short cellNumber = (short)tableHeader.length;
         //创建一个Excel文件
@@ -378,7 +378,7 @@ public class ProblemServiceImpl implements ProblemService {
 
         //创建时间
         headCell = hssfRow.createCell(cellNumber - 1);
-        headCell.setCellValue("日期:" + dataStr);
+        headCell.setCellValue(ExportXlsFileConst.DATE_CONST + dataStr);
         headCell.setCellStyle(cellTextStyle);
 
         // 添加表头行
