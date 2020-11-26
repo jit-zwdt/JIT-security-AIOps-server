@@ -40,4 +40,10 @@ public interface SysCronExpressionService {
      * @param id 时间表达式的 id
      */
     void delCronExpression(String id);
+
+    /**
+     * 查询所有的时间表达式
+     * @return 时间表达式数据
+     */
+    List<SysCronExpressionEntity> findAllCronExpression();
 }
