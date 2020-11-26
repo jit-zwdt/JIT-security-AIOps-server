@@ -55,7 +55,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     @Autowired
     private MonitorDailyOperationReportRepo monitorDailyOperationReportRepo;
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<String> getTheDateNewProblemList(String auth) throws Exception {
@@ -261,12 +261,12 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         int rowSize = dataArray.length;
         //大标题的名称
         String headName = ExportXlsFileConst.OPERATION_REPORT_HEAD_NAME;
-        //转换时间字符串
-        String dataStr = formatter.format(LocalDateTime.now());
+        //获取时间字符串
+        String dataStr = dataArray[0][1];
         //表头
         String[] tableHeader = ExportXlsFileConst.OPERATION_REPORT_TABLE_HEADER;
         //运维人
-        String roleName = ExportXlsFileConst.OPERATION_REPORT_ROLE_NAME;
+        String roleName = dataArray[0][0];
         //表的列数
         short cellNumber=(short)tableHeader.length;
         //创建一个Excel文件
@@ -378,8 +378,8 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellMainTextStyle.setBorderRight(BorderStyle.THIN);
         cellMainTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
-        for(int i = 0 ; i < rowSize ; i++){
-            hssfRow = sheet.createRow(2 + 1 + i);
+        for(int i = 1 ; i < rowSize ; i++){
+            hssfRow = sheet.createRow(2 + i);
             //添加文字
             for(int b = 0 ; b < dataArray[i].length ; b++){
                 // 添加内容
