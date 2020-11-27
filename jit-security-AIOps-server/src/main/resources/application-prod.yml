@@ -26,8 +26,8 @@ spring:
         format_sql: false
         #jdbc:
         #time_zone: Hongkong
-  jackson:
-    time-zone: GMT+8
+#  jackson:
+#    time-zone: GMT+8
   cache:
     type: ehcache
     ehcache:
