@@ -13,7 +13,7 @@ zabbix:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&tinyInt1isBit=false
     username: root
     password: root
     connectionTimeout: 20000
@@ -26,8 +26,8 @@ spring:
         format_sql: false
         #jdbc:
         #time_zone: Hongkong
-#  jackson:
-#    time-zone: GMT+8
+  jackson:
+    time-zone: GMT+8
   cache:
     type: ehcache
     ehcache:
