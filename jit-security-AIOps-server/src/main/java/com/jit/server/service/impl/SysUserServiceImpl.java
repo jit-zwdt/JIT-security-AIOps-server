@@ -56,10 +56,10 @@ public class SysUserServiceImpl implements SysUserService {
                     List<Predicate> list = new ArrayList<Predicate>();
                     list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     if (StringUtils.isNotBlank(param.getUsername())) {
-                        list.add(cb.equal(root.get("username").as(String.class), param.getUsername()));
+                        list.add(cb.like(root.get("username").as(String.class), '%' + param.getUsername() + '%'));
                     }
                     if (StringUtils.isNotBlank(param.getName())) {
-                        list.add(cb.equal(root.get("name").as(String.class), param.getName()));
+                        list.add(cb.like(root.get("name").as(String.class), '%' + param.getName() + '%'));
                     }
                     if (StringUtils.isNotBlank(param.getStatus())) {
                         list.add(cb.equal(root.get("status").as(String.class), param.getStatus()));
