@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -116,6 +117,7 @@ public class DailyOperationReportController {
         try {
             Page<MonitorDailyOperationReportEntity> monitorDailyOperationReportEntities = dailyOperationReportService.getDailyOperationReports(params);
             log.info(String.valueOf(monitorDailyOperationReportEntities.getContent()));
+            log.info(String.valueOf(Clock.systemDefaultZone()));
             Map<String, Object> result = new HashMap<>();
             result.put("page", params.getPage());
             result.put("size", params.getSize());
