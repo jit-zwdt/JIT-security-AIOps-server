@@ -51,9 +51,9 @@ public class DailyOperationReportController {
     private DailyOperationReportService dailyOperationReportService;
 
 
-    @ResponseBody
+
     @GetMapping(value = "/getDailyOperationReport")
-    public Result getDailyOperationReport(HttpServletRequest req) {
+    public @ResponseBody Result getDailyOperationReport(HttpServletRequest req) {
         try {
             log.info("11111");
             MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
