@@ -21,7 +21,7 @@ fi
 
 docker build -t $IMAGENAME:$VERSION $project
 
-docker run -p 8081:8080 -idt --name jit-aiops-server --network zabbix_net  --ip=172.19.0.6  -v /var/log/tomcat:/usr/local/tomcat/logs  $IMAGENAME:$VERSION
+docker run -e TZ="Asia/Shanghai" -p 8081:8080 -idt --name jit-aiops-server --network zabbix_net  --ip=172.19.0.6  -v /var/log/tomcat:/usr/local/tomcat/logs  $IMAGENAME:$VERSION
 
 
 # docker tag $IMAGENAME:$VERSION $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
