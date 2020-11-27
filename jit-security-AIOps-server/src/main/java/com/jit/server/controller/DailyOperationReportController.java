@@ -83,6 +83,7 @@ public class DailyOperationReportController {
             monitorDailyOperationReportEntity.setSolvedProblemDetail(theDateSolvedProblemList != null ? StringUtils.join(theDateSolvedProblemList, "</br>") : "");
             List<String> theMonthSolvedProblemList = dailyOperationReportService.getTheMonthSolvedProblemList(auth);
             monitorDailyOperationReportEntity.setSolvedProblemTotail(theMonthSolvedProblemList != null ? String.valueOf(theMonthSolvedProblemList.size()) : "0");
+            log.info(monitorDailyOperationReportEntity.toString());
             return Result.SUCCESS(monitorDailyOperationReportEntity);
         } catch (Exception e) {
             e.printStackTrace();
