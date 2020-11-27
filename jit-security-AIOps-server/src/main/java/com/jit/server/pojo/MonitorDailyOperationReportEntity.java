@@ -64,7 +64,7 @@ public class MonitorDailyOperationReportEntity {
      * 创建时间
      */
     @Column(name = "gmt_create")
-    @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
+  //  @JsonDeserialize(using = CustomJsonSerializer.LocalDateTimeStrDeserializer.class)
     private LocalDateTime gmtCreate;
 
     /**
