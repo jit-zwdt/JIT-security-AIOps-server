@@ -55,6 +55,7 @@ public class DailyOperationReportController {
     @GetMapping(value = "/getDailyOperationReport")
     public Result getDailyOperationReport(HttpServletRequest req) {
         try {
+            log.info("11111");
             MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
             monitorDailyOperationReportEntity.setOperationUser(userService.findNamebyUsername());
             monitorDailyOperationReportEntity.setOperationTime(LocalDateTime.now());
@@ -83,7 +84,6 @@ public class DailyOperationReportController {
             monitorDailyOperationReportEntity.setSolvedProblemDetail(theDateSolvedProblemList != null ? StringUtils.join(theDateSolvedProblemList, "</br>") : "");
             List<String> theMonthSolvedProblemList = dailyOperationReportService.getTheMonthSolvedProblemList(auth);
             monitorDailyOperationReportEntity.setSolvedProblemTotail(theMonthSolvedProblemList != null ? String.valueOf(theMonthSolvedProblemList.size()) : "0");
-            log.info(monitorDailyOperationReportEntity.toString());
             return Result.SUCCESS(monitorDailyOperationReportEntity);
         } catch (Exception e) {
             e.printStackTrace();
