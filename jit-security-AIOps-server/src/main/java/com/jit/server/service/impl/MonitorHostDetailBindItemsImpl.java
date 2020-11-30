@@ -27,7 +27,7 @@ public class MonitorHostDetailBindItemsImpl implements MonitorHostDetailBindItem
 
     @Override
     public List<MonitorHostDetailBindItems> findMonitorHostDetailBindItemsByHostId(String hostId, int isDeleted) throws Exception {
-        return monitorHostDetailBindItemsRepo.findByHostIdAndIsDeleted(hostId, isDeleted);
+        return monitorHostDetailBindItemsRepo.findByHostIdAndIsDeletedOrderByGmtCreateDesc(hostId, isDeleted);
     }
 
     @Override

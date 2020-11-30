@@ -100,7 +100,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             PdfPTable tableChild = createChildTable(jsonresult);
             document.add(tableChild);
             document.add(blankRow);
-            PdfPTable tableFooter = createFooterTable();
+            PdfPTable tableFooter = createFooterTable(jsonresult);
             document.add(tableFooter);
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,20 +143,20 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setColspan(3);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("负责单位", font));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Paragraph("吉大正元", font));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        cell.setColspan(3);
-        table.addCell(cell);
+//        cell = new PdfPCell(new Paragraph("负责单位", font));
+//        cell.setPaddingLeft(10);
+//        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        cell.setMinimumHeight(17);
+//        table.addCell(cell);
+//
+//        cell = new PdfPCell(new Paragraph("吉大正元", font));
+//        cell.setPaddingLeft(10);
+//        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        cell.setMinimumHeight(17);
+//        cell.setColspan(3);
+//        table.addCell(cell);
 
         cell = new PdfPCell(new Paragraph("联系人", font));
         cell.setPaddingLeft(10);
@@ -165,7 +165,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("刘峰", font));
+        cell = new PdfPCell(new Paragraph(jsonObject.get("username")+"", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -179,7 +179,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("15504252525", font));
+        cell = new PdfPCell(new Paragraph(jsonObject.get("mobile")+"", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -312,15 +312,17 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return table;
     }
 
-    public static PdfPTable createFooterTable() throws DocumentException, IOException {
+    public static PdfPTable createFooterTable(String jsonresult) throws DocumentException, IOException {
+        JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+        String userName = jsonObject.get("username")+"";
+        String createTime = jsonObject.get("createTime")+"";
         BaseFont bfChinese = BaseFont.createFont( "STSongStd-Light" ,"UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
         Font font = new Font(bfChinese, 11,Font.NORMAL);
-
         PdfPTable table = new PdfPTable(2);
         int width3[] = {100,60};
         table.setWidths(width3);
-        PdfPCell cell31 = new PdfPCell(new Paragraph("巡检工程师："+"刘峰",font));
-        PdfPCell cell32 = new PdfPCell(new Paragraph("日期："+"2020-09-15",font));
+        PdfPCell cell31 = new PdfPCell(new Paragraph("巡检工程师："+ userName,font));
+        PdfPCell cell32 = new PdfPCell(new Paragraph("日期："+ createTime,font));
         cell31.setBorder(0);
         cell31.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell32.setBorder(0);
@@ -479,8 +481,8 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         //声明日期格式转换对象
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         //进行字符串转换 LocalDateTime 对象
-        LocalDateTime startGmtCreate = param.get("startGmtCreate")!= null ? LocalDateTime.parse(param.get("startGmtCreate").toString() , dateTimeFormatter) : null;
-        LocalDateTime endGmtCreate = param.get("endGmtCreate")!= null ? LocalDateTime.parse(param.get("endGmtCreate").toString() , dateTimeFormatter) : null;
+        LocalDateTime startGmtCreate = param.get("startGmtCreate")!= null && param.get("startGmtCreate")!="" ? LocalDateTime.parse(param.get("startGmtCreate").toString() , dateTimeFormatter) : null;
+        LocalDateTime endGmtCreate = param.get("endGmtCreate")!= null && param.get("endGmtCreate")!="" ? LocalDateTime.parse(param.get("endGmtCreate").toString() , dateTimeFormatter) : null;
         //拼接动态条件语句的 sql 语句
         StringBuffer comditionalSQL = new StringBuffer();
         //排序语句的 sql 语句

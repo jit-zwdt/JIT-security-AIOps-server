@@ -221,10 +221,11 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
                     List<Predicate> list = new ArrayList<Predicate>();
                     list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
 
-                    if (StringUtils.isNotBlank(param.get("queryDate"))) {
-                        String date = param.get("queryDate");
-                        LocalDateTime startDateTime = LocalDateTime.parse(date + " 00:00:00", formatter);
-                        LocalDateTime endDateTime = LocalDateTime.parse(date + " 23:59:59", formatter);
+                    if (StringUtils.isNotBlank(param.get("startGmtCreate")) && StringUtils.isNotBlank(param.get("endGmtCreate"))) {
+                        String startGmtCreate = param.get("startGmtCreate");
+                        String endGmtCreate = param.get("endGmtCreate");
+                        LocalDateTime startDateTime = LocalDateTime.parse(startGmtCreate, formatter);
+                        LocalDateTime endDateTime = LocalDateTime.parse(endGmtCreate, formatter);
                         list.add(cb.greaterThanOrEqualTo(root.get("gmtCreate"), startDateTime));
                         list.add(cb.lessThanOrEqualTo(root.get("gmtCreate"), endDateTime));
                     }

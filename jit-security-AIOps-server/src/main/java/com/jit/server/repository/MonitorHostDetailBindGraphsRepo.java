@@ -17,7 +17,7 @@ import java.util.List;
 public interface MonitorHostDetailBindGraphsRepo extends JpaRepository<MonitorHostDetailBindGraphs, String>, JpaSpecificationExecutor<MonitorHostDetailBindGraphs> {
 
 
-    List<MonitorHostDetailBindGraphs> findByHostIdAndIsDeleted(String hostId, int isDeleted);
+    List<MonitorHostDetailBindGraphs> findByHostIdAndIsDeletedOrderByGmtCreateDesc(String hostId, int isDeleted);
 
     MonitorHostDetailBindGraphs findByHostIdAndGraphIdAndIsDeleted(String hostId, String graphId, int isDeleted);
 }

@@ -3,8 +3,11 @@ package com.jit.server.job;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
+import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
+import com.jit.server.service.SysUserService;
+import com.jit.server.service.UserService;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -23,6 +27,12 @@ public class TimerTask {
 
     @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     @Autowired
     private InspectionManageService inspectionManageService;
@@ -37,6 +47,12 @@ public class TimerTask {
         String info = jsonObject.get("info") + "";
         String scheduleId = jsonObject.get("scheduleId") + "";
         String username = jsonObject.get("username") + "";
+        String userId = userService.findIdByUsername();
+        Optional<SysUserEntity> bean = sysUserService.findById(userId);
+        SysUserEntity sysDictionaryEntity = new SysUserEntity();
+        if (bean.isPresent()) {
+            sysDictionaryEntity = bean.get();
+        }
         String parentId = jsonObject.get("parentId") + "";
         JSONArray infojson = JSONArray.parseArray(info);
         if (infojson == null) {
@@ -89,6 +105,7 @@ public class TimerTask {
         jsonresult.put("scheduleId", scheduleId);
         jsonresult.put("username", username);
         jsonresult.put("parentId" , parentId);
+        jsonresult.put("mobile",(sysDictionaryEntity.getMobile()!="")?sysDictionaryEntity.getMobile():"无");
         inspectionManageService.createPDF(jsonresult.toString());
 
     }

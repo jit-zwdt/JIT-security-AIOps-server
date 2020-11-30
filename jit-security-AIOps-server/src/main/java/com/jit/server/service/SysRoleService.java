@@ -43,5 +43,7 @@ public interface SysRoleService {
 
     List<SysRoleEntity> findAll();
 
+    List<SysRoleEntity> findByIsDeleted();
+
     List<String> getLevelOneMenuSids() throws Exception;
 }

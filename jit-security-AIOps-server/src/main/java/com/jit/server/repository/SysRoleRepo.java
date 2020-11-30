@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SysRoleRepo extends JpaRepository<SysRoleEntity, String>, JpaSpecificationExecutor<SysRoleEntity> {
     @Query(value = "select roleSign from SysRoleEntity where id = ?1 and isDeleted = 0")
@@ -18,4 +20,6 @@ public interface SysRoleRepo extends JpaRepository<SysRoleEntity, String>, JpaSp
     SysRoleEntity getRoleByRoleSign(String sign);
 
     SysRoleEntity findByIdAndIsDeleted(String id, int isDeleted);
+
+    List<SysRoleEntity> findByIsDeleted(int isDeleted);
 }

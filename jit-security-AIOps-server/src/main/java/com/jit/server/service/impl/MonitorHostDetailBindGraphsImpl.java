@@ -30,7 +30,7 @@ public class MonitorHostDetailBindGraphsImpl implements MonitorHostDetailBindGra
 
     @Override
     public List<MonitorHostDetailBindGraphs> findMonitorHostDetailBindGraphsByHostId(String hostId, int isDeleted) throws Exception {
-        return monitorHostDetailBindGraphsRepo.findByHostIdAndIsDeleted(hostId, isDeleted);
+        return monitorHostDetailBindGraphsRepo.findByHostIdAndIsDeletedOrderByGmtCreateDesc(hostId, isDeleted);
     }
 
     @Override

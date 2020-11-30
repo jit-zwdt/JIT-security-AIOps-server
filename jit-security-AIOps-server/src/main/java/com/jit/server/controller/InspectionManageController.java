@@ -81,6 +81,7 @@ public class InspectionManageController {
             }
             jsonObject.put("auth",auth);
             jsonObject.put("username",username);
+            jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
             ScheduleTaskParams st = new ScheduleTaskParams();
             st.setId(id);
             st.setCronExpression(jsonObject.get("timerTask")+"");
