@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -55,7 +54,6 @@ public class DailyOperationReportController {
     @GetMapping(value = "/getDailyOperationReport")
     public @ResponseBody Result getDailyOperationReport(HttpServletRequest req) {
         try {
-            log.info("11111");
             MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
             monitorDailyOperationReportEntity.setOperationUser(userService.findNamebyUsername());
             monitorDailyOperationReportEntity.setOperationTime(LocalDateTime.now());
