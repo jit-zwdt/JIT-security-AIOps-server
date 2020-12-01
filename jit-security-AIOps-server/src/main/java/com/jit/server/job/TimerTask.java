@@ -3,8 +3,11 @@ package com.jit.server.job;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
+import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
+import com.jit.server.service.SysUserService;
+import com.jit.server.service.UserService;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -23,6 +27,9 @@ public class TimerTask {
 
     @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private InspectionManageService inspectionManageService;
@@ -38,6 +45,7 @@ public class TimerTask {
         String scheduleId = jsonObject.get("scheduleId") + "";
         String username = jsonObject.get("username") + "";
         String parentId = jsonObject.get("parentId") + "";
+        String mobile = jsonObject.get("mobile") + "";
         JSONArray infojson = JSONArray.parseArray(info);
         if (infojson == null) {
             throw new Exception("巡检对象参数异常");
@@ -89,6 +97,7 @@ public class TimerTask {
         jsonresult.put("scheduleId", scheduleId);
         jsonresult.put("username", username);
         jsonresult.put("parentId" , parentId);
+        jsonresult.put("mobile", mobile);
         inspectionManageService.createPDF(jsonresult.toString());
 
     }

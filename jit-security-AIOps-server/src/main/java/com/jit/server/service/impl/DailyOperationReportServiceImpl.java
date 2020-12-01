@@ -31,14 +31,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -221,10 +219,12 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
                     List<Predicate> list = new ArrayList<Predicate>();
                     list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
 
-                    if (StringUtils.isNotBlank(param.get("queryDate"))) {
-                        String date = param.get("queryDate");
-                        LocalDateTime startDateTime = LocalDateTime.parse(date + " 00:00:00", formatter);
-                        LocalDateTime endDateTime = LocalDateTime.parse(date + " 23:59:59", formatter);
+                    if (StringUtils.isNotBlank(param.get("startGmtCreate")) && StringUtils.isNotBlank(param.get("endGmtCreate"))) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String startGmtCreate = sdf.format(new Date(Long.parseLong(param.get("startGmtCreate"))));
+                        String endGmtCreate = sdf.format(new Date(Long.parseLong(param.get("endGmtCreate"))));
+                        LocalDateTime startDateTime = startGmtCreate!="" ? LocalDateTime.parse(startGmtCreate, formatter): null;
+                        LocalDateTime endDateTime = endGmtCreate!="" ? LocalDateTime.parse(endGmtCreate, formatter): null;
                         list.add(cb.greaterThanOrEqualTo(root.get("gmtCreate"), startDateTime));
                         list.add(cb.lessThanOrEqualTo(root.get("gmtCreate"), endDateTime));
                     }

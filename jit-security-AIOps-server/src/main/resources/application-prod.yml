@@ -41,6 +41,17 @@ ftp:
   userName: jitutil
   passWord: dota&csjit3368
 ###################################
+#--------------SFTP配置-------------#
+###################################
+sftp:
+  hostName: 172.17.0.1
+  port: 22
+  userName: user1
+  passWord: 111111
+  remoteRootPath: /home/user1/upload
+  timeOut: 3000
+  useShow: 1
+###################################
 #--------------LOG配置-------------#
 ###################################
 logging:

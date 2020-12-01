@@ -326,7 +326,7 @@ public class SysRoleController {
     @PostMapping("/findAllRole")
     public Result findAllRole() {
         try {
-            return Result.SUCCESS(sysRoleService.findAll());
+            return Result.SUCCESS(sysRoleService.findByIsDeleted());
 
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);

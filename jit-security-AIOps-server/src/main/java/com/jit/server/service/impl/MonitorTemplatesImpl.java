@@ -46,7 +46,7 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
                     List<Predicate> list = new ArrayList<Predicate>();
                     list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
                     if (StringUtils.isNotBlank(param.getName())) {
-                        list.add(cb.equal(root.get("name").as(String.class), param.getName()));
+                        list.add(cb.like(root.get("name").as(String.class), "%"+param.getName()+"%"));
                     }
                     if (StringUtils.isNotBlank(param.getType())) {
                         list.add(cb.equal(root.get("typeId").as(String.class), param.getType()));

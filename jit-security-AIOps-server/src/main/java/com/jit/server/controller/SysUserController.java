@@ -1,15 +1,13 @@
 package com.jit.server.controller;
 
 import com.jit.server.config.FtpConfig;
+import com.jit.server.config.SFtpConfig;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.FtpClientUtil;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
+import com.jit.server.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -39,6 +37,9 @@ public class SysUserController {
 
     @Autowired
     private FtpConfig ftpConfig;
+
+    @Autowired
+    private SFtpConfig sFtpConfig;
 
     @ResponseBody
     @PostMapping(value = "/getUsers")
@@ -232,4 +233,47 @@ public class SysUserController {
         re.replaceAll("[\\s*\t\n\r]", "");
         return Result.SUCCESS(re);
     }
+
+    @PostMapping("/uploadSftpPic")
+    public Result uploadSftpPic(MultipartFile file) throws Exception {
+        SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
+        InputStream input = null;
+        try {
+            if (!file.isEmpty()) {
+                String filename = file.getOriginalFilename(); //获得原始的文件名
+                input = file.getInputStream();
+                SftpConfig sftpConfig = new SftpConfig(sFtpConfig.getHostName(), sFtpConfig.getPort(), sFtpConfig.getUserName(), sFtpConfig.getPassWord(), sFtpConfig.getTimeOut(), sFtpConfig.getRemoteRootPath());
+                String url = sftp.upload(sftpConfig.getRemoteRootPath(), filename, input, sftpConfig);
+                return Result.SUCCESS(url);
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
+            }
+        }
+    }
+
+    @PostMapping("/getSftpPicBase64/{param}")
+    public Result getSftpPicBase64(@PathVariable String param) {
+        SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
+        String re = "";
+        try {
+            SftpConfig sftpConfig = new SftpConfig(sFtpConfig.getHostName(), sFtpConfig.getPort(), sFtpConfig.getUserName(), sFtpConfig.getPassWord(), sFtpConfig.getTimeOut(), sFtpConfig.getRemoteRootPath());
+            BASE64Encoder base64Encoder = new BASE64Encoder();
+            re = base64Encoder.encode(sftp.download(sftpConfig.getRemoteRootPath(), param, sftpConfig));// 将字节数组转成base64字符串
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        } finally {
+        }
+        return Result.SUCCESS(re);
+    }
+
 }

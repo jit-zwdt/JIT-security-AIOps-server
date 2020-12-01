@@ -16,7 +16,7 @@ import java.util.List;
 public interface MonitorHostDetailBindItemsRepo extends JpaRepository<MonitorHostDetailBindItems, String>, JpaSpecificationExecutor<MonitorHostDetailBindItems> {
 
 
-    List<MonitorHostDetailBindItems> findByHostIdAndIsDeleted(String hostId, int isDeleted);
+    List<MonitorHostDetailBindItems> findByHostIdAndIsDeletedOrderByGmtCreateDesc(String hostId, int isDeleted);
 
     MonitorHostDetailBindItems findByHostIdAndItemIdAndIsDeleted(String hostId, String itemId, int isDeleted);
 }

@@ -8,21 +8,19 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
+import com.jit.server.config.SFtpConfig;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import com.jit.server.repository.InspectionRepo;
 import com.jit.server.service.InspectionManageService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.FtpClientUtil;
-import com.jit.server.util.PageRequest;
+import com.jit.server.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -34,10 +32,9 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Service
 public class InspectionManageServiceImpl implements InspectionManageService {
@@ -47,6 +44,8 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     private FtpConfig ftpConfig;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private SFtpConfig sFtpConfig;
     @Override
     public List<HostEntity> getHostInfo(String id) throws Exception {
         try {
@@ -100,7 +99,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             PdfPTable tableChild = createChildTable(jsonresult);
             document.add(tableChild);
             document.add(blankRow);
-            PdfPTable tableFooter = createFooterTable();
+            PdfPTable tableFooter = createFooterTable(jsonresult);
             document.add(tableFooter);
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,20 +142,20 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setColspan(3);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("负责单位", font));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Paragraph("吉大正元", font));
-        cell.setPaddingLeft(10);
-        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setMinimumHeight(17);
-        cell.setColspan(3);
-        table.addCell(cell);
+//        cell = new PdfPCell(new Paragraph("负责单位", font));
+//        cell.setPaddingLeft(10);
+//        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        cell.setMinimumHeight(17);
+//        table.addCell(cell);
+//
+//        cell = new PdfPCell(new Paragraph("吉大正元", font));
+//        cell.setPaddingLeft(10);
+//        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        cell.setMinimumHeight(17);
+//        cell.setColspan(3);
+//        table.addCell(cell);
 
         cell = new PdfPCell(new Paragraph("联系人", font));
         cell.setPaddingLeft(10);
@@ -165,7 +164,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("刘峰", font));
+        cell = new PdfPCell(new Paragraph(jsonObject.get("username")+"", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -179,7 +178,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         cell.setMinimumHeight(17);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Paragraph("15504252525", font));
+        cell = new PdfPCell(new Paragraph(jsonObject.get("mobile")+"", font));
         cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -241,7 +240,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         PdfPCell cell;
 
         cell = new PdfPCell(new Paragraph("序号", font));
-        cell.setPaddingLeft(1);
+        cell.setPaddingLeft(10);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setMinimumHeight(17);
@@ -312,15 +311,19 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return table;
     }
 
-    public static PdfPTable createFooterTable() throws DocumentException, IOException {
+    public static PdfPTable createFooterTable(String jsonresult) throws DocumentException, IOException {
+        JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+        String userName = jsonObject.get("username")+"";
+//        String createTime = jsonObject.get("createTime")+"";
+        SimpleDateFormat sft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
         BaseFont bfChinese = BaseFont.createFont( "STSongStd-Light" ,"UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
         Font font = new Font(bfChinese, 11,Font.NORMAL);
-
         PdfPTable table = new PdfPTable(2);
         int width3[] = {100,60};
         table.setWidths(width3);
-        PdfPCell cell31 = new PdfPCell(new Paragraph("巡检工程师："+"刘峰",font));
-        PdfPCell cell32 = new PdfPCell(new Paragraph("日期："+"2020-09-15",font));
+        PdfPCell cell31 = new PdfPCell(new Paragraph("巡检工程师："+ userName, font));
+        PdfPCell cell32 = new PdfPCell(new Paragraph("日期："+ sft.format(date), font));
         cell31.setBorder(0);
         cell31.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell32.setBorder(0);
@@ -393,7 +396,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
             FileInputStream input = null;
             try {
                 input = new FileInputStream(file);
-                url = makeftp(input, filepath, jsonresult);
+                url = makesftp(input, filepath, jsonresult);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -443,19 +446,44 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         return url;
     }
 
+    public String makesftp(FileInputStream file, String filepath, String jsonresult) throws Exception {
+        String url = "";
+        SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
+        try {
+            if (file != null) {
+                JSONObject jsonObject = JSONObject.parseObject(jsonresult);
+                SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHH");
+                SimpleDateFormat sft = new SimpleDateFormat("yyyyMMdd");
+                Date date = new Date();
+                String path = "/"+sft.format(date)+"/"+sf.format(date);
+                SftpConfig sftpConfig = new SftpConfig(sFtpConfig.getHostName(), sFtpConfig.getPort(), sFtpConfig.getUserName(), sFtpConfig.getPassWord(), sFtpConfig.getTimeOut(), sFtpConfig.getRemoteRootPath());
+                filepath = UUID.randomUUID().toString() + filepath.substring(filepath.lastIndexOf("."), filepath.length());
+                url = sftp.upload(sftpConfig.getRemoteRootPath() + path, filepath, file, sftpConfig);
+                url = sftpConfig.getRemoteRootPath() + path + "/" + url;
+                return url;
+            } else {
+                return url;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return url;
+    }
+
     public void createSchemeTable(String url, String jsonresult) throws Exception {
         try {
             JSONObject jsonObject = JSONObject.parseObject(jsonresult);
             String scheduleId = jsonObject.get("scheduleId")+"";
             String schemeName = jsonObject.get("schemeName")+"";
-            String username = jsonObject.get("username")+"";
+            String userId = jsonObject.get("userId")+"";
             String parentId = jsonObject.get("parentId") + "";
             MonitorSchemeTimerTaskEntity schemeTimerTaskEntity = new MonitorSchemeTimerTaskEntity();
             schemeTimerTaskEntity.setScheduleId(scheduleId);
             schemeTimerTaskEntity.setSchemeName(schemeName);
             schemeTimerTaskEntity.setFtpUrl(url);
             schemeTimerTaskEntity.setGmtCreate(LocalDateTime.now());
-            schemeTimerTaskEntity.setCreateBy(username);
+            schemeTimerTaskEntity.setCreateBy(userId);
             schemeTimerTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
             schemeTimerTaskEntity.setParentId(parentId);
             inspectionRepo.save(schemeTimerTaskEntity);
@@ -479,8 +507,8 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         //声明日期格式转换对象
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         //进行字符串转换 LocalDateTime 对象
-        LocalDateTime startGmtCreate = param.get("startGmtCreate")!= null ? LocalDateTime.parse(param.get("startGmtCreate").toString() , dateTimeFormatter) : null;
-        LocalDateTime endGmtCreate = param.get("endGmtCreate")!= null ? LocalDateTime.parse(param.get("endGmtCreate").toString() , dateTimeFormatter) : null;
+        LocalDateTime startGmtCreate = param.get("startGmtCreate")!= null && param.get("startGmtCreate")!="" ? LocalDateTime.parse(param.get("startGmtCreate").toString() , dateTimeFormatter) : null;
+        LocalDateTime endGmtCreate = param.get("endGmtCreate")!= null && param.get("endGmtCreate")!="" ? LocalDateTime.parse(param.get("endGmtCreate").toString() , dateTimeFormatter) : null;
         //拼接动态条件语句的 sql 语句
         StringBuffer comditionalSQL = new StringBuffer();
         //排序语句的 sql 语句

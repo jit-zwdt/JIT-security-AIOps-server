@@ -190,6 +190,11 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    public List<SysRoleEntity> findByIsDeleted() {
+        return sysRoleRepo.findByIsDeleted(ConstUtil.IS_NOT_DELETED);
+    }
+
+    @Override
     public List<String> getLevelOneMenuSids() throws Exception {
         return sysMenuRepo.getLevelOneMenuSids();
     }

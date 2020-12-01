@@ -1,34 +1,31 @@
 package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jcraft.jsch.ChannelSftp;
 import com.jit.server.config.FtpConfig;
+import com.jit.server.config.SFtpConfig;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import com.jit.server.pojo.SysScheduleTaskEntity;
+import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.ScheduleTaskParams;
-import com.jit.server.service.InspectionManageService;
-import com.jit.server.service.SysScheduleTaskService;
-import com.jit.server.service.UserService;
-import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.FtpClientUtil;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
+import com.jit.server.service.*;
+import com.jit.server.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import sun.net.ftp.FtpClient;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -49,6 +46,12 @@ public class InspectionManageController {
 
     @Autowired
     private FtpConfig ftpConfig;
+
+    @Autowired
+    private SFtpConfig sFtpConfig;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     @PostMapping("/getHostInfo")
     public Result getHostInfo(@RequestParam("id") String id) {
@@ -71,7 +74,7 @@ public class InspectionManageController {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
             String auth = zabbixAuthService.getAuth();
-            String username = userService.findIdByUsername();
+            String username = userService.findNamebyUsername();
             JSONObject jsonObject = JSONObject.parseObject(param);
             // 在 monitor_scheme_timer_task 表中添加一条主数据 其他的数据都是跟着这条数据进行添加的
             MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
@@ -79,8 +82,19 @@ public class InspectionManageController {
                 monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
                 jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
             }
+            String userId = userService.findIdByUsername();
+            Optional<SysUserEntity> bean = sysUserService.findById(userId);
+            SysUserEntity sysDictionaryEntity = new SysUserEntity();
+            String mobile = "";
+            if (bean.isPresent()) {
+                sysDictionaryEntity = bean.get();
+                mobile = sysDictionaryEntity.getMobile() != "" ? sysDictionaryEntity.getMobile() : "无";
+            }
             jsonObject.put("auth",auth);
             jsonObject.put("username",username);
+            jsonObject.put("userId",userId);
+            jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
+            jsonObject.put("mobile", mobile);
             ScheduleTaskParams st = new ScheduleTaskParams();
             st.setId(id);
             st.setCronExpression(jsonObject.get("timerTask")+"");
@@ -157,6 +171,37 @@ public class InspectionManageController {
                     os.close();
                     // 关闭 FTP 对象
                     ftpClientUtil.closeFTP(ftpClient);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @PostMapping("/makeSftpPdf")
+    public void makeSftpPdf(String ftpFilePath, HttpServletResponse response) {
+        SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
+        InputStream input = null;
+        try {
+            SftpConfig sftpConfig = new SftpConfig(sFtpConfig.getHostName(), sFtpConfig.getPort(), sFtpConfig.getUserName(), sFtpConfig.getPassWord(), sFtpConfig.getTimeOut(), sFtpConfig.getRemoteRootPath());
+            ChannelSftp csftp = sftp.connect(sftpConfig);
+            csftp.cd(sftpConfig.getRemoteRootPath());
+            input = csftp.get(ftpFilePath);
+            IOUtils.copy(input,response.getOutputStream());
+            //设置返回值属性
+            response.setCharacterEncoding("utf-8");
+            //设置返回的文件是 pdf 文件
+            response.setContentType("application/pdf");
+            response.getOutputStream().close();
+            response.flushBuffer();
+            sftp.disConnect(csftp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(input != null){
+                try {
+                    // 关闭流对象
+                    input.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
