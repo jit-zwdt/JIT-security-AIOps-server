@@ -48,6 +48,8 @@ public class TriggerController {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 List<ZabbixTriggerDTO> result= triggerService.findByCondition(params, auth);
                 if (null != result && !CollectionUtils.isEmpty(result)) {
+                    // 过滤Zabbix中未知项
+                    result = triggerService.getStateList(result);
                     return Result.SUCCESS(result);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);

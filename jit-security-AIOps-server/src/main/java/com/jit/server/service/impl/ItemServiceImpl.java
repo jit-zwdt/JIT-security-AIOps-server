@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -89,4 +86,18 @@ public class ItemServiceImpl implements ItemService {
         dto.setStatus("1".equals(status.trim())?true:false);
         return zabbixItemService.update(dto, auth);
     }
+    @Override
+    public List<ZabbixGetItemDTO> getStateList(List<ZabbixGetItemDTO> result) {
+        int i = 0;
+        while(i < result.size()){
+            ZabbixGetItemDTO z = result.get(i);
+            if(z.isState() == true){
+                result.remove(i);
+            }else{
+                i++;
+            }
+        }
+        return result;
+    }
+
 }
