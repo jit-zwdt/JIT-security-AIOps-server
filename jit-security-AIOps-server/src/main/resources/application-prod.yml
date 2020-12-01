@@ -46,9 +46,9 @@ ftp:
 sftp:
   hostName: 172.19.0.1
   port: 22
-  userName: root
-  passWord: root
-  remoteRootPath: /upload
+  userName: user1
+  passWord: 111111
+  remoteRootPath: /home/user1/upload
   timeOut: 3000
   useShow: 1
 ###################################
