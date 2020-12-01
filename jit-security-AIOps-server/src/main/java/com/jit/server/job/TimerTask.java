@@ -32,9 +32,6 @@ public class TimerTask {
     private UserService userService;
 
     @Autowired
-    private SysUserService sysUserService;
-
-    @Autowired
     private InspectionManageService inspectionManageService;
 
     public void taskWithParams(String param) throws Exception {
@@ -47,13 +44,8 @@ public class TimerTask {
         String info = jsonObject.get("info") + "";
         String scheduleId = jsonObject.get("scheduleId") + "";
         String username = jsonObject.get("username") + "";
-        String userId = userService.findIdByUsername();
-        Optional<SysUserEntity> bean = sysUserService.findById(userId);
-        SysUserEntity sysDictionaryEntity = new SysUserEntity();
-        if (bean.isPresent()) {
-            sysDictionaryEntity = bean.get();
-        }
         String parentId = jsonObject.get("parentId") + "";
+        String mobile = jsonObject.get("mobile") + "";
         JSONArray infojson = JSONArray.parseArray(info);
         if (infojson == null) {
             throw new Exception("巡检对象参数异常");
@@ -105,7 +97,7 @@ public class TimerTask {
         jsonresult.put("scheduleId", scheduleId);
         jsonresult.put("username", username);
         jsonresult.put("parentId" , parentId);
-        jsonresult.put("mobile",(sysDictionaryEntity.getMobile()!="")?sysDictionaryEntity.getMobile():"无");
+        jsonresult.put("mobile", mobile);
         inspectionManageService.createPDF(jsonresult.toString());
 
     }
