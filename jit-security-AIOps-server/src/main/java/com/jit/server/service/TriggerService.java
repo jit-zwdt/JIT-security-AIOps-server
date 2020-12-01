@@ -17,4 +17,5 @@ public interface TriggerService {
     String updateTriggerPriority(String id, String priority ,String auth) throws Exception;
     List<ZabbixTriggerDTO> findTriggerAll(TriggerParams params,String auth ) throws Exception;
     List<ZabbixTriggerDTO> findTriggerById(String[] params,String auth) throws Exception;
+    List<ZabbixTriggerDTO> getStateList(List<ZabbixTriggerDTO> result);
 }

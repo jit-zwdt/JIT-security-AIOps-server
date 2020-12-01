@@ -9,6 +9,7 @@ import com.jit.server.service.TriggerService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
+import com.jit.zabbix.client.dto.ZabbixGetItemDTO;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.dto.ZabbixUpdateTriggerDTO;
@@ -112,5 +113,19 @@ public class TriggerServiceImpl implements TriggerService {
         paramsTrigger.setSelectFunctions(TRIGGER_EXTEND);
 
         return zabbixTriggerService.get(paramsTrigger, auth);
+    }
+
+    @Override
+    public List<ZabbixTriggerDTO> getStateList(List<ZabbixTriggerDTO> result) {
+        int i = 0;
+        while(i < result.size()){
+            ZabbixTriggerDTO z = result.get(i);
+            if(z.isState() == true){
+                result.remove(i);
+            }else{
+                i++;
+            }
+        }
+        return result;
     }
 }
