@@ -37,8 +37,6 @@ public class TimerTask {
     @Autowired
     private InspectionManageService inspectionManageService;
 
-    private static final Logger logger = LoggerFactory.getLogger(SFTPClientUtil.class);
-
     public void taskWithParams(String param) throws Exception {
         if (param == null) {
             throw new Exception("参数异常");
@@ -59,7 +57,6 @@ public class TimerTask {
         for (int i = 0; i < infojson.size(); i++) {
             JSONObject job = infojson.getJSONObject(i);
             String triggerid = job.get("triggerid") + "";
-            logger.info(triggerid);
             triggeridsList.add(triggerid);
         }
         String[] triggerids = (String[]) triggeridsList.toArray(new String[]{});
@@ -72,7 +69,6 @@ public class TimerTask {
                 objectIds.add(re.getObjectId());
             }
         }
-        logger.info(String.valueOf(objectIds));
         JSONArray resultData = new JSONArray();
         for (int i = 0; i < infojson.size(); i++) {
             JSONObject job = infojson.getJSONObject(i);
@@ -88,10 +84,10 @@ public class TimerTask {
             boolean checkflag = false;
             if (objectIds.indexOf(triggerid) > -1) {
                 for (int j = 0; j < result.size(); j++) {
-                    ZabbixProblemDTO dto = new ZabbixProblemDTO();
+                    ZabbixProblemDTO dto = result.get(j);
                     if (triggerid.equals(dto.getObjectId())) {
                         checkflag = true;
-                        jsonresult.put("datainfo", "异常！该项目安全级别为" + checkSeverity(dto.getSeverity().getValue()));
+                        jsonresult.put("datainfo", "异常！该监控项安全级别：" + checkSeverity(dto.getSeverity().getValue()) + ";内容：" + dto.getName() + ";详情：" + dto.getOpdata());
                     }
                 }
             }
