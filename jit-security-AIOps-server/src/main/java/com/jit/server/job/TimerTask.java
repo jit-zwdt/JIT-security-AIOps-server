@@ -2,23 +2,15 @@ package com.jit.server.job;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jit.server.pojo.MonitorHostDetailBindGraphs;
-import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
-import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
-import com.jit.server.util.SFTPClientUtil;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @Description:
@@ -36,8 +28,6 @@ public class TimerTask {
 
     @Autowired
     private InspectionManageService inspectionManageService;
-
-    private static final Logger logger = LoggerFactory.getLogger(SFTPClientUtil.class);
 
     public void taskWithParams(String param) throws Exception {
         if (param == null) {
@@ -89,8 +79,7 @@ public class TimerTask {
                     ZabbixProblemDTO dto = result.get(j);
                     if (triggerid.equals(dto.getObjectId())) {
                         checkflag = true;
-                        jsonresult.put("datainfo", "异常！该监控项安全级别：" + checkSeverity(dto.getSeverity().getValue()) + ";内容：" + dto.getName() + ";详情：" + dto.getOpdata());
-                        logger.info(String.valueOf(jsonresult));
+                        jsonresult.put("datainfo", "异常！该监控项安全级别：" + checkSeverity(dto.getSeverity().getValue()) + ";/n内容：" + dto.getName() + ";/n详情：" + dto.getOpdata());
                         resultData.add(jsonresult);
                     }
                 }
