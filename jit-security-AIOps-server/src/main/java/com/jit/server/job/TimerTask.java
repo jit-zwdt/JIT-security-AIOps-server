@@ -37,6 +37,8 @@ public class TimerTask {
     @Autowired
     private InspectionManageService inspectionManageService;
 
+    private static final Logger logger = LoggerFactory.getLogger(SFTPClientUtil.class);
+
     public void taskWithParams(String param) throws Exception {
         if (param == null) {
             throw new Exception("参数异常");
@@ -88,6 +90,8 @@ public class TimerTask {
                     if (triggerid.equals(dto.getObjectId())) {
                         checkflag = true;
                         jsonresult.put("datainfo", "异常！该监控项安全级别：" + checkSeverity(dto.getSeverity().getValue()) + ";内容：" + dto.getName() + ";详情：" + dto.getOpdata());
+                        logger.info(String.valueOf(jsonresult));
+                        resultData.add(jsonresult);
                     }
                 }
             }
