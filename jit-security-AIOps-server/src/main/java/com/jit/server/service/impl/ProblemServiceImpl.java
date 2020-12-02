@@ -300,7 +300,7 @@ public class ProblemServiceImpl implements ProblemService {
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
         if (params!= null ) {
             Map<String, Object> mapFilter = new HashMap();
-            mapFilter.put("objectid", params);
+            mapFilter.put("eventid", params);
             params_pro.setFilter(mapFilter);
         }
         return zabbixProblemService.get(params_pro, auth);
