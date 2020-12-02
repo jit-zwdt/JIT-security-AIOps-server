@@ -8,7 +8,10 @@ import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.SFTPClientUtil;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +36,8 @@ public class TimerTask {
 
     @Autowired
     private InspectionManageService inspectionManageService;
+
+    private static final Logger logger = LoggerFactory.getLogger(SFTPClientUtil.class);
 
     public void taskWithParams(String param) throws Exception {
         if (param == null) {
@@ -61,6 +66,8 @@ public class TimerTask {
         if (result == null) {
             throw new Exception("数据异常");
         }
+        logger.info(String.valueOf(result));
+        logger.info(String.valueOf(result.size()));
         JSONArray resultData = new JSONArray();
         for (int i = 0; i < infojson.size(); i++) {
             JSONObject job = infojson.getJSONObject(i);
