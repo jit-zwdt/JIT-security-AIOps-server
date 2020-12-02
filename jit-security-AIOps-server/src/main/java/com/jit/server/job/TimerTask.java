@@ -63,12 +63,16 @@ public class TimerTask {
             triggeridsList.add(triggerid);
         }
         String[] triggerids = (String[]) triggeridsList.toArray(new String[]{});
+        List objectIds = new ArrayList();
         List<ZabbixProblemDTO> result = problemService.findProblemById(triggerids, auth);
         if (result == null) {
             throw new Exception("数据异常");
+        } else {
+            for (ZabbixProblemDTO re :result) {
+                objectIds.add(re.getObjectId());
+            }
         }
-        logger.info(String.valueOf(result));
-        logger.info(String.valueOf(result.size()));
+        logger.info(String.valueOf(objectIds));
         JSONArray resultData = new JSONArray();
         for (int i = 0; i < infojson.size(); i++) {
             JSONObject job = infojson.getJSONObject(i);
@@ -82,7 +86,7 @@ public class TimerTask {
             jsonresult.put("hostname",hostname);
             jsonresult.put("description",description);
             boolean checkflag = false;
-            if (result.indexOf(triggerid) > -1) {
+            if (objectIds.indexOf(triggerid) > -1) {
                 for (int j = 0; j < result.size(); j++) {
                     ZabbixProblemDTO dto = new ZabbixProblemDTO();
                     if (triggerid.equals(dto.getObjectId())) {
