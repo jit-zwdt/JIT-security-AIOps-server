@@ -59,6 +59,7 @@ public class TimerTask {
         for (int i = 0; i < infojson.size(); i++) {
             JSONObject job = infojson.getJSONObject(i);
             String triggerid = job.get("triggerid") + "";
+            logger.info(triggerid);
             triggeridsList.add(triggerid);
         }
         String[] triggerids = (String[]) triggeridsList.toArray(new String[]{});
