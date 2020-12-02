@@ -79,7 +79,15 @@ public class TimerTask {
                     ZabbixProblemDTO dto = result.get(j);
                     if (triggerid.equals(dto.getObjectId())) {
                         checkflag = true;
-                        jsonresult.put("datainfo", "异常！该监控项安全级别：" + checkSeverity(dto.getSeverity().getValue()) + ";/n内容：" + dto.getName() + ";/n详情：" + dto.getOpdata());
+                        String infoName = "";
+                        String infoOpdata = "";
+                        if (dto.getName() != null && !dto.getName().equals("")) {
+                            infoName = ";内容：<<" + dto.getName() + ">>";
+                        }
+                        if (dto.getOpdata() != null && !dto.getOpdata().equals("")) {
+                            infoOpdata = ";详情：<<" + dto.getOpdata() + ">>";
+                        }
+                        jsonresult.put("datainfo", "异常！该监控项安全级别：<<" + checkSeverity(dto.getSeverity().getValue()) + ">>" + infoName + infoOpdata);
                         resultData.add(jsonresult);
                     }
                 }
