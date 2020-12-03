@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.MonitorHostDetailBindItemsDTO;
 import com.jit.server.pojo.MonitorHostDetailBindItems;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface MonitorHostDetailBindItemsService {
     MonitorHostDetailBindItems findById(String id) throws Exception;
 
     MonitorHostDetailBindItems findByHostIdAndItemIdAndIsDeleted(String hostId, String itemId, int isDeleted) throws Exception;
+
+    List<MonitorHostDetailBindItemsDTO> findMonitorHostDetailBindItemsDTOByHostId(List<MonitorHostDetailBindItemsDTO> list);
 }

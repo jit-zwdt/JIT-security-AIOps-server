@@ -330,6 +330,8 @@ public class TrendController {
                     list.add(m5);
                 }
             }
+            // 将集合进行重新排序
+            list = monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsDTOByHostId(list);
             return Result.SUCCESS(list);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
