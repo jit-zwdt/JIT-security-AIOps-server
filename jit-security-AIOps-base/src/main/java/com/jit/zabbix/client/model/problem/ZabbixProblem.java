@@ -44,4 +44,5 @@ public class ZabbixProblem {
     @JsonDeserialize(using = CustomJsonSerializer.BooleanNumericDeserializer.class)
     protected boolean acknowledged;
     protected ProblemSeverity severity;
+    protected String opdata;
 }

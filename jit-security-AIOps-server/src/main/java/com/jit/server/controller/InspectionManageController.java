@@ -81,6 +81,7 @@ public class InspectionManageController {
             if (id == null) {
                 monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
                 jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
+                jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
             }
             String userId = userService.findIdByUsername();
             Optional<SysUserEntity> bean = sysUserService.findById(userId);
@@ -93,7 +94,6 @@ public class InspectionManageController {
             jsonObject.put("auth",auth);
             jsonObject.put("username",username);
             jsonObject.put("userId",userId);
-            jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
             jsonObject.put("mobile", mobile);
             ScheduleTaskParams st = new ScheduleTaskParams();
             st.setId(id);

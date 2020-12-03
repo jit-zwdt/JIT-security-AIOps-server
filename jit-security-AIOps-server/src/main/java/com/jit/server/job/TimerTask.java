@@ -2,20 +2,15 @@ package com.jit.server.job;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jit.server.pojo.MonitorHostDetailBindGraphs;
-import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.service.InspectionManageService;
 import com.jit.server.service.ProblemService;
-import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @Description:
@@ -57,9 +52,14 @@ public class TimerTask {
             triggeridsList.add(triggerid);
         }
         String[] triggerids = (String[]) triggeridsList.toArray(new String[]{});
+        List objectIds = new ArrayList();
         List<ZabbixProblemDTO> result = problemService.findProblemById(triggerids, auth);
         if (result == null) {
             throw new Exception("数据异常");
+        } else {
+            for (ZabbixProblemDTO re :result) {
+                objectIds.add(re.getObjectId());
+            }
         }
         JSONArray resultData = new JSONArray();
         for (int i = 0; i < infojson.size(); i++) {
@@ -74,12 +74,21 @@ public class TimerTask {
             jsonresult.put("hostname",hostname);
             jsonresult.put("description",description);
             boolean checkflag = false;
-            if (result.indexOf(triggerid) > -1) {
+            if (objectIds.indexOf(triggerid) > -1) {
                 for (int j = 0; j < result.size(); j++) {
-                    ZabbixProblemDTO dto = new ZabbixProblemDTO();
+                    ZabbixProblemDTO dto = result.get(j);
                     if (triggerid.equals(dto.getObjectId())) {
                         checkflag = true;
-                        jsonresult.put("datainfo", "异常！该项目安全级别为" + checkSeverity(dto.getSeverity().getValue()));
+                        String infoName = "";
+                        String infoOpdata = "";
+                        if (dto.getName() != null && !dto.getName().equals("")) {
+                            infoName = ";内容：<<" + dto.getName() + ">>";
+                        }
+                        if (dto.getOpdata() != null && !dto.getOpdata().equals("")) {
+                            infoOpdata = ";详情：<<" + dto.getOpdata() + ">>";
+                        }
+                        jsonresult.put("datainfo", "异常！该监控项安全级别：<<" + checkSeverity(dto.getSeverity().getValue()) + ">>" + infoName + infoOpdata);
+                        resultData.add(jsonresult);
                     }
                 }
             }
