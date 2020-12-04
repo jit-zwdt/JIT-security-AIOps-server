@@ -235,12 +235,12 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         table.setSpacingAfter(10f); // Space after table
         table.setTotalWidth(500); //设置列宽
         table.setLockedWidth(true); //锁定列宽
-        int width[] = {5,20,60,20};
+        int width[] = {8,20,60,20};
         table.setWidths(width);
         PdfPCell cell;
 
         cell = new PdfPCell(new Paragraph("序号", font));
-        cell.setPaddingLeft(10);
+        cell.setPaddingLeft(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setMinimumHeight(17);
@@ -281,7 +281,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
 
             cell = new PdfPCell(new Paragraph(num, font8));
             cell.setPaddingLeft(1);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setMinimumHeight(17);
             table.addCell(cell);
