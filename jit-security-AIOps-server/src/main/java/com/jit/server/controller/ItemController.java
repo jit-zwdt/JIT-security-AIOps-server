@@ -44,8 +44,6 @@ public class ItemController {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
                 List<ZabbixGetItemDTO> result = itemService.getItemInfoList(itemParams,auth);
                 if (result != null && !CollectionUtils.isEmpty(result)) {
-                    // 过滤Zabbix中不支持项
-                    result = itemService.getStateList(result);
                     return Result.SUCCESS(result);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);

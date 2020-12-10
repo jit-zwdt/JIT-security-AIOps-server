@@ -126,4 +126,24 @@ public class GraphItemController {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
+
+    /**
+     * 根据图形 ids 获取所有的图形监控项
+     * @param graphids 图形 ids
+     * @param req HttpServletRequest 对象
+     * @return 返回统一返回响应对象
+     * @throws IOException
+     */
+    @PostMapping("/getGItemByGraphIdAll")
+    public Result getGItemByGraphId(@RequestParam("graphids[]") List<String> graphids, HttpServletRequest req) throws IOException {
+        try {
+            GraphItemParams graphItemParams = new GraphItemParams();
+            graphItemParams.setGraphids(graphids);
+            String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+            return Result.SUCCESS(graphItemService.getGItemList(graphItemParams,auth));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
 }

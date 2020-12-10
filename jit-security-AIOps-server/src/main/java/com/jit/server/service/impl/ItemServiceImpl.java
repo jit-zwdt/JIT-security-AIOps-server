@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.ItemService;
 import com.jit.server.service.ZabbixAuthService;
@@ -43,6 +44,12 @@ public class ItemServiceImpl implements ItemService {
             params.setHostIds(hostids);
             params.setOutput(ITEM_EXTEND);
             params.setSortFields(ITEM_ARRAY_NAME);
+            //创建过滤是否支持的条件
+            Map<String , Object> stateMap = new HashMap<>(1);
+            //过滤条件添加
+            stateMap.put("state" , 0);
+            //赋值
+            params.setFilter(stateMap);
             String name = itemParams.getName();
             String status = itemParams.getStatus();
             String key_ = itemParams.getKey_();
@@ -86,18 +93,4 @@ public class ItemServiceImpl implements ItemService {
         dto.setStatus("1".equals(status.trim())?true:false);
         return zabbixItemService.update(dto, auth);
     }
-    @Override
-    public List<ZabbixGetItemDTO> getStateList(List<ZabbixGetItemDTO> result) {
-        int i = 0;
-        while(i < result.size()){
-            ZabbixGetItemDTO z = result.get(i);
-            if(z.isState() == true){
-                result.remove(i);
-            }else{
-                i++;
-            }
-        }
-        return result;
-    }
-
 }
