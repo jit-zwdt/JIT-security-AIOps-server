@@ -102,6 +102,7 @@ public class ProblemController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
@@ -115,6 +116,7 @@ public class ProblemController {
             List<MonitorClaimEntity> list = problemService.findClaimByUser(problemName, Integer.parseInt(resolveType));
             return Result.SUCCESS(list);
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
@@ -125,6 +127,7 @@ public class ProblemController {
             problemService.updateClaimAfterRegister(monitorClaimEntity);
             return Result.SUCCESS(null);
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
@@ -144,6 +147,7 @@ public class ProblemController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
@@ -184,6 +188,7 @@ public class ProblemController {
             }
             return Result.SUCCESS(resultList);
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

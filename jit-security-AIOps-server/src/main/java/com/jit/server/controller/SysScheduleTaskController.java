@@ -58,17 +58,23 @@ public class SysScheduleTaskController {
         try {
             return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
         } catch (SchedulerExistedException e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION);
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.SCHEDULER_USE_CLASS_EXCEPTION);
         } catch (NoSuchMethodException e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.SCHEDULER_USE_METHOD_EXCEPTION);
         } catch (CronExpression e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.SCHEDULER_CRON_EXPRESSION_EXCEPTION);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             log.error("创建失败：原因 {}", e.getMessage());
             return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }

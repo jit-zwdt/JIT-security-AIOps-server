@@ -133,6 +133,7 @@ public class InspectionManageController {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
     }
