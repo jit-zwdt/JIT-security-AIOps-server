@@ -227,7 +227,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         };
         //排序的定义
         List<Sort.Order> list = new ArrayList<>();
-        Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "sortOrder");
+        Sort.Order order1 = new Sort.Order(Sort.Direction.ASC, "sortOrder");
         list.add(order1);
         Sort sort = Sort.by(list);
         //分页的定义
