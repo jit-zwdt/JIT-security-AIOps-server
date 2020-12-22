@@ -31,7 +31,8 @@ public class SysMenuEntity {
     /**
      * 菜单ID
      */
-    @Column(name = "sid")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "sid" , nullable=false , insertable=false , updatable=false , columnDefinition="numeric(19,0) IDENTITY")
     private int sid;
 
     /**
