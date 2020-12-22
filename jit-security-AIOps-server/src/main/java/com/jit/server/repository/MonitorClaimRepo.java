@@ -18,8 +18,8 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
     @Query("select e from MonitorClaimEntity e where e.problemId =  ?1")
     MonitorClaimEntity getMonitorClaimEntityById(String problemId);
 
-    @Query(value = "select * from monitor_claim e where e.claim_user_id =  ?1 and e.problem_name like %?2% and if(?3 != -1,e.is_resolve =?3,1=1)", nativeQuery = true)
-    List<MonitorClaimEntity> findClaimByUser(String claimUserId, String problemName, int resolveType);
+//    @Query(value = "select * from monitor_claim e where e.claim_user_id =  ?1 and e.problem_name like %?2% and if(?3 != -1,e.is_resolve =?3,1=1)", nativeQuery = true)
+//    List<MonitorClaimEntity> findClaimByUser(String claimUserId, String problemName, int resolveType);
 
     @Transactional
     @Modifying
@@ -50,4 +50,6 @@ public interface MonitorClaimRepo extends JpaRepository<MonitorClaimEntity, Stri
 
     @Query("select distinct e from MonitorClaimEntity e,MonitorRegisterEntity r where e.isDeleted= 0 and e.isRegister = 1 and e.isResolve = 1 and e.id = r.claimId and r.isResolve = 1 and r.gmtCreate >= ?1 and r.gmtCreate <= ?2")
     List<MonitorClaimEntity> getSolvedMonitorClaimEntityByDate(LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
+
+
 }
