@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.pojo.MonitorTypeEntity;
@@ -9,6 +10,7 @@ import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.service.MonitorTemplatesService;
 import com.jit.server.service.MonitorTypeService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -63,6 +65,7 @@ public class MonitorTemplatesController {
 
     @ResponseBody
     @PostMapping(value = "/getMonitorTemplates")
+    @AutoLog(value = "模板管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getMonitorTemplates(@RequestBody PageRequest<MonitorTemplatesParams> params) {
 
         try {
@@ -129,6 +132,7 @@ public class MonitorTemplatesController {
 
     @ResponseBody
     @PostMapping(value = "/bindTemplates")
+    @AutoLog(value = "模板管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result bindTemplates(@RequestParam String id, @RequestParam String templates, @RequestParam String templateIds) {
         try {
             if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(templates) && StringUtils.isNotBlank(templateIds)) {

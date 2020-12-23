@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.DictionaryDTO;
 import com.jit.server.dto.DictionaryItemResultDTO;
 import com.jit.server.dto.DictionaryResultDTO;
@@ -8,6 +9,7 @@ import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.service.DictionaryService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class SysDictionaryController {
 
     @ResponseBody
     @PostMapping(value = "/getDictionary")
+    @AutoLog(value = "字典管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getDictionary(@RequestParam("name") String name, @RequestParam("code") String code, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
         int currentPageTemp = 0;
         if (currentPage != "" && currentPage != null) {
@@ -85,6 +88,7 @@ public class SysDictionaryController {
     }
 
     @DeleteMapping("/deleteDictionary/{id}")
+    @AutoLog(value = "字典管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteDictionary(@PathVariable String id) {
         try {
             Optional<SysDictionaryEntity> bean = dictionaryService.findById(id);
@@ -118,6 +122,7 @@ public class SysDictionaryController {
     }
 
     @PostMapping("/addDictionary")
+    @AutoLog(value = "字典管理-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {
         try {
             sysDictionaryEntity.setDictCode(sysDictionaryEntity.getDictCode().trim().toLowerCase());
@@ -128,6 +133,7 @@ public class SysDictionaryController {
     }
 
     @PostMapping("/findDictionaryItemByDicId")
+    @AutoLog(value = "字典管理-查询子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findDictionaryItemByDicId(@RequestParam("id") String id, @RequestParam("itemText") String itemText, @RequestParam("status") String status, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
         int temp = 0;
         int currentPageTemp = 0;
@@ -156,6 +162,7 @@ public class SysDictionaryController {
     }
 
     @DeleteMapping("/deleteDictionaryItem/{id}")
+    @AutoLog(value = "字典管理-删除子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteDictionaryItem(@PathVariable String id) {
         try {
             Optional<SysDictionaryItemEntity> bean = dictionaryService.findDictionaryItemById(id);
@@ -174,6 +181,7 @@ public class SysDictionaryController {
     }
 
     @PostMapping("/addDictionaryItem")
+    @AutoLog(value = "字典管理-新增/编辑子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) {
         try {
             return Result.SUCCESS(dictionaryService.addDictionaryItem(sysDictionaryItemEntity));

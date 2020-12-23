@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jcraft.jsch.ChannelSftp;
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
@@ -68,6 +69,7 @@ public class InspectionManageController {
     }
 
     @PostMapping("/addTimerTaskInfo")
+    @AutoLog(value = "巡检计划管理-添加/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addTimerTaskInfo(@RequestParam("param") String param , String id) {
         try {
             if (param == null) {
@@ -180,6 +182,7 @@ public class InspectionManageController {
     }
 
     @PostMapping("/makeSftpPdf")
+    @AutoLog(value = "巡检报告中心-预览", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public void makeSftpPdf(String ftpFilePath, HttpServletResponse response) {
         SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
         InputStream input = null;
@@ -218,6 +221,7 @@ public class InspectionManageController {
      * @return Result 返回值对象
      */
     @PostMapping(value = "/getMonitorSchemeTimerTasks")
+    @AutoLog(value = "巡检计划管理/巡检报告中心-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getMonitorSchemeTimerTasks(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
             Page<MonitorSchemeTimerTaskEntityDto> sysScheduleTaskEntities = inspectionManageService.getMonitorSchemeTimerTasks(params);
@@ -241,6 +245,7 @@ public class InspectionManageController {
      * @return 统一返回对象
      */
     @DeleteMapping("/deleteMonitorSchemeTimerTask/{id}/{scheduleId}")
+    @AutoLog(value = "巡检计划管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteMonitorSchemeTimerTask(@PathVariable String id , @PathVariable String scheduleId){
         //非空校验
         if (id == null) {

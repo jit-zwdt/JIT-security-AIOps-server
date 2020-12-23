@@ -1,15 +1,13 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
 import com.jit.server.request.HostViewInfoParams;
 import com.jit.server.service.HostService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
-import com.jit.server.util.StringUtils;
+import com.jit.server.util.*;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import com.jit.zabbix.client.dto.ZabbixHostGroupDTO;
 import com.jit.zabbix.client.request.ZabbixGetHostGroupParams;
@@ -43,6 +41,7 @@ public class HostController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/addHost")
+    @AutoLog(value = "监控列表-添加", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addHost(@RequestBody HostParams params, HttpServletRequest req) {
         try{
             if(params!=null){
@@ -67,6 +66,7 @@ public class HostController {
     }
 
     @PutMapping("/updateHost/{id}")
+    @AutoLog(value = "监控列表-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<HostEntity> updateHost(@RequestBody HostParams params, @PathVariable String id, HttpServletRequest req) {
         try{
             if(params!=null && StringUtils.isNotEmpty(id)){
@@ -93,6 +93,7 @@ public class HostController {
     }
 
     @DeleteMapping("/deleteHost/{id}")
+    @AutoLog(value = "监控列表-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteHost(@PathVariable String id, HttpServletRequest req) {
         try{
             Optional<HostEntity> bean = hostService.findByHostId(id);
@@ -115,6 +116,7 @@ public class HostController {
     }
 
     @PutMapping("/updateHostEnableMonitor/{id}")
+    @AutoLog(value = "监控列表-[启动,停用]监控状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateHostEnableMonitor(@PathVariable String id, @RequestParam("enableMonitor") String enableMonitor, HttpServletRequest req) {
         try{
             Optional<HostEntity> bean = hostService.findByHostId(id);
@@ -268,6 +270,7 @@ public class HostController {
     }
 
     @PostMapping(value = "/getTop5ByTrigger")
+    @AutoLog(value = "监控-top5 [异常,告警]信息查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getTop5ByTrigger(@RequestBody Map<String, Object> params, HttpServletRequest req) {
         //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
         try{

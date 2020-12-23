@@ -1,15 +1,13 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.request.DailyOperationReportParams;
 import com.jit.server.service.DailyOperationReportService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.ExportXlsFileConst;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
+import com.jit.server.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -52,6 +50,7 @@ public class DailyOperationReportController {
 
 
     @GetMapping(value = "/getDailyOperationReport")
+    @AutoLog(value = "当日运维日报-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public @ResponseBody Result getDailyOperationReport(HttpServletRequest req) {
         try {
             MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
@@ -91,6 +90,7 @@ public class DailyOperationReportController {
 
     @ResponseBody
     @PostMapping(value = "/addDailyOperationReport")
+    @AutoLog(value = "当日运维日报-保存", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addDailyOperationReport(@RequestBody DailyOperationReportParams params, HttpServletRequest req) {
         try {
             if (params != null) {
@@ -111,6 +111,7 @@ public class DailyOperationReportController {
 
     @ResponseBody
     @PostMapping(value = "/getDailyOperationReports")
+    @AutoLog(value = "历史运维日报列表-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getDailyOperationReports(@RequestBody PageRequest<Map<String, String>> params) {
 
         try {
@@ -130,6 +131,7 @@ public class DailyOperationReportController {
 
     @ResponseBody
     @GetMapping(value = "/getDailyOperationReported")
+    @AutoLog(value = "历史运维日报列表-查看", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getDailyOperationReported(@RequestParam String id) {
 
         try {
@@ -151,6 +153,7 @@ public class DailyOperationReportController {
      * @throws IOException
      */
     @PostMapping("/downLoadDaily")
+    @AutoLog(value = "当日运维日报/历史运维日报-导出", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public void downLoadDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
         //声明日期转换对象
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

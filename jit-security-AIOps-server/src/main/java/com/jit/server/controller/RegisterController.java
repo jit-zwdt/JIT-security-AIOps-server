@@ -1,10 +1,12 @@
 package com.jit.server.controller;
 
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.ProblemRegisterDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorRegisterEntity;
 import com.jit.server.service.MonitorRegisterService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ public class RegisterController {
     private MonitorRegisterService registerService;
 
     @PostMapping("/findRegisterByClaimId/{id}")
+    @AutoLog(value = "故障处理登记-已解决信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findRegisterByClaimId(@PathVariable String id) {
         try{
             List<ProblemRegisterDTO> monitorRegisterEntity= registerService.findByClaimId(id);
@@ -33,6 +36,7 @@ public class RegisterController {
     }
 
     @PostMapping("/addRegister")
+    @AutoLog(value = "故障处理登记-登记", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addRegister(@RequestBody MonitorRegisterEntity monitorRegisterEntity) {
         try{
             if(monitorRegisterEntity!=null){

@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.SysMenuDTO;
 import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.exception.ExceptionEnum;
@@ -7,6 +8,7 @@ import com.jit.server.pojo.SysMenuEntity;
 import com.jit.server.request.MenuParams;
 import com.jit.server.service.SysMenuService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -47,6 +49,7 @@ public class SysMenuController {
 
     @ResponseBody
     @GetMapping(value = "/getMenusList")
+    @AutoLog(value = "菜单管理-菜单列表", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getMenusList() {
         try {
             List<SysMenuListDTO> menus = sysMenuService.getMenusList();
@@ -58,6 +61,7 @@ public class SysMenuController {
     }
 
     @PostMapping(value = "/findBySysMenu/{id}")
+    @AutoLog(value = "菜单管理-详情", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findBySysMenu(@PathVariable String id) {
         try {
             if (StringUtils.isNotEmpty(id)) {
@@ -88,6 +92,7 @@ public class SysMenuController {
     }
 
     @PostMapping(value = "/addMenus")
+    @AutoLog(value = "菜单管理-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addMenus(@RequestBody MenuParams menuParams) {
         try {
             if (menuParams != null) {
@@ -126,6 +131,7 @@ public class SysMenuController {
     }
 
     @PostMapping(value = "/updateMenus")
+    @AutoLog(value = "菜单管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateMenus(@RequestBody SysMenuListDTO sysMenuListDTO) {
         try {
             if (sysMenuListDTO != null && StringUtils.isNotEmpty(sysMenuListDTO.getId())) {
@@ -159,6 +165,7 @@ public class SysMenuController {
     }
 
     @PutMapping("updateIsShow/{id}/{isShow}")
+    @AutoLog(value = "菜单管理-隐藏", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateIsShow(@PathVariable String id, @PathVariable int isShow) {
         try {
             //调用方法更新数据
@@ -171,6 +178,7 @@ public class SysMenuController {
     }
 
     @PostMapping(value = "/delMenus/{id}")
+    @AutoLog(value = "菜单管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result delMenus(@PathVariable String id) {
         try {
             Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);

@@ -1,10 +1,12 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.ItemParams;
 import com.jit.server.service.ItemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -38,6 +40,7 @@ public class ItemController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getItemInfoList")
+    @AutoLog(value = "监控列表-监控项-查询 , 监控信息-指标列表查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getItemInfoList(@RequestBody ItemParams itemParams, HttpServletRequest req) throws IOException {
         try {
             if (itemParams != null && itemParams.getHostids() != null) {
@@ -57,6 +60,7 @@ public class ItemController {
         }
     }
     @PutMapping("/updateItemStatus/{id}")
+    @AutoLog(value = "监控列表-监控项-[启动,停用]监控状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateItemStatus(@PathVariable String id, @RequestParam("status") String status, HttpServletRequest req) {
         try{
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));

@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.request.CreateGraphPrototypeParams;
@@ -10,6 +11,7 @@ import com.jit.server.service.GraphPrototypeService;
 import com.jit.server.service.ItemService;
 import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -47,6 +49,7 @@ public class GraphPrototypeController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getGProInfoList")
+    @AutoLog(value = "监控信息-查询所有图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getGProInfoList(@RequestBody GraphPrototypeParams graphPrototypeParams, HttpServletRequest req) throws IOException {
         try {
             if (graphPrototypeParams != null) {
@@ -67,6 +70,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/createGpro")
+    @AutoLog(value = "监控信息-添加图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
@@ -88,6 +92,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/updateGpro")
+    @AutoLog(value = "监控信息-编辑图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
@@ -109,6 +114,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/deleteGpro")
+    @AutoLog(value = "监控信息-删除图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteGpro(@RequestBody TrendParams trendParams, HttpServletRequest req
     ) throws IOException {
         try {

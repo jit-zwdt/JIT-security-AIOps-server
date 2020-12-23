@@ -1,11 +1,13 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.MonitorHostDetailBindItemsDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorHostDetailBindGraphs;
 import com.jit.server.pojo.MonitorHostDetailBindItems;
 import com.jit.server.request.*;
 import com.jit.server.service.*;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixGetGraphItemDTO;
@@ -59,6 +61,7 @@ public class TrendController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getItemInfoList")
+    @AutoLog(value = "监控信息-查询单个折线图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getItemInfoList(@RequestBody HistoryParams historyParams, HttpServletRequest req) throws IOException {
         try {
             if (historyParams != null && historyParams.getItemids() != null) {
@@ -79,6 +82,7 @@ public class TrendController {
     }
 
     @PostMapping("/addHostDetailItem")
+    @AutoLog(value = "监控信息-添加指标到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addHostDetailItem(@RequestBody TrendParams trendParams) {
         try {
             if (trendParams != null) {
@@ -103,6 +107,7 @@ public class TrendController {
     }
 
     @PostMapping("/addHostDetailGraph")
+    @AutoLog(value = "监控信息-添加图形到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addHostDetailGraph(@RequestBody TrendParams trendParams) {
         try {
             if (trendParams != null) {
@@ -168,6 +173,7 @@ public class TrendController {
     }
 
     @PostMapping("/findHostDetailItems/{hostId}")
+    @AutoLog(value = "监控信息-查询折线图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findHostDetailItems(@PathVariable String hostId, @RequestBody HistoryParams historyParams, HttpServletRequest req) {
         try {
             List<MonitorHostDetailBindItemsDTO> list = new ArrayList<>();

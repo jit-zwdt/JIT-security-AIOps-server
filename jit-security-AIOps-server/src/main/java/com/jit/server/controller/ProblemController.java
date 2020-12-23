@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.dto.ProblemSolveReportDTO;
@@ -16,6 +17,7 @@ import com.jit.server.service.DictionaryService;
 import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.server.util.StringUtils;
@@ -53,6 +55,7 @@ public class ProblemController {
     private DictionaryService dictionaryService;
 
     @PostMapping("/findProblemHost")
+    @AutoLog(value = "统一告警查询-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -70,6 +73,7 @@ public class ProblemController {
 
 
     @PostMapping("/findBySeverityLevel")
+    @AutoLog(value = "故障认领-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletRequest req) throws IOException {
         try {
             if (params != null && params.getSeverities() != null) {
@@ -90,6 +94,7 @@ public class ProblemController {
     }
 
     @PostMapping("/addClaim")
+    @AutoLog(value = "故障认领-认领", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addClaim(@RequestBody MonitorClaimEntity monitorClaimEntity) {
         try {
             if (monitorClaimEntity != null) {
@@ -108,6 +113,7 @@ public class ProblemController {
     }
 
     @PostMapping("/findClaimByUser")
+    @AutoLog(value = "故障处理登记-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findClaimByUser(@RequestParam(value = "problemName") String problemName, @RequestParam(value = "resolveType") String resolveType) {
         try {
             if (resolveType == null || ("").equals(resolveType)) {
@@ -133,6 +139,7 @@ public class ProblemController {
     }
 
     @PostMapping("/findByProblemId")
+    @AutoLog(value = "故障认领-已认领信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findByProblemId(@RequestParam(value = "problemId") String problemId) {
         try {
             if (problemId != null) {
@@ -153,6 +160,7 @@ public class ProblemController {
     }
 
     @PostMapping("/problemSolveReport")
+    @AutoLog(value = "故障解决统计报表-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd, @RequestParam("dictCode") String dictCode) {
         try {
             List<MonitorClaimEntity> claimList = null;
@@ -200,6 +208,7 @@ public class ProblemController {
      * @throws IOException IO异常
      */
     @PostMapping("/downLoadFailureToSolve")
+    @AutoLog(value = "故障解决统计报表-导出", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public void downLoadFailureToSolve(@RequestBody String tableData,HttpServletResponse response) {
         //首先对 JSON 格式的数据进行转换
         JSONArray jsonArray = JSONArray.parseArray(tableData);

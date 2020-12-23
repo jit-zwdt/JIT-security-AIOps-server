@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysRoleEntity;
@@ -8,6 +9,7 @@ import com.jit.server.pojo.SysUserRoleEntity;
 import com.jit.server.request.RoleParams;
 import com.jit.server.service.SysRoleService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
@@ -36,6 +38,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping(value = "/getRoles")
+    @AutoLog(value = "角色维护-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getRoles(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
             Page<SysRoleEntity> sysUserEntities = sysRoleService.getRoles(params);
@@ -92,6 +95,7 @@ public class SysRoleController {
     }
 
     @PostMapping("/addRole")
+    @AutoLog(value = "角色维护-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addRole(@RequestBody RoleParams roleParams) {
         try {
             if (roleParams != null) {
@@ -152,6 +156,7 @@ public class SysRoleController {
 
     @ResponseBody
     @DeleteMapping(value = "/delRole/{id}")
+    @AutoLog(value = "角色维护-删除菜单", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result delRole(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
@@ -208,6 +213,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping(value = "/bindingUsers")
+    @AutoLog(value = "角色维护-绑定人员", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result bindingUsers(@RequestBody Map<String, Object> params) {
         try {
             String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
@@ -285,6 +291,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping(value = "/bindingMenus")
+    @AutoLog(value = "角色维护-绑定菜单", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result bindingMenus(@RequestBody Map<String, Object> params) {
         try {
             String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";

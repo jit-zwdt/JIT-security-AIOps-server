@@ -1,8 +1,10 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.*;
 import com.jit.server.service.*;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.*;
@@ -64,6 +66,7 @@ public class GraphItemController {
     }
 
     @PostMapping("/getResultList")
+    @AutoLog(value = "监控信息-查询单个饼图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getResultList(@RequestBody GraphItemParams graphItemParams, HttpServletRequest req) throws IOException {
         try {
             if (graphItemParams != null) {

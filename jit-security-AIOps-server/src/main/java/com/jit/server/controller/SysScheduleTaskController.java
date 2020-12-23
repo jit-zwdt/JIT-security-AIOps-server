@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.CronExpression;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.exception.SchedulerExistedException;
@@ -7,6 +8,7 @@ import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.service.SysScheduleTaskService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class SysScheduleTaskController {
 
     @ResponseBody
     @PostMapping(value = "/getScheduleTasks")
+    @AutoLog(value = "定时任务-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getScheduleTasks(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
             Page<SysScheduleTaskEntity> sysScheduleTaskEntities = sysScheduleTaskService.getSysScheduleTasks(params);
@@ -54,6 +57,7 @@ public class SysScheduleTaskController {
     }
 
     @PostMapping("/addScheduleTask")
+    @AutoLog(value = "定时任务-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
         try {
             return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
@@ -81,6 +85,7 @@ public class SysScheduleTaskController {
 
     @ResponseBody
     @DeleteMapping(value = "/delScheduleTask/{id}")
+    @AutoLog(value = "定时任务-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result delScheduleTask(@PathVariable String id) {
         try {
             sysScheduleTaskService.delScheduleTask(id);
@@ -93,6 +98,7 @@ public class SysScheduleTaskController {
 
     @ResponseBody
     @PutMapping(value = "/changeStatus/{id}")
+    @AutoLog(value = "定时计划-修改启动状态 , 巡检计划管理-修改启动状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result changeStatus(@PathVariable String id) {
         try {
             sysScheduleTaskService.changeStatus(id);

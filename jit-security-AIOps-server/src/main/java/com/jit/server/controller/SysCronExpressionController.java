@@ -1,10 +1,12 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.CronExpressionDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysCronExpressionEntity;
 import com.jit.server.service.SysCronExpressionService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.PageRequest;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class SysCronExpressionController {
 
     @ResponseBody
     @PostMapping(value = "/getCronExpressions")
+    @AutoLog(value = "定时表达式管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getCronExpressions(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
             Page<SysCronExpressionEntity> sysCronExpressionEntities = sysCronExpressionService.getCronExpressions(params);
@@ -66,6 +69,7 @@ public class SysCronExpressionController {
      * @return 统一封装对象
      */
     @PostMapping("/addCronExpression")
+    @AutoLog(value = "定时表达式管理-添加", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addCronExpression(@RequestBody SysCronExpressionEntity cronExpression){
         //首先先进行数据的查询校验是否有描述相同的数据
         boolean flag = sysCronExpressionService.checkAddCronExpressionDesc(cronExpression.getCronExpressionDesc());
@@ -93,6 +97,7 @@ public class SysCronExpressionController {
      * @return 统一封装对象
      */
     @DeleteMapping("delCronExpression/{id}")
+    @AutoLog(value = "定时表达式管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result delCronExpression(@PathVariable String id){
         try {
             sysCronExpressionService.delCronExpression(id);

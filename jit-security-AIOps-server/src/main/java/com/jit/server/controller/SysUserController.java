@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
 import com.jit.server.exception.ExceptionEnum;
@@ -43,6 +44,7 @@ public class SysUserController {
 
     @ResponseBody
     @PostMapping(value = "/getUsers")
+    @AutoLog(value = "人员管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getUsers(@RequestBody PageRequest<SysUserEntityParams> params) {
 
         try {
@@ -61,6 +63,7 @@ public class SysUserController {
     }
 
     @PostMapping("/addUser")
+    @AutoLog(value = "人员管理-新增/修改/冻结", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addUser(@RequestBody SysUserEntity params) {
         try {
             return Result.SUCCESS(sysUserService.addUser(params));
@@ -70,6 +73,7 @@ public class SysUserController {
     }
 
     @PostMapping("/updatePassword")
+    @AutoLog(value = "人员管理-更改密码", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updatePassword(@RequestBody SysUserEntity params) {
         try {
             return Result.SUCCESS(sysUserService.updatePassword(params));
@@ -79,6 +83,7 @@ public class SysUserController {
     }
 
     @DeleteMapping("/deleteUser/{id}")
+    @AutoLog(value = "人员管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteUser(@PathVariable String id) {
         try {
             Optional<SysUserEntity> bean = sysUserService.findById(id);
@@ -97,6 +102,7 @@ public class SysUserController {
     }
 
     @PostMapping("/findUserById/{id}")
+    @AutoLog(value = "人员管理-详情", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findUserById(@PathVariable String id) {
         try {
             Optional<SysUserEntity> bean = sysUserService.findById(id);

@@ -1,9 +1,11 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.ParamsConfig;
 import com.jit.server.request.Top5Params;
 import com.jit.server.service.HostService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class Top5CommonController {
 
     @ResponseBody
     @PostMapping(value = "/getTop5Msg")
+    @AutoLog(value = "监控-Top5 信息查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getTop5Msg(@RequestBody Top5Params params, HttpServletRequest req
     ) {
         Result result = null;

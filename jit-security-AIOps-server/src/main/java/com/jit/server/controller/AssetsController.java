@@ -45,6 +45,7 @@ public class AssetsController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/findByCondition")
+    @AutoLog(value = "资产信息-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
         try {
             if (params != null) {
@@ -88,6 +89,7 @@ public class AssetsController {
     }
 
     @PutMapping("/updateAssets/{id}")
+    @AutoLog(value = "资产信息-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<MonitorAssetsEntity> updateAssets(@RequestBody AssetsParams params, @PathVariable String id, HttpServletRequest req) {
         try {
             if (params != null && StringUtils.isNotEmpty(id)) {
@@ -128,6 +130,7 @@ public class AssetsController {
     }
 
     @DeleteMapping("/deleteAssets/{id}")
+    @AutoLog(value = "资产信息-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteAssets(@PathVariable String id) {
         try {
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);

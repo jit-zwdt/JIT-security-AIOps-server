@@ -1,8 +1,10 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.MediaTypeParams;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixCreateMediaTypeDTO;
@@ -44,6 +46,7 @@ public class MediaTypeController {
 
     @ResponseBody
     @PostMapping(value = "/getMediaTypes")
+    @AutoLog(value = "告警通知方式-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getMediaTypes(@RequestBody MediaTypeParams params , HttpServletRequest req) {
 
         try {
@@ -75,6 +78,7 @@ public class MediaTypeController {
     }
 
     @PutMapping("/updateStatus")
+    @AutoLog(value = "告警通知方式-[启用,禁用]状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateStatus(@RequestParam String mediatypeid, @RequestParam("status") boolean status , HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(mediatypeid)) {
@@ -105,6 +109,7 @@ public class MediaTypeController {
     }
 
     @PostMapping("/addMediaType")
+    @AutoLog(value = "告警通知方式-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addMediaType(@RequestBody MediaTypeParams params, HttpServletRequest req) {
         try {
             if (params != null) {
@@ -131,6 +136,7 @@ public class MediaTypeController {
     }
 
     @DeleteMapping("/deleteMediaType/{id}")
+    @AutoLog(value = "告警通知方式-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteMediaType(@PathVariable String id , HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(id)) {
@@ -180,6 +186,7 @@ public class MediaTypeController {
     }
 
     @PutMapping("/updateMediaType/{id}")
+    @AutoLog(value = "告警通知方式-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateMediaType(@PathVariable String id, @RequestBody MediaTypeParams params, HttpServletRequest req) {
         try {
             if (params != null && StringUtils.isNotBlank(id)) {

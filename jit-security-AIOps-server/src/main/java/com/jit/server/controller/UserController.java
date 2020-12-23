@@ -1,10 +1,12 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.request.UserParams;
 import com.jit.server.service.SysUserService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixUserDTO;
@@ -32,6 +34,7 @@ public class UserController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getUserInfo")
+    @AutoLog(value = "告警定义-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletRequest req) {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -78,6 +81,7 @@ public class UserController {
     }
 
     @PostMapping("/updateUserAndMediaInfo/{id}")
+    @AutoLog(value = "告警定义-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateUserAndMediaInfo(@PathVariable String id, @RequestBody List<UserParams> tempData, HttpServletRequest req) {
         try {
             if (tempData != null) {

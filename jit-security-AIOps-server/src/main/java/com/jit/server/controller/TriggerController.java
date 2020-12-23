@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.ProblemParams;
@@ -7,10 +8,7 @@ import com.jit.server.request.TriggerConditionParams;
 import com.jit.server.request.TriggerParams;
 import com.jit.server.service.TriggerService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
-import com.jit.server.util.StringUtils;
+import com.jit.server.util.*;
 import com.jit.zabbix.client.dto.ZabbixTriggerDTO;
 import com.jit.zabbix.client.model.trigger.ZabbixTrigger;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +39,7 @@ public class TriggerController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/findByCondition")
+    @AutoLog(value = "监控列表-触发器-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findByCondition(@RequestBody TriggerParams params, HttpServletRequest req
     ) throws IOException {
         try{
@@ -63,6 +62,7 @@ public class TriggerController {
         }
     }
     @PutMapping("/updateTriggerStatus/{id}")
+    @AutoLog(value = "监控列表-触发器-[启动,停用]监控状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateTriggerStatus(@PathVariable String id, @RequestParam("status") String status, HttpServletRequest req) {
         try{
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -77,6 +77,7 @@ public class TriggerController {
     }
 
     @PutMapping("/updateTriggerPriority/{id}")
+    @AutoLog(value = "监控列表-触发器-修改严重性", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateTriggerPriority(@PathVariable String id, @RequestParam("priority") String priority, HttpServletRequest req
     ) {
         try{

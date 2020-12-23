@@ -1,9 +1,11 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysDepartmentEntity;
 import com.jit.server.service.SysDepartmentService;
 import com.jit.server.service.UserService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class SysDepartmentController {
 
     @ResponseBody
     @GetMapping(value = "/getDepartmentInfos")
+    @AutoLog(value = "部门管理-查询所有部门树", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getDepartmentInfos() {
         try {
             return Result.SUCCESS(sysDepartmentService.getDepartmentInfos());
@@ -45,6 +48,7 @@ public class SysDepartmentController {
     }
 
     @PostMapping("/addDepartment")
+    @AutoLog(value = "部门管理-添加/修改部门", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addDepartment(@RequestBody SysDepartmentEntity department) {
         try {
             if (department != null) {
@@ -94,6 +98,7 @@ public class SysDepartmentController {
 
     @ResponseBody
     @GetMapping(value = "/getDepartment/{id}")
+    @AutoLog(value = "部门管理-详细信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getDepartment(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
@@ -109,6 +114,7 @@ public class SysDepartmentController {
 
     @ResponseBody
     @DeleteMapping(value = "/delDepartment/{ids}")
+    @AutoLog(value = "部门管理-批量删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result delDepartment(@PathVariable String ids) {
         try {
             if (StringUtils.isNotBlank(ids)) {
