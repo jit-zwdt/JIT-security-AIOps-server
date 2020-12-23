@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysLogEntity;
@@ -9,6 +10,7 @@ import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @RestController
-@RequestMapping("/syslog")
+@RequestMapping("/sys/syslog")
 public class SysLogController {
 
     /**
@@ -43,9 +45,9 @@ public class SysLogController {
     @PostMapping("/findSysLog")
     @AutoLog(value = "日志管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findSysLog(@RequestParam(value = "logType" , required = false) int logType,
-                             @RequestParam(value = "sysLog" , required = false) String logContent ,
-                             @RequestParam(value = "startTime" , required = false) LocalDateTime startTime ,
-                             @RequestParam(value = "endTime" , required = false) LocalDateTime endTime ,
+                             @RequestParam(value = "logContent" , required = false) String logContent ,
+                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "startTime" , required = false) LocalDateTime startTime ,
+                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "endTime" , required = false) LocalDateTime endTime ,
                              @RequestParam(value = "operationType" , required = false) int operationType,
                              int currentPage ,
                              int currentSize){

@@ -56,8 +56,6 @@ public class SysLogServiceImpl implements SysLogService {
     public Page<SysLogEntity> findSysLog(int logType, String logContent, LocalDateTime startTime, LocalDateTime endTime, int operationType, int currentPage, int currentSize) {
         //创建安全的日期转换对象
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startTimeStr = formatter.format(startTime);
-        String endTimeStr = formatter.format(endTime);
         //创建多条件查询
         Specification<SysLogEntity> specification = new Specification<SysLogEntity>() {
             @Override
@@ -81,12 +79,16 @@ public class SysLogServiceImpl implements SysLogService {
                 }
                 //创建时间 开始时间 ~ 结束时间
                 if(startTime != null){
+                    //转换
+                    String startTimeStr = formatter.format(startTime);
                     //创建查询条件
                     Predicate temp = criteriaBuilder.greaterThanOrEqualTo(root.get("gmtCreate").as(String.class) , startTimeStr);
                     //将第三个查询条件加入集合
                     predicates.add(temp);
                 }
                 if(endTime != null){
+                    //转换
+                    String endTimeStr = formatter.format(endTime);
                     //创建查询条件
                     Predicate temp = criteriaBuilder.lessThanOrEqualTo(root.get("gmtCreate").as(String.class) , endTimeStr);
                     //将第三个查询条件加入集合
