@@ -2,8 +2,10 @@ package com.jit.controller;
 
 import com.jit.Application;
 import com.jit.server.pojo.SysCronExpressionEntity;
+import com.jit.server.pojo.SysLogEntity;
 import com.jit.server.service.AssetsService;
 import com.jit.server.service.SysCronExpressionService;
+import com.jit.server.service.SysLogService;
 import com.jit.server.util.FtpClientUtil;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.hssf.usermodel.*;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.*;
@@ -36,6 +39,9 @@ public class AllTest {
 
     @Autowired
     private SysCronExpressionService sysCronExpressionService;
+
+    @Autowired
+    private SysLogService sysLogService;
 
     /**
      * 测试 FTP 文件下载
@@ -258,5 +264,15 @@ public class AllTest {
         headCell.setCellStyle(cellTextStyle);
         //写入到文件
         workbook.write(file);
+    }
+
+    @Test
+    public void testFindSysLog(){
+        LocalDateTime startTime = LocalDateTime.parse("2020-12-23T00:00:00");
+        LocalDateTime endTime = LocalDateTime.parse("2020-12-24T00:00:00");
+        Page<SysLogEntity> sysLog = sysLogService.findSysLog(1, "定时", startTime, endTime, 2, 1, 5);
+        System.out.println(sysLog.getContent());
+        System.out.println(sysLog.getTotalElements());
+        System.out.println(sysLog.getSize());
     }
 }
