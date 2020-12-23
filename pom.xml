@@ -4,10 +4,11 @@
     <groupId>com.jit</groupId>
     <artifactId>JIT-security-AIOps</artifactId>
     <packaging>pom</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>jit-security-AIOps-server</module>
         <module>jit-security-AIOps-base</module>
+        <module>jit-security-AIOps-logging</module>
     </modules>
     <name>JIT-security-AIOps</name>
     <url>https://github.com/jit-zwdt/JIT-security-AIOps-server</url>

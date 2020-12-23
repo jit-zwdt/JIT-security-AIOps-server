@@ -1,13 +1,11 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.AccountDisabledException;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.service.AuthService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.JwtTokenDto;
-import com.jit.server.util.MD5Util;
-import com.jit.server.util.RandomUtil;
-import com.jit.server.util.Result;
+import com.jit.server.util.*;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +31,8 @@ public class LoginController {
     @Resource
     private CacheManager cacheManager;
 
-    @Autowired
-    private ZabbixAuthService zabbixAuthService;
-
     @PostMapping("/login")
+    @AutoLog(value = "用户登录（带验证码）", logType = ConstLogUtil.LOG_TYPE_LOGIN)
     public Result login(@RequestParam(value = "username", required = true) String username,
                         @RequestParam(value = "password", required = true) String password,
                         @RequestParam(value = "verificationCode", required = true) String verificationCode,
@@ -71,7 +67,11 @@ public class LoginController {
         }
     }
 
+    @Autowired
+    private ZabbixAuthService zabbixAuthService;
+
     @PostMapping("/loginWithOutVerificationCode")
+    @AutoLog(value = "用户登录（不带验证码）", logType = ConstLogUtil.LOG_TYPE_LOGIN)
     public Result loginWithOutVerificationCode(@RequestParam(value = "username", required = true) String username,
                                                @RequestParam(value = "password", required = true) String password,
                                                HttpServletResponse resp) {

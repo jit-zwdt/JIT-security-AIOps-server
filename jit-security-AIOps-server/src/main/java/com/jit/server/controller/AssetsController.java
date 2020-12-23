@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorAssetsEntity;
@@ -8,10 +9,7 @@ import com.jit.server.request.AssetsParams;
 import com.jit.server.service.AssetsService;
 import com.jit.server.service.HostService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.PageRequest;
-import com.jit.server.util.Result;
-import com.jit.server.util.StringUtils;
+import com.jit.server.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +68,7 @@ public class AssetsController {
     }
 
     @PostMapping("/addAssets")
+    @AutoLog(value = "资产信息-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addAssets(@RequestBody MonitorAssetsEntity assets) {
         try {
             if (assets != null) {
@@ -134,11 +133,11 @@ public class AssetsController {
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             MonitorAssetsEntity monitorAssetsEntity = bean.get();
             //判断是否是硬件 如果是硬件进行进一步的判断进行删除 0 是硬件
-            if(monitorAssetsEntity.getType().equals("0")){
+            if (monitorAssetsEntity.getType().equals("0")) {
                 // 根据 IP 查询是否有对应的数据 如果有的话进行返回错误的判断
                 boolean flag = hostService.findByHostJmxIp(monitorAssetsEntity.getIp());
                 //如果存在数据直接返回 Error 错误
-                if(flag){
+                if (flag) {
                     return Result.ERROR(ExceptionEnum.ASSET_UNDER_MONITORING_EXISTS);
                 }
             }
@@ -201,11 +200,12 @@ public class AssetsController {
 
     /**
      * 根据传入 ip 的值判断是否有这条数据 如果有 返回 true 如果没有 返回 false
+     *
      * @param ip Ip
      * @return 统一封装返回对象
      */
     @GetMapping("/validateIp")
-    public Result validateIp(String ip){
+    public Result validateIp(String ip) {
         // 调用方法验证 Ip 是否具有这个 Ip 地址
         boolean flag = assetsService.validateIp(ip);
         // 返回成功对象 flag 是业务层传输的值
@@ -214,11 +214,12 @@ public class AssetsController {
 
     /**
      * 根据传入资产编号的值判断是否有这条数据 如果有 返回 true 如果没有 返回 false
+     *
      * @param number 资产编号
      * @return 统一封装返回对象
      */
     @GetMapping("/validateNumber")
-    public Result validateNumber(String number){
+    public Result validateNumber(String number) {
         // 调用方法验证 Ip 是否具有这个 Ip 地址
         boolean flag = assetsService.validateNumber(number);
         // 返回成功对象 flag 是业务层传输的值

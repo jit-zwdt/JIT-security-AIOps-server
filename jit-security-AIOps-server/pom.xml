@@ -5,7 +5,7 @@
     <parent>
         <artifactId>JIT-security-AIOps</artifactId>
         <groupId>com.jit</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -66,7 +66,13 @@
         <dependency>
             <groupId>com.jit</groupId>
             <artifactId>jit-security-AIOps-base</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jit</groupId>
+            <artifactId>jit-security-AIOps-logging</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -94,6 +100,22 @@
             <artifactId>jsch</artifactId>
             <version>0.1.54</version>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.dm</groupId>
+            <artifactId>DmJdbcDriver18</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>D:/dmdbms/drivers/jdbc/DmJdbcDriver18.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dm.dialect</groupId>
+            <artifactId>hibernate5</artifactId>
+            <version>5.3</version>
+            <scope>system</scope>
+            <systemPath>D:/dmdbms/drivers/jdbc/dialect/DmDialect-for-hibernate5.3.jar</systemPath>
+        </dependency>-->
     </dependencies>
     <profiles>
         <!-- 本地开发环境 -->

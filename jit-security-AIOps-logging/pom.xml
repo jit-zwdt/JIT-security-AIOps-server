@@ -1,43 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>JIT-security-AIOps</artifactId>
         <groupId>com.jit</groupId>
         <version>1.0</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jit</groupId>
-    <artifactId>jit-security-AIOps-base</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0</version>
-    <name>jit-security-AIOps-base</name>
-    <description>jit-security-AIOps-base</description>
-    <url>https://github.com/jit-zwdt/JIT-security-AIOps-server</url>
-
-    <dependencies></dependencies>
-    <profiles>
-        <!-- 本地开发环境 -->
-        <profile>
-            <id>dev</id>
-            <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
-            </properties>
-            <activation>
-                <!--默认-->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <!-- 生产环境 -->
-        <profile>
-            <id>prod</id>
-            <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
-        </profile>
-    </profiles>
+    <artifactId>jit-security-AIOps-logging</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -66,4 +60,5 @@
             </resource>
         </resources>
     </build>
+
 </project>

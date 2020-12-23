@@ -1,7 +1,9 @@
 package com.jit.server.controller;
 
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.service.ZabbixUserService;
@@ -27,6 +29,7 @@ public class LogoutController {
 
     @ResponseBody
     @PostMapping(value = "/logout")
+    @AutoLog(value = "用户登出", logType = ConstLogUtil.LOG_TYPE_LOGIN)
     public Result logout(HttpServletRequest req) {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));

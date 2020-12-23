@@ -1,0 +1,70 @@
+#server port
+server:
+  port: 8081
+  compression:
+    min-response-size:
+  servlet:
+    context-path: /api
+zabbix:
+  api:
+    url: http://172.16.15.10/zabbix/
+  username: Admin
+  password: zabbix
+spring:
+  datasource:
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    #    username: root
+    #    password: root
+    driver-class-name: dm.jdbc.driver.DmDriver
+    url: jdbc:dm://172.16.15.10:5236/DAMENG?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+    username: JIT_SECURITY_AIOPS
+    password: JIT_SECURITY_AIOPS
+    connectionTimeout: 20000
+#    maximumPoolSize: 5
+  jpa:
+    #    database-platform: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.DmDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+        #jdbc:
+        #time_zone: Hongkong
+  jackson:
+    time-zone: GMT+8
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:/ehcache.xml
+###################################
+#--------------FTP配置-------------#
+###################################
+ftp:
+  hostName: 172.16.15.10
+  port: 21
+  userName: jitutil
+  passWord: dota&csjit3368
+###################################
+#--------------SFTP配置-------------#
+###################################
+sftp:
+  hostName: 172.16.15.10
+  port: 22
+  userName: sftp
+  passWord: dota&csjit3368
+  remoteRootPath: /upload
+  timeOut: 3000
+  useShow: 1
+###################################
+#--------------LOG配置-------------#
+###################################
+logging:
+  level:
+    root: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
+    level: debug
+  file:
+    name: c:/mylog/JIT-security-AIOps-server.log
