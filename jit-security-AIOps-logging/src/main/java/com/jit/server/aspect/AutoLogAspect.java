@@ -135,23 +135,29 @@ public class AutoLogAspect {
      */
     private int getOperationType(String methodName) {
         methodName = methodName.toLowerCase();
-        if (methodName.startsWith("list") || methodName.startsWith("get") || methodName.startsWith("find")) {
+        if (methodName.startsWith("get")) {
             return ConstLogUtil.OPERATION_TYPE_R;
         }
-        if (methodName.startsWith("add") || methodName.startsWith("save")) {
+        if (methodName.startsWith("add")) {
             return ConstLogUtil.OPERATION_TYPE_C;
         }
-        if (methodName.startsWith("edit")) {
+        if (methodName.startsWith("update")) {
             return ConstLogUtil.OPERATION_TYPE_U;
         }
-        if (methodName.startsWith("delete") || methodName.startsWith("del")) {
+        if (methodName.startsWith("delete")) {
             return ConstLogUtil.OPERATION_TYPE_D;
         }
         if (methodName.startsWith("import")) {
             return ConstLogUtil.OPERATION_TYPE_IMP;
         }
-        if (methodName.startsWith("export") || methodName.startsWith("downLoad")) {
+        if (methodName.startsWith("export")) {
             return ConstLogUtil.OPERATION_TYPE_EXP;
+        }
+        if (methodName.startsWith("upload")) {
+            return ConstLogUtil.OPERATION_TYPE_UPLOAD;
+        }
+        if (methodName.startsWith("download")) {
+            return ConstLogUtil.OPERATION_TYPE_DOWNLOAD;
         }
         return ConstLogUtil.OPERATION_TYPE_UNDEFINE;
     }

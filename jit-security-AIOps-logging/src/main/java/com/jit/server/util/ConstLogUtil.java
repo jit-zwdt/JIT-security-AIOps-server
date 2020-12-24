@@ -49,15 +49,24 @@ public class ConstLogUtil {
     public static final int OPERATION_TYPE_D = 4;
 
     /**
-     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出
+     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
      */
     public static final int OPERATION_TYPE_IMP = 5;
 
 
     /**
-     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出
+     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
      */
     public static final int OPERATION_TYPE_EXP = 6;
 
 
+    /**
+     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
+     */
+    public static final int OPERATION_TYPE_UPLOAD = 7;
+
+    /**
+     * 操作日志类型：0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
+     */
+    public static final int OPERATION_TYPE_DOWNLOAD = 8;
 }
