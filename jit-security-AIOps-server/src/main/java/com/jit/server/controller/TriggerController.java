@@ -38,9 +38,9 @@ public class TriggerController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
-    @PostMapping("/findByCondition")
+    @PostMapping("/getByConditions")
     @AutoLog(value = "监控列表-触发器-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findByCondition(@RequestBody TriggerParams params, HttpServletRequest req
+    public Result getByConditions(@RequestBody TriggerParams params, HttpServletRequest req
     ) throws IOException {
         try{
             if(params!=null&&params.getHostId()!=null){

@@ -32,9 +32,9 @@ public class SysDictionaryController {
     private DictionaryService dictionaryService;
 
     @ResponseBody
-    @PostMapping(value = "/getDictionary")
+    @PostMapping(value = "/getDictionarys")
     @AutoLog(value = "字典管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getDictionary(@RequestParam("name") String name, @RequestParam("code") String code, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
+    public Result getDictionarys(@RequestParam("name") String name, @RequestParam("code") String code, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
         int currentPageTemp = 0;
         if (currentPage != "" && currentPage != null) {
             currentPageTemp = Integer.parseInt(currentPage);
@@ -132,9 +132,9 @@ public class SysDictionaryController {
         }
     }
 
-    @PostMapping("/findDictionaryItemByDicId")
+    @PostMapping("/getDictionaryItemByDicId")
     @AutoLog(value = "字典管理-查询子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findDictionaryItemByDicId(@RequestParam("id") String id, @RequestParam("itemText") String itemText, @RequestParam("status") String status, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
+    public Result getDictionaryItemByDicId(@RequestParam("id") String id, @RequestParam("itemText") String itemText, @RequestParam("status") String status, @RequestParam("currentPage") String currentPage, @RequestParam("pageSize") String pageSize) {
         int temp = 0;
         int currentPageTemp = 0;
         if (currentPage != "" && currentPage != null) {

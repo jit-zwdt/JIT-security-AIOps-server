@@ -101,9 +101,9 @@ public class SysUserController {
         }
     }
 
-    @PostMapping("/findUserById/{id}")
+    @PostMapping("/getUserById/{id}")
     @AutoLog(value = "人员管理-详情", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findUserById(@PathVariable String id) {
+    public Result getUserById(@PathVariable String id) {
         try {
             Optional<SysUserEntity> bean = sysUserService.findById(id);
             if (bean.isPresent()) {

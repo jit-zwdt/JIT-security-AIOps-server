@@ -44,9 +44,9 @@ public class AssetsController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
-    @PostMapping("/findByCondition")
+    @PostMapping("/getByConditions")
     @AutoLog(value = "资产信息-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findByCondition(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
+    public Result getByConditions(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
         try {
             if (params != null) {
                 Page<MonitorAssetsEntity> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());

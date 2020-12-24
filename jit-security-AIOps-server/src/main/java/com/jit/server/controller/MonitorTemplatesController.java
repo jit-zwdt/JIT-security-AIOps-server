@@ -131,9 +131,9 @@ public class MonitorTemplatesController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/bindTemplates")
+    @PostMapping(value = "/updateTemplates")
     @AutoLog(value = "模板管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result bindTemplates(@RequestParam String id, @RequestParam String templates, @RequestParam String templateIds) {
+    public Result updateTemplates(@RequestParam String id, @RequestParam String templates, @RequestParam String templateIds) {
         try {
             if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(templates) && StringUtils.isNotBlank(templateIds)) {
                 MonitorTemplatesEntity monitorTemplatesEntity = monitorTemplatesService.getMonitorTemplate(id);

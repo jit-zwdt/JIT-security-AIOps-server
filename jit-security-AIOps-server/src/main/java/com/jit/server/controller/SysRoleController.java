@@ -212,9 +212,9 @@ public class SysRoleController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/bindingUsers")
+    @PostMapping(value = "/updateBindingUsers")
     @AutoLog(value = "角色维护-绑定人员", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result bindingUsers(@RequestBody Map<String, Object> params) {
+    public Result updateBindingUsers(@RequestBody Map<String, Object> params) {
         try {
             String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
             List<String> value = params.get("value") != null ? (List<String>) params.get("value") : null;
@@ -290,9 +290,9 @@ public class SysRoleController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/bindingMenus")
+    @PostMapping(value = "/updateBindingMenus")
     @AutoLog(value = "角色维护-绑定菜单", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result bindingMenus(@RequestBody Map<String, Object> params) {
+    public Result updateBindingMenus(@RequestBody Map<String, Object> params) {
         try {
             String roleId = params.get("roleId") != null ? params.get("roleId").toString() : "";
             List<String> keys = params.get("keys") != null ? (List<String>) params.get("keys") : null;
