@@ -122,8 +122,19 @@ public class SysDictionaryController {
     }
 
     @PostMapping("/addDictionary")
-    @AutoLog(value = "字典管理-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {//TODO:方法的拆分
+    @AutoLog(value = "字典管理-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {
+        try {
+            sysDictionaryEntity.setDictCode(sysDictionaryEntity.getDictCode().trim().toLowerCase());
+            return Result.SUCCESS(dictionaryService.addDictionary(sysDictionaryEntity));
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateDictionary")
+    @AutoLog(value = "字典管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {
         try {
             sysDictionaryEntity.setDictCode(sysDictionaryEntity.getDictCode().trim().toLowerCase());
             return Result.SUCCESS(dictionaryService.addDictionary(sysDictionaryEntity));
@@ -181,8 +192,18 @@ public class SysDictionaryController {
     }
 
     @PostMapping("/addDictionaryItem")
-    @AutoLog(value = "字典管理-新增/编辑子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) { //TODO: 两个方法文件名称的拆分
+    @AutoLog(value = "字典管理-新增子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) {
+        try {
+            return Result.SUCCESS(dictionaryService.addDictionaryItem(sysDictionaryItemEntity));
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateDictionaryItem")
+    @AutoLog(value = "字典管理-编辑子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) {
         try {
             return Result.SUCCESS(dictionaryService.addDictionaryItem(sysDictionaryItemEntity));
         } catch (Exception e) {

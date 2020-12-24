@@ -48,42 +48,33 @@ public class SysDepartmentController {
     }
 
     @PostMapping("/addDepartment")
-    @AutoLog(value = "部门管理-添加/修改部门", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDepartment(@RequestBody SysDepartmentEntity department) {//TODO: 两个方法拆分掉 拆成两个方法
+    @AutoLog(value = "部门管理-添加部门", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addDepartment(@RequestBody SysDepartmentEntity department) {
         try {
             if (department != null) {
-                String id = "";
-                if (StringUtils.isBlank(department.getId())) {
-                    if ("0".equals(department.getParentId())) {
-                        department.setDepartType("1");
-                    } else {
-                        department.setDepartType("2");
-                    }
-                    department.setGmtCreate(LocalDateTime.now());
-                    department.setCreateBy(userService.findIdByUsername());
-                    department.setIsDeleted(ConstUtil.IS_NOT_DELETED);
-                    id = sysDepartmentService.saveOrUpdateDepartment(department);
+                //调用更新添加的方法
+                String id = saveDepartment(department);
+                if (id != null && !id.isEmpty()) {
+                    return Result.SUCCESS("success");
                 } else {
-                    SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartment(department.getId());
-                    if (sysDepartmentEntity != null) {
-                        sysDepartmentEntity.setDepartName(department.getDepartName());
-                        sysDepartmentEntity.setDepartCode(department.getDepartCode());
-                        sysDepartmentEntity.setMobile(department.getMobile());
-                        sysDepartmentEntity.setFax(department.getFax());
-                        sysDepartmentEntity.setAddress(department.getAddress());
-                        sysDepartmentEntity.setDepartCategory(department.getDepartCategory());
-                        sysDepartmentEntity.setStatus(department.getStatus());
-                        sysDepartmentEntity.setDepartNameEn(department.getDepartNameEn());
-                        sysDepartmentEntity.setDepartNameAbbr(department.getDepartNameAbbr());
-                        sysDepartmentEntity.setRemark(department.getRemark());
-                        sysDepartmentEntity.setDepartOrder(department.getDepartOrder());
-                        sysDepartmentEntity.setDescription(department.getDescription());
-                        sysDepartmentEntity.setGmtModified(LocalDateTime.now());
-                        sysDepartmentEntity.setUpdateBy(userService.findIdByUsername());
-                        id = sysDepartmentService.saveOrUpdateDepartment(sysDepartmentEntity);
-                    }
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
                 }
-                if (id != null) {
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateDepartment")
+    @AutoLog(value = "部门管理-修改部门", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateDepartment(@RequestBody SysDepartmentEntity department) {
+        try {
+            if (department != null) {
+                //调用更新添加的方法
+                String id = saveDepartment(department);
+                if (id != null && !id.isEmpty()) {
                     return Result.SUCCESS("success");
                 } else {
                     return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
@@ -115,7 +106,7 @@ public class SysDepartmentController {
     @ResponseBody
     @DeleteMapping(value = "/deleteDepartment/{ids}")
     @AutoLog(value = "部门管理-批量删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result deleteDepartment(@PathVariable String ids) { //TODO: 做删除接口的更改名称
+    public Result deleteDepartment(@PathVariable String ids) {
         try {
             if (StringUtils.isNotBlank(ids)) {
                 List<String> list = new ArrayList<>();
@@ -180,4 +171,43 @@ public class SysDepartmentController {
         }
     }
 
+    /**
+     * 修改或者添加部门
+     * @param department 需要进行添加或者修改的部门数据 添加没有实体类的 id
+     * @return 部门 ID
+     */
+    private String saveDepartment(SysDepartmentEntity department) throws Exception {
+        String id = "";
+        if (StringUtils.isBlank(department.getId())) {
+            if ("0".equals(department.getParentId())) {
+                department.setDepartType("1");
+            } else {
+                department.setDepartType("2");
+            }
+            department.setGmtCreate(LocalDateTime.now());
+            department.setCreateBy(userService.findIdByUsername());
+            department.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            id = sysDepartmentService.saveOrUpdateDepartment(department);
+        } else {
+            SysDepartmentEntity sysDepartmentEntity = sysDepartmentService.getDepartment(department.getId());
+            if (sysDepartmentEntity != null) {
+                sysDepartmentEntity.setDepartName(department.getDepartName());
+                sysDepartmentEntity.setDepartCode(department.getDepartCode());
+                sysDepartmentEntity.setMobile(department.getMobile());
+                sysDepartmentEntity.setFax(department.getFax());
+                sysDepartmentEntity.setAddress(department.getAddress());
+                sysDepartmentEntity.setDepartCategory(department.getDepartCategory());
+                sysDepartmentEntity.setStatus(department.getStatus());
+                sysDepartmentEntity.setDepartNameEn(department.getDepartNameEn());
+                sysDepartmentEntity.setDepartNameAbbr(department.getDepartNameAbbr());
+                sysDepartmentEntity.setRemark(department.getRemark());
+                sysDepartmentEntity.setDepartOrder(department.getDepartOrder());
+                sysDepartmentEntity.setDescription(department.getDescription());
+                sysDepartmentEntity.setGmtModified(LocalDateTime.now());
+                sysDepartmentEntity.setUpdateBy(userService.findIdByUsername());
+                id = sysDepartmentService.saveOrUpdateDepartment(sysDepartmentEntity);
+            }
+        }
+        return id;
+    }
 }

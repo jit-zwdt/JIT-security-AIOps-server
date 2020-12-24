@@ -95,34 +95,31 @@ public class SysRoleController {
     }
 
     @PostMapping("/addRole")
-    @AutoLog(value = "角色维护-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addRole(@RequestBody RoleParams roleParams) { //TODO: 两个方法名称的拆分
+    @AutoLog(value = "角色维护-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addRole(@RequestBody RoleParams roleParams) {
         try {
             if (roleParams != null) {
-                String id = roleParams.getId();
-                if (StringUtils.isBlank(id)) {
-                    SysRoleEntity role = new SysRoleEntity();
-                    role.setRoleName(roleParams.getRoleName());
-                    role.setRoleSign(roleParams.getRoleSign());
-                    role.setRemark(roleParams.getRemark());
-                    role.setIsDeleted(ConstUtil.IS_NOT_DELETED);
-                    role.setGmtCreate(LocalDateTime.now());
-                    role.setCreateBy(userService.findIdByUsername());
-                    id = sysRoleService.saveOrUpdateRole(role).getId();
+                String id = saveRole(roleParams);
+                if (id != null && !id.isEmpty()) {
+                    return Result.SUCCESS("success");
                 } else {
-                    SysRoleEntity role = sysRoleService.findByIdAndIsDeleted(id);
-                    if (role != null) {
-                        role.setRoleName(roleParams.getRoleName());
-                        role.setRoleSign(roleParams.getRoleSign());
-                        role.setRemark(roleParams.getRemark());
-                        role.setGmtModified(LocalDateTime.now());
-                        role.setUpdateBy(userService.findIdByUsername());
-                        id = sysRoleService.saveOrUpdateRole(role).getId();
-                    } else {
-                        return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
-                    }
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
                 }
-                if (id != null && !"".equals(id)) {
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateRole")
+    @AutoLog(value = "角色维护-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateRole(@RequestBody RoleParams roleParams) {
+        try {
+            if (roleParams != null) {
+                String id = saveRole(roleParams);
+                if (id != null && !id.isEmpty()) {
                     return Result.SUCCESS("success");
                 } else {
                     return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
@@ -157,7 +154,7 @@ public class SysRoleController {
     @ResponseBody
     @DeleteMapping(value = "/deleteRole/{id}")
     @AutoLog(value = "角色维护-删除菜单", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result deleteRole(@PathVariable String id) { //TODO:删除菜单文件名称的修改
+    public Result deleteRole(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
                 SysRoleEntity sysRoleEntity = sysRoleService.findByIdAndIsDeleted(id);
@@ -338,5 +335,36 @@ public class SysRoleController {
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
+    }
+
+    /**
+     * 保存角色 包括添加和修改的方法
+     * @param roleParams role 参数
+     * @return role id
+     * @throws Exception
+     */
+    private String saveRole(RoleParams roleParams) throws Exception {
+        String id = roleParams.getId();
+        if (StringUtils.isBlank(id)) {
+            SysRoleEntity role = new SysRoleEntity();
+            role.setRoleName(roleParams.getRoleName());
+            role.setRoleSign(roleParams.getRoleSign());
+            role.setRemark(roleParams.getRemark());
+            role.setIsDeleted(ConstUtil.IS_NOT_DELETED);
+            role.setGmtCreate(LocalDateTime.now());
+            role.setCreateBy(userService.findIdByUsername());
+            id = sysRoleService.saveOrUpdateRole(role).getId();
+        } else {
+            SysRoleEntity role = sysRoleService.findByIdAndIsDeleted(id);
+            if (role != null) {
+                role.setRoleName(roleParams.getRoleName());
+                role.setRoleSign(roleParams.getRoleSign());
+                role.setRemark(roleParams.getRemark());
+                role.setGmtModified(LocalDateTime.now());
+                role.setUpdateBy(userService.findIdByUsername());
+                id = sysRoleService.saveOrUpdateRole(role).getId();
+            }
+        }
+        return id;
     }
 }

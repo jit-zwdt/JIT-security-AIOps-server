@@ -69,69 +69,37 @@ public class InspectionManageController {
     }
 
     @PostMapping("/addTimerTaskInfo")
-    @AutoLog(value = "巡检计划管理-添加/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) { //TODO:两个方法名称的拆分
+    @AutoLog(value = "巡检计划管理-添加", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) {
         try {
             if (param == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-            String auth = zabbixAuthService.getAuth();
-            String username = userService.findNamebyUsername();
-            JSONObject jsonObject = JSONObject.parseObject(param);
-            // 在 monitor_scheme_timer_task 表中添加一条主数据 其他的数据都是跟着这条数据进行添加的
-            MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
-            if (id == null) {
-                monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
-                jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
-                jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
-            }
-            String userId = userService.findIdByUsername();
-            Optional<SysUserEntity> bean = sysUserService.findById(userId);
-            SysUserEntity sysDictionaryEntity = new SysUserEntity();
-            String mobile = "";
-            if (bean.isPresent()) {
-                sysDictionaryEntity = bean.get();
-                mobile = sysDictionaryEntity.getMobile() != "" ? sysDictionaryEntity.getMobile() : "无";
-            }
-            jsonObject.put("auth",auth);
-            jsonObject.put("username",username);
-            jsonObject.put("userId",userId);
-            jsonObject.put("mobile", mobile);
-            ScheduleTaskParams st = new ScheduleTaskParams();
-            st.setId(id);
-            st.setCronExpression(jsonObject.get("timerTask")+"");
-            st.setJobClassName("com.jit.server.job.TimerTask");
-            st.setJobMethodName("taskWithParams");
-            // 设置初始状态为关闭
-            st.setStatus(1);
-            st.setJsonParam(jsonObject.toString());
-            //进行正常的添加 quartz 操作
-            String sysScheduleId = sysScheduleTaskService.addScheduleTask(st);
-            //调用保存方法进行 monitor_scheme_timer_task 表数据的更新操作
-            if (id == null) {
-                monitorSchemeTimerTaskEntity.setScheduleId(sysScheduleId);
-                inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
-            }
-            // 在定时器添加之前进行查询当前添加成功的表的数据的操作
-            SysScheduleTaskEntity scheduleTask = sysScheduleTaskService.getSysScheduleTaskById(sysScheduleId);
-            // 获取传递的参数
-            JSONObject JsonParam = JSONObject.parseObject(scheduleTask.getJsonParam());
-            // 设置 scheduleId 值
-            JsonParam.put("scheduleId" , sysScheduleId);
-            // 设置 st 对象的 sysScheduleId 设置完成后可以进行更新操作
-            st.setId(sysScheduleId);
-            // 设置传入参数对象
-            st.setJsonParam(JsonParam.toJSONString());
-            // 调用添加方法会自动的进行更新操作
-            sysScheduleTaskService.addScheduleTask(st);
-            // 调用方法进行状态的修改
-            sysScheduleTaskService.changeStatus(sysScheduleId);
-            // 添加定时任务
-            if (sysScheduleId!=null) {
+            //进行数据的添加
+            String sysScheduleId = saveTimerTaskInfo(param, null);
+            if (sysScheduleId != null && !sysScheduleId.isEmpty()) {
                 return Result.SUCCESS(sysScheduleId);
             }else{
-                // 模拟数据的回滚操作
-                inspectionManageService.deleteMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity.getId());
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateTimerTaskInfo")
+    @AutoLog(value = "巡检计划管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateTimerTaskInfo(@RequestParam("param") String param , String id){
+        try {
+            if (param == null) {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+            //进行数据的添加
+            String sysScheduleId = saveTimerTaskInfo(param, id);
+            if (sysScheduleId != null && !sysScheduleId.isEmpty()) {
+                return Result.SUCCESS(sysScheduleId);
+            }else{
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -183,7 +151,7 @@ public class InspectionManageController {
 
     @PostMapping("/downloadSftpPdf")
     @AutoLog(value = "巡检报告中心-预览", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public void downloadSftpPdf(String ftpFilePath, HttpServletResponse response) { //TODO:导出
+    public void downloadSftpPdf(String ftpFilePath, HttpServletResponse response) {
         SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
         InputStream input = null;
         try {
@@ -261,5 +229,72 @@ public class InspectionManageController {
             Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
         return Result.SUCCESS(null);
+    }
+
+    /**
+     * 更新 , 添加巡检计划管理的方法
+     * @param param 添加信息参数
+     * @param id 进行修改的 id 如果添加则传入 null 即可
+     * @return sysScheduleId 添加的数据 ID 信息
+     */
+    private String saveTimerTaskInfo(String param , String id) throws Exception {
+        String auth = zabbixAuthService.getAuth();
+        String username = userService.findNamebyUsername();
+        JSONObject jsonObject = JSONObject.parseObject(param);
+        // 在 monitor_scheme_timer_task 表中添加一条主数据 其他的数据都是跟着这条数据进行添加的
+        MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
+        if (id == null) {
+            monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
+            jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
+            jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
+        }
+        String userId = userService.findIdByUsername();
+        Optional<SysUserEntity> bean = sysUserService.findById(userId);
+        SysUserEntity sysDictionaryEntity = new SysUserEntity();
+        String mobile = "";
+        if (bean.isPresent()) {
+            sysDictionaryEntity = bean.get();
+            mobile = sysDictionaryEntity.getMobile() != "" ? sysDictionaryEntity.getMobile() : "无";
+        }
+        jsonObject.put("auth",auth);
+        jsonObject.put("username",username);
+        jsonObject.put("userId",userId);
+        jsonObject.put("mobile", mobile);
+        ScheduleTaskParams st = new ScheduleTaskParams();
+        st.setId(id);
+        st.setCronExpression(jsonObject.get("timerTask")+"");
+        st.setJobClassName("com.jit.server.job.TimerTask");
+        st.setJobMethodName("taskWithParams");
+        // 设置初始状态为关闭
+        st.setStatus(1);
+        st.setJsonParam(jsonObject.toString());
+        //进行正常的添加 quartz 操作
+        String sysScheduleId = sysScheduleTaskService.addScheduleTask(st);
+        //调用保存方法进行 monitor_scheme_timer_task 表数据的更新操作
+        if (id == null) {
+            monitorSchemeTimerTaskEntity.setScheduleId(sysScheduleId);
+            inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
+        }
+        // 在定时器添加之前进行查询当前添加成功的表的数据的操作
+        SysScheduleTaskEntity scheduleTask = sysScheduleTaskService.getSysScheduleTaskById(sysScheduleId);
+        // 获取传递的参数
+        JSONObject JsonParam = JSONObject.parseObject(scheduleTask.getJsonParam());
+        // 设置 scheduleId 值
+        JsonParam.put("scheduleId" , sysScheduleId);
+        // 设置 st 对象的 sysScheduleId 设置完成后可以进行更新操作
+        st.setId(sysScheduleId);
+        // 设置传入参数对象
+        st.setJsonParam(JsonParam.toJSONString());
+        // 调用添加方法会自动的进行更新操作
+        sysScheduleTaskService.addScheduleTask(st);
+        // 调用方法进行状态的修改
+        sysScheduleTaskService.changeStatus(sysScheduleId);
+        // 添加定时任务
+        //返回添加巡检计划数据的 ScheduleId
+        if (sysScheduleId == null) {
+            // 模拟数据的回滚操作
+            inspectionManageService.deleteMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity.getId());
+        }
+        return sysScheduleId;
     }
 }

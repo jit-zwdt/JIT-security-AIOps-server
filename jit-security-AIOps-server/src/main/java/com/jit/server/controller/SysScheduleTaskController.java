@@ -57,8 +57,35 @@ public class SysScheduleTaskController {
     }
 
     @PostMapping("/addScheduleTask")
-    @AutoLog(value = "定时任务-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) { //TODO: 两个方法名称的拆分
+    @AutoLog(value = "定时任务-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
+        try {
+            return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
+        } catch (SchedulerExistedException e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.SCHEDULER_EXISTED_EXCEPTION);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.SCHEDULER_USE_CLASS_EXCEPTION);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.SCHEDULER_USE_METHOD_EXCEPTION);
+        } catch (CronExpression e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.SCHEDULER_CRON_EXPRESSION_EXCEPTION);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error("创建失败：原因 {}", e.getMessage());
+            return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/updateScheduleTask")
+    @AutoLog(value = "定时任务-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result updateScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
         try {
             return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
         } catch (SchedulerExistedException e) {
@@ -86,7 +113,7 @@ public class SysScheduleTaskController {
     @ResponseBody
     @DeleteMapping(value = "/deleteScheduleTask/{id}")
     @AutoLog(value = "定时任务-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result deleteScheduleTask(@PathVariable String id) { //TODO:删除方法名称的更换名称
+    public Result deleteScheduleTask(@PathVariable String id) {
         try {
             sysScheduleTaskService.delScheduleTask(id);
             return Result.SUCCESS(true);
