@@ -64,7 +64,7 @@ public class SysUserController {
 
     @PostMapping("/addUser")
     @AutoLog(value = "人员管理-新增/修改/冻结", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addUser(@RequestBody SysUserEntity params) {
+    public Result addUser(@RequestBody SysUserEntity params) {//TODO:两个方法的拆分
         try {
             return Result.SUCCESS(sysUserService.addUser(params));
         } catch (Exception e) {

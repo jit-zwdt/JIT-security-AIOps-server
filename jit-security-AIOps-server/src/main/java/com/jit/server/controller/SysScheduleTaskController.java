@@ -58,7 +58,7 @@ public class SysScheduleTaskController {
 
     @PostMapping("/addScheduleTask")
     @AutoLog(value = "定时任务-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) {
+    public Result addScheduleTask(@RequestBody ScheduleTaskParams scheduleTaskParams) { //TODO: 两个方法名称的拆分
         try {
             return Result.SUCCESS(sysScheduleTaskService.addScheduleTask(scheduleTaskParams));
         } catch (SchedulerExistedException e) {
@@ -84,9 +84,9 @@ public class SysScheduleTaskController {
     }
 
     @ResponseBody
-    @DeleteMapping(value = "/delScheduleTask/{id}")
+    @DeleteMapping(value = "/deleteScheduleTask/{id}")
     @AutoLog(value = "定时任务-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result delScheduleTask(@PathVariable String id) {
+    public Result deleteScheduleTask(@PathVariable String id) { //TODO:删除方法名称的更换名称
         try {
             sysScheduleTaskService.delScheduleTask(id);
             return Result.SUCCESS(true);

@@ -115,8 +115,7 @@ public class GraphPrototypeController {
 
     @PostMapping("/deleteGpro")
     @AutoLog(value = "监控信息-删除图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result deleteGpro(@RequestBody TrendParams trendParams, HttpServletRequest req
-    ) throws IOException {
+    public Result deleteGpro(@RequestBody TrendParams trendParams, HttpServletRequest req) throws IOException {
         try {
             if(!trendParams.getGraphId().isEmpty()){
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));

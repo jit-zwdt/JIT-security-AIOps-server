@@ -207,9 +207,9 @@ public class ProblemController {
      * @param response response 对象
      * @throws IOException IO异常
      */
-    @PostMapping("/downLoadFailureToSolve")
+    @PostMapping("/exportFailureToSolve")
     @AutoLog(value = "故障解决统计报表-导出", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public void downLoadFailureToSolve(@RequestBody String tableData,HttpServletResponse response) {
+    public void exportFailureToSolve(@RequestBody String tableData,HttpServletResponse response) { //TODO:文件的导出方法名称
         //首先对 JSON 格式的数据进行转换
         JSONArray jsonArray = JSONArray.parseArray(tableData);
         //将前端传来的数据转换成为 二维数组

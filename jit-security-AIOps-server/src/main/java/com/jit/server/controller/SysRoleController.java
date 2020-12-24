@@ -96,7 +96,7 @@ public class SysRoleController {
 
     @PostMapping("/addRole")
     @AutoLog(value = "角色维护-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addRole(@RequestBody RoleParams roleParams) {
+    public Result addRole(@RequestBody RoleParams roleParams) { //TODO: 两个方法名称的拆分
         try {
             if (roleParams != null) {
                 String id = roleParams.getId();
@@ -155,9 +155,9 @@ public class SysRoleController {
     }
 
     @ResponseBody
-    @DeleteMapping(value = "/delRole/{id}")
+    @DeleteMapping(value = "/deleteRole/{id}")
     @AutoLog(value = "角色维护-删除菜单", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result delRole(@PathVariable String id) {
+    public Result deleteRole(@PathVariable String id) { //TODO:删除菜单文件名称的修改
         try {
             if (StringUtils.isNotBlank(id)) {
                 SysRoleEntity sysRoleEntity = sysRoleService.findByIdAndIsDeleted(id);

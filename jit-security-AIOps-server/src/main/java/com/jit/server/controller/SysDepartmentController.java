@@ -49,7 +49,7 @@ public class SysDepartmentController {
 
     @PostMapping("/addDepartment")
     @AutoLog(value = "部门管理-添加/修改部门", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDepartment(@RequestBody SysDepartmentEntity department) {
+    public Result addDepartment(@RequestBody SysDepartmentEntity department) {//TODO: 两个方法拆分掉 拆成两个方法
         try {
             if (department != null) {
                 String id = "";
@@ -113,9 +113,9 @@ public class SysDepartmentController {
     }
 
     @ResponseBody
-    @DeleteMapping(value = "/delDepartment/{ids}")
+    @DeleteMapping(value = "/deleteDepartment/{ids}")
     @AutoLog(value = "部门管理-批量删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result delDepartment(@PathVariable String ids) {
+    public Result deleteDepartment(@PathVariable String ids) { //TODO: 做删除接口的更改名称
         try {
             if (StringUtils.isNotBlank(ids)) {
                 List<String> list = new ArrayList<>();

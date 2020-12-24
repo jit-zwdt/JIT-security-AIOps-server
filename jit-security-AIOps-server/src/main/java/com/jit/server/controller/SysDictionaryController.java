@@ -123,7 +123,7 @@ public class SysDictionaryController {
 
     @PostMapping("/addDictionary")
     @AutoLog(value = "字典管理-新增/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {
+    public Result addDictionary(@RequestBody SysDictionaryEntity sysDictionaryEntity) {//TODO:方法的拆分
         try {
             sysDictionaryEntity.setDictCode(sysDictionaryEntity.getDictCode().trim().toLowerCase());
             return Result.SUCCESS(dictionaryService.addDictionary(sysDictionaryEntity));
@@ -182,7 +182,7 @@ public class SysDictionaryController {
 
     @PostMapping("/addDictionaryItem")
     @AutoLog(value = "字典管理-新增/编辑子项", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) {
+    public Result addDictionaryItem(@RequestBody SysDictionaryItemEntity sysDictionaryItemEntity) { //TODO: 两个方法文件名称的拆分
         try {
             return Result.SUCCESS(dictionaryService.addDictionaryItem(sysDictionaryItemEntity));
         } catch (Exception e) {

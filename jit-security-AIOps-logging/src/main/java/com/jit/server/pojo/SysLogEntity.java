@@ -42,7 +42,7 @@ public class SysLogEntity {
     private String logContent;
 
     /**
-     * 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除
+     * 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
      */
     @Column(name = "operation_type")
     private int operationType;

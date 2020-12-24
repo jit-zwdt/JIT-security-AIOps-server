@@ -177,9 +177,9 @@ public class SysMenuController {
         }
     }
 
-    @PostMapping(value = "/delMenus/{id}")
+    @PostMapping(value = "/deleteMenus/{id}")
     @AutoLog(value = "菜单管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result delMenus(@PathVariable String id) {
+    public Result deleteMenus(@PathVariable String id) { //TODO: 做删除代码的修改 修改删除名称
         try {
             Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
             if (bean.isPresent()) {

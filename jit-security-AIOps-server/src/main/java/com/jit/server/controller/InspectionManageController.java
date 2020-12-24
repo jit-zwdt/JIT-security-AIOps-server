@@ -70,7 +70,7 @@ public class InspectionManageController {
 
     @PostMapping("/addTimerTaskInfo")
     @AutoLog(value = "巡检计划管理-添加/编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) {
+    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) { //TODO:两个方法名称的拆分
         try {
             if (param == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -181,9 +181,9 @@ public class InspectionManageController {
         }
     }
 
-    @PostMapping("/makeSftpPdf")
+    @PostMapping("/downloadSftpPdf")
     @AutoLog(value = "巡检报告中心-预览", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public void makeSftpPdf(String ftpFilePath, HttpServletResponse response) {
+    public void downloadSftpPdf(String ftpFilePath, HttpServletResponse response) { //TODO:导出
         SFTPClientUtil sftp = new SFTPClientUtil(3, 6000);
         InputStream input = null;
         try {
