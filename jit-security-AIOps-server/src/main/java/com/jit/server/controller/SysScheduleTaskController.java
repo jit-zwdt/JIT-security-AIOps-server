@@ -124,9 +124,9 @@ public class SysScheduleTaskController {
     }
 
     @ResponseBody
-    @PutMapping(value = "/changeStatus/{id}")
+    @PutMapping(value = "/updateStatus/{id}")
     @AutoLog(value = "定时计划-修改启动状态 , 巡检计划管理-修改启动状态", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result changeStatus(@PathVariable String id) {
+    public Result updateStatus(@PathVariable String id) {
         try {
             sysScheduleTaskService.changeStatus(id);
             return Result.SUCCESS(true);

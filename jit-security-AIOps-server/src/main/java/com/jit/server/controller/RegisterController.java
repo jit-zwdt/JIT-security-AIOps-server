@@ -24,9 +24,9 @@ public class RegisterController {
     @Autowired
     private MonitorRegisterService registerService;
 
-    @PostMapping("/findRegisterByClaimId/{id}")
+    @PostMapping("/getRegisterByClaimIds/{id}")
     @AutoLog(value = "故障处理登记-已解决信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findRegisterByClaimId(@PathVariable String id) {
+    public Result getRegisterByClaimIds(@PathVariable String id) {
         try{
             List<ProblemRegisterDTO> monitorRegisterEntity= registerService.findByClaimId(id);
             return Result.SUCCESS(monitorRegisterEntity);

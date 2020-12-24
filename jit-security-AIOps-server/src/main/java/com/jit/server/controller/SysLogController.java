@@ -42,7 +42,7 @@ public class SysLogController {
      * @param currentSize 每页的条数 (必须传入的字段)
      * @return 统一返回数据对象
      */
-    @PostMapping("/findSysLog")
+    @PostMapping("/getSysLogs")
     @AutoLog(value = "日志管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result findSysLog(int logType,
                              @RequestParam(value = "logContent" , required = false) String logContent ,

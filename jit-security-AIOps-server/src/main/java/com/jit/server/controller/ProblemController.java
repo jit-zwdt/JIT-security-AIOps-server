@@ -54,9 +54,9 @@ public class ProblemController {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @PostMapping("/findProblemHost")
+    @PostMapping("/getProblemHosts")
     @AutoLog(value = "统一告警查询-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findProblemHost(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
+    public Result getProblemHosts(@RequestBody ProblemParams params, HttpServletRequest req) throws IOException {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             List<ProblemHostDTO> result = problemService.findProblemHost(params, auth);
@@ -72,9 +72,9 @@ public class ProblemController {
     }
 
 
-    @PostMapping("/findBySeverityLevel")
+    @PostMapping("/getBySeverityLevels")
     @AutoLog(value = "故障认领-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findBySeverityLevel(@RequestBody ProblemClaimParams params, HttpServletRequest req) throws IOException {
+    public Result getBySeverityLevels(@RequestBody ProblemClaimParams params, HttpServletRequest req) throws IOException {
         try {
             if (params != null && params.getSeverities() != null) {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -112,9 +112,9 @@ public class ProblemController {
         }
     }
 
-    @PostMapping("/findClaimByUser")
+    @PostMapping("/getClaimByUsers")
     @AutoLog(value = "故障处理登记-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findClaimByUser(@RequestParam(value = "problemName") String problemName, @RequestParam(value = "resolveType") String resolveType) {
+    public Result getClaimByUsers(@RequestParam(value = "problemName") String problemName, @RequestParam(value = "resolveType") String resolveType) {
         try {
             if (resolveType == null || ("").equals(resolveType)) {
                 resolveType = "-1";
@@ -138,9 +138,9 @@ public class ProblemController {
         }
     }
 
-    @PostMapping("/findByProblemId")
+    @PostMapping("/getByProblemIds")
     @AutoLog(value = "故障认领-已认领信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findByProblemId(@RequestParam(value = "problemId") String problemId) {
+    public Result getByProblemIds(@RequestParam(value = "problemId") String problemId) {
         try {
             if (problemId != null) {
                 Map<String, Object> map = new HashMap<>();
@@ -159,9 +159,9 @@ public class ProblemController {
         }
     }
 
-    @PostMapping("/problemSolveReport")
+    @PostMapping("/getProblemSolveReports")
     @AutoLog(value = "故障解决统计报表-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result problemSolveReport(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd, @RequestParam("dictCode") String dictCode) {
+    public Result getProblemSolveReports(@RequestParam("problemType") String problemType, @RequestParam("problemName") String problemName, @RequestParam("resolveTimeStart") String resolveTimeStart, @RequestParam("resolveTimeEnd") String resolveTimeEnd, @RequestParam("dictCode") String dictCode) {
         try {
             List<MonitorClaimEntity> claimList = null;
             if (StringUtils.isNotEmpty(resolveTimeStart) && StringUtils.isNotEmpty(resolveTimeEnd)) {

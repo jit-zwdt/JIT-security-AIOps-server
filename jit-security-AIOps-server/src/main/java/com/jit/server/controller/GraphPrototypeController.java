@@ -69,9 +69,9 @@ public class GraphPrototypeController {
         }
     }
 
-    @PostMapping("/createGpro")
+    @PostMapping("/addGpro")
     @AutoLog(value = "监控信息-添加图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result createGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
+    public Result addGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
             if(zabbixCreateGraphPrototypeParams != null && zabbixCreateGraphPrototypeParams.getGitems() !=null){

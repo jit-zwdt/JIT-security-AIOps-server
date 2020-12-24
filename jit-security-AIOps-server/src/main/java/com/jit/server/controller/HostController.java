@@ -269,9 +269,9 @@ public class HostController {
         }
     }
 
-    @PostMapping(value = "/getTop5ByTrigger")
+    @PostMapping(value = "/getTop5ByTriggers")
     @AutoLog(value = "监控-top5 [异常,告警]信息查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getTop5ByTrigger(@RequestBody Map<String, Object> params, HttpServletRequest req) {
+    public Result getTop5ByTriggers(@RequestBody Map<String, Object> params, HttpServletRequest req) {
         //, @RequestParam("itemKey") String itemKey, @RequestParam(value = "typeId",required = false) String typeId, @RequestParam(value = "subtypeId",required = false) String subtypeId
         try{
             if(params!=null){

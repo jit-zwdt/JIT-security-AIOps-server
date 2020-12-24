@@ -60,9 +60,9 @@ public class SysMenuController {
         }
     }
 
-    @PostMapping(value = "/findBySysMenu/{id}")
+    @PostMapping(value = "/getBySysMenu/{id}")
     @AutoLog(value = "菜单管理-详情", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findBySysMenu(@PathVariable String id) {
+    public Result getBySysMenu(@PathVariable String id) {
         try {
             if (StringUtils.isNotEmpty(id)) {
                 Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);

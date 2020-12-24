@@ -41,9 +41,9 @@ public class Top5CommonController {
     public static final String METHOD_NAME = "getMonitor";
 
     @ResponseBody
-    @PostMapping(value = "/getTop5Msg")
+    @PostMapping(value = "/getTop5Msgs")
     @AutoLog(value = "监控-Top5 信息查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getTop5Msg(@RequestBody Top5Params params, HttpServletRequest req
+    public Result getTop5Msgs(@RequestBody Top5Params params, HttpServletRequest req
     ) {
         Result result = null;
         String typeId = params.getTypeId();

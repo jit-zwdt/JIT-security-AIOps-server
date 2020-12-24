@@ -60,9 +60,9 @@ public class TrendController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
-    @PostMapping("/getItemInfoList")
+    @PostMapping("/getItemInfoListTrends")
     @AutoLog(value = "监控信息-查询单个折线图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getItemInfoList(@RequestBody HistoryParams historyParams, HttpServletRequest req) throws IOException {
+    public Result getItemInfoListTrends(@RequestBody HistoryParams historyParams, HttpServletRequest req) throws IOException {
         try {
             if (historyParams != null && historyParams.getItemids() != null) {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -172,9 +172,9 @@ public class TrendController {
         }
     }
 
-    @PostMapping("/findHostDetailItems/{hostId}")
+    @PostMapping("/getHostDetailItems/{hostId}")
     @AutoLog(value = "监控信息-查询折线图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findHostDetailItems(@PathVariable String hostId, @RequestBody HistoryParams historyParams, HttpServletRequest req) {
+    public Result getHostDetailItems(@PathVariable String hostId, @RequestBody HistoryParams historyParams, HttpServletRequest req) {
         try {
             List<MonitorHostDetailBindItemsDTO> list = new ArrayList<>();
             List<MonitorHostDetailBindItems> monitorHostDetailBindItems = monitorHostDetailBindItemsService.findMonitorHostDetailBindItemsByHostId(hostId, ConstUtil.IS_NOT_DELETED);

@@ -33,9 +33,9 @@ public class UserController {
     @Autowired
     private ZabbixAuthService zabbixAuthService;
 
-    @PostMapping("/getUserInfo")
+    @PostMapping("/getUsers")
     @AutoLog(value = "告警定义-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getUserInfo(@RequestParam(value = "alias", required = false) String alias, HttpServletRequest req) {
+    public Result getUsers(@RequestParam(value = "alias", required = false) String alias, HttpServletRequest req) {
         try {
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             List<ZabbixUserDTO> result = userService.getUserInfo(alias, auth);
