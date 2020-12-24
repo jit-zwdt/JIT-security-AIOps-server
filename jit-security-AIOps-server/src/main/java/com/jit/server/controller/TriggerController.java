@@ -92,8 +92,8 @@ public class TriggerController {
         }
     }
 
-    @PutMapping("/findTriggerAll")
-    public Result findTriggerAll(@RequestBody TriggerParams params, HttpServletRequest req) throws IOException {
+    @PutMapping("/getTriggers")
+    public Result getTriggers(@RequestBody TriggerParams params, HttpServletRequest req) throws IOException {
         try{
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             List<ZabbixTriggerDTO> result= triggerService.findTriggerAll(params, auth);

@@ -138,8 +138,8 @@ public class HostController {
         }
     }
 
-    @PostMapping("/findById/{id}")
-    public Result<HostEntity> findById(@PathVariable String id) {
+    @PostMapping("/getHost/{id}")
+    public Result<HostEntity> getHost(@PathVariable String id) {
         try{
             Optional<HostEntity> bean = hostService.findByHostId(id);
             if (bean.isPresent()) {
@@ -152,8 +152,8 @@ public class HostController {
         }
     }
 
-    @PostMapping("/hostinfo")
-    public Result<Object> hostinfo(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException{
+    @PostMapping("/getHosts")
+    public Result<Object> getHosts(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException{
         try{
             if(params!=null){
                 Page<Object> pageResult = hostService.hostinfo(params.getParam(),params.getPage(),params.getSize());
@@ -198,8 +198,8 @@ public class HostController {
         }
     }
 
-    @PostMapping("/findHostAvailable")
-    public Result<HostEntity> findHostAvailable(@RequestBody String[] hostIds, HttpServletRequest req) {
+    @PostMapping("/getHostAvailable")
+    public Result<HostEntity> getHostAvailable(@RequestBody String[] hostIds, HttpServletRequest req) {
         try{
             if(hostIds!=null && hostIds.length>0){
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
@@ -294,8 +294,8 @@ public class HostController {
         }
     }
 
-    @PostMapping("/findHostIdinfo/{hostId}")
-    public Result<HostEntity> findHostId(@PathVariable String hostId) {
+    @PostMapping("/getHostIdInfo/{hostId}")
+    public Result<HostEntity> getHostIdInfo(@PathVariable String hostId) {
         try{
             HostEntity bean = hostService.findHostIdinfo(hostId);
             if (bean!=null) {

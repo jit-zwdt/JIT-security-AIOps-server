@@ -158,8 +158,8 @@ public class AssetsController {
         }
     }
 
-    @PostMapping("/findById/{id}")
-    public Result<MonitorAssetsEntity> findById(@PathVariable String id) {
+    @PostMapping("/getAsset/{id}")
+    public Result<MonitorAssetsEntity> getAsset(@PathVariable String id) {
         try {
             Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
             if (bean.isPresent()) {
@@ -172,8 +172,8 @@ public class AssetsController {
         }
     }
 
-    @PostMapping("/findByConditionInfo")
-    public Result findByConditionInfo() {
+    @PostMapping("/getConditionInfo")
+    public Result getConditionInfo() {
         try {
             List<Object> listResult = assetsService.findByConditionInfo();
             if (null != listResult && !listResult.isEmpty()) {

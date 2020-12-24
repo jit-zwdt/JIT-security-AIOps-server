@@ -66,8 +66,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/findUserByRole")
-    public Result findUserByRole(@RequestParam(value = "roleId", required = true) String roleId) {
+    @PostMapping("/getUserByRole")
+    public Result getUserByRole(@RequestParam(value = "roleId", required = true) String roleId) {
         try {
             if (roleId != null) {
                 return Result.SUCCESS(sysUserService.findUserByRole(roleId));

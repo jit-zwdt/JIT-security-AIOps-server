@@ -344,8 +344,8 @@ public class TrendController {
         }
     }
 
-    @PostMapping("/findHostDetailGraphs/{hostId}")
-    public Result findHostDetailGraphs(@PathVariable String hostId, @RequestBody GraphItemParams graphItemParams, HttpServletRequest req) {
+    @PostMapping("/getHostDetailGraphs/{hostId}")
+    public Result getHostDetailGraphs(@PathVariable String hostId, @RequestBody GraphItemParams graphItemParams, HttpServletRequest req) {
         try {
             List<Map<String, Object>> listFinal = new ArrayList<>();
             List<MonitorHostDetailBindGraphs> list = monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, ConstUtil.IS_NOT_DELETED);

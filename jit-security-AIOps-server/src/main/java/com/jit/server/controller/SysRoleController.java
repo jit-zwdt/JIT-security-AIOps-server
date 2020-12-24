@@ -330,8 +330,8 @@ public class SysRoleController {
         }
     }
 
-    @PostMapping("/findAllRole")
-    public Result findAllRole() {
+    @PostMapping("/getRoles")
+    public Result getRoles() {
         try {
             return Result.SUCCESS(sysRoleService.findByIsDeleted());
 

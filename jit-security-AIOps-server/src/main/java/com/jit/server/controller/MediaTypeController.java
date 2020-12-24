@@ -158,8 +158,8 @@ public class MediaTypeController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/findByMediaTypeId/{id}")
-    public Result findByMediaTypeId(@PathVariable String id , HttpServletRequest req) {
+    @PostMapping(value = "/getMediaType/{id}")
+    public Result getMediaType(@PathVariable String id , HttpServletRequest req) {
         if (StringUtils.isNotBlank(id)) {
             try {
                 String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));

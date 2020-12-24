@@ -106,8 +106,8 @@ public class SysDictionaryController {
         }
     }
 
-    @PostMapping("/findDictionaryById/{id}")
-    public Result findDictionaryById(@PathVariable String id) {
+    @PostMapping("/getDictionary/{id}")
+    public Result getDictionary(@PathVariable String id) {
         try {
             Optional<SysDictionaryEntity> bean = dictionaryService.findById(id);
             if (bean.isPresent()) {
@@ -190,8 +190,8 @@ public class SysDictionaryController {
         }
     }
 
-    @PostMapping("/findDictionaryItemById/{id}")
-    public Result findDictionaryItemById(@PathVariable String id) {
+    @PostMapping("/getDictionaryItem/{id}")
+    public Result getDictionaryItem(@PathVariable String id) {
         try {
             Optional<SysDictionaryItemEntity> bean = dictionaryService.findDictionaryItemById(id);
             if (bean.isPresent()) {

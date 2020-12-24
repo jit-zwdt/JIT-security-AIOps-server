@@ -96,9 +96,9 @@ public class SysCronExpressionController {
      * @param id 需要删除的时间表达式的 ID
      * @return 统一封装对象
      */
-    @DeleteMapping("delCronExpression/{id}")
+    @DeleteMapping("deleteCronExpression/{id}")
     @AutoLog(value = "定时表达式管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result delCronExpression(@PathVariable String id){
+    public Result deleteCronExpression(@PathVariable String id){
         try {
             sysCronExpressionService.delCronExpression(id);
         } catch (Exception e) {
