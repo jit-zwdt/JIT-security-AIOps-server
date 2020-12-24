@@ -47,13 +47,13 @@ public class SysLogServiceImpl implements SysLogService {
      * @param logContent 日志内容
      * @param startTime 开始时间
      * @param endTime 结束时间
-     * @param operationType 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除
+     * @param operationType 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载
      * @param currentPage 当前页
      * @param currentSize 每页的条数
      * @return 统一返回数据对象
      */
     @Override
-    public Page<SysLogEntity> findSysLog(int logType, String logContent, LocalDateTime startTime, LocalDateTime endTime, int operationType, int currentPage, int currentSize) {
+    public Page<SysLogEntity> findSysLog(int logType, String logContent, LocalDateTime startTime, LocalDateTime endTime, Integer operationType, int currentPage, int currentSize) {
         //创建安全的日期转换对象
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         //创建多条件查询
@@ -95,7 +95,7 @@ public class SysLogServiceImpl implements SysLogService {
                     predicates.add(temp);
                 }
                 //操作类型
-                if(operationType != 0){
+                if(operationType != null){
                     //创建查询条件
                     Predicate temp = criteriaBuilder.equal(root.get("operationType") , operationType);
                     //将第四个查询条件加入集合

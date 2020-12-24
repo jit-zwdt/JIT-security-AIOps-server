@@ -33,11 +33,11 @@ public class SysLogController {
 
     /**
      * 根据传入的信息进行查询日志数据
-     * @param logType 日志类型 0:登录日志;1:操作日志;2:错误日志 (查询全部传入 0)
+     * @param logType 日志类型 0:登录日志;1:操作日志;2:错误日志
      * @param logContent 日志内容 (查询全部传 null)
      * @param startTime 开始时间 (查询全部传 null 查询一个也是好用的 查询的是当前时间范围后的所有数据)
      * @param endTime 结束时间 (查询全部传 null 查询一个也是好用的 查询的是当前时间范围前的所有数据)
-     * @param operationType 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载 (查询全部传入 -1)
+     * @param operationType 操作日志类型 0:未定义;1:添加;2:查询;3:修改;4:删除;5:导入;6:导出;7:上传;8:下载 (查询全部传入 "")
      * @param currentPage 当前页 (必须传入的字段)
      * @param currentSize 每页的条数 (必须传入的字段)
      * @return 统一返回数据对象
@@ -48,7 +48,7 @@ public class SysLogController {
                              @RequestParam(value = "logContent" , required = false) String logContent ,
                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "startTime" , required = false) LocalDateTime startTime ,
                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "endTime" , required = false) LocalDateTime endTime ,
-                             int operationType,
+                             @RequestParam(value = "operationType" , required = false) Integer operationType,
                              int currentPage ,
                              int currentSize){
         try {

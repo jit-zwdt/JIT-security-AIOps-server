@@ -23,6 +23,6 @@ public interface SysLogService {
      * @param currentSize 每页的条数
      * @return 统一返回数据对象
      */
-    Page<SysLogEntity> findSysLog(int logType, String logContent, LocalDateTime startTime, LocalDateTime endTime, int operationType, int currentPage, int currentSize);
+    Page<SysLogEntity> findSysLog(int logType, String logContent, LocalDateTime startTime, LocalDateTime endTime, Integer operationType, int currentPage, int currentSize);
 
 }
