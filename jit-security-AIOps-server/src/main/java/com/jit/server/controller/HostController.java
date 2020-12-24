@@ -153,6 +153,7 @@ public class HostController {
     }
 
     @PostMapping("/getHosts")
+    @AutoLog(value = "监控列表-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<Object> getHosts(@RequestBody PageRequest<HostParams> params, HttpServletResponse resp) throws IOException{
         try{
             if(params!=null){
