@@ -59,7 +59,7 @@ public class ZabbixHost {
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime ipmiDisableUntil;
     @JsonProperty("ipmi_error")
-    protected String impiError;
+    protected String ipmiError;
     @JsonProperty("ipmi_errors_from")
     @JsonDeserialize(using= CustomJsonSerializer.DateStrDeserializer.class)
     protected LocalDateTime ipmiErrorsFrom;
