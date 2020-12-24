@@ -49,7 +49,7 @@ public class GraphPrototypeController {
     private ZabbixAuthService zabbixAuthService;
 
     @PostMapping("/getGProInfoList")
-    @AutoLog(value = "监控信息-查询所有图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-查询所有组合图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getGProInfoList(@RequestBody GraphPrototypeParams graphPrototypeParams, HttpServletRequest req) throws IOException {
         try {
             if (graphPrototypeParams != null) {
@@ -70,7 +70,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/addGpro")
-    @AutoLog(value = "监控信息-添加图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-添加组合图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
@@ -92,7 +92,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/updateGpro")
-    @AutoLog(value = "监控信息-编辑图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-编辑组合图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updateGpro(@RequestBody ZabbixCreateGraphPrototypeParams zabbixCreateGraphPrototypeParams,HttpServletRequest req
     ) throws IOException {
         try {
@@ -114,7 +114,7 @@ public class GraphPrototypeController {
     }
 
     @PostMapping("/deleteGpro")
-    @AutoLog(value = "监控信息-删除图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-删除组合图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteGpro(@RequestBody TrendParams trendParams, HttpServletRequest req) throws IOException {
         try {
             if(!trendParams.getGraphId().isEmpty()){

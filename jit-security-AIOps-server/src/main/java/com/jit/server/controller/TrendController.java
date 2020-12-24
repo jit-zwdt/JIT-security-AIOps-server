@@ -82,7 +82,7 @@ public class TrendController {
     }
 
     @PostMapping("/addHostDetailItem")
-    @AutoLog(value = "监控信息-添加指标到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-添加指标图形到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addHostDetailItem(@RequestBody TrendParams trendParams) {
         try {
             if (trendParams != null) {
@@ -107,7 +107,7 @@ public class TrendController {
     }
 
     @PostMapping("/addHostDetailGraph")
-    @AutoLog(value = "监控信息-添加图形到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-添加组合图形到概况", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addHostDetailGraph(@RequestBody TrendParams trendParams) {
         try {
             if (trendParams != null) {
@@ -173,7 +173,7 @@ public class TrendController {
     }
 
     @PostMapping("/getHostDetailItems/{hostId}")
-    @AutoLog(value = "监控信息-查询折线图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "监控信息-查询图形", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getHostDetailItems(@PathVariable String hostId, @RequestBody HistoryParams historyParams, HttpServletRequest req) {
         try {
             List<MonitorHostDetailBindItemsDTO> list = new ArrayList<>();

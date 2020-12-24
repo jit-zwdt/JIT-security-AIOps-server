@@ -139,7 +139,7 @@ public class ProblemController {
     }
 
     @PostMapping("/getByProblemIds")
-    @AutoLog(value = "故障认领-已认领信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "故障认领-查询已认领信息", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getByProblemIds(@RequestParam(value = "problemId") String problemId) {
         try {
             if (problemId != null) {
