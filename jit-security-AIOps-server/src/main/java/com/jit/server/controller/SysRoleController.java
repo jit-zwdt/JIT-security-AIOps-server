@@ -37,9 +37,9 @@ public class SysRoleController {
     private UserService userService;
 
     @ResponseBody
-    @PostMapping(value = "/getRoles")
+    @PostMapping(value = "/getPageRoles")
     @AutoLog(value = "角色维护-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getRoles(@RequestBody PageRequest<Map<String, Object>> params) {
+    public Result getPageRoles(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
             Page<SysRoleEntity> sysUserEntities = sysRoleService.getRoles(params);
             Map<String, Object> result = new HashMap<>(5);
