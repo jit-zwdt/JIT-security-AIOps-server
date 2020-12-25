@@ -143,7 +143,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         LocalDate localDate = LocalDateTime.now().toLocalDate();
         LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", formatter);
         LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", formatter);
-        List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
+        Set<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
             for (MonitorClaimEntity monitorClaimEntity : monitorClaimEntityList) {
@@ -160,7 +160,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", formatter);
         LocalDate dateTo = LocalDateTime.now().toLocalDate();
         LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", formatter);
-        List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
+        Set<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getProcessingMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
             for (MonitorClaimEntity monitorClaimEntity : monitorClaimEntityList) {
@@ -176,7 +176,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         LocalDate localDate = LocalDateTime.now().toLocalDate();
         LocalDateTime dateTimeFrom = LocalDateTime.parse(localDate + " 00:00:00", formatter);
         LocalDateTime dateTimeTo = LocalDateTime.parse(localDate + " 23:59:59", formatter);
-        List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
+        Set<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
             for (MonitorClaimEntity monitorClaimEntity : monitorClaimEntityList) {
@@ -193,7 +193,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         LocalDateTime dateTimeFrom = LocalDateTime.parse(dateFrom + " 00:00:00", formatter);
         LocalDate dateTo = LocalDateTime.now().toLocalDate();
         LocalDateTime dateTimeTo = LocalDateTime.parse(dateTo + " 23:59:59", formatter);
-        List<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
+        Set<MonitorClaimEntity> monitorClaimEntityList = monitorClaimRepo.getSolvedMonitorClaimEntityByDate(dateTimeFrom, dateTimeTo);
         if (monitorClaimEntityList != null && !monitorClaimEntityList.isEmpty()) {
             res = new ArrayList<>();
             for (MonitorClaimEntity monitorClaimEntity : monitorClaimEntityList) {

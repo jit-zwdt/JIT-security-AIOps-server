@@ -153,7 +153,7 @@ public class MonitorAssetsEntity {
     /**
      * 使用人
      */
-    @Column(name = "user")
+    @Column(name = "user_name")
     private String user;
 
     /**

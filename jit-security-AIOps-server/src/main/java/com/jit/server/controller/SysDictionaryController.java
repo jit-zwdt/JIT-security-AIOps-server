@@ -15,13 +15,11 @@ import com.jit.server.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -46,17 +44,17 @@ public class SysDictionaryController {
         try {
             List<DictionaryDTO> list = new ArrayList<>();
             DictionaryResultDTO dictionaryResultDTO = new DictionaryResultDTO();
-            List<SysDictionaryEntity> sysDictionaryEntityList = dictionaryService.getDictionary(name, code, currentPageTemp, pageSizeTemp);
-            if (sysDictionaryEntityList.size() > 0) {
-                for (int i = 0; i < sysDictionaryEntityList.size(); i++) {
+            Page<SysDictionaryEntity> pageResult = dictionaryService.getDictionary(name, code, currentPageTemp, pageSizeTemp);
+            if (pageResult.getContent().size() > 0) {
+                for (int i = 0; i < pageResult.getContent().size(); i++) {
                     DictionaryDTO dictionaryDTO = new DictionaryDTO();
-                    dictionaryDTO.setDictionaryEntity(sysDictionaryEntityList.get(i));
+                    dictionaryDTO.setDictionaryEntity(pageResult.getContent().get(i));
                     dictionaryDTO.setNum(i + 1 + (currentPageTemp - 1) * pageSizeTemp);
                     list.add(dictionaryDTO);
                 }
-                int count = dictionaryService.getCount(name, code);
+                // int count = dictionaryService.getCount(name, code);
                 dictionaryResultDTO.setList(list);
-                dictionaryResultDTO.setCount(count);
+                dictionaryResultDTO.setCount((int) pageResult.getTotalElements());
             }
             return Result.SUCCESS(dictionaryResultDTO);
         } catch (Exception e) {
@@ -161,11 +159,11 @@ public class SysDictionaryController {
             } else {
                 temp = -1;
             }
-            List<SysDictionaryItemEntity> list = dictionaryService.findByDictId(id, itemText, temp, currentPageTemp, pageSizeTemp);
-            int count = dictionaryService.getDictionaryItemCount(id, itemText, temp);
+            Page<SysDictionaryItemEntity> list = dictionaryService.findByDictId(id, itemText, temp, currentPageTemp, pageSizeTemp);
+            //int count = dictionaryService.getDictionaryItemCount(id, itemText, temp);
             DictionaryItemResultDTO dictionaryItemResultDTO = new DictionaryItemResultDTO();
-            dictionaryItemResultDTO.setCount(count);
-            dictionaryItemResultDTO.setList(list);
+            dictionaryItemResultDTO.setCount((int) list.getTotalElements());
+            dictionaryItemResultDTO.setList(list.getContent());
             return Result.SUCCESS(dictionaryItemResultDTO);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
