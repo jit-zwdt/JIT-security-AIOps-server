@@ -85,4 +85,14 @@ public class GraphPrototype {
     @JsonProperty("ymin_type")
     protected Integer yminType;
 
+    /**
+     * 图表的来源.
+     *
+     * 可用值:
+     * 0 - (默认) 简单的图表;
+     * 4 - 发现的图表.
+     */
+    @JsonProperty("flags")
+    protected Integer flags;
+
 }
