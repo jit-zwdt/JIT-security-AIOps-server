@@ -3,6 +3,7 @@ package com.jit.server.service.impl;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
+import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
@@ -23,9 +24,14 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -212,8 +218,25 @@ public class ProblemServiceImpl implements ProblemService {
     public List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         SysUserEntity user = sysUserRepo.findByUsername(username);
-        List<MonitorClaimEntity> list = monitorClaimRepo.findClaimByUser(user.getId(), "%"+problemName+"%", resolveType);
-        return list;
+        //条件
+        Specification<MonitorClaimEntity> spec = new Specification<MonitorClaimEntity>() {
+            @Override
+            public Predicate toPredicate(Root<MonitorClaimEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> list = new ArrayList<Predicate>();
+
+                list.add(cb.equal(root.get("claimUserId").as(String.class), user.getId()));
+
+                if (com.jit.server.util.StringUtils.isNotEmpty(problemName)) {
+                    list.add(cb.like(root.get("problemName").as(String.class), "%" + problemName + "%"));
+                }
+                if (resolveType != -1) {
+                    list.add(cb.equal(root.get("isResolve").as(Integer.class), resolveType));
+                }
+                Predicate[] arr = new Predicate[list.size()];
+                return cb.and(list.toArray(arr));
+            }
+        };
+        return this.monitorClaimRepo.findAll(spec);
     }
 
     @Override

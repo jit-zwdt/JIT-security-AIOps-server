@@ -19,8 +19,8 @@ import java.util.List;
 @Repository
 public interface AssetsRepo extends JpaRepository<MonitorAssetsEntity, String>, JpaSpecificationExecutor<MonitorAssetsEntity> {
 
-    @Override
-    Page<MonitorAssetsEntity> findAll(Specification<MonitorAssetsEntity> spec, Pageable pageable);
+//    @Override
+//    Page<MonitorAssetsEntity> findAll(Specification<MonitorAssetsEntity> spec, Pageable pageable);
 
     @Query(value = "select e.id,e.name,e.number,e.ip from MonitorAssetsEntity e where e.isDeleted = 0 and e.type = '0'")
     List<Object> findHardwareInfo();

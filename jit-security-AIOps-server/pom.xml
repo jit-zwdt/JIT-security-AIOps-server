@@ -25,10 +25,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -101,6 +98,14 @@
             <version>0.1.54</version>
         </dependency>
 
+        <!-- MySQL数据库依赖 start -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- MySQL数据库依赖 end -->
+
+        <!-- DM 达梦数据库依赖 start -->
         <!--<dependency>
             <groupId>com.dm</groupId>
             <artifactId>DmJdbcDriver18</artifactId>
@@ -116,6 +121,8 @@
             <scope>system</scope>
             <systemPath>D:/dmdbms/drivers/jdbc/dialect/DmDialect-for-hibernate5.3.jar</systemPath>
         </dependency>-->
+        <!-- DM 达梦数据库依赖 end -->
+
     </dependencies>
     <profiles>
         <!-- 本地开发环境 -->

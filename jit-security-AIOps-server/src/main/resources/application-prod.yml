@@ -11,6 +11,7 @@ zabbix:
   username: Admin
   password: zabbix
 spring:
+## MYSQL datasource ↓ ↓ ↓ ↓ ↓ ↓
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
@@ -24,8 +25,22 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        #jdbc:
-        #time_zone: Hongkong
+## MYSQL datasource ↑ ↑ ↑ ↑ ↑ ↑
+
+## DM datasource ↓ ↓ ↓ ↓ ↓ ↓
+#  datasource:
+#    driver-class-name: dm.jdbc.driver.DmDriver
+#    url: jdbc:dm://172.16.15.10:5236/DAMENG?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+#    username: JIT_SECURITY_AIOPS
+#    password: JIT_SECURITY_AIOPS
+#    connectionTimeout: 20000
+#  jpa:
+#    database-platform: org.hibernate.dialect.DmDialect
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: false
+## DM datasource ↑ ↑ ↑ ↑ ↑ ↑
   jackson:
     time-zone: GMT+8
   cache:

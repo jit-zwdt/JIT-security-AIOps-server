@@ -3,12 +3,13 @@ package com.jit.server.service;
 import com.jit.server.dto.DictDTO;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface DictionaryService {
-    List<SysDictionaryEntity> getDictionary(String name, String code, int currentPage, int pageSize);
+    Page<SysDictionaryEntity> getDictionary(String name, String code, int currentPage, int pageSize);
 
     int getCount(String name, String code);
 
@@ -18,7 +19,7 @@ public interface DictionaryService {
 
     SysDictionaryEntity addDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception;
 
-    List<SysDictionaryItemEntity> findByDictId(String id, String itemName, int status, int currentPage, int pageSize);
+    Page<SysDictionaryItemEntity> findByDictId(String id, String itemName, int status, int currentPage, int pageSize);
 
     Optional<SysDictionaryItemEntity> findDictionaryItemById(String id);
 
