@@ -44,7 +44,7 @@ public class SysLogController {
      */
     @PostMapping("/getSysLogs")
     @AutoLog(value = "日志管理-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result findSysLog(int logType,
+    public Result getSysLog(int logType,
                              @RequestParam(value = "logContent" , required = false) String logContent ,
                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "startTime" , required = false) LocalDateTime startTime ,
                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") @RequestParam(value = "endTime" , required = false) LocalDateTime endTime ,
