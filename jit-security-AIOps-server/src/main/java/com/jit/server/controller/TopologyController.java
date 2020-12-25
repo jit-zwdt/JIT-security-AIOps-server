@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorAssetsEntity;
@@ -11,6 +12,7 @@ import com.jit.server.service.HostService;
 import com.jit.server.service.TopologyService;
 import com.jit.server.service.UserService;
 import com.jit.server.service.ZabbixAuthService;
+import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
@@ -53,6 +55,7 @@ public class TopologyController {
      */
     @ResponseBody
     @PostMapping(value = "/addTopologyInfo")
+    @AutoLog(value = "网络拓扑图-网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addTopologyInfo(@RequestBody TopologyParams topologyParams) {
         try {
             MonitorTopologyEntity topologyEntity = new MonitorTopologyEntity();
@@ -95,6 +98,7 @@ public class TopologyController {
      */
     @PostMapping("/getTopologyOneInfo")
     @ResponseBody
+    @AutoLog(value = "网络拓扑图-获取当前目标网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<MonitorTopologyEntity> getTopologyOneInfo(@RequestBody TopologyParams topologyParams) {
         try {
             if (topologyParams.getId() == null) {
@@ -118,6 +122,7 @@ public class TopologyController {
      */
     @ResponseBody
     @PostMapping("/getTopologyAllInfo")
+    @AutoLog(value = "网络拓扑图-获取全部网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<MonitorTopologyEntity> getTopologyAllInfo(@RequestBody TopologyParams topologyParams) {
         try {
             List<MonitorTopologyEntity> bean = topologyService.getMonitorTopologAllInfo(topologyParams.getInfoName());
@@ -138,6 +143,7 @@ public class TopologyController {
      */
     @ResponseBody
     @PostMapping("/getTopologyItemInfo")
+    @AutoLog(value = "网络拓扑图-获取当前目标监控数据", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<MonitorTopologyEntity> getTopologyItemInfo(@RequestBody TopologyParams topologyParams, HttpServletRequest req) {
         try {
             List<Object> bean = topologyService.getTopologyItemInfo(topologyParams.getIp());
