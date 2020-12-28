@@ -55,7 +55,7 @@ public class TopologyController {
      */
     @ResponseBody
     @PostMapping(value = "/addTopologyInfo")
-    @AutoLog(value = "网络拓扑图-网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    @AutoLog(value = "网络拓扑图-网络拓扑图保存", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addTopologyInfo(@RequestBody TopologyParams topologyParams) {
         try {
             MonitorTopologyEntity topologyEntity = new MonitorTopologyEntity();
