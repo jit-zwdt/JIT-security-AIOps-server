@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.MonitorRegisterEntityDTO;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.dto.ProblemSolveReportDTO;
@@ -181,9 +182,14 @@ public class ProblemController {
                     regList = registerService.findByClaimIdAndProblemType(claimList.get(i).getId(), problemType);
                 }
                 if (regList != null && !CollectionUtils.isEmpty(regList)) {
+                    MonitorRegisterEntityDTO monitorRegisterEntityDTO = null;
                     for (MonitorRegisterEntity mm : regList) {
-                        mm.setProblemType(dictionaryService.getItemTextByDictCodeAndItemValue(dictCode, mm.getProblemType()));
-                        result.setRegister(mm);
+                        monitorRegisterEntityDTO = new MonitorRegisterEntityDTO();
+                        monitorRegisterEntityDTO.setProblemType(dictionaryService.getItemTextByDictCodeAndItemValue(dictCode, mm.getProblemType()));
+                        monitorRegisterEntityDTO.setProblemProcess(mm.getProblemProcess());
+                        monitorRegisterEntityDTO.setProblemReason(mm.getProblemReason());
+                        monitorRegisterEntityDTO.setProblemSolution(mm.getProblemSolution());
+                        result.setRegister(monitorRegisterEntityDTO);
                     }
                 } else {
                     continue;
@@ -203,18 +209,19 @@ public class ProblemController {
 
     /**
      * 根据传入的数据进行 Xls文件的构建生成下载
+     *
      * @param tableData 需要生成 xls 的数据 json 格式的字符串
-     * @param response response 对象
+     * @param response  response 对象
      * @throws IOException IO异常
      */
     @PostMapping("/exportFailureToSolve")
     @AutoLog(value = "故障解决统计报表-导出", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public void exportFailureToSolve(@RequestBody String tableData,HttpServletResponse response) {
+    public void exportFailureToSolve(@RequestBody String tableData, HttpServletResponse response) {
         //首先对 JSON 格式的数据进行转换
         JSONArray jsonArray = JSONArray.parseArray(tableData);
         //将前端传来的数据转换成为 二维数组
         String[][] dataArray = new String[jsonArray.size()][];
-        for(int i= 0 ; i < jsonArray.size() ; i++){
+        for (int i = 0; i < jsonArray.size(); i++) {
             //取出里面的对象字符串并转换成为 JSON 对象
             JSONObject faultElement = jsonArray.getJSONObject(i);
             //取出里面的元素进行拼接数组对象
@@ -234,7 +241,7 @@ public class ProblemController {
             String problemProcess = (String) register.get("problemProcess");
             String problemSolution = (String) register.get("problemSolution");
             //构建数组对象
-            String[] faultArray = {index , resolveTime , problemName , problemType , role , user , problemReason , problemProcess , problemSolution , ns , problemHandleTime};
+            String[] faultArray = {index, resolveTime, problemName, problemType, role, user, problemReason, problemProcess, problemSolution, ns, problemHandleTime};
             //放入二维数组
             dataArray[i] = faultArray;
         }
@@ -247,7 +254,7 @@ public class ProblemController {
             //设置响应协议为响应xls文件
             response.setContentType("application/octet-stream");
             //设置弹出框
-            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
+            response.setHeader("Content-Disposition", "attachment; fileName=" + UUID.randomUUID() + ".xls");
             //写出
             workbook.write(out);
             out.flush();
