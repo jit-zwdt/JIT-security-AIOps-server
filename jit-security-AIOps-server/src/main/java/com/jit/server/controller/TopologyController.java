@@ -3,10 +3,7 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.HostEntity;
-import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.pojo.MonitorTopologyEntity;
-import com.jit.server.request.HostViewInfoParams;
 import com.jit.server.request.TopologyParams;
 import com.jit.server.service.HostService;
 import com.jit.server.service.TopologyService;
@@ -160,21 +157,21 @@ public class TopologyController {
                     if (result != null && result.size() > 0) {
                         ZabbixHostDTO zbhost = result.get(0);
                         if (zbhost.getError() != null && !"".equals(zbhost.getError())) {
-                            info = info + ";错误:" + zbhost.getError();
+                            info = info + ";" + zbhost.getError();
                         }
                         if (zbhost.getJmxError() != null && !"".equals(zbhost.getJmxError())) {
-                            info = info + ";错误:" + zbhost.getJmxError();
+                            info = info + ";" + zbhost.getJmxError();
                         }
                         if (zbhost.getIpmiError() != null && !"".equals(zbhost.getIpmiError())) {
-                            info = info + ";错误:" + zbhost.getIpmiError();
+                            info = info + ";" + zbhost.getIpmiError();
                         }
                         if (zbhost.getSnmpError() != null && !"".equals(zbhost.getSnmpError())) {
-                            info = info + ";错误:" + zbhost.getSnmpError();
-                        }
-                        if (!"".equals(info)) {
-                            info = info.substring(1, info.length());
+                            info = info + ";" + zbhost.getSnmpError();
                         }
                     }
+                }
+                if (!"".equals(info)) {
+                    info = info.substring(1, info.length());
                 }
                 return Result.SUCCESS(info);
             } else {
