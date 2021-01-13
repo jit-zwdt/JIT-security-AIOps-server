@@ -7,16 +7,16 @@ server:
     context-path: /api
 zabbix:
   api:
-    url: http://172.19.0.5:8080/
-  username: Admin
-  password: zabbix
+    url: http://${ZABBIX_API_URL:172.19.0.5}:${ZABBIX_API_PORT:8080}/
+  username: ${ZABBIX_USERNAME:Admin}
+  password: ${ZABBIX_PASSWORD:zabbix}
 spring:
 ## ↓ ↓ ↓ ↓ ↓ ↓ MYSQL datasource ↓ ↓ ↓ ↓ ↓ ↓
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.17.0.1:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:172.17.0.1}:${{DB_PORT:3306}/${DB_NAME:jit-security-aiops-server}?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
     connectionTimeout: 20000
     maximumPoolSize: 5
   jpa:
