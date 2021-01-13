@@ -14,7 +14,7 @@ spring:
 ## ↓ ↓ ↓ ↓ ↓ ↓ MYSQL datasource ↓ ↓ ↓ ↓ ↓ ↓
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:172.17.0.1}:${{DB_PORT:3306}/${DB_NAME:jit-security-aiops-server}?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    url: jdbc:mysql://${DB_HOST:172.17.0.1}:${DB_PORT:3306}/${DB_NAME:jit-security-aiops-server}?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:root}
     connectionTimeout: 20000
