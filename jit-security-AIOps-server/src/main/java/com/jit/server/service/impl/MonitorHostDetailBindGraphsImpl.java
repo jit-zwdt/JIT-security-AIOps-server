@@ -9,6 +9,7 @@ import com.jit.server.service.MonitorHostDetailBindGraphsService;
 import com.jit.server.service.MonitorHostDetailBindItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class MonitorHostDetailBindGraphsImpl implements MonitorHostDetailBindGra
     private MonitorHostDetailBindGraphsRepo monitorHostDetailBindGraphsRepo;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MonitorHostDetailBindGraphs saveOrUpdateMonitorHostDetailBindGraphs(MonitorHostDetailBindGraphs monitorHostDetailBindGraphs) throws Exception {
         return monitorHostDetailBindGraphsRepo.saveAndFlush(monitorHostDetailBindGraphs);
     }

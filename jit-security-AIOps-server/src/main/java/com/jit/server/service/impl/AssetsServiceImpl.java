@@ -99,11 +99,13 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addAssets(MonitorAssetsEntity assets) throws Exception {
         assetsRepo.save(assets);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAssets(String id) throws Exception {
         assetsRepo.deleteById(id);
     }
@@ -117,7 +119,7 @@ public class AssetsServiceImpl implements AssetsService {
     @Transactional(rollbackFor = Exception.class)
     public void updateAssets(MonitorAssetsEntity assets) throws Exception {
         //更新数据
-        assetsRepo.save(assets);
+        assetsRepo.saveAndFlush(assets);
     }
 
     @Override

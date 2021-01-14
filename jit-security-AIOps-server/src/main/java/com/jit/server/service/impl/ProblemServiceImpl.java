@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -210,6 +211,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception {
         monitorClaimRepo.save(monitorClaimEntity);
     }
@@ -240,6 +242,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity) {
         if (monitorClaimEntity.getIsResolve() == ConstUtil.RESOLVED) {
             monitorClaimRepo.updateClaimAfterRegister(monitorClaimEntity.getId(), monitorClaimEntity.getIsRegister(), monitorClaimEntity.getIsResolve(), monitorClaimEntity.getProblemHandleTime(), LocalDateTime.now());

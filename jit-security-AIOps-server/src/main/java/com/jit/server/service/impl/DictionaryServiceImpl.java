@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -80,12 +81,14 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysDictionaryEntity updateDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception {
         sysDictionaryEntity.setUpdateBy(userService.findIdByUsername());
-        return dictionaryRepo.save(sysDictionaryEntity);
+        return dictionaryRepo.saveAndFlush(sysDictionaryEntity);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysDictionaryEntity addDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception {
         if (sysDictionaryEntity.getId() != null && sysDictionaryEntity.getId() != "") {
             sysDictionaryEntity.setUpdateBy(userService.findIdByUsername());
@@ -94,7 +97,7 @@ public class DictionaryServiceImpl implements DictionaryService {
             sysDictionaryEntity.setCreateBy(userService.findIdByUsername());
             sysDictionaryEntity.setGmtCreate(LocalDateTime.now());
         }
-        return dictionaryRepo.save(sysDictionaryEntity);
+        return dictionaryRepo.saveAndFlush(sysDictionaryEntity);
     }
 
     @Override
@@ -250,12 +253,14 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysDictionaryItemEntity updateDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception {
         sysDictionaryItemEntity.setUpdateBy(userService.findIdByUsername());
         return dictionaryItemRepo.save(sysDictionaryItemEntity);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysDictionaryItemEntity addDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception {
         if (sysDictionaryItemEntity.getId() != null && sysDictionaryItemEntity.getId() != "") {
             sysDictionaryItemEntity.setUpdateBy(userService.findIdByUsername());

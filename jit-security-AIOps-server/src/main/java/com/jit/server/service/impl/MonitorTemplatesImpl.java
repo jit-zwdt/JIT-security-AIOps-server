@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -89,6 +90,7 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateMonitorTemplate(MonitorTemplatesEntity monitorTemplatesEntity) throws Exception {
         monitorTemplatesRepo.saveAndFlush(monitorTemplatesEntity);
     }

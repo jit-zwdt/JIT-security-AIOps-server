@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
@@ -149,6 +150,7 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String addHost(HostEntity host, String auth) throws Exception {
         //调用zabbix接口进行保存
         String hostid = createHostToZabbix(host,auth);
@@ -161,12 +163,13 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String deleteHost(HostEntity host , String auth) throws Exception {
         //调用zabbix接口进行删除
         String hostid = zabbixHostService.delete(host.getHostId(), auth);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
-            hostRepo.save(host);
+            hostRepo.saveAndFlush(host);
         }
         return hostid;
     }
@@ -177,23 +180,25 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String updateHost(HostEntity host,String auth) throws Exception {
         //调用zabbix接口进行保存
         String hostid = updateHostToZabbix(host,auth);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
-            hostRepo.save(host);
+            hostRepo.saveAndFlush(host);
         }
         return hostid;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String updateHostEnableMonitor(HostEntity host,String auth) throws Exception {
         //调用zabbix接口进行保存
         String hostid = updateHostStatusToZabbix(host.getHostId(), host.getEnableMonitor(),auth);
         if (StringUtils.isNotEmpty(hostid)) {
             //更新本地
-            hostRepo.save(host);
+            hostRepo.saveAndFlush(host);
         }
         return hostid;
     }

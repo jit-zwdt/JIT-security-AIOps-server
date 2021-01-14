@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -89,6 +90,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysUserEntity addUser(SysUserEntity params) throws Exception {
         if (params.getId() != null && params.getId() != "") {
             params.setUpdateBy(userService.findIdByUsername());
@@ -102,10 +104,11 @@ public class SysUserServiceImpl implements SysUserService {
             params.setCreateBy(userService.findIdByUsername());
             params.setGmtCreate(LocalDateTime.now());
         }
-        return sysUserRepo.save(params);
+        return sysUserRepo.saveAndFlush(params);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysUserEntity updatePassword(SysUserEntity params) throws Exception {
         if (params.getId() != null && params.getId() != "") {
             if (params.getPassword() != null && params.getPassword() != "") {

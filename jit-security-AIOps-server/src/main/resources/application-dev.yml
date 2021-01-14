@@ -71,9 +71,14 @@ sftp:
 logging:
   level:
     root: info
+    org:
+      springframework:
+        orm:
+          jpa:
+            DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
-    level: debug
+    level: DEBUG
   file:
     name: c:/mylog/JIT-security-AIOps-server.log
