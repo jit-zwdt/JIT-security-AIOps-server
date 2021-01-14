@@ -7,7 +7,7 @@ server:
     context-path: /api
 zabbix:
   api:
-    url: http://${ZABBIX_APIURL:172.19.0.5}:${ZABBIX_APIPORT:8080}/
+    url: http://${ZABBIX_APIURL:172.19.0.2}:${ZABBIX_APIPORT:8080}/
   username: ${ZABBIXUSERNAME:Admin}
   password: ${ZABBIXPASSWORD:zabbix}
 spring:
