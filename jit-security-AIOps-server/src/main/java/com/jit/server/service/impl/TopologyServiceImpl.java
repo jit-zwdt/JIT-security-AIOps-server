@@ -8,6 +8,7 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -37,6 +38,7 @@ public class TopologyServiceImpl implements TopologyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addTopology(MonitorTopologyEntity topology) throws Exception {
         topologyRepo.save(topology);
     }

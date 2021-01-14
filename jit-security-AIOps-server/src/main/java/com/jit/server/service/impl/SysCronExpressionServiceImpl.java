@@ -87,6 +87,7 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
      * @return 添加成功的时间表达式对象
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysCronExpressionEntity addCronExpression(SysCronExpressionEntity cronExpression) {
 
         // 获取的登录人的用户名

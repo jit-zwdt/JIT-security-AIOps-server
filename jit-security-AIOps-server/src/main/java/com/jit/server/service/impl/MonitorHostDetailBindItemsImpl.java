@@ -7,6 +7,8 @@ import com.jit.server.repository.MonitorHostDetailBindItemsRepo;
 import com.jit.server.service.MonitorHostDetailBindItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +27,7 @@ public class MonitorHostDetailBindItemsImpl implements MonitorHostDetailBindItem
     private MonitorHostDetailBindItemsRepo monitorHostDetailBindItemsRepo;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MonitorHostDetailBindItems saveOrUpdateMonitorHostDetailBindItems(MonitorHostDetailBindItems monitorHostDetailBindItems) throws Exception {
         return monitorHostDetailBindItemsRepo.saveAndFlush(monitorHostDetailBindItems);
     }

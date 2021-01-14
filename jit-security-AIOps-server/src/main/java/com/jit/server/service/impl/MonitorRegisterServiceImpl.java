@@ -7,6 +7,7 @@ import com.jit.server.repository.MonitorRegisterRepo;
 import com.jit.server.service.MonitorRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class MonitorRegisterServiceImpl implements MonitorRegisterService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MonitorRegisterEntity addRegister(MonitorRegisterEntity monitorRegisterEntity) {
         MonitorRegisterEntity registerEntity = monitorRegisterRepo.save(monitorRegisterEntity);
         return registerEntity;

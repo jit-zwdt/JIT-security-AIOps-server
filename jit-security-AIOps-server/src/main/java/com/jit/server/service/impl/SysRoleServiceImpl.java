@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -89,6 +90,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysRoleEntity saveOrUpdateRole(SysRoleEntity sysRoleEntity) throws Exception {
         return sysRoleRepo.saveAndFlush(sysRoleEntity);
     }
@@ -137,6 +139,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String saveOrUpdateUserRole(SysUserRoleEntity sysUserRoleEntity) throws Exception {
         return sysUserRoleRepo.saveAndFlush(sysUserRoleEntity).getId();
     }
@@ -180,6 +183,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String saveOrUpdateRoleMenu(SysRoleMenuEntity sysRoleMenuEntity) throws Exception {
         return sysRoleMenuRepo.saveAndFlush(sysRoleMenuEntity).getId();
     }

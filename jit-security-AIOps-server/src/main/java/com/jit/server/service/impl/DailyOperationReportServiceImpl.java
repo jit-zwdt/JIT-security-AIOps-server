@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -204,6 +205,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MonitorDailyOperationReportEntity addDailyOperationReport(MonitorDailyOperationReportEntity monitorDailyOperationReportEntity) throws Exception {
         return monitorDailyOperationReportRepo.saveAndFlush(monitorDailyOperationReportEntity);
     }

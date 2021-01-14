@@ -154,6 +154,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addSysMenu(SysMenuEntity sysMenuEntity) throws Exception {
         sysMenuRepo.save(sysMenuEntity);
     }
@@ -164,8 +165,9 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateSysMenu(SysMenuEntity sysMenuEntity) throws Exception {
-        sysMenuRepo.save(sysMenuEntity);
+        sysMenuRepo.saveAndFlush(sysMenuEntity);
     }
 
     /**

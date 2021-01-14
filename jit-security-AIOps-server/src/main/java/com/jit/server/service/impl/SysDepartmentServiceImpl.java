@@ -8,6 +8,7 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String saveOrUpdateDepartment(SysDepartmentEntity department) throws Exception {
         if (department != null) {
             return sysDepartmentRepo.saveAndFlush(department).getId();

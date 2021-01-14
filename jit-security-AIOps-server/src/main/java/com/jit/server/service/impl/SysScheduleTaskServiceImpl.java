@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -89,6 +90,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
      * save and start schedule job.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String saveAndScheduleJob(SysScheduleTaskEntity sysScheduleTaskEntity) throws Exception {
         String id = sysScheduleTaskRepo.saveAndFlush(sysScheduleTaskEntity).getId();
         if (StringUtils.isNotBlank(id)) {
