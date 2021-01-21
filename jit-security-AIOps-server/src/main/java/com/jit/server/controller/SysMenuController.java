@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -65,9 +64,8 @@ public class SysMenuController {
     public Result getBySysMenu(@PathVariable String id) {
         try {
             if (StringUtils.isNotEmpty(id)) {
-                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
-                if (bean.isPresent()) {
-                    SysMenuEntity sysMenuEntity = bean.get();
+                SysMenuEntity sysMenuEntity = sysMenuService.findBySysMenuId(id);
+                if (sysMenuEntity != null) {
                     return Result.SUCCESS(sysMenuEntity);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
@@ -135,9 +133,8 @@ public class SysMenuController {
     public Result updateMenus(@RequestBody SysMenuListDTO sysMenuListDTO) {
         try {
             if (sysMenuListDTO != null && StringUtils.isNotEmpty(sysMenuListDTO.getId())) {
-                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(sysMenuListDTO.getId());
-                if (bean.isPresent()) {
-                    SysMenuEntity sysMenuEntity = bean.get();
+                SysMenuEntity sysMenuEntity = sysMenuService.findBySysMenuId(sysMenuListDTO.getId());
+                if (sysMenuEntity != null) {
                     BeanUtils.copyProperties(sysMenuListDTO, sysMenuEntity);
                     // 添加自己手动转类型的方法
                     sysMenuEntity.setIsShow(Integer.parseInt(sysMenuListDTO.getIsShow()));
@@ -181,9 +178,8 @@ public class SysMenuController {
     @AutoLog(value = "菜单管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteMenus(@PathVariable String id) {
         try {
-            Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
-            if (bean.isPresent()) {
-                SysMenuEntity sysMenuEntity = bean.get();
+            SysMenuEntity sysMenuEntity = sysMenuService.findBySysMenuId(id);
+            if (sysMenuEntity != null) {
                 sysMenuEntity.setGmtModified(LocalDateTime.now());
                 sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                 sysMenuEntity.setIsDeleted(ConstUtil.IS_DELETED);
@@ -246,9 +242,8 @@ public class SysMenuController {
     public Result judgeOfChild(@PathVariable String id) {
         try {
             if (StringUtils.isNotEmpty(id)) {
-                Optional<SysMenuEntity> bean = sysMenuService.findBySysMenuId(id);
-                if (bean.isPresent()) {
-                    SysMenuEntity sysMenuEntity = bean.get();
+                SysMenuEntity sysMenuEntity = sysMenuService.findBySysMenuId(id);
+                if (sysMenuEntity != null) {
                     // 如果parenid 等于0 ，证明是一级菜单 ，需判断是否有二级菜单
                     if (sysMenuEntity.getParentId().equals("0")) {
                         // 当id 与 parenid 有相等的证明有二级菜单
