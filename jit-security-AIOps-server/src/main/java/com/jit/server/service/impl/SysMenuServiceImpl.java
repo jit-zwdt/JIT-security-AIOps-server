@@ -160,7 +160,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
-    public Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception {
+    public SysMenuEntity findBySysMenuId(String id) throws Exception {
         return sysMenuRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
     }
 

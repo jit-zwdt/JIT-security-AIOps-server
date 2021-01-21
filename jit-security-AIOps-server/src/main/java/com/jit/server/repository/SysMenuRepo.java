@@ -30,7 +30,7 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
     @Query("SELECT srm FROM SysUserRoleEntity ur, SysRoleEntity sr, SysRoleMenuEntity srm WHERE sr.id = ur.roleId and sr.isDeleted = 0 and sr.id = srm.roleId and srm.isDeleted = 0 and ur.userId = ?1 and ur.isDeleted = 0")
     List<SysRoleMenuEntity> findSysRoleMenuEntityList(String id);
 
-    Optional<SysMenuEntity> findByIdAndIsDeleted(String id, int isDeleted);
+    SysMenuEntity findByIdAndIsDeleted(String id, int isDeleted);
 
     List<SysMenuEntity> findByParentId(String parentid);
 

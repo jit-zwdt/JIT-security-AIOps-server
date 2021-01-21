@@ -12,7 +12,9 @@ public interface SysMenuService {
     List<SysMenuDTO> getMenus(String userid) throws Exception;
     List<SysMenuListDTO> getMenusList() throws Exception;
     void addSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
-    Optional<SysMenuEntity> findBySysMenuId(String id) throws Exception;
+
+    SysMenuEntity findBySysMenuId(String id) throws Exception;
+
     void updateSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
     List<SysMenuListDTO> getMenusFirst() throws Exception;
 

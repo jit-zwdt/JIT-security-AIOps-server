@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.SysUserDTO;
 import com.jit.server.pojo.SysUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -35,4 +36,9 @@ public interface SysUserRepo extends JpaRepository<SysUserEntity, String>, JpaSp
 
     @Query("SELECT u.name FROM SysUserEntity u WHERE u.username = ?1 and u.isDeleted = 0")
     String findNameByUsername(String username);
+
+    @Query(value = "SELECT new com.jit.server.dto.SysUserDTO(u.id, u.username, u.name, u.workNo, u.mobile, u.sex, u.birth, u.picId, u.picUrl, u.departmentId, u.province, u.city, u.liveAddress, u.hobby, u.email,u.status) FROM SysUserEntity u WHERE u.id = ?1 and u.isDeleted = 0")
+    SysUserDTO findUserById(String id);
+
+    SysUserEntity findByIdAndIsDeleted(String id, int isDeleted);
 }

@@ -93,7 +93,7 @@ public class SysDepartmentController {
     public Result getDepartment(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                return Result.SUCCESS(sysDepartmentService.getDepartment(id));
+                return Result.SUCCESS(sysDepartmentService.getDepartmentInfo(id));
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
@@ -173,6 +173,7 @@ public class SysDepartmentController {
 
     /**
      * 修改或者添加部门
+     *
      * @param department 需要进行添加或者修改的部门数据 添加没有实体类的 id
      * @return 部门 ID
      */

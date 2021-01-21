@@ -1,5 +1,7 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.SysDepartmentDTO;
+import com.jit.server.dto.SysDepartmentInfoDTO;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysDepartmentEntity;
 
@@ -16,6 +18,8 @@ public interface SysDepartmentService {
 
     String saveOrUpdateDepartment(SysDepartmentEntity department) throws Exception;
 
+    SysDepartmentInfoDTO getDepartmentInfo(String id) throws Exception;
+
     SysDepartmentEntity getDepartment(String id) throws Exception;
 
     List<String> getSubDepIds(String id) throws Exception;
@@ -24,5 +28,5 @@ public interface SysDepartmentService {
 
     SysDepartmentEntity getDepartmentByDepartCode(String code);
 
-    List<SysDepartmentEntity> getAllDepartment();
+    List<SysDepartmentDTO> getAllDepartment();
 }

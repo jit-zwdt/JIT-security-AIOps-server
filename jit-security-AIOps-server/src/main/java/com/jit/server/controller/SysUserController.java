@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
+import com.jit.server.dto.SysUserDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.request.SysUserEntityParams;
@@ -20,10 +21,8 @@ import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -48,7 +47,7 @@ public class SysUserController {
     public Result getUsers(@RequestBody PageRequest<SysUserEntityParams> params) {
 
         try {
-            Page<SysUserEntity> sysUserEntities = sysUserService.getUsers(params);
+            Page<SysUserDTO> sysUserEntities = sysUserService.getUsers(params);
             Map<String, Object> result = new HashMap<>(5);
             result.put("page", params.getPage());
             result.put("size", params.getSize());
@@ -66,7 +65,8 @@ public class SysUserController {
     @AutoLog(value = "人员管理-新增", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addUser(@RequestBody SysUserEntity params) {
         try {
-            return Result.SUCCESS(sysUserService.addUser(params));
+            sysUserService.addUser(params);
+            return Result.SUCCESS(null);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -74,9 +74,10 @@ public class SysUserController {
 
     @PostMapping("/updateUser")
     @AutoLog(value = "人员管理-修改/冻结", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result updateUser(@RequestBody SysUserEntity params) {
+    public Result updateUser(@RequestBody SysUserDTO params) {
         try {
-            return Result.SUCCESS(sysUserService.addUser(params));
+            sysUserService.updateUser(params);
+            return Result.SUCCESS(null);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -86,7 +87,8 @@ public class SysUserController {
     @AutoLog(value = "人员管理-更改密码", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result updatePassword(@RequestBody SysUserEntity params) {
         try {
-            return Result.SUCCESS(sysUserService.updatePassword(params));
+            sysUserService.updatePassword(params);
+            return Result.SUCCESS(null);
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
@@ -96,13 +98,9 @@ public class SysUserController {
     @AutoLog(value = "人员管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result deleteUser(@PathVariable String id) {
         try {
-            Optional<SysUserEntity> bean = sysUserService.findById(id);
-            if (bean.isPresent()) {
-                SysUserEntity sysUserEntity = bean.get();
-                sysUserEntity.setGmtModified(LocalDateTime.now());
-                sysUserEntity.setIsDeleted(ConstUtil.IS_DELETED);
-                SysUserEntity sysUser = sysUserService.addUser(sysUserEntity);
-                return Result.SUCCESS(sysUser);
+            if (StringUtils.isNotBlank(id)) {
+                sysUserService.deleteUser(id);
+                return Result.SUCCESS(null);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
@@ -115,10 +113,9 @@ public class SysUserController {
     @AutoLog(value = "人员管理-详情", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getUserById(@PathVariable String id) {
         try {
-            Optional<SysUserEntity> bean = sysUserService.findById(id);
-            if (bean.isPresent()) {
-                SysUserEntity sysDictionaryEntity = bean.get();
-                return Result.SUCCESS(sysDictionaryEntity);
+            SysUserDTO sysUserDTO = sysUserService.findUserById(id);
+            if (sysUserDTO != null) {
+                return Result.SUCCESS(sysUserDTO);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
@@ -131,10 +128,9 @@ public class SysUserController {
     public Result getUserInfo() {
         try {
             String id = userService.findIdByUsername();
-            Optional<SysUserEntity> bean = sysUserService.findById(id);
-            if (bean.isPresent()) {
-                SysUserEntity sysDictionaryEntity = bean.get();
-                return Result.SUCCESS(sysDictionaryEntity);
+            SysUserDTO user = sysUserService.findUserById(id);
+            if (user != null) {
+                return Result.SUCCESS(user);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }

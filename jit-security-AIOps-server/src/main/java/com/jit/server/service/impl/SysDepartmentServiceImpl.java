@@ -1,5 +1,7 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.SysDepartmentDTO;
+import com.jit.server.dto.SysDepartmentInfoDTO;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysDepartmentEntity;
 import com.jit.server.repository.SysDepartmentRepo;
@@ -65,9 +67,15 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
     }
 
     @Override
+    public SysDepartmentInfoDTO getDepartmentInfo(String id) throws Exception {
+        return sysDepartmentRepo.findDepartmentInfo(id);
+    }
+
+    @Override
     public SysDepartmentEntity getDepartment(String id) throws Exception {
         return sysDepartmentRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
     }
+
 
     @Override
     public List<String> getSubDepIds(String parentId) throws Exception {
@@ -81,11 +89,11 @@ public class SysDepartmentServiceImpl implements SysDepartmentService {
 
     @Override
     public SysDepartmentEntity getDepartmentByDepartCode(String code) {
-        return sysDepartmentRepo.findByDepartCodeAndIsDeleted(code,ConstUtil.IS_NOT_DELETED);
+        return sysDepartmentRepo.findByDepartCodeAndIsDeleted(code, ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
-    public List<SysDepartmentEntity> getAllDepartment() {
-        return sysDepartmentRepo.findByIsDeleted(ConstUtil.IS_NOT_DELETED);
+    public List<SysDepartmentDTO> getAllDepartment() {
+        return sysDepartmentRepo.findDepartmentInfos();
     }
 }

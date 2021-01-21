@@ -26,7 +26,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -58,9 +57,9 @@ public class InspectionManageController {
     public Result getHostInfo(@RequestParam("id") String id) {
         try {
             List<HostEntity> bean = inspectionManageService.getHostInfo(id);
-            if (bean!=null) {
+            if (bean != null) {
                 return Result.SUCCESS(bean);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -70,7 +69,7 @@ public class InspectionManageController {
 
     @PostMapping("/addTimerTaskInfo")
     @AutoLog(value = "巡检计划管理-添加", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result addTimerTaskInfo(@RequestParam("param") String param , String id) {
+    public Result addTimerTaskInfo(@RequestParam("param") String param, String id) {
         try {
             if (param == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -79,7 +78,7 @@ public class InspectionManageController {
             String sysScheduleId = saveTimerTaskInfo(param, null);
             if (sysScheduleId != null && !sysScheduleId.isEmpty()) {
                 return Result.SUCCESS(sysScheduleId);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -90,7 +89,7 @@ public class InspectionManageController {
 
     @PostMapping("/updateTimerTaskInfo")
     @AutoLog(value = "巡检计划管理-编辑", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result updateTimerTaskInfo(@RequestParam("param") String param , String id){
+    public Result updateTimerTaskInfo(@RequestParam("param") String param, String id) {
         try {
             if (param == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -99,7 +98,7 @@ public class InspectionManageController {
             String sysScheduleId = saveTimerTaskInfo(param, id);
             if (sysScheduleId != null && !sysScheduleId.isEmpty()) {
                 return Result.SUCCESS(sysScheduleId);
-            }else{
+            } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
@@ -136,7 +135,7 @@ public class InspectionManageController {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(os != null){
+            if (os != null) {
                 try {
                     // 关闭流对象
                     os.close();
@@ -159,7 +158,7 @@ public class InspectionManageController {
             ChannelSftp csftp = sftp.connect(sftpConfig);
             csftp.cd(sftpConfig.getRemoteRootPath());
             input = csftp.get(ftpFilePath);
-            IOUtils.copy(input,response.getOutputStream());
+            IOUtils.copy(input, response.getOutputStream());
             //设置返回值属性
             response.setCharacterEncoding("utf-8");
             //设置返回的文件是 pdf 文件
@@ -170,7 +169,7 @@ public class InspectionManageController {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(input != null){
+            if (input != null) {
                 try {
                     // 关闭流对象
                     input.close();
@@ -185,6 +184,7 @@ public class InspectionManageController {
      * 根据传递的参数进行查询 巡检信息
      * 默认情况下查询所有的父级别数据
      * 如果需要查询所有的子数据需要传入 parentId 字段值不为 null 就可以
+     *
      * @param params 参数对象
      * @return Result 返回值对象
      */
@@ -208,13 +208,14 @@ public class InspectionManageController {
 
     /**
      * 根据 id 删除数据数据 如果有子数据也会自动删除子数据
-     * @param id monitor_scheme_timer_task 表的 id
+     *
+     * @param id         monitor_scheme_timer_task 表的 id
      * @param scheduleId sys_schedule_task 表的 id
      * @return 统一返回对象
      */
     @DeleteMapping("/deleteMonitorSchemeTimerTask/{id}/{scheduleId}")
     @AutoLog(value = "巡检计划管理-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result deleteMonitorSchemeTimerTask(@PathVariable String id , @PathVariable String scheduleId){
+    public Result deleteMonitorSchemeTimerTask(@PathVariable String id, @PathVariable String scheduleId) {
         //非空校验
         if (id == null) {
             return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
@@ -233,11 +234,12 @@ public class InspectionManageController {
 
     /**
      * 更新 , 添加巡检计划管理的方法
+     *
      * @param param 添加信息参数
-     * @param id 进行修改的 id 如果添加则传入 null 即可
+     * @param id    进行修改的 id 如果添加则传入 null 即可
      * @return sysScheduleId 添加的数据 ID 信息
      */
-    private String saveTimerTaskInfo(String param , String id) throws Exception {
+    private String saveTimerTaskInfo(String param, String id) throws Exception {
         String auth = zabbixAuthService.getAuth();
         String username = userService.findNamebyUsername();
         JSONObject jsonObject = JSONObject.parseObject(param);
@@ -245,24 +247,22 @@ public class InspectionManageController {
         MonitorSchemeTimerTaskEntity monitorSchemeTimerTaskEntity = null;
         if (id == null) {
             monitorSchemeTimerTaskEntity = inspectionManageService.addMonitorSchemeTimerTask(jsonObject.toString());
-            jsonObject.put("parentId" , monitorSchemeTimerTaskEntity.getId());
-            jsonObject.put("createTime",monitorSchemeTimerTaskEntity.getGmtCreate());
+            jsonObject.put("parentId", monitorSchemeTimerTaskEntity.getId());
+            jsonObject.put("createTime", monitorSchemeTimerTaskEntity.getGmtCreate());
         }
         String userId = userService.findIdByUsername();
-        Optional<SysUserEntity> bean = sysUserService.findById(userId);
-        SysUserEntity sysDictionaryEntity = new SysUserEntity();
+        SysUserEntity sysDictionaryEntity = sysUserService.findById(userId);
         String mobile = "";
-        if (bean.isPresent()) {
-            sysDictionaryEntity = bean.get();
+        if (sysDictionaryEntity != null) {
             mobile = sysDictionaryEntity.getMobile() != "" ? sysDictionaryEntity.getMobile() : "无";
         }
-        jsonObject.put("auth",auth);
-        jsonObject.put("username",username);
-        jsonObject.put("userId",userId);
+        jsonObject.put("auth", auth);
+        jsonObject.put("username", username);
+        jsonObject.put("userId", userId);
         jsonObject.put("mobile", mobile);
         ScheduleTaskParams st = new ScheduleTaskParams();
         st.setId(id);
-        st.setCronExpression(jsonObject.get("timerTask")+"");
+        st.setCronExpression(jsonObject.get("timerTask") + "");
         st.setJobClassName("com.jit.server.job.TimerTask");
         st.setJobMethodName("taskWithParams");
         // 设置初始状态为关闭
@@ -280,7 +280,7 @@ public class InspectionManageController {
         // 获取传递的参数
         JSONObject JsonParam = JSONObject.parseObject(scheduleTask.getJsonParam());
         // 设置 scheduleId 值
-        JsonParam.put("scheduleId" , sysScheduleId);
+        JsonParam.put("scheduleId", sysScheduleId);
         // 设置 st 对象的 sysScheduleId 设置完成后可以进行更新操作
         st.setId(sysScheduleId);
         // 设置传入参数对象
