@@ -81,7 +81,7 @@ public class HomePageServiceImpl implements HomePageService {
             }
         }
         //未定义信息统计添加
-//        jsonObject.put("not_classified" , not_classified);
+        jsonObject.put("not_classified" , not_classified);
         //信息信息统计添加
         jsonObject.put("information" , information);
         //警告信息统计添加
