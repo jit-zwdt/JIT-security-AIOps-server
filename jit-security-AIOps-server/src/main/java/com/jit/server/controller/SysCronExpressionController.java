@@ -88,7 +88,7 @@ public class SysCronExpressionController {
         // 进行数据的添加
         SysCronExpressionEntity cronExpressionData = sysCronExpressionService.addCronExpression(cronExpression);
         if (cronExpressionData.getId() != null) {
-            return Result.SUCCESS(cronExpressionData);
+            return Result.SUCCESS(null);
         }
         return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
     }
