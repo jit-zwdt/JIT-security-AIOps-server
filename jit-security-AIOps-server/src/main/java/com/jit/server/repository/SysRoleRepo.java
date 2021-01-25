@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.SysRoleDTO;
 import com.jit.server.pojo.SysRoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,4 +23,7 @@ public interface SysRoleRepo extends JpaRepository<SysRoleEntity, String>, JpaSp
     SysRoleEntity findByIdAndIsDeleted(String id, int isDeleted);
 
     List<SysRoleEntity> findByIsDeleted(int isDeleted);
+
+    @Query("select new com.jit.server.dto.SysRoleDTO(r.id, r.roleName, r.roleSign, r.remark) from SysRoleEntity r where r.isDeleted = 0 and r.id = ?1")
+    SysRoleDTO findRoleById(String id);
 }

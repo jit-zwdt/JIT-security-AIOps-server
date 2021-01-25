@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.SysRoleDTO;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysRoleEntity;
@@ -41,7 +42,7 @@ public class SysRoleController {
     @AutoLog(value = "角色维护-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getPageRoles(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
-            Page<SysRoleEntity> sysUserEntities = sysRoleService.getRoles(params);
+            Page<SysRoleDTO> sysUserEntities = sysRoleService.getRoles(params);
             Map<String, Object> result = new HashMap<>(5);
             result.put("page", params.getPage());
             result.put("size", params.getSize());
@@ -137,11 +138,11 @@ public class SysRoleController {
     public Result getRole(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                SysRoleEntity sysRoleEntity = sysRoleService.findByIdAndIsDeleted(id);
-                if (sysRoleEntity == null) {
+                SysRoleDTO sysRoleDTO = sysRoleService.findRoleById(id);
+                if (sysRoleDTO == null) {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
-                return Result.SUCCESS(sysRoleEntity);
+                return Result.SUCCESS(sysRoleDTO);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
