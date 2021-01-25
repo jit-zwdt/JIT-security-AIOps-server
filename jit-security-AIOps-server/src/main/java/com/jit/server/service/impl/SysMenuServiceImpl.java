@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.dto.SysMenuDTO;
+import com.jit.server.dto.SysMenuInfoDTO;
 import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.dto.SysMenuMetaDTO;
 import com.jit.server.pojo.SysMenuEntity;
@@ -157,6 +158,11 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Transactional(rollbackFor = Exception.class)
     public void addSysMenu(SysMenuEntity sysMenuEntity) throws Exception {
         sysMenuRepo.save(sysMenuEntity);
+    }
+
+    @Override
+    public SysMenuInfoDTO findSysMenuInfoBySysMenuId(String id) throws Exception {
+        return sysMenuRepo.findSysMenuById(id);
     }
 
     @Override

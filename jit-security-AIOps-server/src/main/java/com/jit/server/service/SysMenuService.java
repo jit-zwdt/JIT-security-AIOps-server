@@ -1,6 +1,7 @@
 package com.jit.server.service;
 
 import com.jit.server.dto.SysMenuDTO;
+import com.jit.server.dto.SysMenuInfoDTO;
 import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.pojo.SysMenuEntity;
 
@@ -13,7 +14,9 @@ public interface SysMenuService {
     List<SysMenuListDTO> getMenusList() throws Exception;
     void addSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
 
-    SysMenuEntity findBySysMenuId(String id) throws Exception;
+    SysMenuEntity findBySysMenuId(String id)throws Exception;
+
+    SysMenuInfoDTO findSysMenuInfoBySysMenuId(String id) throws Exception;
 
     void updateSysMenu(SysMenuEntity sysMenuEntity) throws Exception;
     List<SysMenuListDTO> getMenusFirst() throws Exception;

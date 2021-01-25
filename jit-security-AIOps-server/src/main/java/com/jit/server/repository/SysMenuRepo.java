@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.SysMenuInfoDTO;
 import com.jit.server.pojo.SysMenuEntity;
 import com.jit.server.pojo.SysRoleMenuEntity;
 import com.jit.server.pojo.SysUserEntity;
@@ -30,7 +31,8 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
     @Query("SELECT srm FROM SysUserRoleEntity ur, SysRoleEntity sr, SysRoleMenuEntity srm WHERE sr.id = ur.roleId and sr.isDeleted = 0 and sr.id = srm.roleId and srm.isDeleted = 0 and ur.userId = ?1 and ur.isDeleted = 0")
     List<SysRoleMenuEntity> findSysRoleMenuEntityList(String id);
 
-    SysMenuEntity findByIdAndIsDeleted(String id, int isDeleted);
+    @Query("SELECT new com.jit.server.dto.SysMenuInfoDTO(u.id, u.sid, u.parentId, u.name, u.title, u.path, u.component, u.icon, u.menuType, u.isShow, u.orderNum, u.redirect, u.isRoute, u.hiddenRoute) FROM SysMenuEntity u WHERE  u.isDeleted = 0 and u.id = ?1")
+    SysMenuInfoDTO findSysMenuById(String id);
 
     List<SysMenuEntity> findByParentId(String parentid);
 
@@ -48,4 +50,6 @@ public interface SysMenuRepo extends JpaRepository<SysMenuEntity, String>, JpaSp
 
     @Query("SELECT u.sid FROM SysMenuEntity u WHERE  u.isDeleted = 0 and u.parentId = '0' order by u.orderNum")
     List<String> getLevelOneMenuSids();
+
+    SysMenuEntity findByIdAndIsDeleted(String id, int isNotDeleted);
 }
