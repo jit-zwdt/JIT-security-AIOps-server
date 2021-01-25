@@ -15,5 +15,5 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DictionaryDTO {
     private Integer num;
-    private SysDictionaryEntity dictionaryEntity;
+    private SysDictionaryDTO sysDictionaryDTO;
 }

@@ -1,6 +1,6 @@
 package com.jit.server.repository;
 
-import com.jit.server.pojo.SysDictionaryEntity;
+import com.jit.server.dto.SysDictionaryItemDTO;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +32,7 @@ public interface DictionaryItemRepo extends JpaRepository<SysDictionaryItemEntit
 
     @Query(value = "select di.item_text from sys_dict_item di,sys_dict d where di.is_deleted = 0 and d.is_deleted = 0 and di.dict_id = d.id and d.dict_code = ?1 and di.item_value = ?2 ", nativeQuery = true)
     String findItemTextByDictCodeAndItemValue(String dictCode, String itemValue);
+
+    @Query("select new com.jit.server.dto.SysDictionaryItemDTO(i.id, i.dictId, i.itemText, i.itemValue, i.description, i.sortOrder, i.status) from SysDictionaryItemEntity i where i.id = ?1 and i.isDeleted = 0")
+    SysDictionaryItemDTO findDictItemById(String id);
 }
