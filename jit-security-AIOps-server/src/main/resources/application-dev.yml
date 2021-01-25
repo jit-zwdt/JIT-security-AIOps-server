@@ -75,7 +75,7 @@ logging:
       springframework:
         orm:
           jpa:
-            DEBUG
+            info
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger:%L : %msg%n"
