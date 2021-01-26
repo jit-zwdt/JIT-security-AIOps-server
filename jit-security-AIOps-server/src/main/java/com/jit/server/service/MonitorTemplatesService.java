@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.MonitorTemplatesDTO;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.request.MonitorTemplatesParams;
 import com.jit.server.util.PageRequest;
@@ -11,7 +12,7 @@ public interface MonitorTemplatesService {
 
     List<MonitorTemplatesEntity> getMonitorTemplates() throws Exception;
 
-    Page<MonitorTemplatesEntity> getMonitorTemplates(PageRequest<MonitorTemplatesParams> params) throws Exception;
+    Page<MonitorTemplatesDTO> getMonitorTemplates(PageRequest<MonitorTemplatesParams> params) throws Exception;
 
     MonitorTemplatesEntity getMonitorTemplate(String id) throws Exception;
 

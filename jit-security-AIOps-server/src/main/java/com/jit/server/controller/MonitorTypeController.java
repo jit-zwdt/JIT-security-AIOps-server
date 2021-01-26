@@ -1,5 +1,6 @@
 package com.jit.server.controller;
 
+import com.jit.server.dto.MonitorTypesDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorTypeEntity;
 import com.jit.server.service.MonitorTypeService;
@@ -32,7 +33,7 @@ public class MonitorTypeController {
     @PostMapping(value = "/getMonitorTypes")
     public Result getMonitorTemplates() {
         try {
-            List<MonitorTypeEntity> monitorTemplatesList = monitorTypeService.getMonitorTypes();
+            List<MonitorTypesDTO> monitorTemplatesList = monitorTypeService.getMonitorTypes();
             return Result.SUCCESS(monitorTemplatesList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,7 +45,7 @@ public class MonitorTypeController {
     @PostMapping(value = "/getMonitorSubTypes")
     public Result getMonitorSubTemplates() {
         try {
-            List<MonitorTypeEntity> monitorTemplatesList = monitorTypeService.getMonitorSubTypes();
+            List<MonitorTypesDTO> monitorTemplatesList = monitorTypeService.getMonitorSubTypes();
             return Result.SUCCESS(monitorTemplatesList);
         } catch (Exception e) {
             e.printStackTrace();
