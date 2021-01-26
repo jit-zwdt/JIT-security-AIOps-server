@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.SysLogDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysLogEntity;
 import com.jit.server.service.SysLogService;
@@ -53,7 +54,7 @@ public class SysLogController {
                              int currentSize){
         try {
             //进行调用业务层进行数据的查询
-            Page<SysLogEntity> sysLogs = sysLogService.findSysLog(logType, logContent, startTime, endTime, operationType, currentPage, currentSize);
+            Page<SysLogDTO> sysLogs = sysLogService.findSysLog(logType, logContent, startTime, endTime, operationType, currentPage, currentSize);
             //返回数据
             return Result.SUCCESS(sysLogs);
         } catch (Exception e) {
