@@ -23,7 +23,6 @@ import com.jit.zabbix.client.service.ZabbixProblemService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -328,7 +327,7 @@ public class HomePageController {
      * @return JSON 对象拼接的数据
      */
     @GetMapping("/getAssetData")
-    public Result getAssetData(){
+    public Result getAssetData() throws Exception {
         //调用资产管理层进行数据的查询
         List<Object[]> sumResult = assetsService.getCountAndSum();
         // 再次封装数据进行状态的自主拼接
