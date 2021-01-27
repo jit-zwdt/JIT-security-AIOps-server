@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.HostDTO;
 import com.jit.server.pojo.HostEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -86,4 +87,7 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
      * @return HostEntity 集合对象
      */
     List<HostEntity> findByAssetsIdAndDeleted(String assetsId, int isDeleted);
+
+    @Query("SELECT new com.jit.server.dto.HostDTO(id, hostId, objectName, businessName, assetsId, proxyMonitor, enableMonitor, templatesId, typeId, subtypeId, groupId, remark, label, agentType, agentIp, agentDnsName, agentPort, jmxType, jmxIp, jmxDnsName, jmxPort, jmxMacro, snmpType, snmpIp, snmpDnsName, snmpPort, snmpMacro, ipmiType, ipmiIp, ipmiDnsName, ipmiPort, ipmiMacro, mssqlMacroInstance, mssqlMacroOdbc, mssqlMacroPassword, mssqlMacroUsername, oracleMacroIp, oracleMacroPort, oracleMacroAsm, oracleMacroDbname, oracleMacroPassword, oracleMacroUsername, vmMacroCpuFrequency, vmMacroPassword, vmMacroSdkLink, vmMacroUsername) FROM HostEntity h WHERE h.hostId=?1")
+    HostDTO findHostByHostId(String id);
 }

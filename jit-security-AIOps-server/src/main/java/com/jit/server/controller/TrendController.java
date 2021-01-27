@@ -183,28 +183,28 @@ public class TrendController {
             List<MonitorHostDetailBindItems> list3 = new ArrayList<>();
             List<MonitorHostDetailBindItems> list4 = new ArrayList<>();
             List<MonitorHostDetailBindItems> list5 = new ArrayList<>();
-            for(MonitorHostDetailBindItems m:monitorHostDetailBindItems){
-                if(m.getValueType() == 0){
+            for (MonitorHostDetailBindItems m : monitorHostDetailBindItems) {
+                if (m.getValueType() == 0) {
                     list1.add(m);
                 }
-                if(m.getValueType() == 1){
+                if (m.getValueType() == 1) {
                     list2.add(m);
                 }
-                if(m.getValueType() == 2){
+                if (m.getValueType() == 2) {
                     list3.add(m);
                 }
-                if(m.getValueType() == 3){
+                if (m.getValueType() == 3) {
                     list4.add(m);
                 }
-                if(m.getValueType() == 4){
+                if (m.getValueType() == 4) {
                     list5.add(m);
                 }
             }
 
-            if(list1.size()>0){
+            if (list1.size() > 0) {
                 HistoryParams type1 = new HistoryParams();
                 List<String> listType1 = new ArrayList<>();
-                for(MonitorHostDetailBindItems m:list1){
+                for (MonitorHostDetailBindItems m : list1) {
                     listType1.add(m.getItemId());
                 }
                 type1.setItemids(listType1);
@@ -214,13 +214,13 @@ public class TrendController {
                 type1.setTimefrom(historyParams.getTimefrom());
                 type1.setTimetill(historyParams.getTimetill());
                 List<ZabbixHistoryDTO> result1 = historyService.getHistoryInfoList(type1, auth1);
-                for(MonitorHostDetailBindItems m:list1){
+                for (MonitorHostDetailBindItems m : list1) {
                     m1 = new MonitorHostDetailBindItemsDTO();
                     m1.setItemId(m.getItemId());
                     List<ZabbixHistoryDTO> listHistory1 = new ArrayList<>();
                     m1.setMonitorHostDetailBindItems(m);
-                    for(ZabbixHistoryDTO z:result1){
-                        if(z.getItemId().equals(m.getItemId())){
+                    for (ZabbixHistoryDTO z : result1) {
+                        if (z.getItemId().equals(m.getItemId())) {
                             listHistory1.add(z);
                         }
                     }
@@ -228,10 +228,10 @@ public class TrendController {
                     list.add(m1);
                 }
             }
-            if(list2.size()>0){
+            if (list2.size() > 0) {
                 HistoryParams type2 = new HistoryParams();
                 List<String> listType2 = new ArrayList<>();
-                for(MonitorHostDetailBindItems m:list2){
+                for (MonitorHostDetailBindItems m : list2) {
                     listType2.add(m.getItemId());
                 }
                 type2.setItemids(listType2);
@@ -241,13 +241,13 @@ public class TrendController {
                 type2.setTimefrom(historyParams.getTimefrom());
                 type2.setTimetill(historyParams.getTimetill());
                 List<ZabbixHistoryDTO> result2 = historyService.getHistoryInfoList(type2, auth2);
-                for(MonitorHostDetailBindItems m:list2){
+                for (MonitorHostDetailBindItems m : list2) {
                     m2 = new MonitorHostDetailBindItemsDTO();
                     m2.setItemId(m.getItemId());
                     List<ZabbixHistoryDTO> listHistory2 = new ArrayList<>();
                     m2.setMonitorHostDetailBindItems(m);
-                    for(ZabbixHistoryDTO z:result2){
-                        if(z.getItemId().equals(m.getItemId())){
+                    for (ZabbixHistoryDTO z : result2) {
+                        if (z.getItemId().equals(m.getItemId())) {
                             listHistory2.add(z);
                         }
                     }
@@ -255,10 +255,10 @@ public class TrendController {
                     list.add(m2);
                 }
             }
-            if(list3.size()>0){
+            if (list3.size() > 0) {
                 HistoryParams type3 = new HistoryParams();
                 List<String> listType3 = new ArrayList<>();
-                for(MonitorHostDetailBindItems m:list3){
+                for (MonitorHostDetailBindItems m : list3) {
                     listType3.add(m.getItemId());
                 }
                 type3.setItemids(listType3);
@@ -268,13 +268,13 @@ public class TrendController {
                 type3.setTimefrom(historyParams.getTimefrom());
                 type3.setTimetill(historyParams.getTimetill());
                 List<ZabbixHistoryDTO> result3 = historyService.getHistoryInfoList(type3, auth3);
-                for(MonitorHostDetailBindItems m:list3){
+                for (MonitorHostDetailBindItems m : list3) {
                     m3 = new MonitorHostDetailBindItemsDTO();
                     m3.setItemId(m.getItemId());
                     List<ZabbixHistoryDTO> listHistory3 = new ArrayList<>();
                     m3.setMonitorHostDetailBindItems(m);
-                    for(ZabbixHistoryDTO z:result3){
-                        if(z.getItemId().equals(m.getItemId())){
+                    for (ZabbixHistoryDTO z : result3) {
+                        if (z.getItemId().equals(m.getItemId())) {
                             listHistory3.add(z);
                         }
                     }
@@ -282,10 +282,10 @@ public class TrendController {
                     list.add(m3);
                 }
             }
-            if(list4.size()>0){
+            if (list4.size() > 0) {
                 HistoryParams type4 = new HistoryParams();
                 List<String> listType4 = new ArrayList<>();
-                for(MonitorHostDetailBindItems m:list4){
+                for (MonitorHostDetailBindItems m : list4) {
                     listType4.add(m.getItemId());
                 }
                 type4.setItemids(listType4);
@@ -295,12 +295,12 @@ public class TrendController {
                 type4.setTimefrom(historyParams.getTimefrom());
                 type4.setTimetill(historyParams.getTimetill());
                 List<ZabbixHistoryDTO> result4 = historyService.getHistoryInfoList(type4, auth4);
-                for(MonitorHostDetailBindItems m:list4){
+                for (MonitorHostDetailBindItems m : list4) {
                     m4 = new MonitorHostDetailBindItemsDTO();
                     m4.setItemId(m.getItemId());
                     List<ZabbixHistoryDTO> listHistory4 = new ArrayList<>();
-                    for(ZabbixHistoryDTO z:result4){
-                        if(z.getItemId().equals(m.getItemId())){
+                    for (ZabbixHistoryDTO z : result4) {
+                        if (z.getItemId().equals(m.getItemId())) {
                             listHistory4.add(z);
                         }
                     }
@@ -309,10 +309,10 @@ public class TrendController {
                     list.add(m4);
                 }
             }
-            if(list5.size()>0){
+            if (list5.size() > 0) {
                 HistoryParams type5 = new HistoryParams();
                 List<String> listType5 = new ArrayList<>();
-                for(MonitorHostDetailBindItems m:list5){
+                for (MonitorHostDetailBindItems m : list5) {
                     listType5.add(m.getItemId());
                 }
                 type5.setItemids(listType5);
@@ -322,12 +322,12 @@ public class TrendController {
                 type5.setTimefrom(historyParams.getTimefrom());
                 type5.setTimetill(historyParams.getTimetill());
                 List<ZabbixHistoryDTO> result5 = historyService.getHistoryInfoList(type5, auth5);
-                for(MonitorHostDetailBindItems m:list5){
+                for (MonitorHostDetailBindItems m : list5) {
                     m5 = new MonitorHostDetailBindItemsDTO();
                     m5.setItemId(m.getItemId());
                     List<ZabbixHistoryDTO> listHistory5 = new ArrayList<>();
-                    for(ZabbixHistoryDTO z:result5){
-                        if(z.getItemId().equals(m.getItemId())){
+                    for (ZabbixHistoryDTO z : result5) {
+                        if (z.getItemId().equals(m.getItemId())) {
                             listHistory5.add(z);
                         }
                     }
@@ -350,17 +350,20 @@ public class TrendController {
             List<Map<String, Object>> listFinal = new ArrayList<>();
             List<MonitorHostDetailBindGraphs> list = monitorHostDetailBindGraphsService.findMonitorHostDetailBindGraphsByHostId(hostId, ConstUtil.IS_NOT_DELETED);
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-            for(MonitorHostDetailBindGraphs m:list){
+            for (MonitorHostDetailBindGraphs m : list) {
                 Map<String, Object> finalResult = new HashMap<>();
                 finalResult.put("id", m.getId());
                 List<String> listTemp = new ArrayList<>();
                 listTemp.add(m.getGraphId());
                 graphItemParams.setGraphids(listTemp);
-                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams,auth);
+                List<ZabbixGetGraphItemDTO> result = graphItemService.getGItemList(graphItemParams, auth);
+                if (result == null || result.isEmpty()) {
+                    continue;
+                }
                 finalResult.put("gItemData", result);
                 GraphPrototypeParams graphPrototypeParams = new GraphPrototypeParams();
                 graphPrototypeParams.setGraphids(graphItemParams.getGraphids());
-                List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams,auth);
+                List<ZabbixGetGraphPrototypeDTO> graph = graphPrototypeService.getGProList(graphPrototypeParams, auth);
                 finalResult.put("graphData", graph);
                 List<String> itemids = new ArrayList<>();
                 for (ZabbixGetGraphItemDTO z : result) {
@@ -371,7 +374,7 @@ public class TrendController {
                     itemParams.setItemids(itemids);
                     itemParams.setHostids(graphItemParams.getHostids());
                     List<ZabbixGetItemDTO> item = itemService.getItemInfoList(itemParams, auth);
-                    for(ZabbixGetItemDTO zabbixGetItemDTO:item){
+                    for (ZabbixGetItemDTO zabbixGetItemDTO : item) {
                         List<String> _itemId = new ArrayList<>();
                         HistoryParams historyParams = new HistoryParams();
                         _itemId.add(zabbixGetItemDTO.getId());

@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.HostDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.request.HostParams;
@@ -298,7 +299,7 @@ public class HostController {
     @PostMapping("/getHostIdInfo/{hostId}")
     public Result<HostEntity> getHostIdInfo(@PathVariable String hostId) {
         try{
-            HostEntity bean = hostService.findHostIdinfo(hostId);
+            HostDTO bean = hostService.findHostIdinfo(hostId);
             if (bean!=null) {
                 return Result.SUCCESS(bean);
             }else{

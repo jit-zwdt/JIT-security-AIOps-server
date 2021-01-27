@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.HostDTO;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.repository.HostRepo;
@@ -1144,8 +1145,8 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public HostEntity findHostIdinfo(String id) throws Exception {
-        return hostRepo.findByHostId(id);
+    public HostDTO findHostIdinfo(String id) throws Exception {
+        return hostRepo.findHostByHostId(id);
     }
 
     @Override

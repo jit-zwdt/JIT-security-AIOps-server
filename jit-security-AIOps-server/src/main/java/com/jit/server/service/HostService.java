@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.HostDTO;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.request.HostParams;
@@ -35,7 +36,7 @@ public interface HostService {
 
     public List<Map<String, String>> getTop5ByTrigger(Map<String, Object> params, String auth) throws Exception;
 
-    public HostEntity findHostIdinfo(String id) throws Exception;
+    HostDTO findHostIdinfo(String id) throws Exception;
 
     List<HostEntity> getHosts() throws Exception;
 
