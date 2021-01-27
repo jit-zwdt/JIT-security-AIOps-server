@@ -3,6 +3,7 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.exception.ExceptionEnum;
+import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.pojo.MonitorTopologyEntity;
 import com.jit.server.request.TopologyParams;
 import com.jit.server.service.HostService;
@@ -14,11 +15,13 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.Result;
 import com.jit.zabbix.client.dto.ZabbixHostDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -174,6 +177,26 @@ public class TopologyController {
                     info = info.substring(1, info.length());
                 }
                 return Result.SUCCESS(info);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @DeleteMapping("/deleteTopology/{id}")
+    @AutoLog(value = "网络拓扑图-删除", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result deleteTopology(@PathVariable String id, HttpServletRequest req) {
+        try {
+            if (StringUtils.isNotBlank(id)) {
+                Optional<MonitorTopologyEntity> bean = topologyService.getMonitorTopologInfo(id);
+                MonitorTopologyEntity topology = bean.get();
+                topology.setGmtModified(LocalDateTime.now());
+                topology.setUpdateBy(userService.findIdByUsername());
+                topology.setIsDeleted(ConstUtil.IS_DELETED);
+                topologyService.addTopology(topology);
+                return Result.SUCCESS(bean);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
