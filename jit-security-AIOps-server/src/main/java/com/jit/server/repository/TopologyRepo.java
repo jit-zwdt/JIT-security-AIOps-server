@@ -15,5 +15,5 @@ import java.util.List;
  */
 @Repository
 public interface TopologyRepo extends JpaRepository<MonitorTopologyEntity, String>, JpaSpecificationExecutor<MonitorTopologyEntity> {
-    List<MonitorTopologyEntity> findByInfoNameLikeAndIsDeleted(String infoName, int isDeleted);
+    List<MonitorTopologyEntity> findByInfoNameLikeAndIsDeletedOrderByGmtCreateDesc(String infoName, int isDeleted);
 }

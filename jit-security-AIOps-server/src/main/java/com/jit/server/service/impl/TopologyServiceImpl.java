@@ -34,7 +34,7 @@ public class TopologyServiceImpl implements TopologyService {
 
     @Override
     public List<MonitorTopologyEntity> getMonitorTopologAllInfo(String infoName) throws Exception {
-        return topologyRepo.findByInfoNameLikeAndIsDeleted("%"+infoName+"%", ConstUtil.IS_NOT_DELETED);
+        return topologyRepo.findByInfoNameLikeAndIsDeletedOrderByGmtCreateDesc("%"+infoName+"%", ConstUtil.IS_NOT_DELETED);
     }
 
     @Override
