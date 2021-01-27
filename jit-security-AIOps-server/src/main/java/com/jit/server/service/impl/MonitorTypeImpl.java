@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 
+import com.jit.server.dto.MonitorTypesDTO;
 import com.jit.server.pojo.MonitorTypeEntity;
 import com.jit.server.repository.MonitorTypeRepo;
 import com.jit.server.service.MonitorTypeService;
@@ -17,13 +18,13 @@ public class MonitorTypeImpl implements MonitorTypeService {
     MonitorTypeRepo monitorTypeRepo;
 
     @Override
-    public List<MonitorTypeEntity> getMonitorTypes() throws Exception {
-        return monitorTypeRepo.findByPidAndIsDeletedOrderByOrderNum("0", ConstUtil.IS_NOT_DELETED);
+    public List<MonitorTypesDTO> getMonitorTypes() throws Exception {
+        return monitorTypeRepo.findMonitorTypesByPid(ConstUtil.PID_0);
     }
 
     @Override
-    public List<MonitorTypeEntity> getMonitorSubTypes() throws Exception {
-        return monitorTypeRepo.findByPidNotAndIsDeletedOrderByOrderNum("0", ConstUtil.IS_NOT_DELETED);
+    public List<MonitorTypesDTO> getMonitorSubTypes() throws Exception {
+        return monitorTypeRepo.findMonitorSubTypesByPid(ConstUtil.PID_0);
     }
 
     @Override

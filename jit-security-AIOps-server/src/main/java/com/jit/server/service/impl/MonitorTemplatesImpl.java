@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 
+import com.jit.server.dto.MonitorTemplatesDTO;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.repository.MonitorTemplatesRepo;
 import com.jit.server.request.MonitorTemplatesParams;
@@ -10,25 +11,28 @@ import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MonitorTemplatesImpl implements MonitorTemplatesService {
 
     @Autowired
     MonitorTemplatesRepo monitorTemplatesRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     public List<MonitorTemplatesEntity> getMonitorTemplates() throws Exception {
@@ -37,49 +41,53 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
     }
 
     @Override
-    public Page<MonitorTemplatesEntity> getMonitorTemplates(PageRequest<MonitorTemplatesParams> params) throws Exception {
+    public Page<MonitorTemplatesDTO> getMonitorTemplates(PageRequest<MonitorTemplatesParams> params) throws Exception {
         MonitorTemplatesParams param = params.getParam();
         if (param != null) {
-            //条件
-            Specification<MonitorTemplatesEntity> spec = new Specification<MonitorTemplatesEntity>() {
-                @Override
-                public Predicate toPredicate(Root<MonitorTemplatesEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
-                    if (StringUtils.isNotBlank(param.getName())) {
-                        list.add(cb.like(root.get("name").as(String.class), "%"+param.getName()+"%"));
-                    }
-                    if (StringUtils.isNotBlank(param.getType())) {
-                        list.add(cb.equal(root.get("typeId").as(String.class), param.getType()));
-                    }
-                    Predicate[] arr = new Predicate[list.size()];
-                    return cb.and(list.toArray(arr));
-                }
-            };
-            //排序的定义
-            List<Map<String, String>> orders = params.getOrders();
-            List<Sort.Order> orderList = new ArrayList<>();
-            if (orders != null && !orders.isEmpty()) {
-                Sort.Direction direction = Sort.Direction.ASC;
-                for (Map<String, String> order : orders) {
-                    if (StringUtils.isNotBlank(order.get("property"))) {
-                        String d = order.get("direction");
-                        if (StringUtils.isNotBlank(d)) {
-                            if (Sort.Direction.DESC.name().equals(d.toUpperCase())) {
-                                direction = Sort.Direction.DESC;
-                            }
-                        }
-                        Sort.Order o = new Sort.Order(direction, order.get("property"));
-                        orderList.add(o);
-                    }
-                }
-            } else {
-                orderList.add(new Sort.Order(Sort.Direction.ASC, "typeId"));
+            int size = params.getSize();
+            int page = params.getPage() - 1;
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MonitorTemplatesDTO> query = cb.createQuery(MonitorTemplatesDTO.class);
+            Root<MonitorTemplatesEntity> root = query.from(MonitorTemplatesEntity.class);
+            Path<String> id = root.get("id");
+            Path<String> name = root.get("name");
+            Path<String> typeId = root.get("typeId");
+            Path<String> subtypeIds = root.get("subtypeIds");
+            Path<String> templateIds = root.get("templateIds");
+            Path<String> templates = root.get("templates");
+            Path<String> helpDoc = root.get("helpDoc");
+            Path<String> tempKey = root.get("tempKey");
+            Path<Integer> orderNum = root.get("orderNum");
+            Path<String> ico = root.get("ico");
+            //查询字段
+            query.multiselect(id, name, typeId, subtypeIds, templateIds, templates, helpDoc, tempKey, orderNum, ico);
+            //查询条件
+            List<Predicate> list = new ArrayList<Predicate>();
+            list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            if (StringUtils.isNotBlank(param.getName())) {
+                list.add(cb.like(name.as(String.class), "%" + param.getName() + "%"));
             }
-            Sort sort = Sort.by(orderList);
+            if (StringUtils.isNotBlank(param.getType())) {
+                list.add(cb.equal(typeId.as(String.class), param.getType()));
+            }
+            Predicate[] arr = new Predicate[list.size()];
+            arr = list.toArray(arr);
+            query.where(arr);
+            query.orderBy(cb.asc(typeId));
+            TypedQuery<MonitorTemplatesDTO> typedQuery = entityManager.createQuery(query);
+            int startIndex = size * page;
+            typedQuery.setFirstResult(startIndex);
+            typedQuery.setMaxResults(params.getSize());
+            //总条数
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<MonitorTemplatesEntity> root1 = countQuery.from(MonitorTemplatesEntity.class);
+            countQuery.where(arr);
+            countQuery.select(cb.count(root1));
+            long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
             //分页的定义
-            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-            return this.monitorTemplatesRepo.findAll(spec, pageable);
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            Page<MonitorTemplatesDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+            return res;
         }
         return null;
     }

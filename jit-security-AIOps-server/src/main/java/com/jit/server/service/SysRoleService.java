@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.SysRoleDTO;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysRoleEntity;
@@ -13,13 +14,15 @@ import java.util.Map;
 
 public interface SysRoleService {
 
-    Page<SysRoleEntity> getRoles(PageRequest<Map<String, Object>> params) throws Exception;
+    Page<SysRoleDTO> getRoles(PageRequest<Map<String, Object>> params) throws Exception;
 
     SysRoleEntity getRoleByRoleName(String name) throws Exception;
 
     SysRoleEntity getRoleByRoleSign(String sign) throws Exception;
 
     SysRoleEntity findByIdAndIsDeleted(String id) throws Exception;
+
+    SysRoleDTO findRoleById(String id) throws Exception;
 
     SysRoleEntity saveOrUpdateRole(SysRoleEntity sysRoleEntity) throws Exception;
 

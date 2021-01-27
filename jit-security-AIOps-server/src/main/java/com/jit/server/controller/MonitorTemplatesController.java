@@ -3,6 +3,8 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.MonitorTemplatesDTO;
+import com.jit.server.dto.MonitorTypesDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorTemplatesEntity;
 import com.jit.server.pojo.MonitorTypeEntity;
@@ -69,13 +71,13 @@ public class MonitorTemplatesController {
     public Result getMonitorTemplates(@RequestBody PageRequest<MonitorTemplatesParams> params) {
 
         try {
-            Page<MonitorTemplatesEntity> monitorTemplatesList = monitorTemplatesService.getMonitorTemplates(params);
+            Page<MonitorTemplatesDTO> monitorTemplatesDTOS = monitorTemplatesService.getMonitorTemplates(params);
             Map<String, Object> result = new HashMap<String, Object>();
             result.put("page", params.getPage());
             result.put("size", params.getSize());
-            result.put("totalRow", monitorTemplatesList.getTotalElements());
-            result.put("totalPage", monitorTemplatesList.getTotalPages());
-            result.put("dataList", monitorTemplatesList.getContent());
+            result.put("totalRow", monitorTemplatesDTOS.getTotalElements());
+            result.put("totalPage", monitorTemplatesDTOS.getTotalPages());
+            result.put("dataList", monitorTemplatesDTOS.getContent());
             return Result.SUCCESS(result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,7 +167,7 @@ public class MonitorTemplatesController {
     public Result getTemplates(@RequestParam String keyword, @RequestParam String type) {
         try {
             JSONArray jsonArray = new JSONArray();
-            List<MonitorTypeEntity> monitorTypeEntityList;
+            List<MonitorTypesDTO> monitorTypesDTOList;
             if (StringUtils.isNotBlank(type)) {
                 MonitorTypeEntity monitorTypeEntity = monitorTypeService.getMonitorTypesById(type);
                 JSONObject jsonObject = new JSONObject();
@@ -180,12 +182,12 @@ public class MonitorTemplatesController {
                 jsonObject.put("templates", monitorTemplatesEntityList);
                 jsonArray.add(jsonObject);
             } else {
-                monitorTypeEntityList = monitorTypeService.getMonitorTypes();
-                if (monitorTypeEntityList != null && !monitorTypeEntityList.isEmpty()) {
-                    for (MonitorTypeEntity monitorTypeEntity : monitorTypeEntityList) {
+                monitorTypesDTOList = monitorTypeService.getMonitorTypes();
+                if (monitorTypesDTOList != null && !monitorTypesDTOList.isEmpty()) {
+                    for (MonitorTypesDTO monitorTypesDTO : monitorTypesDTOList) {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("type", monitorTypeEntity.getType());
-                        String typeId = monitorTypeEntity.getId();
+                        jsonObject.put("type", monitorTypesDTO.getType());
+                        String typeId = monitorTypesDTO.getId();
                         List<MonitorTemplatesEntity> monitorTemplatesEntityList;
                         if (StringUtils.isNotBlank(keyword)) {
                             monitorTemplatesEntityList = monitorTemplatesService.getMonitorTemplatesByTypeIdAndNameLike(typeId, keyword);

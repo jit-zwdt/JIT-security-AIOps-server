@@ -1,6 +1,8 @@
 package com.jit.server.service;
 
 import com.jit.server.dto.DictDTO;
+import com.jit.server.dto.SysDictionaryDTO;
+import com.jit.server.dto.SysDictionaryItemDTO;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import org.springframework.data.domain.Page;
@@ -9,33 +11,33 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DictionaryService {
-    Page<SysDictionaryEntity> getDictionary(String name, String code, int currentPage, int pageSize);
+    Page<SysDictionaryDTO> getDictionary(String name, String code, int currentPage, int pageSize);
 
-    int getCount(String name, String code);
+    int getCount(String name, String code) throws Exception;
 
-    Optional<SysDictionaryEntity> findById(String id);
+    SysDictionaryDTO findSysDictionaryById(String id) throws Exception;
 
     SysDictionaryEntity updateDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception;
 
     SysDictionaryEntity addDictionary(SysDictionaryEntity sysDictionaryEntity) throws Exception;
 
-    Page<SysDictionaryItemEntity> findByDictId(String id, String itemName, int status, int currentPage, int pageSize);
+    Page<SysDictionaryItemDTO> findByDictId(String id, String itemName, int status, int currentPage, int pageSize) throws Exception;
 
-    Optional<SysDictionaryItemEntity> findDictionaryItemById(String id);
+    Optional<SysDictionaryItemEntity> findDictionaryItemById(String id) throws Exception;
 
     SysDictionaryItemEntity updateDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception;
 
     SysDictionaryItemEntity addDictionaryItem(SysDictionaryItemEntity sysDictionaryItemEntity) throws Exception;
 
-    int getDictionaryItemCount(String id, String itemText, int status);
+    int getDictionaryItemCount(String id, String itemText, int status) throws Exception;
 
-    SysDictionaryEntity getByDictName(String dictName);
+    SysDictionaryEntity getByDictName(String dictName) throws Exception;
 
-    SysDictionaryEntity getByDictCode(String dictCode);
+    SysDictionaryEntity getByDictCode(String dictCode) throws Exception;
 
-    SysDictionaryItemEntity getByItemText(String itemName, String dictId);
+    SysDictionaryItemEntity getByItemText(String itemName, String dictId) throws Exception;
 
-    List<SysDictionaryItemEntity> getDictionaryByCode(String code);
+    List<SysDictionaryItemDTO> getDictionaryItemsByCode(String code) throws Exception;
 
     List<DictDTO> getDictByCode(String code) throws Exception;
 
@@ -48,4 +50,8 @@ public interface DictionaryService {
      * @throws Exception
      */
     String getItemTextByDictCodeAndItemValue(String dictCode, String itemValue) throws Exception;
+
+    Optional<SysDictionaryEntity> findById(String id) throws Exception;
+
+    SysDictionaryItemDTO findDictItemById(String id) throws Exception;
 }

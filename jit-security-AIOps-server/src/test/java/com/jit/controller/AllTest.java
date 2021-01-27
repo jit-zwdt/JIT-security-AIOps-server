@@ -1,8 +1,8 @@
 package com.jit.controller;
 
 import com.jit.Application;
+import com.jit.server.dto.SysLogDTO;
 import com.jit.server.pojo.SysCronExpressionEntity;
-import com.jit.server.pojo.SysLogEntity;
 import com.jit.server.service.AssetsService;
 import com.jit.server.service.SysCronExpressionService;
 import com.jit.server.service.SysLogService;
@@ -20,13 +20,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * 测试类
  * 测试代码 暂时只放了 测试 FTP 下载代码的测试
+ *
  * @author oldwang <br />
  * 创建时间: 2020.10.22
  */
@@ -45,6 +49,7 @@ public class AllTest {
 
     /**
      * 测试 FTP 文件下载
+     *
      * @throws IOException
      */
     @Test
@@ -65,7 +70,7 @@ public class AllTest {
      * 测试添加时间表达式对象
      */
     @Test
-    public void testAddCronExpression(){
+    public void testAddCronExpression() {
         //创建需要添加的对象
         SysCronExpressionEntity cronExpression = new SysCronExpressionEntity();
         cronExpression.setCronExpressionDesc("1111");
@@ -79,7 +84,7 @@ public class AllTest {
      * 测试是有有对应的数据
      */
     @Test
-    public void testGetCronExpressionDesc(){
+    public void testGetCronExpressionDesc() {
         boolean flag = sysCronExpressionService.checkAddCronExpressionDesc("每隔10");
         System.out.println(flag);
     }
@@ -88,18 +93,19 @@ public class AllTest {
      * 测试删除方法
      */
     @Test
-    public void testDelCronExpression(){
+    public void testDelCronExpression() {
         sysCronExpressionService.delCronExpression("1");
     }
 
     /**
      * 测试 导出 Xls 文件书写方法
+     *
      * @throws IOException
      */
     @Test
     public void createXls() throws IOException {
         //需要生成的表格数据
-        String[][] dataArray = {{"出现问题" , "0" , "" , "16"} , {"认领问题" , "0" , "" , "1"} , {"处理中问题" , "0" , "" , "0"} , {"解决问题" , "0" , "" , "1"}};
+        String[][] dataArray = {{"出现问题", "0", "", "16"}, {"认领问题", "0", "", "1"}, {"处理中问题", "0", "", "0"}, {"解决问题", "0", "", "1"}};
         //添加的数据的条数
         int rowSize = dataArray.length;
         //存储的文件名称
@@ -111,24 +117,24 @@ public class AllTest {
         //转换时间字符串
         String dataStr = formatter.format(LocalDateTime.now());
         //表头
-        String[] tableHeader = {"类别","当日新增数","当日新增详情","本月总数"};
+        String[] tableHeader = {"类别", "当日新增数", "当日新增详情", "本月总数"};
         //运维人
         String roleName = "管理员";
         //存储的文件
         File file = new File(fileName);
         //表的列数
-        short cellNumber=(short)tableHeader.length;
+        short cellNumber = (short) tableHeader.length;
         //创建一个Excel文件
         HSSFWorkbook workbook = new HSSFWorkbook();
         //创建一个工作表
         HSSFSheet sheet = workbook.createSheet(headName);
         //设置列宽
-        sheet.setColumnWidth(0 , 256*15+184);
-        sheet.setColumnWidth(1 , 256*10+184);
-        sheet.setColumnWidth(2 , 256*50+184);
-        sheet.setColumnWidth(3 , 256*20+184);
+        sheet.setColumnWidth(0, 256 * 15 + 184);
+        sheet.setColumnWidth(1, 256 * 10 + 184);
+        sheet.setColumnWidth(2, 256 * 50 + 184);
+        sheet.setColumnWidth(3, 256 * 20 + 184);
         //创建合并的单元格
-        CellRangeAddress region = new CellRangeAddress(0 , 0  , 0  , cellNumber - 1);
+        CellRangeAddress region = new CellRangeAddress(0, 0, 0, cellNumber - 1);
         //合并单元格
         sheet.addMergedRegion(region);
 
@@ -147,7 +153,7 @@ public class AllTest {
         //设置字体
         font.setFontName("楷体");
         //设置文字大小
-        font.setFontHeightInPoints((short)30);
+        font.setFontHeightInPoints((short) 30);
         //加粗
         font.setBold(true);
         //放入样式对象
@@ -190,7 +196,7 @@ public class AllTest {
         //放入
         cellTextStyle.setFont(font);
         //循环创建表头
-        for(int i = 0 ; i < cellNumber ; i++){
+        for (int i = 0; i < cellNumber; i++) {
             // 添加表头内容
             headCell = hssfRow.createCell(i);
             headCell.setCellValue(tableHeader[i]);
@@ -209,10 +215,10 @@ public class AllTest {
         cellTextStyle.setBorderRight(BorderStyle.THIN);
         cellTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
-        for(int i = 0 ; i < rowSize ; i++){
+        for (int i = 0; i < rowSize; i++) {
             hssfRow = sheet.createRow(2 + 1 + i);
             //添加文字
-            for(int b = 0 ; b < dataArray[i].length ; b++){
+            for (int b = 0; b < dataArray[i].length; b++) {
                 // 添加内容
                 headCell = hssfRow.createCell(b);
                 headCell.setCellValue(dataArray[i][b]);
@@ -222,7 +228,7 @@ public class AllTest {
         //添加尾行
         hssfRow = sheet.createRow(2 + 1 + rowSize);
         //设置行高
-        hssfRow.setHeight((short)500);
+        hssfRow.setHeight((short) 500);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
         //设置文字居中
@@ -232,7 +238,7 @@ public class AllTest {
         cellTextStyle.setBorderTop(BorderStyle.THIN);
         cellTextStyle.setBorderBottom(BorderStyle.THIN);
         //设置整个行的上下边框
-        for(int i = 0 ; i < cellNumber - 1 ; i++){
+        for (int i = 0; i < cellNumber - 1; i++) {
             headCell = hssfRow.createCell(i);
             headCell.setCellStyle(cellTextStyle);
         }
@@ -267,10 +273,10 @@ public class AllTest {
     }
 
     @Test
-    public void testFindSysLog(){
+    public void testFindSysLog() {
         LocalDateTime startTime = LocalDateTime.parse("2020-12-23T00:00:00");
         LocalDateTime endTime = LocalDateTime.parse("2020-12-24T00:00:00");
-        Page<SysLogEntity> sysLog = sysLogService.findSysLog(1, "定时", startTime, endTime, 2, 1, 5);
+        Page<SysLogDTO> sysLog = sysLogService.findSysLog(1, "定时", startTime, endTime, 2, 1, 5);
         System.out.println(sysLog.getContent());
         System.out.println(sysLog.getTotalElements());
         System.out.println(sysLog.getSize());

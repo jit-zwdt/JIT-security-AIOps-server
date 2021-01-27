@@ -71,4 +71,9 @@ public class ConstUtil {
      * jit 主机群组
      */
     public static final String HOSTGROUP_NAME = "正元";
+
+    /**
+     * PID 父类型节点 0
+     */
+    public static final String PID_0 = "0";
 }

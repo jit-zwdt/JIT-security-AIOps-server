@@ -1,6 +1,8 @@
 package com.jit.server.service.impl;
 
 import com.jit.server.dto.DictDTO;
+import com.jit.server.dto.SysDictionaryDTO;
+import com.jit.server.dto.SysDictionaryItemDTO;
 import com.jit.server.pojo.SysDictionaryEntity;
 import com.jit.server.pojo.SysDictionaryItemEntity;
 import com.jit.server.repository.DictionaryItemRepo;
@@ -11,16 +13,15 @@ import com.jit.server.util.ConstUtil;
 import com.jit.server.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,31 +43,46 @@ public class DictionaryServiceImpl implements DictionaryService {
     private EntityManager entityManager;
 
     @Override
-    public Page<SysDictionaryEntity> getDictionary(String name, String code, int currentPage, int pageSize) {
-        //条件
-        Specification<SysDictionaryEntity> spec = new Specification<SysDictionaryEntity>() {
-            @Override
-            public Predicate toPredicate(Root<SysDictionaryEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> list = new ArrayList<Predicate>();
-                list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+    public Page<SysDictionaryDTO> getDictionary(String name, String code, int page, int size) {
+        page = page - 1;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SysDictionaryDTO> query = cb.createQuery(SysDictionaryDTO.class);
+        Root<SysDictionaryEntity> root = query.from(SysDictionaryEntity.class);
+        Path<String> id = root.get("id");
+        Path<String> dictName = root.get("dictName");
+        Path<String> dictCode = root.get("dictCode");
+        Path<String> description = root.get("description");
+        Path<LocalDateTime> gmtCreate = root.get("gmtCreate");
+        //查询字段
+        query.multiselect(id, dictName, dictCode, description);
+        //查询条件
+        List<Predicate> list = new ArrayList<>();
+        list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+        if (com.jit.server.util.StringUtils.isNotEmpty(name)) {
+            list.add(cb.like(dictName.as(String.class), "%" + name + "%"));
+        }
 
-                if (com.jit.server.util.StringUtils.isNotEmpty(name)) {
-                    list.add(cb.like(root.get("dictName").as(String.class), "%" + name + "%"));
-                }
-
-                if (StringUtils.isNotEmpty(code)) {
-                    list.add(cb.like(root.get("dictCode").as(String.class), "%" + code + "%"));
-                }
-
-                Predicate[] arr = new Predicate[list.size()];
-                return cb.and(list.toArray(arr));
-            }
-        };
+        if (StringUtils.isNotEmpty(code)) {
+            list.add(cb.like(dictCode.as(String.class), "%" + code + "%"));
+        }
+        Predicate[] arr = new Predicate[list.size()];
+        arr = list.toArray(arr);
+        query.where(arr);
+        query.orderBy(cb.asc(gmtCreate));
+        TypedQuery<SysDictionaryDTO> typedQuery = entityManager.createQuery(query);
+        int startIndex = size * page;
+        typedQuery.setFirstResult(startIndex);
+        typedQuery.setMaxResults(size);
+        //总条数
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<SysDictionaryEntity> root1 = countQuery.from(SysDictionaryEntity.class);
+        countQuery.where(arr);
+        countQuery.select(cb.count(root1));
+        long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
         //分页的定义
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-
-        return this.dictionaryRepo.findAll(spec , pageable);
-
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        Page<SysDictionaryDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+        return res;
     }
 
     @Override
@@ -76,7 +92,12 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public Optional<SysDictionaryEntity> findById(String id) {
+    public SysDictionaryDTO findSysDictionaryById(String id) {
+        return dictionaryRepo.findSysDictionaryById(id);
+    }
+
+    @Override
+    public Optional<SysDictionaryEntity> findById(String id) throws Exception {
         return dictionaryRepo.findById(id);
     }
 
@@ -116,7 +137,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public List<SysDictionaryItemEntity> getDictionaryByCode(String code) {
+    public List<SysDictionaryItemDTO> getDictionaryItemsByCode(String code) {
 
         String comditionalSQL = "";
         String baseSQL = "SELECT " +
@@ -125,13 +146,8 @@ public class DictionaryServiceImpl implements DictionaryService {
                 "sysdictionaryitementity.itemText, " +
                 "sysdictionaryitementity.itemValue, " +
                 "sysdictionaryitementity.description, " +
-                "sysdictionaryitementity.gmtCreate, " +
-                "sysdictionaryitementity.gmtModified, " +
-                "sysdictionaryitementity.createBy, " +
-                "sysdictionaryitementity.updateBy, " +
                 "sysdictionaryitementity.sortOrder, " +
-                "sysdictionaryitementity.status, " +
-                "sysdictionaryitementity.isDeleted " +
+                "sysdictionaryitementity.status " +
                 "FROM " +
                 "SysDictionaryItemEntity sysdictionaryitementity " +
                 "LEFT JOIN SysDictionaryEntity sysdictionaryentity ON sysdictionaryentity.id = sysdictionaryitementity.dictId " +
@@ -150,31 +166,26 @@ public class DictionaryServiceImpl implements DictionaryService {
             res.setParameter(entry.getKey(), entry.getValue());
         }
         List<Object[]> resultList = res.getResultList();
-        List<SysDictionaryItemEntity> sysDictionaryItemEntities = null;
+        List<SysDictionaryItemDTO> sysDictionaryItemDTOS = null;
         if (resultList != null) {
             //创建集合
-            sysDictionaryItemEntities = new ArrayList<>();
-            for(int i = 0 ; i < resultList.size() ; i++){
+            sysDictionaryItemDTOS = new ArrayList<>();
+            for (int i = 0; i < resultList.size(); i++) {
                 //将对象取出
                 Object obj[] = resultList.get(i);
                 //创建对象
-                SysDictionaryItemEntity sysDictionaryItemEntity = new SysDictionaryItemEntity();
-                sysDictionaryItemEntity.setId(obj[0]+"");
-                sysDictionaryItemEntity.setDictId(obj[1]+"");
-                sysDictionaryItemEntity.setItemText(obj[2]+"");
-                sysDictionaryItemEntity.setItemValue(obj[3]+"");
-                sysDictionaryItemEntity.setDescription(obj[4]+"");
-                sysDictionaryItemEntity.setGmtCreate((java.time.LocalDateTime)obj[5]);
-                sysDictionaryItemEntity.setGmtModified((java.time.LocalDateTime)obj[6]);
-                sysDictionaryItemEntity.setCreateBy(obj[7]+"");
-                sysDictionaryItemEntity.setUpdateBy(obj[8]+"");
-                sysDictionaryItemEntity.setSortOrder((int)obj[9]);
-                sysDictionaryItemEntity.setStatus((int)obj[10]);
-                sysDictionaryItemEntity.setIsDeleted((int)obj[11]);
-                sysDictionaryItemEntities.add(sysDictionaryItemEntity);
+                SysDictionaryItemDTO sysDictionaryItemDTO = new SysDictionaryItemDTO();
+                sysDictionaryItemDTO.setId(obj[0] + "");
+                sysDictionaryItemDTO.setDictId(obj[1] + "");
+                sysDictionaryItemDTO.setItemText(obj[2] + "");
+                sysDictionaryItemDTO.setItemValue(obj[3] + "");
+                sysDictionaryItemDTO.setDescription(obj[4] + "");
+                sysDictionaryItemDTO.setSortOrder((int) obj[5]);
+                sysDictionaryItemDTO.setStatus((int) obj[6]);
+                sysDictionaryItemDTOS.add(sysDictionaryItemDTO);
             }
         }
-        return sysDictionaryItemEntities;
+        return sysDictionaryItemDTOS;
     }
 
     @Override
@@ -208,37 +219,51 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public Page<SysDictionaryItemEntity> findByDictId(String id, String itemText, int status, int currentPage, int pageSize) {
-        //条件
-        Specification<SysDictionaryItemEntity> spec = new Specification<SysDictionaryItemEntity>() {
-            @Override
-            public Predicate toPredicate(Root<SysDictionaryItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> list = new ArrayList<Predicate>();
-                list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+    public Page<SysDictionaryItemDTO> findByDictId(String pid, String text, int intStatus, int page, int size) {
+        page = page - 1;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SysDictionaryItemDTO> query = cb.createQuery(SysDictionaryItemDTO.class);
+        Root<SysDictionaryItemEntity> root = query.from(SysDictionaryItemEntity.class);
+        Path<String> id = root.get("id");
+        Path<String> dictId = root.get("dictId");
+        Path<String> itemText = root.get("itemText");
+        Path<String> itemValue = root.get("itemValue");
+        Path<String> description = root.get("description");
+        Path<Integer> sortOrder = root.get("sortOrder");
+        Path<Integer> status = root.get("status");
+        //查询字段
+        query.multiselect(id, dictId, itemText, itemValue, description, sortOrder, status);
+        //查询条件
+        List<Predicate> list = new ArrayList<>();
+        list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+        list.add(cb.equal(dictId.as(String.class), pid));
 
-                list.add(cb.equal(root.get("dictId").as(String.class),  id ));
-
-                if (StringUtils.isNotEmpty(itemText)) {
-                    list.add(cb.like(root.get("itemText").as(String.class), "%" + itemText + "%"));
-                }
-                if (status != -1) {
-                    list.add(cb.equal(root.get("status").as(Integer.class), status));
-                }
-                Predicate[] arr = new Predicate[list.size()];
-                return cb.and(list.toArray(arr));
-            }
-        };
-        //排序的定义
-        List<Sort.Order> list = new ArrayList<>();
-        Sort.Order order1 = new Sort.Order(Sort.Direction.ASC, "sortOrder");
-        list.add(order1);
-        Sort sort = Sort.by(list);
+        if (StringUtils.isNotEmpty(text)) {
+            list.add(cb.like(itemText.as(String.class), "%" + text + "%"));
+        }
+        if (intStatus != -1) {
+            list.add(cb.equal(status.as(Integer.class), intStatus));
+        }
+        Predicate[] arr = new Predicate[list.size()];
+        arr = list.toArray(arr);
+        query.where(arr);
+        query.orderBy(cb.asc(sortOrder));
+        TypedQuery<SysDictionaryItemDTO> typedQuery = entityManager.createQuery(query);
+        int startIndex = size * page;
+        typedQuery.setFirstResult(startIndex);
+        typedQuery.setMaxResults(size);
+        //总条数
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<SysDictionaryItemEntity> root1 = countQuery.from(SysDictionaryItemEntity.class);
+        countQuery.where(arr);
+        countQuery.select(cb.count(root1));
+        long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
         //分页的定义
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-
-        return this.dictionaryItemRepo.findAll(spec , pageable);
-
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        Page<SysDictionaryItemDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+        return res;
     }
+
 
     @Override
     public int getDictionaryItemCount(String id, String itemText, int status) {
@@ -250,6 +275,11 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public Optional<SysDictionaryItemEntity> findDictionaryItemById(String id) {
         return dictionaryItemRepo.findById(id);
+    }
+
+    @Override
+    public SysDictionaryItemDTO findDictItemById(String id) throws Exception {
+        return dictionaryItemRepo.findDictItemById(id);
     }
 
     @Override

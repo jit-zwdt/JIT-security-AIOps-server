@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.MonitorAssetsDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorAssetsEntity;
@@ -49,7 +50,7 @@ public class AssetsController {
     public Result getByConditions(@RequestBody PageRequest<AssetsParams> params, HttpServletResponse resp) {
         try {
             if (params != null) {
-                Page<MonitorAssetsEntity> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());
+                Page<MonitorAssetsDTO> pageResult = assetsService.findByCondition(params.getParam(), params.getPage(), params.getSize());
                 if (null != pageResult) {
                     Map<String, Object> result = new HashMap<>(3);
                     result.put("totalRow", pageResult.getTotalElements());
@@ -117,7 +118,7 @@ public class AssetsController {
                         }
                     });
                     assetsService.updateAssets(assets);
-                    return Result.SUCCESS(assets);
+                    return Result.SUCCESS(null);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
@@ -149,7 +150,7 @@ public class AssetsController {
                 assets.setGmtModified(LocalDateTime.now());
                 assets.setIsDeleted(ConstUtil.IS_DELETED);
                 assetsService.updateAssets(assets);
-                return Result.SUCCESS(assets);
+                return Result.SUCCESS(null);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
@@ -161,9 +162,9 @@ public class AssetsController {
     @PostMapping("/getAsset/{id}")
     public Result<MonitorAssetsEntity> getAsset(@PathVariable String id) {
         try {
-            Optional<MonitorAssetsEntity> bean = assetsService.findByAssetsId(id);
-            if (bean.isPresent()) {
-                return Result.SUCCESS(bean);
+            MonitorAssetsDTO monitorAssetsDTO = assetsService.findMonitorAssetByAssetsId(id);
+            if (monitorAssetsDTO != null) {
+                return Result.SUCCESS(monitorAssetsDTO);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
@@ -208,7 +209,7 @@ public class AssetsController {
      * @return 统一封装返回对象
      */
     @GetMapping("/validateIp")
-    public Result validateIp(String ip) {
+    public Result validateIp(String ip) throws Exception {
         // 调用方法验证 Ip 是否具有这个 Ip 地址
         boolean flag = assetsService.validateIp(ip);
         // 返回成功对象 flag 是业务层传输的值
@@ -222,7 +223,7 @@ public class AssetsController {
      * @return 统一封装返回对象
      */
     @GetMapping("/validateNumber")
-    public Result validateNumber(String number) {
+    public Result validateNumber(String number) throws Exception {
         // 调用方法验证 Ip 是否具有这个 Ip 地址
         boolean flag = assetsService.validateNumber(number);
         // 返回成功对象 flag 是业务层传输的值

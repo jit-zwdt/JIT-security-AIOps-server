@@ -2,6 +2,7 @@ package com.jit.server.controller;
 
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.dto.SysMenuDTO;
+import com.jit.server.dto.SysMenuInfoDTO;
 import com.jit.server.dto.SysMenuListDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.SysMenuEntity;
@@ -64,9 +65,9 @@ public class SysMenuController {
     public Result getBySysMenu(@PathVariable String id) {
         try {
             if (StringUtils.isNotEmpty(id)) {
-                SysMenuEntity sysMenuEntity = sysMenuService.findBySysMenuId(id);
-                if (sysMenuEntity != null) {
-                    return Result.SUCCESS(sysMenuEntity);
+                SysMenuInfoDTO sysMenuInfoDTO = sysMenuService.findSysMenuInfoBySysMenuId(id);
+                if (sysMenuInfoDTO != null) {
+                    return Result.SUCCESS(sysMenuInfoDTO);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
@@ -119,7 +120,7 @@ public class SysMenuController {
                 sysMenuEntity.setIsRoute(Integer.parseInt(menuParams.getIsRoute()));
                 sysMenuEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 sysMenuService.addSysMenu(sysMenuEntity);
-                return Result.SUCCESS(sysMenuEntity);
+                return Result.SUCCESS(null);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
@@ -149,7 +150,7 @@ public class SysMenuController {
                     sysMenuEntity.setGmtModified(LocalDateTime.now());
                     sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                     sysMenuService.updateSysMenu(sysMenuEntity);
-                    return Result.SUCCESS(sysMenuEntity);
+                    return Result.SUCCESS(null);
                 } else {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
@@ -166,8 +167,8 @@ public class SysMenuController {
     public Result updateIsShow(@PathVariable String id, @PathVariable int isShow) {
         try {
             //调用方法更新数据
-            SysMenuEntity sysMenuEntity = sysMenuService.updateIsShow(id, isShow);
-            return Result.SUCCESS(sysMenuEntity);
+            sysMenuService.updateIsShow(id, isShow);
+            return Result.SUCCESS(null);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
@@ -184,7 +185,7 @@ public class SysMenuController {
                 sysMenuEntity.setUpdateBy(userService.findIdByUsername());
                 sysMenuEntity.setIsDeleted(ConstUtil.IS_DELETED);
                 sysMenuService.updateSysMenu(sysMenuEntity);
-                return Result.SUCCESS(sysMenuEntity);
+                return Result.SUCCESS(null);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }

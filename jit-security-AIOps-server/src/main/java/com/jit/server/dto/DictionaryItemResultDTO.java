@@ -2,7 +2,6 @@ package com.jit.server.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.jit.server.pojo.SysDictionaryItemEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,6 @@ import java.util.List;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DictionaryItemResultDTO {
-    private List<SysDictionaryItemEntity> list;
+    private List<SysDictionaryItemDTO> list;
     private int count;
 }

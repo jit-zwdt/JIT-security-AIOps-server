@@ -2,8 +2,8 @@ package com.jit.server.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.SysLogDTO;
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.SysLogEntity;
 import com.jit.server.service.SysLogService;
 import com.jit.server.util.ConstLogUtil;
 import com.jit.server.util.Result;
@@ -11,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
@@ -53,7 +56,7 @@ public class SysLogController {
                              int currentSize){
         try {
             //进行调用业务层进行数据的查询
-            Page<SysLogEntity> sysLogs = sysLogService.findSysLog(logType, logContent, startTime, endTime, operationType, currentPage, currentSize);
+            Page<SysLogDTO> sysLogs = sysLogService.findSysLog(logType, logContent, startTime, endTime, operationType, currentPage, currentSize);
             //返回数据
             return Result.SUCCESS(sysLogs);
         } catch (Exception e) {

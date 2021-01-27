@@ -1,5 +1,6 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.SysRoleDTO;
 import com.jit.server.dto.TransferDTO;
 import com.jit.server.dto.TreeNode;
 import com.jit.server.pojo.SysRoleEntity;
@@ -15,16 +16,16 @@ import com.jit.server.util.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,31 +46,50 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Autowired
     private SysMenuRepo sysMenuRepo;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
-    public Page<SysRoleEntity> getRoles(PageRequest<Map<String, Object>> params) {
+    public Page<SysRoleDTO> getRoles(PageRequest<Map<String, Object>> params) {
         Map<String, Object> param = params.getParam();
         if (param != null && !param.isEmpty()) {
-            //条件
-            Specification<SysRoleEntity> spec = new Specification<SysRoleEntity>() {
-                @Override
-                public Predicate toPredicate(Root<SysRoleEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
-                    String roleName = param.get("roleName") != null ? param.get("roleName").toString() : "";
-                    if (StringUtils.isNotBlank(roleName)) {
-                        list.add(cb.like(root.get("roleName").as(String.class), "%" + roleName + "%"));
-                    }
-                    Predicate[] arr = new Predicate[list.size()];
-                    return cb.and(list.toArray(arr));
-                }
-            };
-            //排序的定义
-            List<Sort.Order> orderList = new ArrayList<>();
-            orderList.add(new Sort.Order(Sort.Direction.ASC, "gmtCreate"));
-            Sort sort = Sort.by(orderList);
+            int size = params.getSize();
+            int page = params.getPage() - 1;
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<SysRoleDTO> query = cb.createQuery(SysRoleDTO.class);
+            Root<SysRoleEntity> root = query.from(SysRoleEntity.class);
+            Path<String> id = root.get("id");
+            Path<String> roleName = root.get("roleName");
+            Path<String> roleSign = root.get("roleSign");
+            Path<String> remark = root.get("remark");
+            Path<LocalDateTime> gmtCreate = root.get("gmtCreate");
+            //查询字段
+            query.multiselect(id, roleName, roleSign, remark);
+            //查询条件
+            List<Predicate> list = new ArrayList<>();
+            list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            String name = param.get("roleName") != null ? param.get("roleName").toString() : "";
+            if (StringUtils.isNotBlank(name)) {
+                list.add(cb.like(root.get("roleName").as(String.class), "%" + name + "%"));
+            }
+            Predicate[] arr = new Predicate[list.size()];
+            arr = list.toArray(arr);
+            query.where(arr);
+            query.orderBy(cb.asc(gmtCreate));
+            TypedQuery<SysRoleDTO> typedQuery = entityManager.createQuery(query);
+            int startIndex = size * page;
+            typedQuery.setFirstResult(startIndex);
+            typedQuery.setMaxResults(params.getSize());
+            //总条数
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<SysRoleEntity> root1 = countQuery.from(SysRoleEntity.class);
+            countQuery.where(arr);
+            countQuery.select(cb.count(root1));
+            long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
             //分页的定义
-            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-            return sysRoleRepo.findAll(spec, pageable);
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            Page<SysRoleDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+            return res;
         }
         return null;
     }
@@ -87,6 +107,11 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Override
     public SysRoleEntity findByIdAndIsDeleted(String id) throws Exception {
         return sysRoleRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
+    }
+
+    @Override
+    public SysRoleDTO findRoleById(String id) throws Exception {
+        return sysRoleRepo.findRoleById(id);
     }
 
     @Override
