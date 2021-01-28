@@ -1,6 +1,7 @@
 package com.jit.server.service;
 
 import com.jit.server.dto.DailyOperationReportDTO;
+import com.jit.server.dto.MonitorDailyOperationReportDTO;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.request.DailyOperationReportParams;
 import com.jit.server.request.MonitorTemplatesParams;
@@ -30,9 +31,9 @@ public interface DailyOperationReportService {
 
     MonitorDailyOperationReportEntity addDailyOperationReport(MonitorDailyOperationReportEntity monitorDailyOperationReportEntity) throws Exception;
 
-    Page<MonitorDailyOperationReportEntity> getDailyOperationReports(PageRequest<Map<String,String>> params) throws Exception;
+    Page<MonitorDailyOperationReportDTO> getDailyOperationReports(PageRequest<Map<String,String>> params) throws Exception;
 
-    MonitorDailyOperationReportEntity getDailyOperationReportById(String id) throws Exception;
+    MonitorDailyOperationReportDTO getDailyOperationReportById(String id) throws Exception;
 
     /**
      * 导出 Xls 表格 数据根据传入的二维数组进行构建

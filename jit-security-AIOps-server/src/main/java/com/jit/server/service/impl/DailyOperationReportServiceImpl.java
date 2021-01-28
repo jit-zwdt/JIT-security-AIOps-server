@@ -1,6 +1,7 @@
 package com.jit.server.service.impl;
 
 
+import com.jit.server.dto.MonitorDailyOperationReportDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.repository.HostRepo;
@@ -22,16 +23,15 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,6 +53,9 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
 
     @Autowired
     private MonitorDailyOperationReportRepo monitorDailyOperationReportRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -211,49 +214,79 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
     }
 
     @Override
-    public Page<MonitorDailyOperationReportEntity> getDailyOperationReports(PageRequest<Map<String, String>> params) throws Exception {
+    public Page<MonitorDailyOperationReportDTO> getDailyOperationReports(PageRequest<Map<String, String>> params) throws Exception {
         Map<String, String> param = params.getParam();
         if (param != null) {
-            //条件
-            Specification<MonitorDailyOperationReportEntity> spec = new Specification<MonitorDailyOperationReportEntity>() {
-                @Override
-                public Predicate toPredicate(Root<MonitorDailyOperationReportEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            int size = params.getSize();
+            int page = params.getPage() - 1;
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MonitorDailyOperationReportDTO> query = cb.createQuery(MonitorDailyOperationReportDTO.class);
+            Root<MonitorDailyOperationReportEntity> root = query.from(MonitorDailyOperationReportEntity.class);
+            Path<String> id = root.get("id");
+            Path<String> operationUser = root.get("operationUser");
+            Path<LocalDateTime> operationTime = root.get("operationTime");
+            Path<String> signature = root.get("signature");
+            Path<LocalDate> signatureDate = root.get("signatureDate");
+            Path<String> newProblemNum = root.get("newProblemNum");
+            Path<String> newProblemDetail = root.get("newProblemDetail");
+            Path<String> newProblemTotal = root.get("newProblemTotal");
+            Path<String> claimedProblemNum = root.get("claimedProblemNum");
+            Path<String> claimedProblemDetail = root.get("claimedProblemDetail");
+            Path<String> claimedProblemTotal = root.get("claimedProblemTotal");
+            Path<String> processingProblemNum = root.get("processingProblemNum");
+            Path<String> processingProblemDetail = root.get("processingProblemDetail");
+            Path<String> processingProblemTotal = root.get("processingProblemTotal");
+            Path<String> solvedProblemNum = root.get("solvedProblemNum");
+            Path<String> solvedProblemDetail = root.get("solvedProblemDetail");
+            Path<String> solvedProblemTotail = root.get("solvedProblemTotail");
+            Path<LocalDateTime> gmtCreate = root.get("gmtCreate");
 
-                    if (StringUtils.isNotBlank(param.get("startGmtCreate")) && StringUtils.isNotBlank(param.get("endGmtCreate"))) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String startGmtCreate = sdf.format(new Date(Long.parseLong(param.get("startGmtCreate"))));
-                        String endGmtCreate = sdf.format(new Date(Long.parseLong(param.get("endGmtCreate"))));
-                        LocalDateTime startDateTime = startGmtCreate!="" ? LocalDateTime.parse(startGmtCreate, formatter): null;
-                        LocalDateTime endDateTime = endGmtCreate!="" ? LocalDateTime.parse(endGmtCreate, formatter): null;
-                        list.add(cb.greaterThanOrEqualTo(root.get("gmtCreate"), startDateTime));
-                        list.add(cb.lessThanOrEqualTo(root.get("gmtCreate"), endDateTime));
-                    }
-                    Predicate[] arr = new Predicate[list.size()];
-                    return cb.and(list.toArray(arr));
-                }
-            };
-            //排序的定义
-            List<Map<String, String>> orders = params.getOrders();
-            List<Sort.Order> orderList = new ArrayList<>();
-            orderList.add(new Sort.Order(Sort.Direction.ASC, "gmtCreate"));
-            Sort sort = Sort.by(orderList);
+            //查询字段
+            query.multiselect(id, operationUser, operationTime, signature, signatureDate, newProblemNum, newProblemDetail, newProblemTotal, claimedProblemNum, claimedProblemDetail, claimedProblemTotal,
+                    processingProblemNum, processingProblemDetail, processingProblemTotal, solvedProblemNum, solvedProblemDetail, solvedProblemTotail, gmtCreate);
+            //查询条件
+            List<Predicate> list = new ArrayList<>();
+            list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            if (StringUtils.isNotBlank(param.get("startGmtCreate")) && StringUtils.isNotBlank(param.get("endGmtCreate"))) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String startGmtCreate = sdf.format(new Date(Long.parseLong(param.get("startGmtCreate"))));
+                String endGmtCreate = sdf.format(new Date(Long.parseLong(param.get("endGmtCreate"))));
+                LocalDateTime startDateTime = startGmtCreate != "" ? LocalDateTime.parse(startGmtCreate, formatter) : null;
+                LocalDateTime endDateTime = endGmtCreate != "" ? LocalDateTime.parse(endGmtCreate, formatter) : null;
+                list.add(cb.greaterThanOrEqualTo(root.get("gmtCreate"), startDateTime));
+                list.add(cb.lessThanOrEqualTo(root.get("gmtCreate"), endDateTime));
+            }
+            Predicate[] arr = new Predicate[list.size()];
+            arr = list.toArray(arr);
+            query.where(arr);
+            query.orderBy(cb.asc(gmtCreate));
+            TypedQuery<MonitorDailyOperationReportDTO> typedQuery = entityManager.createQuery(query);
+            int startIndex = size * page;
+            typedQuery.setFirstResult(startIndex);
+            typedQuery.setMaxResults(params.getSize());
+            //总条数
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<MonitorDailyOperationReportEntity> root1 = countQuery.from(MonitorDailyOperationReportEntity.class);
+            countQuery.where(arr);
+            countQuery.select(cb.count(root1));
+            long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
             //分页的定义
-            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-            return this.monitorDailyOperationReportRepo.findAll(spec, pageable);
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            Page<MonitorDailyOperationReportDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+            return res;
         }
         return null;
     }
 
 
     @Override
-    public MonitorDailyOperationReportEntity getDailyOperationReportById(String id) throws Exception {
-        return monitorDailyOperationReportRepo.findByIdAndIsDeleted(id,ConstUtil.IS_NOT_DELETED);
+    public MonitorDailyOperationReportDTO getDailyOperationReportById(String id) throws Exception {
+        return monitorDailyOperationReportRepo.findMonitorDailyOperationReportById(id);
     }
 
     /**
      * 导出 Xls 表格 数据根据传入的二维数组进行构建
+     *
      * @param dataArray 二维数组数据对象
      * @return Xls 表格对象
      */
@@ -270,18 +303,18 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //运维人
         String roleName = dataArray[0][0];
         //表的列数
-        short cellNumber=(short)tableHeader.length;
+        short cellNumber = (short) tableHeader.length;
         //创建一个Excel文件
         HSSFWorkbook workbook = new HSSFWorkbook();
         //创建一个工作表
         HSSFSheet sheet = workbook.createSheet(headName);
         //设置列宽
-        sheet.setColumnWidth(0 , 256*15+184);
-        sheet.setColumnWidth(1 , 256*10+184);
-        sheet.setColumnWidth(2 , 256*150+184);
-        sheet.setColumnWidth(3 , 256*20+184);
+        sheet.setColumnWidth(0, 256 * 15 + 184);
+        sheet.setColumnWidth(1, 256 * 10 + 184);
+        sheet.setColumnWidth(2, 256 * 150 + 184);
+        sheet.setColumnWidth(3, 256 * 20 + 184);
         //创建合并的单元格
-        CellRangeAddress region = new CellRangeAddress(0 , 0  , 0  , cellNumber - 1);
+        CellRangeAddress region = new CellRangeAddress(0, 0, 0, cellNumber - 1);
         //合并单元格
         sheet.addMergedRegion(region);
 
@@ -300,7 +333,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //设置字体
         font.setFontName("楷体");
         //设置文字大小
-        font.setFontHeightInPoints((short)30);
+        font.setFontHeightInPoints((short) 30);
         //加粗
         font.setBold(true);
         //放入样式对象
@@ -345,7 +378,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //放入
         cellTextStyle.setFont(font);
         //循环创建表头
-        for(int i = 0 ; i < cellNumber ; i++){
+        for (int i = 0; i < cellNumber; i++) {
             // 添加表头内容
             headCell = hssfRow.createCell(i);
             headCell.setCellValue(tableHeader[i]);
@@ -380,17 +413,17 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellMainTextStyle.setBorderRight(BorderStyle.THIN);
         cellMainTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
-        for(int i = 1 ; i < rowSize ; i++){
+        for (int i = 1; i < rowSize; i++) {
             hssfRow = sheet.createRow(2 + i);
             //添加文字
-            for(int b = 0 ; b < dataArray[i].length ; b++){
+            for (int b = 0; b < dataArray[i].length; b++) {
                 // 添加内容
                 headCell = hssfRow.createCell(b);
                 headCell.setCellValue(dataArray[i][b]);
-                if(b == 2){
+                if (b == 2) {
                     //设置文字样式
                     headCell.setCellStyle(cellMainTextStyle);
-                }else {
+                } else {
                     //设置文字样式
                     headCell.setCellStyle(cellTextStyle);
                 }
@@ -399,7 +432,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         //添加尾行
         hssfRow = sheet.createRow(2 + 1 + rowSize);
         //设置行高
-        hssfRow.setHeight((short)500);
+        hssfRow.setHeight((short) 500);
         //创建正常的文字样式
         cellTextStyle = workbook.createCellStyle();
         //自动换行
@@ -411,7 +444,7 @@ public class DailyOperationReportServiceImpl implements DailyOperationReportServ
         cellTextStyle.setBorderTop(BorderStyle.THIN);
         cellTextStyle.setBorderBottom(BorderStyle.THIN);
         //设置整个行的上下边框
-        for(int i = 0 ; i < cellNumber - 1 ; i++){
+        for (int i = 0; i < cellNumber - 1; i++) {
             headCell = hssfRow.createCell(i);
             headCell.setCellStyle(cellTextStyle);
         }

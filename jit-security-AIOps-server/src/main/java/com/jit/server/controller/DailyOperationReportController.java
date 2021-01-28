@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.MonitorDailyOperationReportDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorDailyOperationReportEntity;
 import com.jit.server.request.DailyOperationReportParams;
@@ -48,40 +49,40 @@ public class DailyOperationReportController {
     private DailyOperationReportService dailyOperationReportService;
 
 
-
     @GetMapping(value = "/getDailyOperationReport")
     @AutoLog(value = "当日运维日报-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public @ResponseBody Result getDailyOperationReport(HttpServletRequest req) {
+    public @ResponseBody
+    Result getDailyOperationReport(HttpServletRequest req) {
         try {
-            MonitorDailyOperationReportEntity monitorDailyOperationReportEntity = new MonitorDailyOperationReportEntity();
-            monitorDailyOperationReportEntity.setOperationUser(userService.findNamebyUsername());
-            monitorDailyOperationReportEntity.setOperationTime(LocalDateTime.now());
+            MonitorDailyOperationReportDTO monitorDailyOperationReportDTO = new MonitorDailyOperationReportDTO();
+            monitorDailyOperationReportDTO.setOperationUser(userService.findNamebyUsername());
+            monitorDailyOperationReportDTO.setOperationTime(LocalDateTime.now());
             String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
             // new problem
             List<String> theDateNewProblemList = dailyOperationReportService.getTheDateNewProblemList(auth);
-            monitorDailyOperationReportEntity.setNewProblemNum(theDateNewProblemList != null ? String.valueOf(theDateNewProblemList.size()) : "0");
-            monitorDailyOperationReportEntity.setNewProblemDetail(theDateNewProblemList != null ? StringUtils.join(theDateNewProblemList, "</br>") : "");
+            monitorDailyOperationReportDTO.setNewProblemNum(theDateNewProblemList != null ? String.valueOf(theDateNewProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setNewProblemDetail(theDateNewProblemList != null ? StringUtils.join(theDateNewProblemList, "</br>") : "");
             List<String> theMonthNewProblemList = dailyOperationReportService.getTheMonthNewProblemList(auth);
-            monitorDailyOperationReportEntity.setNewProblemTotal(theMonthNewProblemList != null ? String.valueOf(theMonthNewProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setNewProblemTotal(theMonthNewProblemList != null ? String.valueOf(theMonthNewProblemList.size()) : "0");
             // claimed problem
             List<String> theDateClaimedProblemList = dailyOperationReportService.getTheDateClaimedProblemList(auth);
-            monitorDailyOperationReportEntity.setClaimedProblemNum(theDateClaimedProblemList != null ? String.valueOf(theDateClaimedProblemList.size()) : "0");
-            monitorDailyOperationReportEntity.setClaimedProblemDetail(theDateClaimedProblemList != null ? StringUtils.join(theDateClaimedProblemList, "</br>") : "");
+            monitorDailyOperationReportDTO.setClaimedProblemNum(theDateClaimedProblemList != null ? String.valueOf(theDateClaimedProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setClaimedProblemDetail(theDateClaimedProblemList != null ? StringUtils.join(theDateClaimedProblemList, "</br>") : "");
             List<String> theMonthClaimedProblemList = dailyOperationReportService.getTheMonthClaimedProblemList(auth);
-            monitorDailyOperationReportEntity.setClaimedProblemTotal(theMonthClaimedProblemList != null ? String.valueOf(theMonthClaimedProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setClaimedProblemTotal(theMonthClaimedProblemList != null ? String.valueOf(theMonthClaimedProblemList.size()) : "0");
             // processing problem
             List<String> theDateProcessingProblemList = dailyOperationReportService.getTheDateProcessingProblemList(auth);
-            monitorDailyOperationReportEntity.setProcessingProblemNum(theDateProcessingProblemList != null ? String.valueOf(theDateProcessingProblemList.size()) : "0");
-            monitorDailyOperationReportEntity.setProcessingProblemDetail(theDateProcessingProblemList != null ? StringUtils.join(theDateProcessingProblemList, "</br>") : "");
+            monitorDailyOperationReportDTO.setProcessingProblemNum(theDateProcessingProblemList != null ? String.valueOf(theDateProcessingProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setProcessingProblemDetail(theDateProcessingProblemList != null ? StringUtils.join(theDateProcessingProblemList, "</br>") : "");
             List<String> theMonthProcessingProblemList = dailyOperationReportService.getTheMonthProcessingProblemList(auth);
-            monitorDailyOperationReportEntity.setProcessingProblemTotal(theMonthProcessingProblemList != null ? String.valueOf(theMonthProcessingProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setProcessingProblemTotal(theMonthProcessingProblemList != null ? String.valueOf(theMonthProcessingProblemList.size()) : "0");
             // solved problem
             List<String> theDateSolvedProblemList = dailyOperationReportService.getTheDateSolvedProblemList(auth);
-            monitorDailyOperationReportEntity.setSolvedProblemNum(theDateSolvedProblemList != null ? String.valueOf(theDateSolvedProblemList.size()) : "0");
-            monitorDailyOperationReportEntity.setSolvedProblemDetail(theDateSolvedProblemList != null ? StringUtils.join(theDateSolvedProblemList, "</br>") : "");
+            monitorDailyOperationReportDTO.setSolvedProblemNum(theDateSolvedProblemList != null ? String.valueOf(theDateSolvedProblemList.size()) : "0");
+            monitorDailyOperationReportDTO.setSolvedProblemDetail(theDateSolvedProblemList != null ? StringUtils.join(theDateSolvedProblemList, "</br>") : "");
             List<String> theMonthSolvedProblemList = dailyOperationReportService.getTheMonthSolvedProblemList(auth);
-            monitorDailyOperationReportEntity.setSolvedProblemTotail(theMonthSolvedProblemList != null ? String.valueOf(theMonthSolvedProblemList.size()) : "0");
-            return Result.SUCCESS(monitorDailyOperationReportEntity);
+            monitorDailyOperationReportDTO.setSolvedProblemTotail(theMonthSolvedProblemList != null ? String.valueOf(theMonthSolvedProblemList.size()) : "0");
+            return Result.SUCCESS(monitorDailyOperationReportDTO);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
@@ -99,7 +100,8 @@ public class DailyOperationReportController {
                 monitorDailyOperationReportEntity.setGmtCreate(LocalDateTime.now());
                 monitorDailyOperationReportEntity.setGmtModified(LocalDateTime.now());
                 monitorDailyOperationReportEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
-                return Result.SUCCESS(dailyOperationReportService.addDailyOperationReport(monitorDailyOperationReportEntity));
+                dailyOperationReportService.addDailyOperationReport(monitorDailyOperationReportEntity);
+                return Result.SUCCESS(null);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
@@ -115,7 +117,7 @@ public class DailyOperationReportController {
     public Result getDailyOperationReports(@RequestBody PageRequest<Map<String, String>> params) {
 
         try {
-            Page<MonitorDailyOperationReportEntity> monitorDailyOperationReportEntities = dailyOperationReportService.getDailyOperationReports(params);
+            Page<MonitorDailyOperationReportDTO> monitorDailyOperationReportEntities = dailyOperationReportService.getDailyOperationReports(params);
             Map<String, Object> result = new HashMap<>();
             result.put("page", params.getPage());
             result.put("size", params.getSize());
@@ -148,21 +150,22 @@ public class DailyOperationReportController {
 
     /**
      * 下载运维日报的 Xls 文件
+     *
      * @param dailyOperationReport 传入数据集对象
-     * @param response HttpServletResponse 对象
+     * @param response             HttpServletResponse 对象
      * @throws IOException
      */
     @PostMapping("/exportDaily")
     @AutoLog(value = "当日运维日报/历史运维日报-导出", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public void exportDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport , HttpServletResponse response){
+    public void exportDaily(@RequestBody MonitorDailyOperationReportEntity dailyOperationReport, HttpServletResponse response) {
         //声明日期转换对象
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String[][] dataArray = {
-                {dailyOperationReport.getOperationUser() , formatter.format(dailyOperationReport.getOperationTime())},
-                {ExportXlsFileConst.OPERATION_REPORT_PROBLEMS, dailyOperationReport.getNewProblemNum() , dailyOperationReport.getNewProblemDetail().replaceAll("</br>" , "\r\n") , dailyOperationReport.getNewProblemTotal()} ,
-                {ExportXlsFileConst.OPERATION_REPORT_CLAIM_PROBLEMS , dailyOperationReport.getClaimedProblemNum() , dailyOperationReport.getClaimedProblemDetail() , dailyOperationReport.getClaimedProblemTotal()} ,
-                {ExportXlsFileConst.OPERATION_REPORT_HANDLING_PROBLEMS , dailyOperationReport.getProcessingProblemNum() , dailyOperationReport.getProcessingProblemDetail() , dailyOperationReport.getProcessingProblemTotal()} ,
-                {ExportXlsFileConst.OPERATION_REPORT_SOLVE_PROBLEMS , dailyOperationReport.getSolvedProblemNum() , dailyOperationReport.getSolvedProblemDetail() , dailyOperationReport.getSolvedProblemTotail()}
+                {dailyOperationReport.getOperationUser(), formatter.format(dailyOperationReport.getOperationTime())},
+                {ExportXlsFileConst.OPERATION_REPORT_PROBLEMS, dailyOperationReport.getNewProblemNum(), dailyOperationReport.getNewProblemDetail().replaceAll("</br>", "\r\n"), dailyOperationReport.getNewProblemTotal()},
+                {ExportXlsFileConst.OPERATION_REPORT_CLAIM_PROBLEMS, dailyOperationReport.getClaimedProblemNum(), dailyOperationReport.getClaimedProblemDetail(), dailyOperationReport.getClaimedProblemTotal()},
+                {ExportXlsFileConst.OPERATION_REPORT_HANDLING_PROBLEMS, dailyOperationReport.getProcessingProblemNum(), dailyOperationReport.getProcessingProblemDetail(), dailyOperationReport.getProcessingProblemTotal()},
+                {ExportXlsFileConst.OPERATION_REPORT_SOLVE_PROBLEMS, dailyOperationReport.getSolvedProblemNum(), dailyOperationReport.getSolvedProblemDetail(), dailyOperationReport.getSolvedProblemTotail()}
         };
         OutputStream out = null;
         try {
@@ -173,7 +176,7 @@ public class DailyOperationReportController {
             //设置响应协议为响应xls文件
             response.setContentType("application/octet-stream");
             //设置弹出框
-            response.setHeader("Content-Disposition", "attachment; fileName="+ UUID.randomUUID() +".xls");
+            response.setHeader("Content-Disposition", "attachment; fileName=" + UUID.randomUUID() + ".xls");
             //写出
             workbook.write(out);
             out.flush();
