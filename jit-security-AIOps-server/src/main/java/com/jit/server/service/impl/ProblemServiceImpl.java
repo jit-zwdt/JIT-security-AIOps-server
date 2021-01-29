@@ -1,10 +1,9 @@
 package com.jit.server.service.impl;
 
+import com.jit.server.dto.MonitorClaimDTO;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
-import com.jit.server.pojo.SysDictionaryEntity;
-import com.jit.server.pojo.SysUserEntity;
 import com.jit.server.repository.HostRepo;
 import com.jit.server.repository.MonitorClaimRepo;
 import com.jit.server.repository.SysUserRepo;
@@ -14,6 +13,7 @@ import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
 import com.jit.server.util.ConstUtil;
 import com.jit.server.util.ExportXlsFileConst;
+import com.jit.server.util.PageRequest;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import com.jit.zabbix.client.request.ZabbixGetProblemParams;
 import com.jit.zabbix.client.service.ZabbixProblemService;
@@ -24,15 +24,17 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,6 +58,9 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Autowired
     private SysUserRepo sysUserRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception {
@@ -217,28 +222,67 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType) {
+    public Page<MonitorClaimDTO> findClaimByUser(PageRequest<Map<String, Object>> params) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        SysUserEntity user = sysUserRepo.findByUsername(username);
-        //条件
-        Specification<MonitorClaimEntity> spec = new Specification<MonitorClaimEntity>() {
-            @Override
-            public Predicate toPredicate(Root<MonitorClaimEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> list = new ArrayList<Predicate>();
+        String userId = sysUserRepo.findIdByUsername(username);
+        if (params != null) {
+            int size = params.getSize();
+            int page = params.getPage() - 1;
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MonitorClaimDTO> query = cb.createQuery(MonitorClaimDTO.class);
+            Root<MonitorClaimEntity> root = query.from(MonitorClaimEntity.class);
+            Path<String> id = root.get("id");
+            Path<String> hostId = root.get("hostId");
+            Path<String> hostName = root.get("hostName");
+            Path<String> triggerId = root.get("triggerId");
+            Path<String> problemId = root.get("problemId");
+            Path<String> problemName = root.get("problemName");
+            Path<LocalDateTime> problemCreate = root.get("problemCreate");
+            Path<LocalDateTime> claimTime = root.get("claimTime");
+            Path<String> claimOpinion = root.get("claimOpinion");
+            Path<String> claimUserId = root.get("claimUserId");
+            Path<String> claimRoleId = root.get("claimRoleId");
+            Path<Integer> isClaim = root.get("isClaim");
+            Path<String> severity = root.get("severity");
+            Path<String> ns = root.get("ns");
+            Path<Integer> isRegister = root.get("isRegister");
+            Path<Integer> isResolve = root.get("isResolve");
+            Path<String> problemHandleTime = root.get("problemHandleTime");
+            Path<LocalDateTime> resolveTime = root.get("resolveTime");
+            //查询字段
+            query.multiselect(id, hostId, hostName, triggerId, problemId, problemName, problemCreate, claimTime, claimOpinion, claimUserId,
+                    claimRoleId, isClaim, severity, ns, isRegister, isResolve, problemHandleTime, resolveTime);
+            //查询条件
+            List<Predicate> list = new ArrayList<>();
+            list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            list.add(cb.equal(root.get("claimUserId").as(String.class), userId));
 
-                list.add(cb.equal(root.get("claimUserId").as(String.class), user.getId()));
-
-                if (com.jit.server.util.StringUtils.isNotEmpty(problemName)) {
-                    list.add(cb.like(root.get("problemName").as(String.class), "%" + problemName + "%"));
-                }
-                if (resolveType != -1) {
-                    list.add(cb.equal(root.get("isResolve").as(Integer.class), resolveType));
-                }
-                Predicate[] arr = new Predicate[list.size()];
-                return cb.and(list.toArray(arr));
+            if (!"".equals(params.getParam().getOrDefault("problemName", ""))) {
+                list.add(cb.like(root.get("problemName").as(String.class), "%" + params.getParam().get("problemName").toString() + "%"));
             }
-        };
-        return this.monitorClaimRepo.findAll(spec);
+            if (!"".equals(params.getParam().getOrDefault("resolveType", ""))) {
+                list.add(cb.equal(root.get("isResolve").as(Integer.class), Integer.valueOf(params.getParam().get("resolveType").toString())));
+            }
+            Predicate[] arr = new Predicate[list.size()];
+            arr = list.toArray(arr);
+            query.where(arr);
+            query.orderBy(cb.desc(problemCreate));
+            TypedQuery<MonitorClaimDTO> typedQuery = entityManager.createQuery(query);
+            int startIndex = size * page;
+            typedQuery.setFirstResult(startIndex);
+            typedQuery.setMaxResults(params.getSize());
+            //总条数
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<MonitorClaimEntity> root1 = countQuery.from(MonitorClaimEntity.class);
+            countQuery.where(arr);
+            countQuery.select(cb.count(root1));
+            long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
+            //分页的定义
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            Page<MonitorClaimDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+            return res;
+        }
+        return null;
     }
 
     @Override
@@ -322,9 +366,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ZabbixProblemDTO> findProblemById(String[] params,String auth) throws Exception {
+    public List<ZabbixProblemDTO> findProblemById(String[] params, String auth) throws Exception {
         ZabbixGetProblemParams params_pro = new ZabbixGetProblemParams();
-        if (params!= null ) {
+        if (params != null) {
             Map<String, Object> mapFilter = new HashMap();
             mapFilter.put("objectid", params);
             params_pro.setFilter(mapFilter);
@@ -334,6 +378,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     /**
      * 根据传入的故障解决数据构建 xls 文件
+     *
      * @param dataArray 故障解决数据 json 格式的字符串
      * @return xls 文件对象
      */
@@ -350,25 +395,25 @@ public class ProblemServiceImpl implements ProblemService {
         //表头
         String[] tableHeader = ExportXlsFileConst.TROUBLESHOOTING_TABLE_HEADER;
         //表的列数
-        short cellNumber = (short)tableHeader.length;
+        short cellNumber = (short) tableHeader.length;
         //创建一个Excel文件
         HSSFWorkbook workbook = new HSSFWorkbook();
         //创建一个工作表
         HSSFSheet sheet = workbook.createSheet(headName);
         //设置列宽
-        sheet.setColumnWidth(0 , 256*10+184);
-        sheet.setColumnWidth(1 , 256*25+184);
-        sheet.setColumnWidth(2 , 256*40+184);
-        sheet.setColumnWidth(3 , 256*15+184);
-        sheet.setColumnWidth(4 , 256*15+184);
-        sheet.setColumnWidth(5 , 256*15+184);
-        sheet.setColumnWidth(6 , 256*25+184);
-        sheet.setColumnWidth(7 , 256*25+184);
-        sheet.setColumnWidth(8 , 256*25+184);
-        sheet.setColumnWidth(9 , 256*25+184);
-        sheet.setColumnWidth(10 , 256*25+184);
+        sheet.setColumnWidth(0, 256 * 10 + 184);
+        sheet.setColumnWidth(1, 256 * 25 + 184);
+        sheet.setColumnWidth(2, 256 * 40 + 184);
+        sheet.setColumnWidth(3, 256 * 15 + 184);
+        sheet.setColumnWidth(4, 256 * 15 + 184);
+        sheet.setColumnWidth(5, 256 * 15 + 184);
+        sheet.setColumnWidth(6, 256 * 25 + 184);
+        sheet.setColumnWidth(7, 256 * 25 + 184);
+        sheet.setColumnWidth(8, 256 * 25 + 184);
+        sheet.setColumnWidth(9, 256 * 25 + 184);
+        sheet.setColumnWidth(10, 256 * 25 + 184);
         //创建合并的单元格
-        CellRangeAddress region = new CellRangeAddress(0 , 0  , 0  , cellNumber - 1);
+        CellRangeAddress region = new CellRangeAddress(0, 0, 0, cellNumber - 1);
         //合并单元格
         sheet.addMergedRegion(region);
 
@@ -387,7 +432,7 @@ public class ProblemServiceImpl implements ProblemService {
         //设置字体
         font.setFontName("楷体");
         //设置文字大小
-        font.setFontHeightInPoints((short)30);
+        font.setFontHeightInPoints((short) 30);
         //加粗
         font.setBold(true);
         //放入样式对象
@@ -425,7 +470,7 @@ public class ProblemServiceImpl implements ProblemService {
         //放入
         cellTextStyle.setFont(font);
         //循环创建表头
-        for(int i = 0 ; i < cellNumber ; i++){
+        for (int i = 0; i < cellNumber; i++) {
             // 添加表头内容
             headCell = hssfRow.createCell(i);
             headCell.setCellValue(tableHeader[i]);
@@ -444,10 +489,10 @@ public class ProblemServiceImpl implements ProblemService {
         cellTextStyle.setBorderRight(BorderStyle.THIN);
         cellTextStyle.setBorderTop(BorderStyle.THIN);
         //添加主表格数据
-        for(int i = 0 ; i < rowSize ; i++){
+        for (int i = 0; i < rowSize; i++) {
             hssfRow = sheet.createRow(2 + 1 + i);
             //添加文字
-            for(int b = 0 ; b < dataArray[i].length ; b++){
+            for (int b = 0; b < dataArray[i].length; b++) {
                 // 添加内容
                 headCell = hssfRow.createCell(b);
                 headCell.setCellValue(dataArray[i][b]);

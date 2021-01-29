@@ -1,15 +1,19 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.MonitorClaimDTO;
 import com.jit.server.dto.ProblemClaimDTO;
 import com.jit.server.pojo.MonitorClaimEntity;
 import com.jit.server.request.ProblemClaimParams;
 import com.jit.server.dto.ProblemHostDTO;
 import com.jit.server.request.ProblemParams;
+import com.jit.server.util.PageRequest;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface ProblemService {
     List<ZabbixProblemDTO> findByCondition(ProblemParams params, String authToken) throws Exception;
@@ -20,7 +24,7 @@ public interface ProblemService {
 
     void addCalim(MonitorClaimEntity monitorClaimEntity) throws Exception;
 
-    List<MonitorClaimEntity> findClaimByUser(String problemName, int resolveType);
+    Page<MonitorClaimDTO> findClaimByUser(PageRequest<Map<String, Object>> params);
 
     void updateClaimAfterRegister(MonitorClaimEntity monitorClaimEntity);
 
