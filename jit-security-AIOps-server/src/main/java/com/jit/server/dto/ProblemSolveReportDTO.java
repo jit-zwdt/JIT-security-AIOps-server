@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemSolveReportDTO {
     private Integer index;
-    private MonitorClaimEntity claim;
+    private MonitorClaimDTO claim;
     private MonitorRegisterEntityDTO register;
     private String user;
     private String role;

@@ -19,6 +19,7 @@ import com.jit.server.util.*;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
@@ -173,6 +174,7 @@ public class ProblemController {
             if (CollectionUtils.isEmpty(claimList)) {
                 return Result.SUCCESS(null);
             }
+            MonitorClaimDTO monitorClaimDTO;
             for (int i = 0; i < claimList.size(); i++) {
                 ProblemSolveReportDTO result = new ProblemSolveReportDTO();
                 List<MonitorRegisterEntity> regList = registerService.findByClaimIdAndIsResolve(claimList.get(i).getId());
@@ -193,7 +195,9 @@ public class ProblemController {
                     continue;
                 }
                 result.setIndex(i + 1);
-                result.setClaim(claimList.get(i));
+                monitorClaimDTO = new MonitorClaimDTO();
+                BeanUtils.copyProperties(claimList.get(i), monitorClaimDTO);
+                result.setClaim(monitorClaimDTO);
                 result.setUser(sysUserRepo.getOne(claimList.get(i).getClaimUserId()).getName());
                 result.setRole(sysRoleRepo.getOne(claimList.get(i).getClaimRoleId()).getRoleName());
                 resultList.add(result);
