@@ -35,29 +35,9 @@ public class MonitorSchemeTimerTaskEntityDto {
     private java.time.LocalDateTime gmtCreate;
 
     /**
-     * 修改时间
-     */
-    private java.time.LocalDateTime gmtModified;
-
-    /**
      * 父级 ID 如果没有父级 ID 默认为 1
      */
     private String parentId;
-
-    /**
-     * 创建者
-     */
-    private String createBy;
-
-    /**
-     * 更新者
-     */
-    private String updateBy;
-
-    /**
-     * 是否删除 1:表示删除;0:表示未删除
-     */
-    private long isDeleted;
 
     /**
      * 状态（0：已启动；1：已停止）

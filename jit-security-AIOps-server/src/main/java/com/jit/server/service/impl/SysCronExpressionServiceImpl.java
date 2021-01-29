@@ -175,8 +175,8 @@ public class SysCronExpressionServiceImpl implements SysCronExpressionService {
      * @return 时间表达式数据
      */
     @Override
-    public List<SysCronExpressionEntity> findAllCronExpression() {
+    public List<SysCronExpressionDTO> findAllCronExpression() {
         //查询所有的数据并返回
-        return sysCronExpressionRepo.findAll();
+        return sysCronExpressionRepo.findAllCronExpression();
     }
 }

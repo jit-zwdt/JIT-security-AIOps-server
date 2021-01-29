@@ -1,5 +1,6 @@
 package com.jit.server.service;
 
+import com.jit.server.dto.SysScheduleTaskDTO;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.request.ScheduleTaskParams;
 import com.jit.server.util.PageRequest;
@@ -12,19 +13,19 @@ public interface SysScheduleTaskService {
 
     String saveAndScheduleJob(SysScheduleTaskEntity sysScheduleTaskEntity) throws Exception;
 
-    SysScheduleTaskEntity getSysScheduleTaskById(String id) throws Exception;
+    SysScheduleTaskDTO getSysScheduleTaskById(String id) throws Exception;
 
-    Page<SysScheduleTaskEntity> getSysScheduleTasks(PageRequest<Map<String, Object>> params) throws Exception;
+    Page<SysScheduleTaskDTO> getSysScheduleTasks(PageRequest<Map<String, Object>> params) throws Exception;
 
     boolean stopScheduleTask(String jobKey) throws Exception;
 
     void startScheduleTask(String className, String methodName, String cron, String param) throws Exception;
 
-    List<SysScheduleTaskEntity> getScheduleTaskList() throws Exception;
+    List<SysScheduleTaskDTO> getScheduleTaskList() throws Exception;
 
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
+    List<SysScheduleTaskDTO> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
 
-    List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
+    List<SysScheduleTaskDTO> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception;
 
     String addScheduleTask(ScheduleTaskParams scheduleTaskParams) throws Exception;
 

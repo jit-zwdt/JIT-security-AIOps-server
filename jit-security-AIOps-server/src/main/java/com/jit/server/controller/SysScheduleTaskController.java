@@ -1,6 +1,7 @@
 package com.jit.server.controller;
 
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.SysScheduleTaskDTO;
 import com.jit.server.exception.CronExpression;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.exception.SchedulerExistedException;
@@ -42,7 +43,7 @@ public class SysScheduleTaskController {
     @AutoLog(value = "定时任务-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result getScheduleTasks(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
-            Page<SysScheduleTaskEntity> sysScheduleTaskEntities = sysScheduleTaskService.getSysScheduleTasks(params);
+            Page<SysScheduleTaskDTO> sysScheduleTaskEntities = sysScheduleTaskService.getSysScheduleTasks(params);
             Map<String, Object> result = new HashMap<>(5);
             result.put("page", params.getPage());
             result.put("size", params.getSize());
@@ -141,11 +142,11 @@ public class SysScheduleTaskController {
     public Result getScheduleTask(@PathVariable String id) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskService.getSysScheduleTaskById(id);
-                if (sysScheduleTaskEntity == null) {
+                SysScheduleTaskDTO sysScheduleTaskDTO = sysScheduleTaskService.getSysScheduleTaskById(id);
+                if (sysScheduleTaskDTO == null) {
                     return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
                 }
-                return Result.SUCCESS(sysScheduleTaskEntity);
+                return Result.SUCCESS(sysScheduleTaskDTO);
             } else {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

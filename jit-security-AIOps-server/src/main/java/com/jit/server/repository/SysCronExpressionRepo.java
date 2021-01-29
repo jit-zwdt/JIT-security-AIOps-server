@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.SysCronExpressionDTO;
 import com.jit.server.pojo.SysCronExpressionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,26 +23,32 @@ public interface SysCronExpressionRepo extends JpaRepository<SysCronExpressionEn
 
     /**
      * 根据表达式查询表达式
+     *
      * @param cronExpression 表达式
-     * @param isDeleted 删除值 0 表示为删除 1 表示删除
+     * @param isDeleted      删除值 0 表示为删除 1 表示删除
      * @return 表达式对象
      */
-    SysCronExpressionEntity findByCronExpressionAndIsDeleted(String cronExpression , int isDeleted);
+    SysCronExpressionEntity findByCronExpressionAndIsDeleted(String cronExpression, int isDeleted);
 
     /**
      * 根据表达式描述查询表达式
+     *
      * @param cronExpressionDesc 表达式描述
-     * @param isDeleted 删除值 0 表示为删除 1 表示删除
+     * @param isDeleted          删除值 0 表示为删除 1 表示删除
      * @return 表达式对象
      */
-    SysCronExpressionEntity findByCronExpressionDescAndIsDeleted(String cronExpressionDesc , int isDeleted);
+    SysCronExpressionEntity findByCronExpressionDescAndIsDeleted(String cronExpressionDesc, int isDeleted);
 
     /**
      * 修改 isDeleted 根据 ID
+     *
      * @param isDeleted 需要更换的值
-     * @param id ID
+     * @param id        ID
      */
     @Modifying
     @Query("update SysCronExpressionEntity t set t.isDeleted = :isDeleted where t.id = :id")
     void updateIsDeleteByID(int isDeleted, String id);
+
+    @Query("select new com.jit.server.dto.SysCronExpressionDTO(s.id, s.cronExpression, s.cronExpressionDesc) from SysCronExpressionEntity s where s.isDeleted = 0 order by s.gmtCreate")
+    List<SysCronExpressionDTO> findAllCronExpression();
 }
