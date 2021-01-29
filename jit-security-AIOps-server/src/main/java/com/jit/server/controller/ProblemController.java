@@ -3,10 +3,7 @@ package com.jit.server.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
-import com.jit.server.dto.MonitorRegisterEntityDTO;
-import com.jit.server.dto.ProblemClaimDTO;
-import com.jit.server.dto.ProblemHostDTO;
-import com.jit.server.dto.ProblemSolveReportDTO;
+import com.jit.server.dto.*;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.MonitorClaimEntity;
 import com.jit.server.pojo.MonitorRegisterEntity;
@@ -18,14 +15,13 @@ import com.jit.server.service.DictionaryService;
 import com.jit.server.service.MonitorRegisterService;
 import com.jit.server.service.ProblemService;
 import com.jit.server.service.ZabbixAuthService;
-import com.jit.server.util.ConstLogUtil;
-import com.jit.server.util.ConstUtil;
-import com.jit.server.util.Result;
-import com.jit.server.util.StringUtils;
+import com.jit.server.util.*;
 import com.jit.zabbix.client.dto.ZabbixProblemDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,13 +111,16 @@ public class ProblemController {
 
     @PostMapping("/getClaimByUsers")
     @AutoLog(value = "故障处理登记-查询", logType = ConstLogUtil.LOG_TYPE_OPERATION)
-    public Result getClaimByUsers(@RequestParam(value = "problemName") String problemName, @RequestParam(value = "resolveType") String resolveType) {
+    public Result getClaimByUsers(@RequestBody PageRequest<Map<String, Object>> params) {
         try {
-            if (resolveType == null || ("").equals(resolveType)) {
-                resolveType = "-1";
-            }
-            List<MonitorClaimEntity> list = problemService.findClaimByUser(problemName, Integer.parseInt(resolveType));
-            return Result.SUCCESS(list);
+            Page<MonitorClaimDTO> monitorClaimDTOS = problemService.findClaimByUser(params);
+            Map<String, Object> result = new HashMap<>(5);
+            result.put("page", params.getPage());
+            result.put("size", params.getSize());
+            result.put("totalRow", monitorClaimDTOS.getTotalElements());
+            result.put("totalPage", monitorClaimDTOS.getTotalPages());
+            result.put("dataList", monitorClaimDTOS.getContent());
+            return Result.SUCCESS(result);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
@@ -175,6 +174,7 @@ public class ProblemController {
             if (CollectionUtils.isEmpty(claimList)) {
                 return Result.SUCCESS(null);
             }
+            MonitorClaimDTO monitorClaimDTO;
             for (int i = 0; i < claimList.size(); i++) {
                 ProblemSolveReportDTO result = new ProblemSolveReportDTO();
                 List<MonitorRegisterEntity> regList = registerService.findByClaimIdAndIsResolve(claimList.get(i).getId());
@@ -195,7 +195,9 @@ public class ProblemController {
                     continue;
                 }
                 result.setIndex(i + 1);
-                result.setClaim(claimList.get(i));
+                monitorClaimDTO = new MonitorClaimDTO();
+                BeanUtils.copyProperties(claimList.get(i), monitorClaimDTO);
+                result.setClaim(monitorClaimDTO);
                 result.setUser(sysUserRepo.getOne(claimList.get(i).getClaimUserId()).getName());
                 result.setRole(sysRoleRepo.getOne(claimList.get(i).getClaimRoleId()).getRoleName());
                 resultList.add(result);

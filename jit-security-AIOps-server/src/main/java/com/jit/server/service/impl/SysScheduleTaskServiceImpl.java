@@ -2,6 +2,7 @@ package com.jit.server.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.config.CronTaskRegistrar;
+import com.jit.server.dto.SysScheduleTaskDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.exception.SchedulerExistedException;
 import com.jit.server.pojo.SysScheduleTaskEntity;
@@ -15,16 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,35 +48,59 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     @Autowired
     private UserService userService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
     @Override
-    public Page<SysScheduleTaskEntity> getSysScheduleTasks(PageRequest<Map<String, Object>> params) {
+    public Page<SysScheduleTaskDTO> getSysScheduleTasks(PageRequest<Map<String, Object>> params) {
         Map<String, Object> param = params.getParam();
-        if (param != null && !param.isEmpty()) {
-            //条件
-            Specification<SysScheduleTaskEntity> spec = new Specification<SysScheduleTaskEntity>() {
-                @Override
-                public Predicate toPredicate(Root<SysScheduleTaskEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    List<Predicate> list = new ArrayList<Predicate>();
-                    list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
-                    String jobClassName = param.get("jobClassName") != null ? param.get("jobClassName").toString() : "";
-                    if (StringUtils.isNotBlank(jobClassName)) {
-                        list.add(cb.like(root.get("jobClassName").as(String.class), "%" + jobClassName + "%"));
-                    }
-                    String status = param.get("status") != null ? param.get("status").toString() : "";
-                    if (StringUtils.isNotBlank(status)) {
-                        list.add(cb.equal(root.get("status").as(String.class), status));
-                    }
-                    Predicate[] arr = new Predicate[list.size()];
-                    return cb.and(list.toArray(arr));
-                }
-            };
-            //排序的定义
-            List<Sort.Order> orderList = new ArrayList<>();
-            orderList.add(new Sort.Order(Sort.Direction.ASC, "gmtCreate"));
-            Sort sort = Sort.by(orderList);
+        if (param != null) {
+            int size = params.getSize();
+            int page = params.getPage() - 1;
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<SysScheduleTaskDTO> query = cb.createQuery(SysScheduleTaskDTO.class);
+            Root<SysScheduleTaskEntity> root = query.from(SysScheduleTaskEntity.class);
+            Path<String> id = root.get("id");
+            Path<String> jobClassName = root.get("jobClassName");
+            Path<String> jobMethodName = root.get("jobMethodName");
+            Path<String> cronExpression = root.get("cronExpression");
+            Path<String> jsonParam = root.get("jsonParam");
+            Path<String> description = root.get("description");
+            Path<String> jobGroup = root.get("jobGroup");
+            Path<Integer> status = root.get("status");
+            Path<LocalDateTime> gmtCreate = root.get("gmtCreate");
+            //查询字段
+            query.multiselect(id, jobClassName, jobMethodName, cronExpression, jsonParam, description, jobGroup, status);
+            //查询条件
+            List<Predicate> list = new ArrayList<Predicate>();
+            list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));
+            String jobClassName2 = param.get("jobClassName") != null ? param.get("jobClassName").toString() : "";
+            if (StringUtils.isNotBlank(jobClassName2)) {
+                list.add(cb.like(root.get("jobClassName").as(String.class), "%" + jobClassName2 + "%"));
+            }
+            String status2 = param.get("status") != null ? param.get("status").toString() : "";
+            if (StringUtils.isNotBlank(status2)) {
+                list.add(cb.equal(root.get("status").as(String.class), status2));
+            }
+            Predicate[] arr = new Predicate[list.size()];
+            arr = list.toArray(arr);
+            query.where(arr);
+            query.orderBy(cb.asc(gmtCreate));
+            TypedQuery<SysScheduleTaskDTO> typedQuery = entityManager.createQuery(query);
+            int startIndex = size * page;
+            typedQuery.setFirstResult(startIndex);
+            typedQuery.setMaxResults(size);
+            //总条数
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<SysScheduleTaskEntity> root1 = countQuery.from(SysScheduleTaskEntity.class);
+            countQuery.where(arr);
+            countQuery.select(cb.count(root1));
+            long count = entityManager.createQuery(countQuery).getSingleResult().longValue();
             //分页的定义
-            Pageable pageable = org.springframework.data.domain.PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-            return sysScheduleTaskRepo.findAll(spec, pageable);
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            Page<SysScheduleTaskDTO> res = new PageImpl<>(typedQuery.getResultList(), pageable, count);
+            return res;
         }
         return null;
     }
@@ -99,7 +123,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
                     // 定时器添加
                     // 在添加定时器之前把传递的参数添加一个添加定时任务表数据的 ID
                     JSONObject jsonObject = JSONObject.parseObject(sysScheduleTaskEntity.getJsonParam());
-                    jsonObject.put("scheduleId" , id);
+                    jsonObject.put("scheduleId", id);
                     sysScheduleTaskEntity.setJsonParam(jsonObject.toJSONString());
                     // 添加定时任务
                     cronTaskRegistrar.addCronTask(sysScheduleTaskEntity.getJobClassName(), sysScheduleTaskEntity.getJobMethodName(), sysScheduleTaskEntity.getCronExpression(), sysScheduleTaskEntity.getJsonParam());
@@ -117,13 +141,13 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     }
 
     @Override
-    public SysScheduleTaskEntity getSysScheduleTaskById(String id) throws Exception {
-        return sysScheduleTaskRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
+    public SysScheduleTaskDTO getSysScheduleTaskById(String id) throws Exception {
+        return sysScheduleTaskRepo.findSysScheduleTaskById(id);
     }
 
     @Override
-    public List<SysScheduleTaskEntity> getScheduleTaskList() throws Exception {
-        return sysScheduleTaskRepo.findByIsDeletedAndStatusOrderByGmtCreate(ConstUtil.IS_NOT_DELETED, ConstUtil.STATUS_NORMAL);
+    public List<SysScheduleTaskDTO> getScheduleTaskList() throws Exception {
+        return sysScheduleTaskRepo.findScheduleTasksByIsDeletedAndStatus(ConstUtil.IS_NOT_DELETED, ConstUtil.STATUS_NORMAL);
     }
 
     @Override
@@ -133,12 +157,12 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     }
 
     @Override
-    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
+    public List<SysScheduleTaskDTO> getSysScheduleTaskByParams(String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
         return sysScheduleTaskRepo.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression, param);
     }
 
     @Override
-    public List<SysScheduleTaskEntity> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
+    public List<SysScheduleTaskDTO> getSysScheduleTaskByParams2(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
         return sysScheduleTaskRepo.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression, param);
     }
 
@@ -159,7 +183,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
             sysScheduleTaskEntity.setCreateBy(userService.findIdByUsername());
             sysScheduleTaskEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
         } else {
-            sysScheduleTaskEntity = this.getSysScheduleTaskById(scheduleTaskParams.getId());
+            sysScheduleTaskEntity = sysScheduleTaskRepo.findByIdAndIsDeleted(scheduleTaskParams.getId(), ConstUtil.IS_NOT_DELETED);
             sysScheduleTaskEntity.setGmtModified(LocalDateTime.now());
             sysScheduleTaskEntity.setUpdateBy(userService.findIdByUsername());
         }
@@ -187,12 +211,12 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     private boolean vaildateParams(String id, String jobClassName, String jobMethodName, String cronExpression, String param) throws Exception {
         boolean res = false;
         if (StringUtils.isBlank(id)) {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression, param);
+            List<SysScheduleTaskDTO> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams(jobClassName, jobMethodName, cronExpression, param);
             if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
                 res = true;
             }
         } else {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression, param);
+            List<SysScheduleTaskDTO> sysScheduleTaskEntityList = this.getSysScheduleTaskByParams2(id, jobClassName, jobMethodName, cronExpression, param);
             if (sysScheduleTaskEntityList != null && !sysScheduleTaskEntityList.isEmpty()) {
                 res = true;
             }
@@ -203,7 +227,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     @Override
     public void delScheduleTask(String id) throws Exception {
         if (StringUtils.isNotBlank(id)) {
-            SysScheduleTaskEntity sysScheduleTaskEntity = this.getSysScheduleTaskById(id);
+            SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
             if (sysScheduleTaskEntity == null) {
                 throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
             } else {
@@ -227,7 +251,7 @@ public class SysScheduleTaskServiceImpl implements SysScheduleTaskService {
     @Override
     public void changeStatus(String id) throws Exception {
         if (StringUtils.isNotBlank(id)) {
-            SysScheduleTaskEntity sysScheduleTaskEntity = this.getSysScheduleTaskById(id);
+            SysScheduleTaskEntity sysScheduleTaskEntity = sysScheduleTaskRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
             if (sysScheduleTaskEntity == null) {
                 throw new Exception(String.valueOf(ExceptionEnum.QUERY_DATA_EXCEPTION));
             } else {

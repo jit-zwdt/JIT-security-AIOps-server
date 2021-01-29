@@ -74,7 +74,8 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
 
     /**
      * 根据 JMX IP 查询对应的数据
-     * @param jmxIp JMX IP
+     *
+     * @param jmxIp   JMX IP
      * @param deleted 删除状态 0 未删除 1 删除
      * @return 查询到的数据结果集合
      */
@@ -82,12 +83,13 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
 
     /**
      * 查询数据根据关联 ID 进行查询
-     * @param assetsId assetsId 关联ID
+     *
+     * @param assetsId  assetsId 关联ID
      * @param isDeleted 是否删除 0 未删除 1 删除
      * @return HostEntity 集合对象
      */
     List<HostEntity> findByAssetsIdAndDeleted(String assetsId, int isDeleted);
 
-    @Query("SELECT new com.jit.server.dto.HostDTO(id, hostId, objectName, businessName, assetsId, proxyMonitor, enableMonitor, templatesId, typeId, subtypeId, groupId, remark, label, agentType, agentIp, agentDnsName, agentPort, jmxType, jmxIp, jmxDnsName, jmxPort, jmxMacro, snmpType, snmpIp, snmpDnsName, snmpPort, snmpMacro, ipmiType, ipmiIp, ipmiDnsName, ipmiPort, ipmiMacro, mssqlMacroInstance, mssqlMacroOdbc, mssqlMacroPassword, mssqlMacroUsername, oracleMacroIp, oracleMacroPort, oracleMacroAsm, oracleMacroDbname, oracleMacroPassword, oracleMacroUsername, vmMacroCpuFrequency, vmMacroPassword, vmMacroSdkLink, vmMacroUsername) FROM HostEntity h WHERE h.hostId=?1")
+    @Query("SELECT new com.jit.server.dto.HostDTO(h.id, h.hostId, h.objectName, h.businessName, h.assetsId, h.proxyMonitor, h.enableMonitor, h.templatesId, h.typeId, h.subtypeId, h.groupId, h.remark, h.label, h.agentType, h.agentIp, h.agentDnsName, h.agentPort, h.jmxType, h.jmxIp, h.jmxDnsName, h.jmxPort, h.jmxMacro, h.snmpType, h.snmpIp, h.snmpDnsName, h.snmpPort, h.snmpMacro, h.ipmiType, h.ipmiIp, h.ipmiDnsName, h.ipmiPort, h.ipmiMacro, h.mssqlMacroInstance, h.mssqlMacroOdbc, h.mssqlMacroPassword, h.mssqlMacroUsername, h.oracleMacroIp, h.oracleMacroPort, h.oracleMacroAsm, h.oracleMacroDbname, h.oracleMacroPassword, h.oracleMacroUsername, h.vmMacroCpuFrequency, h.vmMacroPassword, h.vmMacroSdkLink, h.vmMacroUsername) FROM HostEntity h WHERE h.hostId=?1")
     HostDTO findHostByHostId(String id);
 }

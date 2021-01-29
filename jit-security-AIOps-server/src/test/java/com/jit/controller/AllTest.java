@@ -76,7 +76,12 @@ public class AllTest {
         cronExpression.setCronExpressionDesc("1111");
         cronExpression.setCronExpression("* * * * * *");
         //测试添加
-        SysCronExpressionEntity cronExpressionEntity = sysCronExpressionService.addCronExpression(cronExpression);
+        SysCronExpressionEntity cronExpressionEntity = null;
+        try {
+            cronExpressionEntity = sysCronExpressionService.addCronExpression(cronExpression);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(cronExpressionEntity);
     }
 
@@ -85,7 +90,12 @@ public class AllTest {
      */
     @Test
     public void testGetCronExpressionDesc() {
-        boolean flag = sysCronExpressionService.checkAddCronExpressionDesc("每隔10");
+        boolean flag = false;
+        try {
+            flag = sysCronExpressionService.checkAddCronExpressionDesc("每隔10");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(flag);
     }
 
@@ -94,7 +104,11 @@ public class AllTest {
      */
     @Test
     public void testDelCronExpression() {
-        sysCronExpressionService.delCronExpression("1");
+        try {
+            sysCronExpressionService.delCronExpression("1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

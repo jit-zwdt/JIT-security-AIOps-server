@@ -5,7 +5,9 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
+import com.jit.server.dto.HostDTO;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
+import com.jit.server.dto.SysScheduleTaskDTO;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
@@ -56,7 +58,7 @@ public class InspectionManageController {
     @PostMapping("/getHostInfo")
     public Result getHostInfo(@RequestParam("id") String id) {
         try {
-            List<HostEntity> bean = inspectionManageService.getHostInfo(id);
+            List<HostDTO> bean = inspectionManageService.getHostInfo(id);
             if (bean != null) {
                 return Result.SUCCESS(bean);
             } else {
@@ -276,7 +278,7 @@ public class InspectionManageController {
             inspectionManageService.addMonitorSchemeTimerTask(monitorSchemeTimerTaskEntity);
         }
         // 在定时器添加之前进行查询当前添加成功的表的数据的操作
-        SysScheduleTaskEntity scheduleTask = sysScheduleTaskService.getSysScheduleTaskById(sysScheduleId);
+        SysScheduleTaskDTO scheduleTask = sysScheduleTaskService.getSysScheduleTaskById(sysScheduleId);
         // 获取传递的参数
         JSONObject JsonParam = JSONObject.parseObject(scheduleTask.getJsonParam());
         // 设置 scheduleId 值

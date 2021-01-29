@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
+import com.jit.server.dto.HostDTO;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
@@ -47,13 +48,13 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     @Autowired
     private SFtpConfig sFtpConfig;
     @Override
-    public List<HostEntity> getHostInfo(String id) throws Exception {
+    public List<HostDTO> getHostInfo(String id) throws Exception {
         try {
             if (StringUtils.isNotEmpty(id)) {
-                List<HostEntity> listinfoOne = inspectionRepo.getHostInfoById(id);
+                List<HostDTO> listinfoOne = inspectionRepo.getHostInfoById(id);
                 return listinfoOne;
             } else {
-                List<HostEntity> listinfoAll = inspectionRepo.getHostInfo();
+                List<HostDTO> listinfoAll = inspectionRepo.getHostInfo();
                 return listinfoAll;
             }
         } catch (Exception e) {
@@ -514,7 +515,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
         //排序语句的 sql 语句
         String orderbySQL = "order by t.gmtCreate asc";
         //主 sql 语句
-        String baseSQL = "select t.id , t.scheduleId , t.ftpUrl , t.schemeName , t.parentId , t.gmtCreate , t.gmtModified , t.createBy , t.updateBy , t.isDeleted  , t2.status from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
+        String baseSQL = "select t.id , t.scheduleId , t.ftpUrl , t.schemeName , t.parentId , t.gmtCreate , t2.status from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
         //查询条数的 sql 语句
         String countSQL = "select count(*) from MonitorSchemeTimerTaskEntity t inner join SysScheduleTaskEntity t2 on t.scheduleId = t2.id where t.isDeleted = 0 and t.schemeName like :schemeName ";
         //map用来组装SQL占位符和对应的值
@@ -575,11 +576,7 @@ public class InspectionManageServiceImpl implements InspectionManageService {
                 monitorSchemeTimerTask.setSchemeName(obj[3]+"");
                 monitorSchemeTimerTask.setParentId(obj[4]+"");
                 monitorSchemeTimerTask.setGmtCreate((java.time.LocalDateTime)obj[5]);
-                monitorSchemeTimerTask.setGmtModified((java.time.LocalDateTime)obj[6]);
-                monitorSchemeTimerTask.setCreateBy(obj[7]+"");
-                monitorSchemeTimerTask.setUpdateBy(obj[8]+"");
-                monitorSchemeTimerTask.setIsDeleted((Long)obj[9]);
-                monitorSchemeTimerTask.setStatus((int)obj[10]);
+                monitorSchemeTimerTask.setStatus((int)obj[6]);
                 monitorSchemeTimerTasks.add(monitorSchemeTimerTask);
             }
         }

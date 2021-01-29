@@ -42,7 +42,8 @@ public class RegisterController {
             if(monitorRegisterEntity!=null){
                 monitorRegisterEntity.setIsDeleted(ConstUtil.IS_NOT_DELETED);
                 monitorRegisterEntity.setGmtCreate(LocalDateTime.now());
-                return Result.SUCCESS(registerService.addRegister(monitorRegisterEntity));
+                registerService.addRegister(monitorRegisterEntity);
+                return Result.SUCCESS(null);
             }else{
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }

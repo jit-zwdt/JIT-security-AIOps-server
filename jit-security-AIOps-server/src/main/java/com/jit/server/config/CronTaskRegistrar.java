@@ -1,5 +1,6 @@
 package com.jit.server.config;
 
+import com.jit.server.dto.SysScheduleTaskDTO;
 import com.jit.server.exception.CronExpression;
 import com.jit.server.pojo.SysScheduleTaskEntity;
 import com.jit.server.service.SysScheduleTaskService;
@@ -47,11 +48,11 @@ public class CronTaskRegistrar implements DisposableBean {
     @Bean
     public void initScheduleTasks() {
         try {
-            List<SysScheduleTaskEntity> sysScheduleTaskEntityList = sysScheduleTaskService.getScheduleTaskList();
+            List<SysScheduleTaskDTO> sysScheduleTaskEntityList = sysScheduleTaskService.getScheduleTaskList();
             if (sysScheduleTaskEntityList == null) {
                 log.info("待初始化任务列表为空！");
             } else {
-                for (SysScheduleTaskEntity s : sysScheduleTaskEntityList) {
+                for (SysScheduleTaskDTO s : sysScheduleTaskEntityList) {
                     this.addCronTask(s.getJobClassName(), s.getJobMethodName(), s.getCronExpression(), s.getJsonParam());
                 }
             }

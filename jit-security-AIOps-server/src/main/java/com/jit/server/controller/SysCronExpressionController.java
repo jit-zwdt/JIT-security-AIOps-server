@@ -53,7 +53,7 @@ public class SysCronExpressionController {
     public Result getAllCronExpressions() {
         try {
             //调用 Service 层进行全部的时间表达式的查询操作
-            List<SysCronExpressionEntity> cronExpressions = sysCronExpressionService.findAllCronExpression();
+            List<SysCronExpressionDTO> cronExpressions = sysCronExpressionService.findAllCronExpression();
             //返回查询结果
             return Result.SUCCESS(cronExpressions);
         } catch (Exception e) {
@@ -74,21 +74,27 @@ public class SysCronExpressionController {
     @AutoLog(value = "定时表达式管理-添加", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result addCronExpression(@RequestBody SysCronExpressionEntity cronExpression) {
         //首先先进行数据的查询校验是否有描述相同的数据
-        boolean flag = sysCronExpressionService.checkAddCronExpressionDesc(cronExpression.getCronExpressionDesc());
-        // 如果返回为 true 表示有表达式一样的数据
-        if (flag) {
-            return Result.ERROR(ExceptionEnum.CRON_EXPRESSION_DESC_DATA_EXISTS);
-        }
-        //在进行查询是否有表达式一样的数据
-        flag = sysCronExpressionService.checkAddCronExpression(cronExpression.getCronExpression());
-        // 如果返回为 true 表示有表达式一样的数据
-        if (flag) {
-            return Result.ERROR(ExceptionEnum.CRON_EXPRESSION_DATA_EXISTS);
-        }
-        // 进行数据的添加
-        SysCronExpressionEntity cronExpressionData = sysCronExpressionService.addCronExpression(cronExpression);
-        if (cronExpressionData.getId() != null) {
-            return Result.SUCCESS(null);
+        try {
+            boolean flag = sysCronExpressionService.checkAddCronExpressionDesc(cronExpression.getCronExpressionDesc());
+            // 如果返回为 true 表示有表达式一样的数据
+            if (flag) {
+                return Result.ERROR(ExceptionEnum.CRON_EXPRESSION_DESC_DATA_EXISTS);
+            }
+            //在进行查询是否有表达式一样的数据
+            flag = sysCronExpressionService.checkAddCronExpression(cronExpression.getCronExpression());
+            // 如果返回为 true 表示有表达式一样的数据
+            if (flag) {
+                return Result.ERROR(ExceptionEnum.CRON_EXPRESSION_DATA_EXISTS);
+            }
+            // 进行数据的添加
+            SysCronExpressionEntity cronExpressionData = sysCronExpressionService.addCronExpression(cronExpression);
+            if (cronExpressionData.getId() != null) {
+                return Result.SUCCESS(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION.getMessage(), e);
+            return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
         }
         return Result.ERROR(ExceptionEnum.SCHEDULER_CREATE_EXCEPTION);
     }
