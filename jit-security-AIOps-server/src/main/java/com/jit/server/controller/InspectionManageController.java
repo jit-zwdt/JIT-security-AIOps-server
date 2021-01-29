@@ -5,6 +5,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jit.server.annotation.AutoLog;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
+import com.jit.server.dto.HostDTO;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.exception.ExceptionEnum;
 import com.jit.server.pojo.HostEntity;
@@ -56,7 +57,7 @@ public class InspectionManageController {
     @PostMapping("/getHostInfo")
     public Result getHostInfo(@RequestParam("id") String id) {
         try {
-            List<HostEntity> bean = inspectionManageService.getHostInfo(id);
+            List<HostDTO> bean = inspectionManageService.getHostInfo(id);
             if (bean != null) {
                 return Result.SUCCESS(bean);
             } else {

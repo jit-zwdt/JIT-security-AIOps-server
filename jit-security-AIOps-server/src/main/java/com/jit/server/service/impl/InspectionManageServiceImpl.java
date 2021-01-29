@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jit.server.config.FtpConfig;
 import com.jit.server.config.SFtpConfig;
+import com.jit.server.dto.HostDTO;
 import com.jit.server.dto.MonitorSchemeTimerTaskEntityDto;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
@@ -47,13 +48,13 @@ public class InspectionManageServiceImpl implements InspectionManageService {
     @Autowired
     private SFtpConfig sFtpConfig;
     @Override
-    public List<HostEntity> getHostInfo(String id) throws Exception {
+    public List<HostDTO> getHostInfo(String id) throws Exception {
         try {
             if (StringUtils.isNotEmpty(id)) {
-                List<HostEntity> listinfoOne = inspectionRepo.getHostInfoById(id);
+                List<HostDTO> listinfoOne = inspectionRepo.getHostInfoById(id);
                 return listinfoOne;
             } else {
-                List<HostEntity> listinfoAll = inspectionRepo.getHostInfo();
+                List<HostDTO> listinfoAll = inspectionRepo.getHostInfo();
                 return listinfoAll;
             }
         } catch (Exception e) {

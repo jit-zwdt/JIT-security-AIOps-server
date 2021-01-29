@@ -1,5 +1,6 @@
 package com.jit.server.repository;
 
+import com.jit.server.dto.HostDTO;
 import com.jit.server.pojo.HostEntity;
 import com.jit.server.pojo.MonitorSchemeTimerTaskEntity;
 import org.springframework.data.domain.Page;
@@ -21,11 +22,11 @@ import java.util.List;
 @Repository
 public interface InspectionRepo extends JpaRepository<MonitorSchemeTimerTaskEntity, String>, JpaSpecificationExecutor<MonitorSchemeTimerTaskEntity> {
 
-    @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0")
-    List<HostEntity> getHostInfo();
+    @Query("SELECT new com.jit.server.dto.HostDTO(h.id, h.hostId, h.objectName, h.businessName, h.assetsId, h.proxyMonitor, h.enableMonitor, h.templatesId, h.typeId, h.subtypeId, h.groupId, h.remark, h.label, h.agentType, h.agentIp, h.agentDnsName, h.agentPort, h.jmxType, h.jmxIp, h.jmxDnsName, h.jmxPort, h.jmxMacro, h.snmpType, h.snmpIp, h.snmpDnsName, h.snmpPort, h.snmpMacro, h.ipmiType, h.ipmiIp, h.ipmiDnsName, h.ipmiPort, h.ipmiMacro, h.mssqlMacroInstance, h.mssqlMacroOdbc, h.mssqlMacroPassword, h.mssqlMacroUsername, h.oracleMacroIp, h.oracleMacroPort, h.oracleMacroAsm, h.oracleMacroDbname, h.oracleMacroPassword, h.oracleMacroUsername, h.vmMacroCpuFrequency, h.vmMacroPassword, h.vmMacroSdkLink, h.vmMacroUsername) FROM HostEntity h WHERE h.deleted = 0")
+    List<HostDTO> getHostInfo();
 
-    @Query("SELECT h FROM HostEntity h WHERE h.deleted = 0 and h.hostId = ?1")
-    List<HostEntity> getHostInfoById(String id);
+    @Query("SELECT new com.jit.server.dto.HostDTO(h.id, h.hostId, h.objectName, h.businessName, h.assetsId, h.proxyMonitor, h.enableMonitor, h.templatesId, h.typeId, h.subtypeId, h.groupId, h.remark, h.label, h.agentType, h.agentIp, h.agentDnsName, h.agentPort, h.jmxType, h.jmxIp, h.jmxDnsName, h.jmxPort, h.jmxMacro, h.snmpType, h.snmpIp, h.snmpDnsName, h.snmpPort, h.snmpMacro, h.ipmiType, h.ipmiIp, h.ipmiDnsName, h.ipmiPort, h.ipmiMacro, h.mssqlMacroInstance, h.mssqlMacroOdbc, h.mssqlMacroPassword, h.mssqlMacroUsername, h.oracleMacroIp, h.oracleMacroPort, h.oracleMacroAsm, h.oracleMacroDbname, h.oracleMacroPassword, h.oracleMacroUsername, h.vmMacroCpuFrequency, h.vmMacroPassword, h.vmMacroSdkLink, h.vmMacroUsername) FROM HostEntity h WHERE h.deleted = 0 and h.hostId = ?1")
+    List<HostDTO> getHostInfoById(String id);
 
     /**
      * 修改数据的 is_deleted 字段变为指定的值 根据 id 修改,传入的第三个参数是父数据的 ID 如果没有就是修改一条数据如果有就是级联修改
