@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +30,7 @@ public class HomePageServiceImpl implements HomePageService {
         return hostRepo.getHostByType();
     }
 
+    public static final int UNIXTIME = 86400;
     /**
      * 根据查询的所有的主机信息进行状态的构建统计
      * @param problemHosts 主机信息
@@ -77,6 +78,87 @@ public class HomePageServiceImpl implements HomePageService {
                 }else if(zabbixProblem.getSeverity() == ProblemSeverity.DISASTER){
                     //灾难
                     disaster++;
+                }
+            }
+        }
+        //未定义信息统计添加
+        jsonObject.put("not_classified" , not_classified);
+        //信息信息统计添加
+        jsonObject.put("information" , information);
+        //警告信息统计添加
+        jsonObject.put("warning" , warning);
+        //一般严重信息统计添加
+        jsonObject.put("average" , average);
+        //严重信息统计添加
+        jsonObject.put("high" , high);
+        //灾难信息统计添加
+        jsonObject.put("disaster" , disaster);
+        //返回
+        return jsonObject;
+    }
+
+    /**
+     * 根据查询的所有的主机信息进行状态的构建统计(当日前六天（包含当日）)
+     * @param problemHosts 主机信息
+     * @return 统计信息
+     */
+    @Override
+    public JSONObject getStatisticalJsonWeek(List<ProblemHostDTO> problemHosts, String timeTill) {
+        int timeInt = 0;
+        // 当前天
+        if (timeTill != null) {
+            timeInt = Integer.parseInt(timeTill);
+        }
+        //创建 JSONObject 对象
+        JSONObject jsonObject = new JSONObject();
+        //未定义信息统计
+        int[] not_classified = new int[]{0, 0, 0, 0, 0, 0, 0};
+        //信息信息统计
+        int[] information = new int[]{0, 0, 0, 0, 0, 0, 0};
+        //警告信息统计
+        int[] warning = new int[]{0, 0, 0, 0, 0, 0, 0};
+        //一般严重信息统计
+        int[] average = new int[]{0, 0, 0, 0, 0, 0, 0};
+        //严重信息统计
+        int[] high = new int[]{0, 0, 0, 0, 0, 0, 0};
+        //灾难信息统计
+        int[] disaster = new int[]{0, 0, 0, 0, 0, 0, 0};
+        // 首先遍历数据集合
+        if(problemHosts != null){
+            for(int i = 0 ; i < problemHosts.size() ; i++){
+                //获取 problemHost 对象
+                ProblemHostDTO problemHost = problemHosts.get(i);
+                //获取里面的真实数据
+                ZabbixProblemDTO zabbixProblem = problemHost.getZabbixProblemDTO();
+                if (zabbixProblem.getClock() != null) {
+                    long clocklong = zabbixProblem.getClock().toEpochSecond(ZoneOffset.of("+8"));
+                    int clock = (int) clocklong;
+                    for (int j = 0; j < 7; j++) {
+                        int start = timeInt - UNIXTIME * (j + 1);
+                        int end = timeInt - UNIXTIME * j;
+                        if (clock >= start && clock <= end) {
+                            //进行数据的桶位相加
+                            if (zabbixProblem.getSeverity() == ProblemSeverity.NOT_CLASSIFIED) {
+                                //未定义
+                                not_classified[j] = not_classified[j] + 1;
+                            } else if (zabbixProblem.getSeverity() == ProblemSeverity.INFORMATION) {
+                                //信息
+                                information[j] = information[j] + 1;
+                            } else if (zabbixProblem.getSeverity() == ProblemSeverity.WARNING) {
+                                //警告
+                                warning[j] = warning[j] + 1;
+                            } else if (zabbixProblem.getSeverity() == ProblemSeverity.AVERAGE) {
+                                //一般严重
+                                average[j] = average[j] + 1;
+                            } else if (zabbixProblem.getSeverity() == ProblemSeverity.HIGH) {
+                                //严重
+                                high[j] = high[j] + 1;
+                            } else if (zabbixProblem.getSeverity() == ProblemSeverity.DISASTER) {
+                                //灾难
+                                disaster[j] = disaster[j] + 1;
+                            }
+                        }
+                    }
                 }
             }
         }

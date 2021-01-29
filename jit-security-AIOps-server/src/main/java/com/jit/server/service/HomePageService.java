@@ -37,4 +37,11 @@ public interface HomePageService {
      * @return 统计信息
      */
     JSONObject getAssetsSumJson(List<Object[]> sumResult);
+
+    /**
+     * 根据查询的所有的主机信息进行状态的构建统计(当日前六天（包含当日）)
+     * @param problemHosts 主机信息
+     * @return 统计信息
+     */
+    JSONObject getStatisticalJsonWeek(List<ProblemHostDTO> problemHosts, String timeTill);
 }

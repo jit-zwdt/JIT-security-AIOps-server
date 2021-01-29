@@ -339,6 +339,90 @@ public class HomePageController {
         }
     }
 
+    /**
+     * 主页获取图表的信息统计图需要的数据接口 统计了异常的情况的数量(当日前六天（包含当日）)
+     * @return JSON 对象拼接的数据
+     */
+    @PostMapping("/getInformationStatisticsWeek")
+    public Result getInformationStatisticsWeek(@RequestParam("timeFrom") String timeFrom, @RequestParam(value = "timeTill") String timeTill, HttpServletRequest request){
+        try {
+            if (timeFrom == null || timeTill == null) {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+            // 根据当前登入对象的令牌获取 zabbix 的登录令牌
+            String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
+            // 创建查询全部参数的构建对象
+            ProblemParams problemParams = new ProblemParams();
+            problemParams.setSeverity(null);
+            // 前6天
+            problemParams.setTimeFrom(timeFrom);
+            // 当前天
+            problemParams.setTimeTill(timeTill);
+            problemParams.setName("");
+            // 调用业务层接口查询全部的数据
+            List<ProblemHostDTO> ProblemHosts = problemService.findProblemHost(problemParams, auth);
+            // 再次封装数据进行状态的自主拼接
+            JSONObject jsonObject = homePageService.getStatisticalJsonWeek(ProblemHosts, timeTill);
+            if (null != jsonObject && !jsonObject.isEmpty()) {
+                return Result.SUCCESS(jsonObject);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/getTimeTop2ItemInfo/{item}")
+    public Result getTimeTop2ItemInfo(@PathVariable String item ,HttpServletRequest req) {
+        try {
+            if (StringUtils.isNotBlank(item)) {
+                //items key
+                String key = paramsConfig.getItem().get(item);
+                if (StringUtils.isNotBlank(key)) {
+                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    List<Object> hosts = hostService.getHostIds();
+                    List<String> hostIds = new ArrayList<>(hosts != null ? hosts.size() : 1);
+                    Map<String, String> hostNameMap = new HashMap<>(hosts != null ? hosts.size() : 1);
+                    for (Object o : hosts) {
+                        Object[] arr = (Object[]) o;
+                        hostIds.add(arr[0].toString());
+                        hostNameMap.put(arr[0].toString(), arr[1].toString());
+                    }
+                    List<ItemC> itemCList = new ArrayList<>(hostIds.size());
+                    List<ItemC> tempItemCList;
+                    ItemC itemC;
+                    for (String hostId : hostIds) {
+                        itemC = getItemLastvalue(hostId, key, auth);
+                        if (itemC != null) {
+                            itemC.setHostName(hostNameMap.get(hostId));
+                            itemCList.add(itemC);
+                        }
+                    }
+                    //sort by value desc
+                    Collections.sort(itemCList, Comparator.comparing(ItemC::getValue).reversed());
+                    //get top5 hostid
+                    if (itemCList.size() > 2) {
+                        tempItemCList = itemCList.subList(0, 2);
+                    } else {
+                        tempItemCList = itemCList;
+                    }
+                    ChartData chartData = getHistoryItemvalue24H(tempItemCList, auth);
+                    return Result.SUCCESS(chartData);
+                } else {
+                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+                }
+            } else {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
+        }
+    }
+
     private ItemC getItemLastvalue(String hostId, String key, String auth) throws Exception {
         ItemC res = null;
         String[] keys = key.split(ConstUtil.PROP_DIVIDER);
@@ -356,6 +440,7 @@ public class HomePageController {
                 res.setHostId(hostId);
                 res.setItemId(zabbixGetItemDTOList.get(0).getId());
                 res.setValue(zabbixGetItemDTOList.get(0).getLastvalue());
+                res.setValueType(zabbixGetItemDTOList.get(0).getValueType().getValue());
                 break;
             }
         }
@@ -426,6 +511,7 @@ public class HomePageController {
     private String getTimelastvalue(String timeFrom, String timeTill, ItemC itemC, String auth) throws ZabbixApiException {
         String res = "0";
         ZabbixGetHistoryParams zabbixGetHistoryParams = new ZabbixGetHistoryParams();
+        zabbixGetHistoryParams.setHistory(itemC.getValueType());
         zabbixGetHistoryParams.setTimeFrom(timeFrom);
         zabbixGetHistoryParams.setTimeTill(timeTill);
         List<String> hostIds = new ArrayList<>();
@@ -489,6 +575,7 @@ public class HomePageController {
         private String hostName;
         private String itemId;
         private String value;
+        private int valueType;
 
         public String getHostId() {
             return hostId;
@@ -520,6 +607,14 @@ public class HomePageController {
 
         public void setHostName(String hostName) {
             this.hostName = hostName;
+        }
+
+        public int getValueType() {
+            return valueType;
+        }
+
+        public void setValueType(int valueType) {
+            this.valueType = valueType;
         }
     }
 }
