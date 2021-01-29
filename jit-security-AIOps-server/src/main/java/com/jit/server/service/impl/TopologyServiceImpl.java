@@ -1,6 +1,6 @@
 package com.jit.server.service.impl;
 
-import com.jit.server.pojo.HostEntity;
+import com.jit.server.dto.MonitorTopologyDTO;
 import com.jit.server.pojo.MonitorTopologyEntity;
 import com.jit.server.repository.TopologyRepo;
 import com.jit.server.service.TopologyService;
@@ -16,7 +16,6 @@ import javax.persistence.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class TopologyServiceImpl implements TopologyService {
@@ -28,13 +27,18 @@ public class TopologyServiceImpl implements TopologyService {
     private EntityManager entityManager;
 
     @Override
-    public Optional<MonitorTopologyEntity> getMonitorTopologInfo(String id) throws Exception {
-        return topologyRepo.findById(id);
+    public MonitorTopologyDTO getMonitorTopologyInfo(String id) throws Exception {
+        return topologyRepo.findMonitorTopologyById(id);
     }
 
     @Override
-    public List<MonitorTopologyEntity> getMonitorTopologAllInfo(String infoName) throws Exception {
-        return topologyRepo.findByInfoNameLikeAndIsDeletedOrderByGmtCreateDesc("%"+infoName+"%", ConstUtil.IS_NOT_DELETED);
+    public MonitorTopologyEntity getMonitorTopologyInfoById(String id) throws Exception {
+        return topologyRepo.findByIdAndIsDeleted(id, ConstUtil.IS_NOT_DELETED);
+    }
+
+    @Override
+    public List<MonitorTopologyDTO> getMonitorTopologyAllInfo(String infoName) throws Exception {
+        return topologyRepo.findMonitorTopologyByInfoName(infoName);
     }
 
     @Override

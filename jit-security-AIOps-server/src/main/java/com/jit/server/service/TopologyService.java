@@ -1,16 +1,17 @@
 package com.jit.server.service;
 
-import com.jit.server.pojo.HostEntity;
+import com.jit.server.dto.MonitorTopologyDTO;
 import com.jit.server.pojo.MonitorTopologyEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TopologyService {
 
-    Optional<MonitorTopologyEntity> getMonitorTopologInfo(String id) throws Exception;
+    MonitorTopologyDTO getMonitorTopologyInfo(String id) throws Exception;
 
-    List<MonitorTopologyEntity> getMonitorTopologAllInfo(String infoName) throws Exception;
+    MonitorTopologyEntity getMonitorTopologyInfoById(String id) throws Exception;
+
+    List<MonitorTopologyDTO> getMonitorTopologyAllInfo(String infoName) throws Exception;
 
     void addTopology(MonitorTopologyEntity topology) throws Exception;
 

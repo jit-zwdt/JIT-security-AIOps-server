@@ -2,8 +2,8 @@ package com.jit.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jit.server.annotation.AutoLog;
+import com.jit.server.dto.MonitorTopologyDTO;
 import com.jit.server.exception.ExceptionEnum;
-import com.jit.server.pojo.MonitorAssetsEntity;
 import com.jit.server.pojo.MonitorTopologyEntity;
 import com.jit.server.request.TopologyParams;
 import com.jit.server.service.HostService;
@@ -21,10 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author jian_liu
@@ -48,6 +46,7 @@ public class TopologyController {
 
     @Autowired
     HostService hostService;
+
     /**
      * saveTopologyInfo
      *
@@ -73,13 +72,14 @@ public class TopologyController {
                     topologyEntity.setInfoName(infoName);
                     topologyService.addTopology(topologyEntity);
                 } else {
-                    Optional<MonitorTopologyEntity> bean = topologyService.getMonitorTopologInfo(infoId);
-                    MonitorTopologyEntity topology = bean.get();
-                    topology.setGmtModified(LocalDateTime.now());
-                    topology.setJsonParam(topologyParams.getJsonParam());
-                    topology.setUpdateBy(userService.findIdByUsername());
-                    topology.setInfoName(infoName);
-                    topologyService.addTopology(topology);
+                    MonitorTopologyEntity topology = topologyService.getMonitorTopologyInfoById(infoId);
+                    if (topology != null) {
+                        topology.setGmtModified(LocalDateTime.now());
+                        topology.setJsonParam(topologyParams.getJsonParam());
+                        topology.setUpdateBy(userService.findIdByUsername());
+                        topology.setInfoName(infoName);
+                        topologyService.addTopology(topology);
+                    }
                 }
                 return Result.SUCCESS(null);
             } else {
@@ -104,8 +104,8 @@ public class TopologyController {
             if (topologyParams.getId() == null) {
                 return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
             }
-            Optional<MonitorTopologyEntity> bean = topologyService.getMonitorTopologInfo(topologyParams.getId());
-            if (bean.isPresent()) {
+            MonitorTopologyDTO bean = topologyService.getMonitorTopologyInfo(topologyParams.getId());
+            if (bean != null) {
                 return Result.SUCCESS(bean);
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
@@ -125,7 +125,7 @@ public class TopologyController {
     @AutoLog(value = "网络拓扑图-获取全部网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
     public Result<MonitorTopologyEntity> getTopologyAllInfo(@RequestBody TopologyParams topologyParams) {
         try {
-            List<MonitorTopologyEntity> bean = topologyService.getMonitorTopologAllInfo(topologyParams.getInfoName());
+            List<MonitorTopologyDTO> bean = topologyService.getMonitorTopologyAllInfo(topologyParams.getInfoName());
             if (bean != null) {
                 return Result.SUCCESS(bean);
             } else {
@@ -190,19 +190,22 @@ public class TopologyController {
     public Result deleteTopology(@PathVariable String id, HttpServletRequest req) {
         try {
             if (StringUtils.isNotBlank(id)) {
-                Optional<MonitorTopologyEntity> bean = topologyService.getMonitorTopologInfo(id);
-                MonitorTopologyEntity topology = bean.get();
-                topology.setGmtModified(LocalDateTime.now());
-                topology.setUpdateBy(userService.findIdByUsername());
-                topology.setIsDeleted(ConstUtil.IS_DELETED);
-                topologyService.addTopology(topology);
-                return Result.SUCCESS(bean);
+                MonitorTopologyEntity topology = topologyService.getMonitorTopologyInfoById(id);
+                if (topology != null) {
+                    topology.setGmtModified(LocalDateTime.now());
+                    topology.setUpdateBy(userService.findIdByUsername());
+                    topology.setIsDeleted(ConstUtil.IS_DELETED);
+                    topologyService.addTopology(topology);
+                    return Result.SUCCESS(null);
+                } else {
+                    return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+                }
             } else {
                 return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
             }
         } catch (Exception e) {
             return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
         }
-    }
 
+    }
 }
