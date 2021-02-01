@@ -184,14 +184,14 @@ public class HomePageController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/getTimeTop5ItemInfo/{item}")
-    public Result getTimeTop5ItemInfo(@PathVariable String item ,HttpServletRequest req) {
+    @PostMapping(value = "/getTimeTopItemInfo")
+    public Result getTimeTopItemInfo(@RequestParam("item") String item, @RequestParam(value = "num") int num, HttpServletRequest request) {
         try {
-            if (StringUtils.isNotBlank(item)) {
+            if (StringUtils.isNotBlank(item) && num > 0) {
                 //items key
                 String key = paramsConfig.getItem().get(item);
                 if (StringUtils.isNotBlank(key)) {
-                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
+                    String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
                     List<Object> hosts = hostService.getHostIds();
                     List<String> hostIds = new ArrayList<>(hosts != null ? hosts.size() : 1);
                     Map<String, String> hostNameMap = new HashMap<>(hosts != null ? hosts.size() : 1);
@@ -213,8 +213,8 @@ public class HomePageController {
                     //sort by value desc
                     Collections.sort(itemCList, Comparator.comparing(ItemC::getValue).reversed());
                     //get top5 hostid
-                    if (itemCList.size() > 5) {
-                        tempItemCList = itemCList.subList(0, 5);
+                    if (itemCList.size() > num) {
+                        tempItemCList = itemCList.subList(0, num);
                     } else {
                         tempItemCList = itemCList;
                     }
@@ -374,55 +374,6 @@ public class HomePageController {
         }
     }
 
-    @ResponseBody
-    @PostMapping(value = "/getTimeTop2ItemInfo/{item}")
-    public Result getTimeTop2ItemInfo(@PathVariable String item ,HttpServletRequest req) {
-        try {
-            if (StringUtils.isNotBlank(item)) {
-                //items key
-                String key = paramsConfig.getItem().get(item);
-                if (StringUtils.isNotBlank(key)) {
-                    String auth = zabbixAuthService.getAuth(req.getHeader(ConstUtil.HEADER_STRING));
-                    List<Object> hosts = hostService.getHostIds();
-                    List<String> hostIds = new ArrayList<>(hosts != null ? hosts.size() : 1);
-                    Map<String, String> hostNameMap = new HashMap<>(hosts != null ? hosts.size() : 1);
-                    for (Object o : hosts) {
-                        Object[] arr = (Object[]) o;
-                        hostIds.add(arr[0].toString());
-                        hostNameMap.put(arr[0].toString(), arr[1].toString());
-                    }
-                    List<ItemC> itemCList = new ArrayList<>(hostIds.size());
-                    List<ItemC> tempItemCList;
-                    ItemC itemC;
-                    for (String hostId : hostIds) {
-                        itemC = getItemLastvalue(hostId, key, auth);
-                        if (itemC != null) {
-                            itemC.setHostName(hostNameMap.get(hostId));
-                            itemCList.add(itemC);
-                        }
-                    }
-                    //sort by value desc
-                    Collections.sort(itemCList, Comparator.comparing(ItemC::getValue).reversed());
-                    //get top5 hostid
-                    if (itemCList.size() > 2) {
-                        tempItemCList = itemCList.subList(0, 2);
-                    } else {
-                        tempItemCList = itemCList;
-                    }
-                    ChartData chartData = getHistoryItemvalue24H(tempItemCList, auth);
-                    return Result.SUCCESS(chartData);
-                } else {
-                    return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
-                }
-            } else {
-                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.ERROR(ExceptionEnum.QUERY_DATA_EXCEPTION);
-        }
-    }
-
     private ItemC getItemLastvalue(String hostId, String key, String auth) throws Exception {
         ItemC res = null;
         String[] keys = key.split(ConstUtil.PROP_DIVIDER);
@@ -527,7 +478,7 @@ public class HomePageController {
             for (ZabbixHistoryDTO zabbixHistoryDTO : zabbixHistoryDTOList) {
                 total = total.add(new BigDecimal(zabbixHistoryDTO.getValue()));
             }
-            res = (total.divide(new BigDecimal(zabbixHistoryDTOList.size()), 4, BigDecimal.ROUND_HALF_UP)).toString();
+            res = (total.divide(new BigDecimal(zabbixHistoryDTOList.size()), 2, BigDecimal.ROUND_HALF_UP)).toString();
         }
         return res;
     }
