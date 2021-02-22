@@ -25,7 +25,7 @@ docker build -t $IMAGENAME:$VERSION $project
 docker run -e TZ="Asia/Shanghai" -p 8081:8080 -idt --name jit-aiops-server --network zabbix_net  --ip=172.19.0.6  -v /var/log/tomcat:/usr/local/tomcat/logs  -e ZABBIX_APIURL=172.19.0.2 -e ZABBIX_APIPORT=8080 -e ZABBIXUSERNAME=Admin -e ZABBIXPASSWORD=zabbix -e DB_HOST=172.17.0.1 -e DB_PORT=3306 -e DB_NAME=jit-security-aiops-server -e DB_USER=root -e DB_PASSWORD=root  $IMAGENAME:$VERSION
 
 
-docker tag $IMAGENAME:$VERSION $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
-docker login -u ggzw -p Dotacsjit3368 $HARBORURI
-docker push $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
-docker rmi $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
+#docker tag $IMAGENAME:$VERSION $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
+#docker login -u ggzw -p Dotacsjit3368 $HARBORURI
+#docker push $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
+#docker rmi $HARBORURI/$HARBORREPONAME/$IMAGENAME:$VERSION
