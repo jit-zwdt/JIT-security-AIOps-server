@@ -36,5 +36,9 @@ public class MonitorTopologyDTO {
      */
     private LocalDateTime gmtCreate;
 
+    /**
+     * 是否首页展示
+     */
+    private Integer homePageDisplay;
 
 }

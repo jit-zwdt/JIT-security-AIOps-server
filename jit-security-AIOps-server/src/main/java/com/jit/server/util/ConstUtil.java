@@ -76,4 +76,14 @@ public class ConstUtil {
      * PID 父类型节点 0
      */
     public static final String PID_0 = "0";
+
+    /**
+     * 首页拓扑图展示 展示
+     */
+    public static final int HOME_PAGE_DISPLAY = 1;
+
+    /**
+     * 首页拓扑图展示 不展示
+     */
+    public static final int HOME_PAGE_UNDISPLAY = 0;
 }

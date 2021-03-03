@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jian_liu
@@ -192,6 +193,9 @@ public class TopologyController {
             if (StringUtils.isNotBlank(id)) {
                 MonitorTopologyEntity topology = topologyService.getMonitorTopologyInfoById(id);
                 if (topology != null) {
+                    if (topology.getHomePageDisplay() ==ConstUtil.HOME_PAGE_DISPLAY) {
+                        return Result.ERROR(ExceptionEnum.HOME_PAGE_DISPLAY_EXISTS);
+                    }
                     topology.setGmtModified(LocalDateTime.now());
                     topology.setUpdateBy(userService.findIdByUsername());
                     topology.setIsDeleted(ConstUtil.IS_DELETED);
@@ -208,4 +212,25 @@ public class TopologyController {
         }
 
     }
+
+    /**
+     * updateTopologyHomePageDisplay
+     *
+     * @return
+     */
+    @PostMapping("/updateTopologyHomePageDisplay")
+    @ResponseBody
+    @AutoLog(value = "网络拓扑图-设定首页展示图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result<MonitorTopologyEntity> updateTopologyHomePageDisplay(@RequestBody Map<String, String> param) {
+        try {
+            if (param.get("id") == null) {
+                return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+            }
+            topologyService.updateTopologyHomePageDisplay(param.get("id"));
+            return Result.SUCCESS(null);
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
 }

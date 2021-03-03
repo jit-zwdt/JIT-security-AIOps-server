@@ -28,13 +28,13 @@ public class MonitorTopologyEntity {
     /**
      * 参数
      */
-    @Column(name = "json_param" )
+    @Column(name = "json_param")
     private String jsonParam;
 
     /**
      * 名称
      */
-    @Column(name = "info_name" )
+    @Column(name = "info_name")
     private String infoName;
 
     /**
@@ -66,5 +66,11 @@ public class MonitorTopologyEntity {
      */
     @Column(name = "is_deleted")
     private int isDeleted;
+
+    /**
+     * 是否首页展示 1：展示 0：不展示
+     */
+    @Column(name = "home_page_display")
+    private int homePageDisplay;
 
 }

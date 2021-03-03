@@ -21,7 +21,7 @@ import java.util.Map;
 public class TopologyServiceImpl implements TopologyService {
 
     @Autowired
-    TopologyRepo topologyRepo;
+    private TopologyRepo topologyRepo;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -68,6 +68,13 @@ public class TopologyServiceImpl implements TopologyService {
         }
         List<Object> resultList = res.getResultList();
         return resultList;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTopologyHomePageDisplay(String id) throws Exception {
+        topologyRepo.updateTopologyNoneHomePageDisplay();
+        topologyRepo.updateTopologyHomePageDisplay(id);
     }
 
 }

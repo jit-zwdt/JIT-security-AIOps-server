@@ -16,4 +16,6 @@ public interface TopologyService {
     void addTopology(MonitorTopologyEntity topology) throws Exception;
 
     List<Object> getTopologyItemInfo(String ip) throws Exception;
+
+    void updateTopologyHomePageDisplay(String id) throws Exception;
 }
