@@ -117,6 +117,36 @@ public class TopologyController {
     }
 
     /**
+     * getTopologyOneInfo
+     *
+     * @return
+     */
+    @PostMapping("/getTopologyDefultInfo")
+    @ResponseBody
+    @AutoLog(value = "网络拓扑图-获取首页网络拓扑图", logType = ConstLogUtil.LOG_TYPE_OPERATION)
+    public Result<MonitorTopologyEntity> getTopologyDefultInfo(@RequestBody TopologyParams topologyParams) {
+        try {
+            String id = topologyService.getHomePageDisplayTopologyId();
+            if(StringUtils.isBlank(id)){
+                if (topologyParams.getId() == null) {
+                    return Result.ERROR(ExceptionEnum.PARAMS_NULL_EXCEPTION);
+                }else{
+                    id = topologyParams.getId();
+                }
+            }
+
+            MonitorTopologyDTO bean = topologyService.getMonitorTopologyInfo(id);
+            if (bean != null) {
+                return Result.SUCCESS(bean);
+            } else {
+                return Result.ERROR(ExceptionEnum.RESULT_NULL_EXCEPTION);
+            }
+        } catch (Exception e) {
+            return Result.ERROR(ExceptionEnum.INNTER_EXCEPTION);
+        }
+    }
+
+    /**
      * getTopologyAllInfo
      *
      * @return

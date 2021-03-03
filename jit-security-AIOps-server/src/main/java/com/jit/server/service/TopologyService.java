@@ -18,4 +18,6 @@ public interface TopologyService {
     List<Object> getTopologyItemInfo(String ip) throws Exception;
 
     void updateTopologyHomePageDisplay(String id) throws Exception;
+
+    String getHomePageDisplayTopologyId() throws Exception;
 }

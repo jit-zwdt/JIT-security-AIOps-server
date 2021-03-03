@@ -77,4 +77,10 @@ public class TopologyServiceImpl implements TopologyService {
         topologyRepo.updateTopologyHomePageDisplay(id);
     }
 
+    @Override
+    public String getHomePageDisplayTopologyId() throws Exception {
+        return topologyRepo.getHomePageDisplayTopologyId();
+    }
+
+
 }

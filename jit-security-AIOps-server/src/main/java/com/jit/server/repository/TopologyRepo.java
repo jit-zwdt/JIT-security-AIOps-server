@@ -34,4 +34,7 @@ public interface TopologyRepo extends JpaRepository<MonitorTopologyEntity, Strin
     @Modifying
     @Query(value = "update MonitorTopologyEntity t set t.homePageDisplay= 1 where t.id = ?1 and t.isDeleted = 0")
     void updateTopologyHomePageDisplay(String id);
+
+    @Query(value = "select t.id from MonitorTopologyEntity t where t.homePageDisplay= 1 and t.isDeleted = 0")
+    String getHomePageDisplayTopologyId();
 }
