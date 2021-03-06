@@ -185,14 +185,19 @@ public class HomePageController {
 
     @ResponseBody
     @PostMapping(value = "/getTimeTopItemInfo")
-    public Result getTimeTopItemInfo(@RequestParam("item") String item, @RequestParam(value = "num") int num, HttpServletRequest request) {
+    public Result getTimeTopItemInfo(@RequestParam("item") String item, @RequestParam(value = "num") int num, @RequestParam("typeId") String typeId, HttpServletRequest request) {
         try {
             if (StringUtils.isNotBlank(item) && num > 0) {
                 //items key
                 String key = paramsConfig.getItem().get(item);
                 if (StringUtils.isNotBlank(key)) {
                     String auth = zabbixAuthService.getAuth(request.getHeader(ConstUtil.HEADER_STRING));
-                    List<Object> hosts = hostService.getHostIds();
+                    List<Object> hosts = new ArrayList<>();
+                    if (StringUtils.isNotBlank(typeId)) {
+                        hosts = hostService.getHostIdsAndtypeId(typeId);
+                    } else {
+                        hosts = hostService.getHostIds();
+                    }
                     List<String> hostIds = new ArrayList<>(hosts != null ? hosts.size() : 1);
                     Map<String, String> hostNameMap = new HashMap<>(hosts != null ? hosts.size() : 1);
                     for (Object o : hosts) {

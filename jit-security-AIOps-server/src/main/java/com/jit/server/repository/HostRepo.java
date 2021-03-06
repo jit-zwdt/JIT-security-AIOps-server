@@ -54,8 +54,11 @@ public interface HostRepo extends JpaRepository<HostEntity, String>, JpaSpecific
 
     List<HostEntity> findByDeleted(int deleted);
 
-    @Query("SELECT h.hostId,h.businessName FROM HostEntity h WHERE h.deleted = 0")
+    @Query("SELECT h.hostId,h.businessName FROM HostEntity h WHERE h.deleted = 0  ")
     List<Object> getHostIds();
+
+    @Query("SELECT h.hostId,h.businessName FROM HostEntity h WHERE h.deleted = 0 and h.typeId=?1 ")
+    List<Object> getHostIdsAndtypeId(String typeId);
 
     @Query(" SELECT h.hostId,h.businessName," +
             "    CASE " +

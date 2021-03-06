@@ -1159,6 +1159,11 @@ public class HostServiceImpl implements HostService {
         return hostRepo.getHostIds();
     }
 
+    @Override
+    public List<Object> getHostIdsAndtypeId(String typeId) throws Exception {
+        return hostRepo.getHostIdsAndtypeId(typeId);
+    }
+
     /**
      * 判断主机名称是否为空
      * @param objectName 主机名称

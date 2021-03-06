@@ -42,6 +42,8 @@ public interface HostService {
 
     List<Object> getHostIds() throws Exception;
 
+    List<Object> getHostIdsAndtypeId(String typeId) throws Exception;
+
     Boolean checkObjectName(String objectName, String odlObjectName) throws Exception;
 
     Boolean checkBusinessName(String businessName, String odlBusinessName);
