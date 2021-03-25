@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,8 +60,9 @@ public class MonitorTemplatesImpl implements MonitorTemplatesService {
             Path<String> tempKey = root.get("tempKey");
             Path<Integer> orderNum = root.get("orderNum");
             Path<String> ico = root.get("ico");
+            Path<LocalDateTime> gmtCreate = root.get("gmtCreate");
             //查询字段
-            query.multiselect(id, name, typeId, subtypeIds, templateIds, templates, helpDoc, tempKey, orderNum, ico);
+            query.multiselect(id, name, typeId, subtypeIds, templateIds, templates, helpDoc, tempKey, orderNum, ico,gmtCreate);
             //查询条件
             List<Predicate> list = new ArrayList<Predicate>();
             list.add(cb.equal(root.get("isDeleted").as(Integer.class), ConstUtil.IS_NOT_DELETED));

@@ -610,6 +610,57 @@ public class HostServiceImpl implements HostService {
             macro.setValue(macro_vm_username.trim());
             macros.add(macro);
         }
+        // Kingbase 数据库宏
+        String kingbaseMacroIp = host.getKingbaseMacroIp();
+        if (StringUtils.isNotEmpty(kingbaseMacroIp)) {
+            //主机IP
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_ADDRESS}");
+            macro.setValue(kingbaseMacroIp.trim());
+            macros.add(macro);
+        }
+        String kingbaseMacroPort = host.getKingbaseMacroPort();
+        if (StringUtils.isNotEmpty(kingbaseMacroPort)) {
+            //端口
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_PORT}");
+            macro.setValue(kingbaseMacroPort.trim());
+            macros.add(macro);
+        }
+        String kingbaseMacroDbname = host.getKingbaseMacroDbname();
+        if (StringUtils.isNotEmpty(kingbaseMacroDbname)) {
+            //数据库名
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_DATABASE}");
+            macro.setValue(kingbaseMacroDbname.trim());
+            macros.add(macro);
+        }
+        String kingbaseMacroUsername = host.getKingbaseMacroUsername();
+        if (StringUtils.isNotEmpty(kingbaseMacroUsername)) {
+            //ORACLE主机宏：用户名
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_USERNAME}");
+            macro.setValue(kingbaseMacroUsername.trim());
+            macros.add(macro);
+        }
+        String kingbaseMacroPassword = host.getKingbaseMacroPassword();
+        if (StringUtils.isNotEmpty(kingbaseMacroPassword)) {
+            //用户名
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_PASSWORD}");
+            macro.setValue(kingbaseMacroPassword.trim());
+            macros.add(macro);
+        }
+        String kingbaseMacroType = host.getKingbaseMacroType();
+        if (StringUtils.isNotEmpty(kingbaseMacroType)) {
+            //用户名
+            HostMacro macro = new HostMacro();
+            macro.setMacro("{$KINGBASE_TYPE}");
+            macro.setValue(kingbaseMacroType.trim());
+            macros.add(macro);
+        }
+
+
         if (!CollectionUtils.isEmpty(macros)) {
             dto.setMacros(macros);
         }

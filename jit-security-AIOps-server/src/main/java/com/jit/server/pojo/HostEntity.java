@@ -156,6 +156,24 @@ public class HostEntity {
     @Column(name = "host_vm_macro_username")
     private String vmMacroUsername;
 
+    @Column(name = "host_kingbase_macro_ip")
+    private String kingbaseMacroIp;
+
+    @Column(name = "host_kingbase_macro_port")
+    private String kingbaseMacroPort;
+
+    @Column(name = "host_kingbase_macro_dbname")
+    private String kingbaseMacroDbname;
+
+    @Column(name = "host_kingbase_macro_username")
+    private String kingbaseMacroUsername;
+
+    @Column(name = "host_kingbase_macro_password")
+    private String kingbaseMacroPassword;
+
+    @Column(name = "host_kingbase_macro_type")
+    private String kingbaseMacroType;
+
     @Column(name = "is_deleted")
     private int deleted;
 

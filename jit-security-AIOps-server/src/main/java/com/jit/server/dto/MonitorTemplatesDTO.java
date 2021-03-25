@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @Description: MonitorTemplatesDTO
  * @Author: zengxin_miao
@@ -61,5 +63,7 @@ public class MonitorTemplatesDTO {
      * 图标 base64
      */
     private String ico;
+
+    private LocalDateTime gmtCreate;
 
 }

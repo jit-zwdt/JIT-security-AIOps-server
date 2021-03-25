@@ -7,14 +7,14 @@ server:
     context-path: /api
 zabbix:
   api:
-    url: http://172.16.15.10/zabbix/
+    url: http://172.16.17.10/zabbix/
   username: Admin
   password: zabbix
 spring:
 ## ↓ ↓ ↓ ↓ ↓ ↓ MYSQL datasource ↓ ↓ ↓ ↓ ↓ ↓
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.15.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
+    url: jdbc:mysql://172.16.17.10:3306/jit-security-aiops-server?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8&tinyInt1isBit=false
     username: root
     password: root
     connectionTimeout: 20000
@@ -30,7 +30,7 @@ spring:
 ## ↓ ↓ ↓ ↓ ↓ ↓ DM datasource ↓ ↓ ↓ ↓ ↓ ↓
 #  datasource:
 #    driver-class-name: dm.jdbc.driver.DmDriver
-#    url: jdbc:dm://172.16.15.10:5236/DAMENG?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+#    url: jdbc:dm://172.16.17.10:5236/DAMENG?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
 #    username: JIT_SECURITY_AIOPS
 #    password: JIT_SECURITY_AIOPS
 #  jpa:
@@ -50,7 +50,7 @@ spring:
 #--------------FTP配置-------------#
 ###################################
 ftp:
-  hostName: 172.16.15.10
+  hostName: 172.16.17.10
   port: 21
   userName: jitutil
   passWord: dota&csjit3368
@@ -58,7 +58,7 @@ ftp:
 #--------------SFTP配置------------#
 ###################################
 sftp:
-  hostName: 172.16.15.10
+  hostName: 172.16.17.10
   port: 22
   userName: sftp
   passWord: dota&csjit3368

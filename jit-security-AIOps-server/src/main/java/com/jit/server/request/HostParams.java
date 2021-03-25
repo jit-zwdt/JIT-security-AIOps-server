@@ -1,14 +1,9 @@
 package com.jit.server.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.jit.zabbix.client.utils.CustomJsonSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import java.time.LocalDateTime;
 
 /**
  * @Description: table assets entity
@@ -71,4 +66,11 @@ public class HostParams {
     private String hostIp;
 
     private String itemKey;
+
+    private String kingbaseMacroIp;
+    private String kingbaseMacroPort;
+    private String kingbaseMacroDbname;
+    private String kingbaseMacroUsername;
+    private String kingbaseMacroPassword;
+    private String kingbaseMacroType;
 }
