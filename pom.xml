@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <fastjson.version>1.2.58</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <!-- 由于达梦8支持到hibernate5.3环境，故hibernate采用5.3.20.Final -->
         <hibernate.version>5.3.20.Final</hibernate.version>
     </properties>
